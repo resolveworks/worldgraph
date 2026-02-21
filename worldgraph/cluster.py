@@ -8,6 +8,19 @@ from scipy.cluster.hierarchy import fcluster, linkage
 from scipy.spatial.distance import squareform
 
 
+def collect_entity_types(extractions: list[dict]) -> list[str]:
+    """Collect unique entity type strings across all articles."""
+    seen = set()
+    types = []
+    for article in extractions:
+        for ent in article["entities"]:
+            t = ent["type"]
+            if t not in seen:
+                seen.add(t)
+                types.append(t)
+    return types
+
+
 def collect_relations(extractions: list[dict]) -> list[str]:
     """Collect unique relation phrases across all articles."""
     seen = set()
@@ -21,17 +34,21 @@ def collect_relations(extractions: list[dict]) -> list[str]:
     return relations
 
 
-def embed_relations(relations: list[str], model_name: str) -> np.ndarray:
-    """Embed relation phrases using fastembed.
+def embed_phrases(phrases: list[str], model: TextEmbedding) -> np.ndarray:
+    """Embed a list of phrases using fastembed."""
+    embeddings = list(model.embed(phrases))
+    return np.array(embeddings)
+
+
+def embed_relations(relations: list[str], model: TextEmbedding) -> np.ndarray:
+    """Embed relation phrases.
 
     Wraps each phrase as "A {phrase} B" before embedding to give the model
     syntactic context — it encodes the meaning of the verb phrase rather than
     just surface tokens.
     """
-    model = TextEmbedding(model_name=model_name)
     wrapped = [f"A {phrase} B" for phrase in relations]
-    embeddings = list(model.embed(wrapped))
-    return np.array(embeddings)
+    return embed_phrases(wrapped, model)
 
 
 def cluster_relations(
@@ -79,7 +96,9 @@ def pick_representative(
 
 
 def build_initial_graphs(
-    extractions: list[dict], relation_map: dict[str, int]
+    extractions: list[dict],
+    relation_map: dict[str, int],
+    type_map: dict[str, str],
 ) -> list[dict]:
     """Build per-article graphs from extraction data.
 
@@ -97,7 +116,7 @@ def build_initial_graphs(
                 {
                     "id": e["id"],
                     "name": e["name"],
-                    "type": e["type"],
+                    "type": type_map.get(e["type"], e["type"]),
                     "occurrences": [
                         {
                             "article_id": article_id,
@@ -140,13 +159,48 @@ def run_clustering(
     with open(input_path) as f:
         extractions = json.load(f)
 
+    model = TextEmbedding(model_name=model_name)
+
+    # --- Cluster entity types ---
+    entity_types = collect_entity_types(extractions)
+    click.echo(f"Found {len(entity_types)} unique entity types")
+
+    click.echo(f"Embedding entity types with {model_name}...")
+    type_embeddings = embed_phrases(entity_types, model)
+
+    click.echo(f"Clustering entity types (threshold={threshold})...")
+    type_labels, type_similarity = cluster_relations(type_embeddings, threshold)
+
+    type_cluster_map: dict[int, list[tuple[str, int]]] = {}
+    for i, (t, label) in enumerate(zip(entity_types, type_labels)):
+        type_cluster_map.setdefault(label, []).append((t, i))
+
+    type_map: dict[str, str] = {}
+    multi_type_clusters = []
+    for cluster_id, members_with_idx in sorted(type_cluster_map.items()):
+        members = [m[0] for m in members_with_idx]
+        indices = [m[1] for m in members_with_idx]
+        representative = pick_representative(members, indices, type_similarity)
+        for t in members:
+            type_map[t] = representative
+        if len(members) > 1:
+            multi_type_clusters.append((representative, members))
+
+    click.echo(
+        f"{len(type_cluster_map)} type clusters "
+        f"({len(multi_type_clusters)} with multiple members)"
+    )
+    for rep, members in multi_type_clusters:
+        click.echo(f"  [{rep}]: {', '.join(members)}")
+
+    # --- Cluster relation phrases ---
     relations = collect_relations(extractions)
-    click.echo(f"Found {len(relations)} unique relation phrases")
+    click.echo(f"\nFound {len(relations)} unique relation phrases")
 
-    click.echo(f"Embedding with {model_name}...")
-    embeddings = embed_relations(relations, model_name)
+    click.echo(f"Embedding relations with {model_name}...")
+    embeddings = embed_relations(relations, model)
 
-    click.echo(f"Clustering (threshold={threshold})...")
+    click.echo(f"Clustering relations (threshold={threshold})...")
     labels, similarity = cluster_relations(embeddings, threshold)
 
     # Build cluster structures
@@ -170,7 +224,7 @@ def run_clustering(
             multi_clusters.append((representative, members))
 
     # Build per-article graphs
-    graphs = build_initial_graphs(extractions, relation_to_cluster)
+    graphs = build_initial_graphs(extractions, relation_to_cluster, type_map)
 
     output = {
         "cluster_labels": cluster_labels,
