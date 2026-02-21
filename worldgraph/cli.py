@@ -4,6 +4,7 @@ import click
 
 from worldgraph.cluster import run_clustering
 from worldgraph.extract import run_extraction
+from worldgraph.match import run_matching
 
 
 @click.group()
@@ -68,9 +69,41 @@ def cluster(input_path: Path, output_path: Path, model: str, threshold: float):
 
 
 @cli.command()
-def match():
-    """Stage 3: Structural matching across article subgraphs. (not yet implemented)"""
-    click.echo("Not yet implemented.")
+@click.option(
+    "--extractions",
+    "extractions_path",
+    default="data/extractions.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Input extractions JSON file.",
+)
+@click.option(
+    "--clusters",
+    "clusters_path",
+    default="data/clusters.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Input clusters JSON file.",
+)
+@click.option(
+    "--output",
+    "output_path",
+    default="data/matches.json",
+    type=click.Path(path_type=Path),
+    help="Output matches JSON file.",
+)
+@click.option(
+    "--name-threshold",
+    default=0.5,
+    type=float,
+    help="Cosine similarity threshold for entity name matching.",
+)
+def match(
+    extractions_path: Path,
+    clusters_path: Path,
+    output_path: Path,
+    name_threshold: float,
+):
+    """Stage 3: Structural matching across article subgraphs."""
+    run_matching(extractions_path, clusters_path, output_path, name_threshold)
 
 
 @cli.command()
