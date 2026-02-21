@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+from worldgraph.cluster import run_clustering
 from worldgraph.extract import run_extraction
 
 
@@ -36,9 +37,34 @@ def extract(input_path: Path, output_path: Path, model: str):
 
 
 @cli.command()
-def cluster():
-    """Stage 2: Embed and cluster similar relations. (not yet implemented)"""
-    click.echo("Not yet implemented.")
+@click.option(
+    "--input",
+    "input_path",
+    default="data/extractions.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Input extractions JSON file.",
+)
+@click.option(
+    "--output",
+    "output_path",
+    default="data/clusters.json",
+    type=click.Path(path_type=Path),
+    help="Output clusters JSON file.",
+)
+@click.option(
+    "--model",
+    default="sentence-transformers/all-MiniLM-L6-v2",
+    help="Sentence embedding model name.",
+)
+@click.option(
+    "--threshold",
+    default=0.7,
+    type=float,
+    help="Cosine similarity threshold for clustering.",
+)
+def cluster(input_path: Path, output_path: Path, model: str, threshold: float):
+    """Stage 2: Embed and cluster similar relations."""
+    run_clustering(input_path, output_path, model, threshold)
 
 
 @cli.command()

@@ -22,10 +22,12 @@ The pipeline has 5 stages:
 data/
   articles.json           # Input: fake news articles for testing (10 articles, 3 overlapping events)
   extractions.json        # Output of stage 1 (entity-relation subgraphs per article)
+  clusters.json           # Output of stage 2 (relation clusters with embeddings)
 worldgraph/
   __init__.py
   cli.py                  # Click CLI entry point (worldgraph command group)
   extract.py              # Stage 1: LLM-based entity/relation extraction
+  cluster.py              # Stage 2: Embed relation phrases and cluster synonyms
 .env.example              # Template for API key configuration
 pyproject.toml            # Project config, dependencies, CLI entry point
 README.md                 # Project proposal / discussion document
