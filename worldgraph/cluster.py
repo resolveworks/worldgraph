@@ -22,9 +22,15 @@ def collect_relations(extractions: list[dict]) -> list[str]:
 
 
 def embed_relations(relations: list[str], model_name: str) -> np.ndarray:
-    """Embed relation phrases using fastembed."""
+    """Embed relation phrases using fastembed.
+
+    Wraps each phrase as "A {phrase} B" before embedding to give the model
+    syntactic context — it encodes the meaning of the verb phrase rather than
+    just surface tokens.
+    """
     model = TextEmbedding(model_name=model_name)
-    embeddings = list(model.embed(relations))
+    wrapped = [f"A {phrase} B" for phrase in relations]
+    embeddings = list(model.embed(wrapped))
     return np.array(embeddings)
 
 
