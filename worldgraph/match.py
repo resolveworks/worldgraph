@@ -85,17 +85,20 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     return float(dot / norm)
 
 
+def entity_embed_key(e: Entity) -> str:
+    """Build the embedding key for an entity: '{type}: {name}'."""
+    return f"{e.type}: {e.name}"
+
+
 def entity_compatible(
     e1: Entity,
     e2: Entity,
     name_embeddings: dict[str, np.ndarray],
     threshold: float,
 ) -> bool:
-    """Check if two entities could be the same: same type + name similarity >= threshold."""
-    if e1.type != e2.type:
-        return False
-    emb1 = name_embeddings.get(e1.name)
-    emb2 = name_embeddings.get(e2.name)
+    """Check if two entities could be the same: embedding similarity >= threshold."""
+    emb1 = name_embeddings.get(entity_embed_key(e1))
+    emb2 = name_embeddings.get(entity_embed_key(e2))
     if emb1 is None or emb2 is None:
         return False
     return cosine_similarity(emb1, emb2) >= threshold
@@ -292,14 +295,14 @@ def run_matching(
     for g in graphs:
         click.echo(f"  {g.article_id}: {len(g.entities)} entities, {len(g.edges)} edges")
 
-    # Collect all unique entity names and embed them
+    # Collect all unique entity embed keys ("{type}: {name}") and embed them
     all_names = set()
     for g in graphs:
         for e in g.entities.values():
-            all_names.add(e.name)
+            all_names.add(entity_embed_key(e))
     all_names = sorted(all_names)
 
-    click.echo(f"\nEmbedding {len(all_names)} unique entity names...")
+    click.echo(f"\nEmbedding {len(all_names)} unique entity keys...")
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     name_embeddings = embed_entity_names(all_names, model)
 
