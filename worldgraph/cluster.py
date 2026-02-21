@@ -78,6 +78,58 @@ def pick_representative(
     return members[best]
 
 
+def build_initial_graphs(
+    extractions: list[dict], relation_map: dict[str, int]
+) -> list[dict]:
+    """Build per-article graphs from extraction data.
+
+    Each article becomes one graph with one occurrence per entity and one
+    article per edge.
+    """
+    graphs = []
+    for article in extractions:
+        article_id = article["article_id"]
+        entity_ids = {e["id"] for e in article["entities"]}
+
+        entities = []
+        for e in article["entities"]:
+            entities.append(
+                {
+                    "id": e["id"],
+                    "name": e["name"],
+                    "type": e["type"],
+                    "occurrences": [
+                        {
+                            "article_id": article_id,
+                            "entity_id": e["id"],
+                            "name": e["name"],
+                        }
+                    ],
+                }
+            )
+
+        edges = []
+        for rel in article["relations"]:
+            src, tgt = rel["source"], rel["target"]
+            if src not in entity_ids or tgt not in entity_ids:
+                continue
+            cluster_id = relation_map.get(rel["relation"])
+            if cluster_id is None:
+                continue
+            edges.append(
+                {
+                    "source": src,
+                    "target": tgt,
+                    "cluster_id": cluster_id,
+                    "articles": [article_id],
+                }
+            )
+
+        graphs.append({"id": article_id, "entities": entities, "edges": edges})
+
+    return graphs
+
+
 def run_clustering(
     input_path: Path,
     output_path: Path,
@@ -102,39 +154,37 @@ def run_clustering(
     for i, (phrase, label) in enumerate(zip(relations, labels)):
         cluster_map.setdefault(label, []).append((phrase, i))
 
-    clusters = []
-    relation_to_cluster = {}
+    cluster_labels: dict[str, str] = {}
+    relation_to_cluster: dict[str, int] = {}
 
+    multi_clusters = []
     for cluster_id, members_with_idx in sorted(cluster_map.items()):
         members = [m[0] for m in members_with_idx]
         indices = [m[1] for m in members_with_idx]
         representative = pick_representative(members, indices, similarity)
 
-        clusters.append(
-            {
-                "id": cluster_id,
-                "representative": representative,
-                "members": members,
-            }
-        )
+        cluster_labels[str(cluster_id)] = representative
         for phrase in members:
             relation_to_cluster[phrase] = cluster_id
+        if len(members) > 1:
+            multi_clusters.append((representative, members))
+
+    # Build per-article graphs
+    graphs = build_initial_graphs(extractions, relation_to_cluster)
 
     output = {
-        "model": model_name,
-        "threshold": threshold,
-        "clusters": clusters,
-        "relation_map": relation_to_cluster,
+        "cluster_labels": cluster_labels,
+        "graphs": graphs,
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
 
-    multi = [c for c in clusters if len(c["members"]) > 1]
     click.echo(
-        f"\n{len(clusters)} clusters ({len(multi)} with multiple members)"
+        f"\n{len(cluster_labels)} clusters ({len(multi_clusters)} with multiple members)"
     )
-    for c in multi:
-        click.echo(f"  [{c['representative']}]: {', '.join(c['members'])}")
-    click.echo(f"\nWrote {output_path}")
+    for rep, members in multi_clusters:
+        click.echo(f"  [{rep}]: {', '.join(members)}")
+    click.echo(f"\n{len(graphs)} article graphs built")
+    click.echo(f"Wrote {output_path}")

@@ -8,13 +8,21 @@ The core idea: news redundancy is the signal, not noise. Multiple outlets report
 
 ## Architecture (PoC Pipeline)
 
-The pipeline has 5 stages:
+The pipeline uses a unified **graph format** that flows between stages. After the initial cluster stage, every intermediate file is a graph JSON with `{cluster_labels, graphs}`. The match stage consumes and produces this format, so iteration is just calling match repeatedly.
 
 1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs (triples)
-2. **Embed & Cluster Relations** — Embed relation phrases with a sentence embedding model, cluster similar relations ("acquired" ≈ "bought" ≈ "completed the purchase of")
-3. **Structural Matching** — Overlay per-article subgraphs; find isomorphic structures with fuzzy-matching node labels across sources
-4. **Iterative Merge** — Loop: merge high-confidence entity pairs → combine relationship sets → discover new overlaps → repeat until convergence
-5. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
+2. **Embed & Cluster Relations** — Embed relation phrases, cluster synonyms, build per-article graphs → `graphs_0.json`
+3. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_N.json` (run repeatedly until convergence)
+4. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
+
+```bash
+worldgraph extract                               # articles.json → extractions.json
+worldgraph cluster                               # extractions.json → graphs_0.json
+worldgraph match --output data/graphs_1.json     # graphs_0.json → graphs_1.json
+worldgraph match -i data/graphs_1.json -o data/graphs_2.json  # repeat until stable
+```
+
+In the graph format, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
 
 ## Project Structure
 
@@ -22,14 +30,14 @@ The pipeline has 5 stages:
 data/
   articles.json           # Input: fake news articles for testing (10 articles, 3 overlapping events)
   extractions.json        # Output of stage 1 (entity-relation subgraphs per article)
-  clusters.json           # Output of stage 2 (relation clusters with embeddings)
-  matches.json            # Output of stage 3 (entity groups + matched triples)
+  graphs_0.json           # Output of stage 2 (initial per-article graphs with clustered relations)
+  graphs_N.json           # Output of stage 3 iterations (merged graphs, N = iteration number)
 worldgraph/
   __init__.py
   cli.py                  # Click CLI entry point (worldgraph command group)
   extract.py              # Stage 1: LLM-based entity/relation extraction
-  cluster.py              # Stage 2: Embed relation phrases and cluster synonyms
-  match.py                # Stage 3: Structural matching via compatibility graph + max clique
+  cluster.py              # Stage 2: Embed relation phrases, cluster synonyms, build initial graphs
+  match.py                # Stage 3: Structural matching + graph merging (iterative)
 .env.example              # Template for API key configuration
 pyproject.toml            # Project config, dependencies, CLI entry point
 README.md                 # Project proposal / discussion document

@@ -48,9 +48,9 @@ def extract(input_path: Path, output_path: Path, model: str):
 @click.option(
     "--output",
     "output_path",
-    default="data/clusters.json",
+    default="data/graphs_0.json",
     type=click.Path(path_type=Path),
-    help="Output clusters JSON file.",
+    help="Output graph JSON file.",
 )
 @click.option(
     "--model",
@@ -64,31 +64,26 @@ def extract(input_path: Path, output_path: Path, model: str):
     help="Cosine similarity threshold for clustering.",
 )
 def cluster(input_path: Path, output_path: Path, model: str, threshold: float):
-    """Stage 2: Embed and cluster similar relations."""
+    """Stage 2: Embed and cluster similar relations, build initial graphs."""
     run_clustering(input_path, output_path, model, threshold)
 
 
 @cli.command()
 @click.option(
-    "--extractions",
-    "extractions_path",
-    default="data/extractions.json",
+    "-i",
+    "--input",
+    "input_path",
+    default="data/graphs_0.json",
     type=click.Path(exists=True, path_type=Path),
-    help="Input extractions JSON file.",
+    help="Input graph JSON file.",
 )
 @click.option(
-    "--clusters",
-    "clusters_path",
-    default="data/clusters.json",
-    type=click.Path(exists=True, path_type=Path),
-    help="Input clusters JSON file.",
-)
-@click.option(
+    "-o",
     "--output",
     "output_path",
-    default="data/matches.json",
+    default="data/graphs_1.json",
     type=click.Path(path_type=Path),
-    help="Output matches JSON file.",
+    help="Output graph JSON file.",
 )
 @click.option(
     "--name-threshold",
@@ -96,20 +91,15 @@ def cluster(input_path: Path, output_path: Path, model: str, threshold: float):
     type=float,
     help="Cosine similarity threshold for entity name matching.",
 )
-def match(
-    extractions_path: Path,
-    clusters_path: Path,
-    output_path: Path,
-    name_threshold: float,
-):
-    """Stage 3: Structural matching across article subgraphs."""
-    run_matching(extractions_path, clusters_path, output_path, name_threshold)
-
-
-@cli.command()
-def merge():
-    """Stage 4: Iterative entity merging. (not yet implemented)"""
-    click.echo("Not yet implemented.")
+@click.option(
+    "--min-edges",
+    default=2,
+    type=int,
+    help="Minimum matched edges to accept a pair match.",
+)
+def match(input_path: Path, output_path: Path, name_threshold: float, min_edges: int):
+    """Stage 3: Structural matching — merge overlapping graphs."""
+    run_matching(input_path, output_path, name_threshold, min_edges)
 
 
 @cli.command()
