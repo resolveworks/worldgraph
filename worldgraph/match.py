@@ -179,18 +179,17 @@ def entity_embed_key(e: Entity) -> str:
     return e.name
 
 
-def entity_compatible(
+def entity_similarity(
     e1: Entity,
     e2: Entity,
     name_embeddings: dict[str, np.ndarray],
-    threshold: float,
-) -> bool:
-    """Check if two entities could be the same: embedding similarity >= threshold."""
+) -> float:
+    """Cosine similarity between two entity name embeddings."""
     emb1 = name_embeddings.get(entity_embed_key(e1))
     emb2 = name_embeddings.get(entity_embed_key(e2))
     if emb1 is None or emb2 is None:
-        return False
-    return cosine_similarity(emb1, emb2) >= threshold
+        return 0.0
+    return cosine_similarity(emb1, emb2)
 
 
 # ---------------------------------------------------------------------------
@@ -202,15 +201,17 @@ def build_compatibility_graph(
     graph_a: ArticleGraph,
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
-    threshold: float,
-) -> tuple[list[tuple[int, int]], dict[int, set[int]]]:
+    floor: float = 0.3,
+) -> tuple[list[tuple[int, int]], dict[int, set[int]], list[tuple[float, float]]]:
     """Build compatibility graph over edge pairs.
 
-    Returns (nodes, adjacency) where each node is (edge_a_idx, edge_b_idx)
-    and adjacency maps node index -> set of compatible node indices.
+    Returns (nodes, adjacency, similarities) where each node is
+    (edge_a_idx, edge_b_idx), adjacency maps node index -> set of compatible
+    node indices, and similarities[i] = (src_sim, tgt_sim) for node i.
     """
-    # Step 1: Find compatible edge pairs (same relation, compatible endpoints)
+    # Step 1: Find compatible edge pairs (same relation, endpoints above floor)
     nodes: list[tuple[int, int]] = []
+    similarities: list[tuple[float, float]] = []
     for i, ea in enumerate(graph_a.edges):
         for j, eb in enumerate(graph_b.edges):
             if ea.relation != eb.relation:
@@ -219,11 +220,12 @@ def build_compatibility_graph(
             src_b = graph_b.entities[eb.source]
             tgt_a = graph_a.entities[ea.target]
             tgt_b = graph_b.entities[eb.target]
-            if not entity_compatible(src_a, src_b, name_embeddings, threshold):
-                continue
-            if not entity_compatible(tgt_a, tgt_b, name_embeddings, threshold):
+            src_sim = entity_similarity(src_a, src_b, name_embeddings)
+            tgt_sim = entity_similarity(tgt_a, tgt_b, name_embeddings)
+            if min(src_sim, tgt_sim) < floor:
                 continue
             nodes.append((i, j))
+            similarities.append((src_sim, tgt_sim))
 
     # Step 2: Build adjacency — two nodes are compatible if entity mappings don't conflict
     adjacency: dict[int, set[int]] = defaultdict(set)
@@ -239,7 +241,7 @@ def build_compatibility_graph(
                 adjacency[ni].add(nj)
                 adjacency[nj].add(ni)
 
-    return nodes, adjacency
+    return nodes, adjacency, similarities
 
 
 def _mappings_consistent(ea1: Edge, eb1: Edge, ea2: Edge, eb2: Edge) -> bool:
@@ -309,8 +311,8 @@ def match_article_pair(
     min_edges: int = 1,
 ) -> PairMatch | None:
     """Find the maximum common subgraph between two article graphs."""
-    nodes, adjacency = build_compatibility_graph(
-        graph_a, graph_b, name_embeddings, threshold
+    nodes, adjacency, similarities = build_compatibility_graph(
+        graph_a, graph_b, name_embeddings
     )
 
     if not nodes:
@@ -318,6 +320,16 @@ def match_article_pair(
 
     clique = bron_kerbosch(adjacency, len(nodes))
     if len(clique) < min_edges:
+        return None
+
+    # Score clique by average endpoint similarity
+    all_sims = []
+    for node_idx in clique:
+        src_sim, tgt_sim = similarities[node_idx]
+        all_sims.append(src_sim)
+        all_sims.append(tgt_sim)
+    avg_sim = sum(all_sims) / len(all_sims)
+    if avg_sim < threshold:
         return None
 
     # Extract aligned edges and entity mappings from the clique
