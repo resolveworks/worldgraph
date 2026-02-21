@@ -4,4 +4,14 @@ version = "0.1.0"
 description = "Cross-source structural matching for knowledge extraction"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "anthropic>=0.83.0",
+    "click>=8.3.1",
+    "python-dotenv>=1.2.1",
+]
+
+[project.scripts]
+worldgraph = "worldgraph.cli:cli"
+
+[tool.setuptools]
+packages = ["worldgraph"]
