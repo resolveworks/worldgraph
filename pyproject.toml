@@ -1,0 +1,7 @@
+[project]
+name = "worldgraph"
+version = "0.1.0"
+description = "Cross-source structural matching for knowledge extraction"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
