@@ -1,166 +1,86 @@
-l# Cross-Source Validation for Knowledge Extraction
+# Cross-Source Structural Matching for Knowledge Extraction
 
-## Abstract
+_A proposal for discussion — February 2026_
 
-When multiple news articles report the same fact, it's probably true. We propose a system that automatically extracts entity-relation pairs from news articles and validates them by checking if multiple independent sources report the same thing. As a key innovation, we use relationship overlap to deduplicate entities. When "Microsoft" and "MSFT" have identical relationships across documents, we know they're the same entity. This approach gives us high-confidence knowledge without manual verification.
+## The Core Idea
 
-## 1. Introduction
+News is redundant by nature. When a major event happens, dozens of outlets report the same facts independently, using different wording but describing the same entities and relationships. Current knowledge extraction systems treat this redundancy as a problem to be filtered out. We think it's the primary signal.
 
-Extracting facts from news articles is noisy. Every extraction system makes mistakes. But when multiple different newspapers all report that "Microsoft acquired Activision," that should give us high confidence that that's true. Extraction errors, on the other hand, are random, they don't repeat across sources.
+We propose a system built on two reinforcing principles:
 
-Our idea: Build a system that uses these repeated relationships as signals for entity deduplication, entities that share relationships across documents are likely the same entity.
+- **Cross-source validation:** Facts reported by multiple independent sources are likely true. Extraction errors are random and don't repeat across sources. A fact appearing in five different articles is far more reliable than one appearing in a single source.
 
-## 2. Proposed Framework
+- **Structural deduplication:** Rather than resolving entities by name matching alone, we use the shape of relationships around them. When two entities have the same relational neighborhood across multiple documents, they're almost certainly the same entity, even if their surface names differ.
 
-### 2.1 Architecture Overview
+These two principles create an iterative loop: resolving entities reveals more shared relationships, which validates more facts, which reveals more entity overlaps. The system bootstraps itself into progressively cleaner knowledge.
 
-The system processes news through an iterative pipeline:
+## How It Works
 
-**Extract → Deduplicate → Validate → Build Graph**
+### 1. Extract Small Subgraphs Per Article
 
-1. **Extraction**: Process each article independently to get entity-relation triples
-   - Input: Raw news articles
-   - Output: (Microsoft, acquired, Activision), (MSFT, bought, ATVI), etc.
-2. **Iterative Deduplication**: Merge entities and cluster relations together
-   - Find similar entities with similar relationships → merge them
-   - Group relations that are now identical → find more entity overlaps
-   - Repeat until no new merges
-   - Output: Deduplicated entities and clustered relations
-3. **Cross-Source Validation**: Score each relation cluster by how many sources report it
-   - 5 articles mention the same fact → high confidence
-   - Only 1 article → low confidence
-   - Check source independence
-4. **Knowledge Graph Construction**: Add high-confidence facts to final graph
-   - Filter by confidence threshold
-   - Maintain provenance (which sources said what)
-   - Output: Clean, validated knowledge base
+Each article is processed independently to produce a small subgraph of entity-relation triples. For example, an article about a CEO change might produce:
 
-The key insight: entity deduplication and relation clustering reinforce each other. When we discover Microsoft = MSFT through their shared relationships, we can cluster more relations together, which reveals more entity duplicates, and so on.
+> `[Sarah Chen] —appointed→ [CEO] —at→ [Nextera Inc]` > `[David Park] —resigned→ [CEO] —at→ [Nextera Inc]`
 
-### 2.2 Entity Resolution Through Combined Signals
+Another article covering the same event produces a similar subgraph with different wording: "named as chief executive," "stepping down from." The extraction layer doesn't need to be perfect. Noise gets filtered later.
 
-We resolve entities using both string similarity and relationship overlap.
+### 2. Overlay and Match Subgraph Structure
 
-**String similarity** captures surface-level matches: exact matches, abbreviations, minor variations, and typos. This provides our initial confidence score for potential entity pairs.
+This is the key step. Rather than comparing individual entity names across articles, we look for subgraphs that have the same shape. When 15 articles all produce a subgraph with the topology `[Person] → [Role] → [Organization]` involving fuzzy-matching names and overlapping time windows, that structural convergence is a much stronger deduplication signal than any string comparison on individual entities.
 
-**Relationship overlap** validates these matches: when entities share relationships across different documents, it strongly suggests they're the same. We use vector embeddings to determine relationship similarity, "acquired," "bought," and "purchased" map to similar vectors and thus count as the same relationship type. The number and uniqueness of shared relationships contribute to overall confidence.
+The intuition: a single name match is ambiguous ("Jordan" could be many people). But when "Jordan" appears in the same structural neighborhood—connected to the same organization, role, and event—across multiple independent sources, the ambiguity collapses.
 
-**The combination** prevents both false positives and false negatives. High string similarity compensates for sparse relationships, while strong relationship overlap can confirm matches despite different surface forms. We require at least moderate confidence from one signal and some support from the other to merge entities. This balanced approach avoids merging unrelated entities that happen to share common relationships while still catching legitimate variants.
+### 3. Merge Relations via Embedding Similarity
 
-### 2.3 The Deduplication Process
+Different articles express the same relationship in different ways: "acquired," "bought," "completed the purchase of." We handle this by embedding relation phrases into a vector space (using a sentence embedding model) and clustering similar relations together. This gives us a normalized relation vocabulary without requiring a predefined schema. The clustering threshold can start conservative and loosen as structural overlap provides additional confidence.
 
-Deduplication is necessarily iterative because entity merges change the relationship landscape.
+### 4. Iterate Until Convergence
 
-The process starts with high-confidence matches, entities with both strong string similarity and clear relationship overlap. These initial merges are safe and obvious.
+Entity resolution and relation clustering reinforce each other in a loop:
 
-Each merge creates cascading effects: when two entities become one, their relationships combine, potentially revealing new patterns. Entities that previously had no apparent connection might now share multiple relationships. Similarly, relationships that seemed different might now involve the same entities.
+- Merge high-confidence entity pairs (strong string similarity + structural overlap).
+- Each merge combines relationship sets, potentially revealing new overlaps.
+- New overlaps surface additional entity matches that weren't visible before.
+- Repeat until no new merges meet the confidence threshold.
 
-The system continues iterating, with each round applying the same matching criteria to the updated graph. Confidence thresholds ensure we only make justified merges. The process converges when no new entity pairs meet the merging criteria.
+The process starts with safe, obvious merges and progressively resolves harder cases as the graph becomes cleaner.
 
-This iterative approach is crucial because relationship overlap, our strongest signal, only becomes fully visible as we progressively clean the entity space. The graph becomes cleaner and more connected with each iteration, ultimately producing a deduplicated knowledge base.
+### 5. Score Facts by Cross-Source Agreement
 
-### 2.4 Confidence Scoring
+After deduplication, each unique fact is scored by how many independent sources report it. Source independence can be estimated from the data itself: outlets that consistently publish identical facts with similar timing are likely dependent (wire services, syndication). True validation comes from genuinely independent reporting.
 
-After deduplication, we score each unique fact based on cross-source validation.
+## Why Structural Matching
 
-**Source counting**: Facts reported by multiple independent sources receive higher confidence. A fact appearing in five different articles is far more reliable than one appearing in a single source.
+This approach has precedent outside of news. In computational biology, protein interaction networks are aligned across species by matching interaction topology—if a cluster of proteins has the same structural pattern in humans and mice, they're likely orthologs. In social network de-anonymization, researchers showed that the topology of a person's friend graph is essentially a fingerprint, sufficient to identify them across platforms without any name information at all.
 
-**Source independence**: We weight source diversity over raw count. The system can learn source dependencies directly from the data, sources that consistently report identical facts with similar timing are likely dependent (wire services, republishing), while sources reporting the same facts independently show true validation. This data-driven approach automatically discovers source relationships without manual configuration.
+The key insight these domains share with news: entities are defined by their relationships. Two nodes with the same relational neighborhood are the same entity, regardless of what they're labeled. News subgraphs are smaller and shallower than biological or social networks, but the compensating factor is volume—thousands of articles producing overlapping subgraphs daily.
 
-**Temporal clustering**: For news events, sources reporting the same fact within a reasonable time window strengthen confidence. Facts reported months apart might represent different events.
+This also flips the conventional pipeline. Standard approaches resolve entities first (by name), then build a graph. We propose building many small provisional graphs first, then using their structural overlap to resolve entities. The graph becomes the deduplication mechanism rather than something constructed after deduplication is already done.
 
-**Relationship consistency**: When sources agree not just on core facts but also on related details and context, confidence increases. Contradictions or inconsistencies reduce the score.
+## Open Problems
 
-The final confidence score determines which facts enter the knowledge graph. High-confidence facts (multiple independent sources, consistent details) can be trusted automatically. Lower-confidence facts might require human review or additional source validation. This tiered approach balances completeness with accuracy.
+These are the hard problems we see. We'd like to discuss whether they're tractable.
 
-## 3. Why This Works
+**Common structural templates.** News is full of repeated event patterns: acquisitions, appointments, earnings reports. These produce nearly identical subgraph shapes for entirely different events. Structural matching alone will generate false positives between unrelated events that happen to share the same topology. Temporal windowing helps—but how much?
 
-**The fundamental principle**: Information redundancy in news creates natural validation signals, while extraction errors follow random patterns.
+**Error cascading.** The iterative merge loop is powerful but potentially fragile. A bad early merge could propagate: incorrectly merging two entities combines their relationships, which could trigger further incorrect merges. What are the convergence properties? Can we bound error propagation? Should merges be reversible?
 
-**For fact validation**: Real events get reported by multiple sources. When a major acquisition or leadership change happens, numerous outlets cover it independently. Our extraction systems might have 20-30% error rates, but these errors are random, different extractors won't make identical mistakes on different articles. True facts accumulate evidence across sources while extraction noise gets filtered out statistically.
+**Sparse entities.** A large portion of entities in news appear in only one or two articles—exactly where structural signal is weakest. These entities can't be validated through cross-source overlap. Do they simply remain unvalidated, or is there a fallback strategy that doesn't collapse back to pure string matching?
 
-**For entity deduplication**: Entities are defined by their relationships in the world. The combination of string similarity and relationship overlap creates a robust matching system. String similarity alone fails with abbreviations, translations, and variants. Relationship overlap alone might incorrectly merge distinct entities with coincidentally similar relationships. Together, they provide complementary signals that catch legitimate variants while avoiding false merges.
+**Relation granularity.** "Acquired" vs. "bought" is straightforward for embedding similarity. But "is expanding into" vs. "announced plans to enter the market of" involves different levels of commitment. How fine-grained should relation equivalence be? Does the clustering approach handle these edge cases, or do we need explicit relation hierarchies?
 
-**The iterative advantage**: As the system processes more documents, it gets progressively better. Each correctly deduplicated entity makes relationship patterns clearer, which improves future deduplication. Each validated fact adds to the relationship network, making entity resolution more accurate. This creates a virtuous cycle where the system effectively trains itself on the structure of the data.
+**Source independence.** Detecting whether sources are truly independent is hard in practice. Wire services get rewritten in ways that look superficially independent. Estimating dependency from co-occurrence patterns is promising but unproven at scale.
 
-**Source dependency detection**: The data contains implicit information about source independence. When outlets consistently report identical facts, they reveal their dependencies. This emergent property means the system can automatically calibrate source weights without manual configuration.
+**Temporal dynamics.** Facts change. CEOs turn over, companies merge, relationships evolve. The system needs to handle the same entity having different relationships at different times without conflating them. How should edges be timestamped and expired?
 
-The result is a self-improving system that transforms noisy, redundant news data into a clean, validated knowledge graph.
+## Next Steps
 
-## 4. Implementation Considerations
+We plan to build a proof of concept: a Python pipeline that takes a set of news articles about overlapping events, extracts subgraphs (using an LLM for extraction), clusters relations via sentence embeddings, runs the iterative structural matching loop, and outputs a deduplicated, confidence-scored knowledge graph.
 
-### 4.1 Technical Requirements
+The goal is to demonstrate the core loop on real data: does structural overlap actually resolve entities that string matching misses? Does cross-source agreement filter extraction noise effectively? Where does it break?
 
-**Core components**:
+We'd welcome input on whether this is a promising direction, which open problems are most critical, and what existing work we should be building on.
 
-- Entity-relation extraction system (any NLP model that outputs triples)
-- Vector embedding model for semantic similarity of relationships
-- Graph database for efficient relationship queries and overlap computation
-- String similarity metrics for entity name matching
-- Iterative merge algorithm with configurable confidence thresholds
+---
 
-**Scalability needs**:
-
-- Parallel processing for initial extraction across documents
-- Efficient indexing for finding entities with shared relationships
-- Incremental processing to add new documents without full recomputation
-
-### 4.2 Key Challenges
-
-**Threshold calibration**: Setting the right balance between string similarity and relationship overlap requires experimentation. Too strict means missing valid merges; too loose creates false positives. These thresholds likely vary by domain.
-
-**Temporal dynamics**: Facts change over time—CEOs change, companies merge, relationships evolve. The system needs temporal awareness to avoid merging entities from different time periods or conflating past and present states.
-
-**Sparse data**: Entities mentioned only once have no relationships to compare across documents. These require fallback strategies or remain unvalidated in a separate tier.
-
-**Computational complexity**: Finding all entities with shared relationships can be expensive at scale. Smart indexing and blocking strategies are essential to avoid quadratic comparisons.
-
-**Contradiction handling**: When sources disagree, the system must decide whether to trust the majority, weight by source credibility, or flag for review. Different domains may require different strategies.
-
-## 5. Use Cases
-
-### 5.1 Newsroom Intelligence
-
-Journalists working on any beat automatically contribute to and benefit from a comprehensive knowledge graph. Business reporters covering earnings build out corporate relationship maps. Political journalists tracking campaigns reveal donor networks. Every story adds validated facts that become available for future reporting across the entire newsroom.
-
-### 5.2 Financial Intelligence Services
-
-Hedge funds need reliable, real-time knowledge about market events. The validated data provides clean feeds of acquisitions, leadership changes, and corporate relationships with confidence scores for automated trading decisions.
-
-### 5.3 Due Diligence Platforms
-
-Law firms and compliance teams benefit from comprehensive entity resolution across jurisdictions and languages. The system unifies corporate registrations, legal filings, and news mentions into complete entity profiles.
-
-### 5.4 Government Intelligence
-
-Agencies tracking sanctions or money laundering can map complex ownership structures and identify hidden connections. Cross-source validation distinguishes confirmed relationships from speculation.
-
-### 5.5 Corporate Competitive Intelligence
-
-Companies monitoring competitors and markets get clean intelligence feeds. Deduplication ensures they're tracking the right entities, while confidence scores separate confirmed moves from rumors.
-
-The network effect is powerful: every journalist's daily reporting enriches a knowledge graph that becomes invaluable for investigation, analysis, and decision-making across industries.
-
-## 6. Related Work
-
-Existing approaches to knowledge extraction address different aspects of this challenge but miss key opportunities.
-
-**Traditional entity resolution** relies on string similarity and statistical methods, edit distances, phonetic matching, rule-based approaches. It compares character sequences, so it misses contextual references, abbreviations and translations.
-
-**Single-source extraction** aims to perfect the accuracy of processing individual documents through better models and training. These systems analyze each article independently, never checking if other articles confirm the same facts, missing the natural validation that comes from multiple sources reporting the same information.
-
-**Knowledge graph construction from text** has advanced with LLMs automating extraction through multi-stage pipelines. Modern systems do incorporate entity resolution, typically using string matching first, then sometimes checking graph neighborhoods or relationship patterns as secondary signals. However, they focus on deduplication within their extracted data rather than using cross-source repetition as a validation signal. The same fact appearing in multiple sources is treated as redundancy to eliminate, not as evidence of truth.
-
-**Fact-checking systems** validate claims through evidence retrieval but focus on verifying explicit human statements rather than extraction output.
-
-Our approach combines string similarity with relationship overlap for entity resolution, but uniquely leverages cross-source redundancy as the primary validation mechanism. We treat the natural repetition in news coverage as a feature for validation rather than a problem to solve. This creates a self-reinforcing system where deduplication improves validation, and validation reveals deduplication opportunities.
-
-## 7. Conclusion
-
-The redundancy in news reporting is not a bug, it's a feature waiting to be exploited. Every day, thousands of journalists independently report the same facts, creating a natural validation mechanism that current knowledge extraction systems ignore. By combining cross-source validation with relationship-based entity resolution, we can transform this "noise" into signal.
-
-The approach is elegantly simple: facts that appear across multiple independent sources are likely true; entities that share relationships across documents are likely the same. These two principles reinforce each other iteratively, creating progressively cleaner knowledge graphs without manual intervention.
-
-This framework turns every journalist into an unwitting knowledge graph contributor. Their daily reporting automatically validates facts through repetition, while the relationships they describe reveal entity connections that string matching alone would miss. The resulting knowledge graph isn't just another extraction, it's validated, deduplicated intelligence that emerges from the collective work of global newsrooms.
-
-The technical requirements are modest, the data sources are abundant, and the validation mechanism is built into the very nature of news. What remains is implementation.
+_For discussion. Feedback welcome._
