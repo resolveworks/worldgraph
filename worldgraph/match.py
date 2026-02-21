@@ -22,7 +22,7 @@ class Entity:
 class Edge:
     source: str  # entity id
     target: str  # entity id
-    cluster_id: int
+    relation: str
 
 
 @dataclass
@@ -75,19 +75,17 @@ class UnionFind:
 
 def load_graphs(
     path: Path,
-) -> tuple[list[ArticleGraph], dict[str, list[dict]], dict[tuple, list[str]], dict[str, str]]:
+) -> tuple[list[ArticleGraph], dict[str, list[dict]], dict[tuple, list[str]]]:
     """Load graph JSON into ArticleGraph objects + provenance.
 
     Returns:
         graphs: list of ArticleGraph (graph id used as article_id)
         entity_occurrences: entity_id → list of {article_id, entity_id, name}
-        edge_articles: (graph_id, src, tgt, cluster_id) → list of article_ids
-        cluster_labels: cluster_id (str) → representative label
+        edge_articles: (graph_id, src, tgt, relation) → list of article_ids
     """
     with open(path) as f:
         data = json.load(f)
 
-    cluster_labels = data["cluster_labels"]
     entity_occurrences: dict[str, list[dict]] = {}
     edge_articles: dict[tuple, list[str]] = {}
     graphs: list[ArticleGraph] = []
@@ -105,20 +103,19 @@ def load_graphs(
 
         edges: list[Edge] = []
         for ed in g["edges"]:
-            edge = Edge(source=ed["source"], target=ed["target"], cluster_id=ed["cluster_id"])
+            edge = Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
             edges.append(edge)
-            edge_articles[(graph_id, edge.source, edge.target, edge.cluster_id)] = ed["articles"]
+            edge_articles[(graph_id, edge.source, edge.target, edge.relation)] = ed["articles"]
 
         graphs.append(ArticleGraph(article_id=graph_id, entities=entities, edges=edges))
 
-    return graphs, entity_occurrences, edge_articles, cluster_labels
+    return graphs, entity_occurrences, edge_articles
 
 
 def save_graphs(
     graphs: list[ArticleGraph],
     entity_occurrences: dict[str, list[dict]],
     edge_articles: dict[tuple, list[str]],
-    cluster_labels: dict[str, str],
     path: Path,
 ) -> None:
     """Write graphs + provenance to graph JSON format."""
@@ -137,19 +134,19 @@ def save_graphs(
 
         edges = []
         for edge in g.edges:
-            key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+            key = (g.article_id, edge.source, edge.target, edge.relation)
             edges.append(
                 {
                     "source": edge.source,
                     "target": edge.target,
-                    "cluster_id": edge.cluster_id,
+                    "relation": edge.relation,
                     "articles": edge_articles[key],
                 }
             )
 
         output_graphs.append({"id": g.article_id, "entities": entities, "edges": edges})
 
-    output = {"cluster_labels": cluster_labels, "graphs": output_graphs}
+    output = {"graphs": output_graphs}
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
@@ -214,11 +211,11 @@ def build_compatibility_graph(
     Returns (nodes, adjacency) where each node is (edge_a_idx, edge_b_idx)
     and adjacency maps node index -> set of compatible node indices.
     """
-    # Step 1: Find compatible edge pairs (same cluster, compatible endpoints)
+    # Step 1: Find compatible edge pairs (same relation, compatible endpoints)
     nodes: list[tuple[int, int]] = []
     for i, ea in enumerate(graph_a.edges):
         for j, eb in enumerate(graph_b.edges):
-            if ea.cluster_id != eb.cluster_id:
+            if ea.relation != eb.relation:
                 continue
             src_a = graph_a.entities[ea.source]
             src_b = graph_b.entities[eb.source]
@@ -385,7 +382,7 @@ def merge_graphs(
             for e in g.entities.values():
                 new_entity_occ[e.id] = entity_occurrences[e.id]
             for edge in g.edges:
-                key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+                key = (g.article_id, edge.source, edge.target, edge.relation)
                 new_edge_art[key] = edge_articles[key]
             continue
 
@@ -423,22 +420,22 @@ def merge_graphs(
             new_entity_occ[new_eid] = pooled_occ
 
         # 3. Remap and dedup edges
-        edge_pool: dict[tuple[str, str, int], list[str]] = defaultdict(list)
+        edge_pool: dict[tuple[str, str, str], list[str]] = defaultdict(list)
         for g in component_graphs:
             for edge in g.edges:
                 new_src = old_to_new.get((g.article_id, edge.source))
                 new_tgt = old_to_new.get((g.article_id, edge.target))
                 if new_src is None or new_tgt is None:
                     continue
-                old_key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+                old_key = (g.article_id, edge.source, edge.target, edge.relation)
                 articles = edge_articles.get(old_key, [])
-                edge_pool[(new_src, new_tgt, edge.cluster_id)].extend(articles)
+                edge_pool[(new_src, new_tgt, edge.relation)].extend(articles)
 
         merged_edges: list[Edge] = []
-        for (src, tgt, cid), articles in edge_pool.items():
+        for (src, tgt, rel), articles in edge_pool.items():
             deduped = sorted(set(articles))
-            merged_edges.append(Edge(source=src, target=tgt, cluster_id=cid))
-            new_edge_art[(merged_id, src, tgt, cid)] = deduped
+            merged_edges.append(Edge(source=src, target=tgt, relation=rel))
+            new_edge_art[(merged_id, src, tgt, rel)] = deduped
 
         new_graphs.append(
             ArticleGraph(article_id=merged_id, entities=merged_entities, edges=merged_edges)
@@ -460,7 +457,7 @@ def run_matching(
 ) -> None:
     """Run structural matching: load graphs, match pairs, merge, save."""
     # 1. Load
-    graphs, entity_occurrences, edge_articles, cluster_labels = load_graphs(input_path)
+    graphs, entity_occurrences, edge_articles = load_graphs(input_path)
     click.echo(f"Loaded {len(graphs)} graphs from {input_path}")
     for g in graphs:
         n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
@@ -510,7 +507,7 @@ def run_matching(
     )
 
     # 5. Save
-    save_graphs(merged_graphs, merged_occ, merged_edges, cluster_labels, output_path)
+    save_graphs(merged_graphs, merged_occ, merged_edges, output_path)
 
     # Summary
     matched_entities = []
@@ -523,7 +520,7 @@ def run_matching(
     confirmed_edges = []
     for g in merged_graphs:
         for edge in g.edges:
-            key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+            key = (g.article_id, edge.source, edge.target, edge.relation)
             arts = merged_edges[key]
             if len(arts) > 1:
                 confirmed_edges.append((g, edge, arts))
@@ -541,7 +538,6 @@ def run_matching(
         for g, edge, arts in confirmed_edges:
             src = g.entities[edge.source].name
             tgt = g.entities[edge.target].name
-            label = cluster_labels.get(str(edge.cluster_id), "?")
-            click.echo(f"  {src} —[{label}]→ {tgt} ({len(arts)} sources)")
+            click.echo(f"  {src} —[{edge.relation}]→ {tgt} ({len(arts)} sources)")
 
     click.echo(f"\nWrote {output_path}")

@@ -97,7 +97,7 @@ def pick_representative(
 
 def build_initial_graphs(
     extractions: list[dict],
-    relation_map: dict[str, int],
+    relation_map: dict[str, str],
     type_map: dict[str, str],
 ) -> list[dict]:
     """Build per-article graphs from extraction data.
@@ -132,14 +132,14 @@ def build_initial_graphs(
             src, tgt = rel["source"], rel["target"]
             if src not in entity_ids or tgt not in entity_ids:
                 continue
-            cluster_id = relation_map.get(rel["relation"])
-            if cluster_id is None:
+            canonical = relation_map.get(rel["relation"])
+            if canonical is None:
                 continue
             edges.append(
                 {
                     "source": src,
                     "target": tgt,
-                    "cluster_id": cluster_id,
+                    "relation": canonical,
                     "articles": [article_id],
                 }
             )
@@ -208,8 +208,7 @@ def run_clustering(
     for i, (phrase, label) in enumerate(zip(relations, labels)):
         cluster_map.setdefault(label, []).append((phrase, i))
 
-    cluster_labels: dict[str, str] = {}
-    relation_to_cluster: dict[str, int] = {}
+    relation_map: dict[str, str] = {}
 
     multi_clusters = []
     for cluster_id, members_with_idx in sorted(cluster_map.items()):
@@ -217,17 +216,15 @@ def run_clustering(
         indices = [m[1] for m in members_with_idx]
         representative = pick_representative(members, indices, similarity)
 
-        cluster_labels[str(cluster_id)] = representative
         for phrase in members:
-            relation_to_cluster[phrase] = cluster_id
+            relation_map[phrase] = representative
         if len(members) > 1:
             multi_clusters.append((representative, members))
 
     # Build per-article graphs
-    graphs = build_initial_graphs(extractions, relation_to_cluster, type_map)
+    graphs = build_initial_graphs(extractions, relation_map, type_map)
 
     output = {
-        "cluster_labels": cluster_labels,
         "graphs": graphs,
     }
 
@@ -235,8 +232,9 @@ def run_clustering(
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
 
+    n_clusters = len(set(relation_map.values()))
     click.echo(
-        f"\n{len(cluster_labels)} clusters ({len(multi_clusters)} with multiple members)"
+        f"\n{n_clusters} relation clusters ({len(multi_clusters)} with multiple members)"
     )
     for rep, members in multi_clusters:
         click.echo(f"  [{rep}]: {', '.join(members)}")

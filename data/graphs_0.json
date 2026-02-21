@@ -1,46 +1,4 @@
 {
-  "cluster_labels": {
-    "0": "board chair of",
-    "1": "remains on board in advisory capacity",
-    "2": "is CEO of",
-    "3": "served as chief operating officer at",
-    "4": "announced resignation from",
-    "5": "will stay on as board adviser for",
-    "6": "held position of COO at",
-    "7": "led since",
-    "8": "has over 20 years of experience in",
-    "9": "establishing research lab in",
-    "10": "expects to close acquisition in",
-    "11": "expected to finalize by",
-    "12": "expressed confidence in",
-    "13": "founded",
-    "14": "founded company in year",
-    "15": "takes position of",
-    "16": "is located in",
-    "17": "employs",
-    "18": "designed for",
-    "19": "launched",
-    "20": "is program of",
-    "21": "has flagship facility in",
-    "22": "will become part of",
-    "23": "joining from",
-    "24": "enters strategic alliance with",
-    "25": "contributes to partnership",
-    "26": "announced strategic partnership with",
-    "27": "investing in",
-    "28": "raised in venture funding",
-    "29": "oversaw expansion into",
-    "30": "grew revenue to",
-    "31": "acquired in",
-    "32": "developing",
-    "33": "is transaction value for",
-    "34": "represents premium over",
-    "35": "praised contributions of",
-    "36": "upgraded stock to overweight",
-    "37": "effective date",
-    "38": "plans to unveil prototype at",
-    "39": "called deal defining moment for AI strategy"
-  },
   "graphs": [
     {
       "id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
@@ -206,7 +164,7 @@
         {
           "source": "6689483e-5c99-4543-8859-a5466646ba21",
           "target": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
-          "cluster_id": 22,
+          "relation": "will become part of",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -214,7 +172,7 @@
         {
           "source": "6689483e-5c99-4543-8859-a5466646ba21",
           "target": "f242c6ca-f18e-4128-8300-b8b5989af86e",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -222,7 +180,7 @@
         {
           "source": "6689483e-5c99-4543-8859-a5466646ba21",
           "target": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
-          "cluster_id": 10,
+          "relation": "expects to close acquisition in",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -230,7 +188,7 @@
         {
           "source": "7dea8a3b-ef26-4294-8c66-c4cd9b2bd20a",
           "target": "6689483e-5c99-4543-8859-a5466646ba21",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -238,7 +196,7 @@
         {
           "source": "7dea8a3b-ef26-4294-8c66-c4cd9b2bd20a",
           "target": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
-          "cluster_id": 39,
+          "relation": "called deal defining moment for AI strategy",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -246,7 +204,7 @@
         {
           "source": "bdf38e3b-fea4-4c76-8d2b-504a581cfe24",
           "target": "8998e43b-ffdc-4a18-8280-793bacc14dd5",
-          "cluster_id": 22,
+          "relation": "will become part of",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -254,7 +212,7 @@
         {
           "source": "85b5f1cf-b6ef-423e-aaaf-e9a24b36e5f0",
           "target": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
-          "cluster_id": 13,
+          "relation": "founded",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -262,7 +220,7 @@
         {
           "source": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
           "target": "967b76ec-f5b7-42ac-82f7-0efb9bad4e3a",
-          "cluster_id": 13,
+          "relation": "founded",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -270,7 +228,7 @@
         {
           "source": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
           "target": "164425d1-fa0b-4cbb-9067-a422bf007afd",
-          "cluster_id": 28,
+          "relation": "raised in venture funding",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -278,7 +236,7 @@
         {
           "source": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
           "target": "65794d50-cfec-4cbb-9e91-143a106fdb6b",
-          "cluster_id": 16,
+          "relation": "is located in",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -286,7 +244,7 @@
         {
           "source": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
           "target": "9e6ac096-603d-450a-ada6-935eb6d58e37",
-          "cluster_id": 16,
+          "relation": "is located in",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -294,7 +252,7 @@
         {
           "source": "25d8585a-4f38-4656-aa78-5e9b1280bffd",
           "target": "c1db9dac-65a5-4d26-88b1-3e9f38f391cd",
-          "cluster_id": 17,
+          "relation": "employs",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -453,7 +411,7 @@
         {
           "source": "44054cf9-a383-49df-9395-f78482985fde",
           "target": "6ff31a28-ad2e-47b1-95ae-cd8353d8d636",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -461,7 +419,7 @@
         {
           "source": "44054cf9-a383-49df-9395-f78482985fde",
           "target": "41a787b0-b1be-4138-8c14-532436f861a2",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -469,7 +427,7 @@
         {
           "source": "44054cf9-a383-49df-9395-f78482985fde",
           "target": "c250c82c-2fd1-43f2-98b7-f2a7a8978e33",
-          "cluster_id": 16,
+          "relation": "is located in",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -477,7 +435,7 @@
         {
           "source": "44054cf9-a383-49df-9395-f78482985fde",
           "target": "ea5d22ce-be0e-4278-a49d-9908accfd656",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -485,7 +443,7 @@
         {
           "source": "ea5d22ce-be0e-4278-a49d-9908accfd656",
           "target": "50f97243-c8ef-438c-91eb-b08eb2364c19",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -493,7 +451,7 @@
         {
           "source": "ea5d22ce-be0e-4278-a49d-9908accfd656",
           "target": "8290f916-4018-4048-8876-8ab3886c6e7e",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -501,7 +459,7 @@
         {
           "source": "6ff31a28-ad2e-47b1-95ae-cd8353d8d636",
           "target": "aacf215c-c3d7-4288-b969-95e83fe2af96",
-          "cluster_id": 17,
+          "relation": "employs",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -509,7 +467,7 @@
         {
           "source": "6ff31a28-ad2e-47b1-95ae-cd8353d8d636",
           "target": "ba514943-201f-49e2-81dc-83fb38d4bb02",
-          "cluster_id": 22,
+          "relation": "will become part of",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -517,7 +475,7 @@
         {
           "source": "aac97717-8f57-48aa-9eef-f6b74f8e782a",
           "target": "6ff31a28-ad2e-47b1-95ae-cd8353d8d636",
-          "cluster_id": 13,
+          "relation": "founded",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -525,7 +483,7 @@
         {
           "source": "aac97717-8f57-48aa-9eef-f6b74f8e782a",
           "target": "44054cf9-a383-49df-9395-f78482985fde",
-          "cluster_id": 22,
+          "relation": "will become part of",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -533,7 +491,7 @@
         {
           "source": "aac97717-8f57-48aa-9eef-f6b74f8e782a",
           "target": "a214a4a0-27d5-4cc3-9988-010007a7b317",
-          "cluster_id": 15,
+          "relation": "takes position of",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -644,7 +602,7 @@
         {
           "source": "a307fb1d-7719-44be-8071-c802afb2df52",
           "target": "2c5e3a87-80aa-44ba-bc09-73059dbeba92",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -652,7 +610,7 @@
         {
           "source": "5c87757d-f746-4767-a853-8bd07561eaca",
           "target": "2c5e3a87-80aa-44ba-bc09-73059dbeba92",
-          "cluster_id": 33,
+          "relation": "is transaction value for",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -660,7 +618,7 @@
         {
           "source": "5c87757d-f746-4767-a853-8bd07561eaca",
           "target": "0af418f4-9145-42a2-8c0b-255602125a9d",
-          "cluster_id": 34,
+          "relation": "represents premium over",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -668,7 +626,7 @@
         {
           "source": "f412102f-7493-4a2c-ad29-bd57a652cae3",
           "target": "2c5e3a87-80aa-44ba-bc09-73059dbeba92",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -676,7 +634,7 @@
         {
           "source": "a307fb1d-7719-44be-8071-c802afb2df52",
           "target": "15913de5-a244-434c-a09f-7268d1decbd8",
-          "cluster_id": 15,
+          "relation": "takes position of",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -684,7 +642,7 @@
         {
           "source": "a307fb1d-7719-44be-8071-c802afb2df52",
           "target": "20449f92-1762-4528-89d3-bd20886cb34d",
-          "cluster_id": 15,
+          "relation": "takes position of",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -692,7 +650,7 @@
         {
           "source": "2c5e3a87-80aa-44ba-bc09-73059dbeba92",
           "target": "33e8ae4e-78ef-4d9b-9e40-cc21070ef472",
-          "cluster_id": 11,
+          "relation": "expected to finalize by",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -803,7 +761,7 @@
         {
           "source": "cbc38157-d9b2-45a8-b93d-6f82b04b5635",
           "target": "2f5d51db-c5ed-4db7-9d6c-8fcf13ac6b34",
-          "cluster_id": 3,
+          "relation": "served as chief operating officer at",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -811,7 +769,7 @@
         {
           "source": "cbc38157-d9b2-45a8-b93d-6f82b04b5635",
           "target": "4659573c-602d-4646-afee-95e765eb5f36",
-          "cluster_id": 37,
+          "relation": "effective date",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -819,7 +777,7 @@
         {
           "source": "cbc38157-d9b2-45a8-b93d-6f82b04b5635",
           "target": "e388b2ad-d576-41d5-b451-de6662e017de",
-          "cluster_id": 3,
+          "relation": "served as chief operating officer at",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -827,7 +785,7 @@
         {
           "source": "cbc38157-d9b2-45a8-b93d-6f82b04b5635",
           "target": "cc1c6cd4-1a7f-409a-af6b-7b2d695ff2c0",
-          "cluster_id": 8,
+          "relation": "has over 20 years of experience in",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -835,7 +793,7 @@
         {
           "source": "63fa8f16-4cef-4588-81ff-f2fb24f1345f",
           "target": "2f5d51db-c5ed-4db7-9d6c-8fcf13ac6b34",
-          "cluster_id": 3,
+          "relation": "served as chief operating officer at",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -843,7 +801,7 @@
         {
           "source": "63fa8f16-4cef-4588-81ff-f2fb24f1345f",
           "target": "2f5d51db-c5ed-4db7-9d6c-8fcf13ac6b34",
-          "cluster_id": 1,
+          "relation": "remains on board in advisory capacity",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -851,7 +809,7 @@
         {
           "source": "af98369d-0230-42f0-9ff6-f71dd347d3e0",
           "target": "2f5d51db-c5ed-4db7-9d6c-8fcf13ac6b34",
-          "cluster_id": 0,
+          "relation": "board chair of",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -859,7 +817,7 @@
         {
           "source": "2f5d51db-c5ed-4db7-9d6c-8fcf13ac6b34",
           "target": "0cc58167-d179-4296-92ad-aa3f8c69c894",
-          "cluster_id": 24,
+          "relation": "enters strategic alliance with",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -982,7 +940,7 @@
         {
           "source": "d58a0ad7-ce9d-4dfc-b51a-9a5b5a7a7172",
           "target": "030ba747-9379-408d-b602-c6e71e135f62",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -990,7 +948,7 @@
         {
           "source": "ec30d100-4f61-44a9-b3b7-47744620a2ba",
           "target": "030ba747-9379-408d-b602-c6e71e135f62",
-          "cluster_id": 7,
+          "relation": "led since",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -998,7 +956,7 @@
         {
           "source": "ec30d100-4f61-44a9-b3b7-47744620a2ba",
           "target": "030ba747-9379-408d-b602-c6e71e135f62",
-          "cluster_id": 4,
+          "relation": "announced resignation from",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1006,7 +964,7 @@
         {
           "source": "d58a0ad7-ce9d-4dfc-b51a-9a5b5a7a7172",
           "target": "8ec8e66b-fc58-45d4-a563-4b018cea174a",
-          "cluster_id": 6,
+          "relation": "held position of COO at",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1014,7 +972,7 @@
         {
           "source": "d58a0ad7-ce9d-4dfc-b51a-9a5b5a7a7172",
           "target": "835fffd9-928d-4f6b-9f4e-8c24fb923635",
-          "cluster_id": 29,
+          "relation": "oversaw expansion into",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1022,7 +980,7 @@
         {
           "source": "ec30d100-4f61-44a9-b3b7-47744620a2ba",
           "target": "030ba747-9379-408d-b602-c6e71e135f62",
-          "cluster_id": 5,
+          "relation": "will stay on as board adviser for",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1030,7 +988,7 @@
         {
           "source": "030ba747-9379-408d-b602-c6e71e135f62",
           "target": "8fb5d1db-95ee-4501-b355-55f121780fef",
-          "cluster_id": 27,
+          "relation": "investing in",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1038,7 +996,7 @@
         {
           "source": "030ba747-9379-408d-b602-c6e71e135f62",
           "target": "cd4c3baf-82ed-45a6-ac26-8a64fd9a74cf",
-          "cluster_id": 27,
+          "relation": "investing in",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1046,7 +1004,7 @@
         {
           "source": "d58a0ad7-ce9d-4dfc-b51a-9a5b5a7a7172",
           "target": "030ba747-9379-408d-b602-c6e71e135f62",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -1205,7 +1163,7 @@
         {
           "source": "b0c27bf6-7461-4927-b3a3-fbc0e76470e3",
           "target": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1213,7 +1171,7 @@
         {
           "source": "36d4e8e4-ec78-468a-84f5-535fd002f9b1",
           "target": "2ca02932-260a-4c02-9336-a5b2b3aa9fe0",
-          "cluster_id": 3,
+          "relation": "served as chief operating officer at",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1221,7 +1179,7 @@
         {
           "source": "36d4e8e4-ec78-468a-84f5-535fd002f9b1",
           "target": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1229,7 +1187,7 @@
         {
           "source": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
           "target": "71ef636f-db3d-4c09-81d3-588799fabcb3",
-          "cluster_id": 13,
+          "relation": "founded",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1237,7 +1195,7 @@
         {
           "source": "b0c27bf6-7461-4927-b3a3-fbc0e76470e3",
           "target": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
-          "cluster_id": 7,
+          "relation": "led since",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1245,7 +1203,7 @@
         {
           "source": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
           "target": "cec9ff7d-d87b-4d69-80cc-105926ece97a",
-          "cluster_id": 30,
+          "relation": "grew revenue to",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1253,7 +1211,7 @@
         {
           "source": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
           "target": "0f5871e8-d04e-4ae7-a1a1-2ab3e46fdb38",
-          "cluster_id": 30,
+          "relation": "grew revenue to",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1261,7 +1219,7 @@
         {
           "source": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
           "target": "8deb03e0-f40b-49dd-93e3-17ba4ade4a87",
-          "cluster_id": 29,
+          "relation": "oversaw expansion into",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1269,7 +1227,7 @@
         {
           "source": "62cb6696-7998-4091-b8cb-dedd49423cb0",
           "target": "b0c27bf6-7461-4927-b3a3-fbc0e76470e3",
-          "cluster_id": 35,
+          "relation": "praised contributions of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1277,7 +1235,7 @@
         {
           "source": "62cb6696-7998-4091-b8cb-dedd49423cb0",
           "target": "36d4e8e4-ec78-468a-84f5-535fd002f9b1",
-          "cluster_id": 12,
+          "relation": "expressed confidence in",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1424,7 +1382,7 @@
         {
           "source": "7c2efc86-7de4-4372-9186-de87a3692fa7",
           "target": "1eec4106-d68d-49a9-aa5f-1e79b222b649",
-          "cluster_id": 26,
+          "relation": "announced strategic partnership with",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1432,7 +1390,7 @@
         {
           "source": "7c2efc86-7de4-4372-9186-de87a3692fa7",
           "target": "55b88dd5-f59c-4a61-a852-46178de8e8e0",
-          "cluster_id": 32,
+          "relation": "developing",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1440,7 +1398,7 @@
         {
           "source": "1eec4106-d68d-49a9-aa5f-1e79b222b649",
           "target": "55b88dd5-f59c-4a61-a852-46178de8e8e0",
-          "cluster_id": 32,
+          "relation": "developing",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1448,7 +1406,7 @@
         {
           "source": "7c2efc86-7de4-4372-9186-de87a3692fa7",
           "target": "1eec4106-d68d-49a9-aa5f-1e79b222b649",
-          "cluster_id": 25,
+          "relation": "contributes to partnership",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1456,7 +1414,7 @@
         {
           "source": "61d136a7-5b86-4e7f-8f21-623f8fe757a3",
           "target": "7c2efc86-7de4-4372-9186-de87a3692fa7",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1464,7 +1422,7 @@
         {
           "source": "8de45024-47c2-426e-ab2f-5b1329da4c80",
           "target": "1eec4106-d68d-49a9-aa5f-1e79b222b649",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1472,7 +1430,7 @@
         {
           "source": "7c2efc86-7de4-4372-9186-de87a3692fa7",
           "target": "3778ef84-7bdb-47ad-8629-dbddf61bbc36",
-          "cluster_id": 25,
+          "relation": "contributes to partnership",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1480,7 +1438,7 @@
         {
           "source": "1eec4106-d68d-49a9-aa5f-1e79b222b649",
           "target": "4e45d97f-d75e-4966-b752-5065f204b948",
-          "cluster_id": 25,
+          "relation": "contributes to partnership",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1488,7 +1446,7 @@
         {
           "source": "55b88dd5-f59c-4a61-a852-46178de8e8e0",
           "target": "0634ff71-4ab0-4306-aeb8-a5c3b7925d38",
-          "cluster_id": 18,
+          "relation": "designed for",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1611,7 +1569,7 @@
         {
           "source": "33ab1cb3-0659-4c96-8710-f0bcc1903ab8",
           "target": "ea3cce8e-e836-4f5d-a6e4-0572ab75c9ff",
-          "cluster_id": 24,
+          "relation": "enters strategic alliance with",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1619,7 +1577,7 @@
         {
           "source": "33ab1cb3-0659-4c96-8710-f0bcc1903ab8",
           "target": "742b1c21-53eb-41bf-83bb-847ba52e786f",
-          "cluster_id": 27,
+          "relation": "investing in",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1627,7 +1585,7 @@
         {
           "source": "ea3cce8e-e836-4f5d-a6e4-0572ab75c9ff",
           "target": "742b1c21-53eb-41bf-83bb-847ba52e786f",
-          "cluster_id": 27,
+          "relation": "investing in",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1635,7 +1593,7 @@
         {
           "source": "33ab1cb3-0659-4c96-8710-f0bcc1903ab8",
           "target": "8c0f704e-6d38-4ffb-a545-d05ba0bb9aa4",
-          "cluster_id": 9,
+          "relation": "establishing research lab in",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1643,7 +1601,7 @@
         {
           "source": "ea3cce8e-e836-4f5d-a6e4-0572ab75c9ff",
           "target": "8c0f704e-6d38-4ffb-a545-d05ba0bb9aa4",
-          "cluster_id": 9,
+          "relation": "establishing research lab in",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1651,7 +1609,7 @@
         {
           "source": "3bca8fd0-7203-4320-ac0a-1b0cf43c22ca",
           "target": "33ab1cb3-0659-4c96-8710-f0bcc1903ab8",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1659,7 +1617,7 @@
         {
           "source": "3bca8fd0-7203-4320-ac0a-1b0cf43c22ca",
           "target": "d07b257b-5510-494b-8224-753ed07ed68c",
-          "cluster_id": 14,
+          "relation": "founded company in year",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1667,7 +1625,7 @@
         {
           "source": "ea3cce8e-e836-4f5d-a6e4-0572ab75c9ff",
           "target": "4de5c3c8-1de8-4b64-98e1-b8f843ad8cc5",
-          "cluster_id": 26,
+          "relation": "announced strategic partnership with",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1675,7 +1633,7 @@
         {
           "source": "33ab1cb3-0659-4c96-8710-f0bcc1903ab8",
           "target": "5deb3c0e-b03a-4258-927b-62333120e10d",
-          "cluster_id": 38,
+          "relation": "plans to unveil prototype at",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1683,7 +1641,7 @@
         {
           "source": "ea3cce8e-e836-4f5d-a6e4-0572ab75c9ff",
           "target": "5deb3c0e-b03a-4258-927b-62333120e10d",
-          "cluster_id": 38,
+          "relation": "plans to unveil prototype at",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1818,7 +1776,7 @@
         {
           "source": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
           "target": "bbfd3916-3da1-4095-bf70-9807d8cb56b9",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1826,7 +1784,7 @@
         {
           "source": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
           "target": "bbaf1470-01ae-4391-b02c-a292205b243c",
-          "cluster_id": 25,
+          "relation": "contributes to partnership",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1834,7 +1792,7 @@
         {
           "source": "39158c17-05c7-450f-9c92-d425c041f861",
           "target": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1842,7 +1800,7 @@
         {
           "source": "c9653a88-f6b5-4bf7-88b4-8182f4e5b655",
           "target": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
-          "cluster_id": 36,
+          "relation": "upgraded stock to overweight",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1850,7 +1808,7 @@
         {
           "source": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
           "target": "e0ac97b7-cb09-4a8e-b53e-19e90056bce1",
-          "cluster_id": 16,
+          "relation": "is located in",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1858,7 +1816,7 @@
         {
           "source": "bbfd3916-3da1-4095-bf70-9807d8cb56b9",
           "target": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
-          "cluster_id": 31,
+          "relation": "acquired in",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1866,7 +1824,7 @@
         {
           "source": "bbaf1470-01ae-4391-b02c-a292205b243c",
           "target": "204666a7-e3b5-4e04-977b-6d255b0a39b3",
-          "cluster_id": 25,
+          "relation": "contributes to partnership",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1977,7 +1935,7 @@
         {
           "source": "7565b759-3749-4f56-bf82-8a54d2387863",
           "target": "a4388ca7-b6f3-46a2-9df8-39a6100229d2",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -1985,7 +1943,7 @@
         {
           "source": "7565b759-3749-4f56-bf82-8a54d2387863",
           "target": "ceaafdcf-64cf-4a4b-acad-855865cb93a5",
-          "cluster_id": 23,
+          "relation": "joining from",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -1993,7 +1951,7 @@
         {
           "source": "7565b759-3749-4f56-bf82-8a54d2387863",
           "target": "ceaafdcf-64cf-4a4b-acad-855865cb93a5",
-          "cluster_id": 3,
+          "relation": "served as chief operating officer at",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -2001,7 +1959,7 @@
         {
           "source": "f27ece10-8203-48be-878b-be2c50fa863e",
           "target": "a4388ca7-b6f3-46a2-9df8-39a6100229d2",
-          "cluster_id": 2,
+          "relation": "is CEO of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -2009,7 +1967,7 @@
         {
           "source": "f27ece10-8203-48be-878b-be2c50fa863e",
           "target": "1f6e38d3-0d92-4a6d-b106-e12cd562d941",
-          "cluster_id": 19,
+          "relation": "launched",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -2017,7 +1975,7 @@
         {
           "source": "1f6e38d3-0d92-4a6d-b106-e12cd562d941",
           "target": "a4388ca7-b6f3-46a2-9df8-39a6100229d2",
-          "cluster_id": 20,
+          "relation": "is program of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -2025,7 +1983,7 @@
         {
           "source": "1f6e38d3-0d92-4a6d-b106-e12cd562d941",
           "target": "779c96e9-344e-4eb1-a3ea-7d0cce8d66b4",
-          "cluster_id": 21,
+          "relation": "has flagship facility in",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -2033,7 +1991,7 @@
         {
           "source": "0b044bee-3195-4f59-b96b-ab54e039efe9",
           "target": "a4388ca7-b6f3-46a2-9df8-39a6100229d2",
-          "cluster_id": 0,
+          "relation": "board chair of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -2041,7 +1999,7 @@
         {
           "source": "0b044bee-3195-4f59-b96b-ab54e039efe9",
           "target": "7565b759-3749-4f56-bf82-8a54d2387863",
-          "cluster_id": 12,
+          "relation": "expressed confidence in",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
