@@ -1,12 +1,16 @@
 import json
+import logging
+import uuid
 from pathlib import Path
 
 import anthropic
 import click
 from dotenv import load_dotenv
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """You are an entity-relation extraction system. Given a news article, extract all entities and the relations between them.
 
@@ -16,16 +20,16 @@ For entity types, use short descriptive phrases like "tech company", "CEO", "cit
 
 
 class Entity(BaseModel):
-    id: str  # "e1", "e2", etc.
-    name: str  # as it appears in the article
-    type: str  # free-form: "tech company", "CEO", "city", etc.
+    id: str = Field(description="Short unique identifier for this entity, e.g. 'e1', 'e2'")
+    name: str = Field(description="Entity name as it appears in the article")
+    type: str = Field(description="Short type phrase, e.g. 'tech company', 'CEO', 'city'")
 
 
 class Relation(BaseModel):
-    source: str  # entity ID
-    relation: str  # free-form verb phrase
-    target: str  # entity ID
-    context: str  # supporting quote
+    source: str = Field(description="The 'id' of the source entity")
+    target: str = Field(description="The 'id' of the target entity")
+    relation: str = Field(description="Concise verb phrase describing the relation")
+    context: str = Field(description="Supporting quote from the article")
 
 
 class Extraction(BaseModel):
@@ -66,13 +70,33 @@ def run_extraction(input_path: Path, output_path: Path, model: str) -> None:
         click.echo(f"[{i}/{len(articles)}] Extracting from: {article['title']}")
         extraction = extract_article(client, article, model)
         data = extraction.model_dump()
+
+        # Replace LLM-generated entity IDs with UUIDs
+        id_map = {e["id"]: str(uuid.uuid4()) for e in data["entities"]}
+        for entity in data["entities"]:
+            entity["id"] = id_map[entity["id"]]
+        remapped_relations = []
+        for rel in data["relations"]:
+            if rel["source"] not in id_map or rel["target"] not in id_map:
+                bad = [k for k in ("source", "target") if rel[k] not in id_map]
+                logger.warning(
+                    "Dropping relation %r — invalid %s: %s",
+                    rel["relation"],
+                    ", ".join(bad),
+                    ", ".join(repr(rel[k]) for k in bad),
+                )
+                continue
+            rel["source"] = id_map[rel["source"]]
+            rel["target"] = id_map[rel["target"]]
+            remapped_relations.append(rel)
+
         results.append(
             {
                 "article_id": article["id"],
                 "source": article["source"],
                 "title": article["title"],
                 "entities": data["entities"],
-                "relations": data["relations"],
+                "relations": remapped_relations,
             }
         )
 
