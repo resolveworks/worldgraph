@@ -5,300 +5,296 @@
   "entity_matches": [
     {
       "canonical_name": "Meridian Technologies",
-      "type": "organization",
+      "type": "tech company",
       "occurrences": [
         {
           "article_id": "article_01",
-          "entity_id": "e1",
+          "entity_id": "1",
           "name": "Meridian Technologies"
         },
         {
           "article_id": "article_02",
-          "entity_id": "e1",
+          "entity_id": "meridian_tech",
           "name": "Meridian Technologies"
         },
         {
           "article_id": "article_03",
-          "entity_id": "e2",
+          "entity_id": "2",
           "name": "Meridian Technologies"
         },
         {
           "article_id": "article_07",
-          "entity_id": "e1",
+          "entity_id": "meridian_tech",
           "name": "Meridian Technologies"
         },
         {
           "article_id": "article_08",
-          "entity_id": "e2",
+          "entity_id": "meridian_technologies",
           "name": "Meridian Technologies"
         },
         {
           "article_id": "article_09",
-          "entity_id": "e1",
+          "entity_id": "meridian",
           "name": "Meridian Technologies"
         }
       ]
     },
     {
       "canonical_name": "Lightwave Analytics",
-      "type": "organization",
+      "type": "AI startup",
       "occurrences": [
         {
           "article_id": "article_01",
-          "entity_id": "e2",
+          "entity_id": "2",
           "name": "Lightwave Analytics"
         },
         {
           "article_id": "article_02",
-          "entity_id": "e2",
+          "entity_id": "lightwave",
           "name": "Lightwave Analytics"
         },
         {
           "article_id": "article_03",
-          "entity_id": "e1",
+          "entity_id": "1",
           "name": "Lightwave Analytics"
         },
         {
           "article_id": "article_08",
-          "entity_id": "e7",
+          "entity_id": "lightwave",
           "name": "Lightwave"
         },
         {
           "article_id": "article_09",
-          "entity_id": "e3",
+          "entity_id": "lightwave",
           "name": "Lightwave Analytics"
         }
       ]
     },
     {
       "canonical_name": "James Xu",
-      "type": "person",
+      "type": "CEO",
       "occurrences": [
         {
           "article_id": "article_01",
-          "entity_id": "e7",
+          "entity_id": "5",
           "name": "James Xu"
         },
         {
           "article_id": "article_07",
-          "entity_id": "e3",
+          "entity_id": "james_xu",
           "name": "James Xu"
         },
         {
           "article_id": "article_09",
-          "entity_id": "e7",
+          "entity_id": "j_xu",
           "name": "J. Xu"
         }
       ]
     },
     {
       "canonical_name": "Dr. Priya Sharma",
-      "type": "person",
+      "type": "founder",
       "occurrences": [
         {
           "article_id": "article_01",
-          "entity_id": "e8",
+          "entity_id": "7",
           "name": "Dr. Priya Sharma"
         },
         {
           "article_id": "article_02",
-          "entity_id": "e10",
+          "entity_id": "priya_sharma",
           "name": "Priya Sharma"
         }
       ]
     },
     {
       "canonical_name": "$2.3 billion",
-      "type": "monetary_amount",
+      "type": "acquisition price",
       "occurrences": [
         {
           "article_id": "article_02",
-          "entity_id": "e3",
+          "entity_id": "acquisition_price",
           "name": "$2.3 billion"
         },
         {
           "article_id": "article_09",
-          "entity_id": "e4",
+          "entity_id": "acquisition_price",
           "name": "$2.3 billion"
-        }
-      ]
-    },
-    {
-      "canonical_name": "Palo Alto",
-      "type": "location",
-      "occurrences": [
-        {
-          "article_id": "article_02",
-          "entity_id": "e6",
-          "name": "Palo Alto"
-        },
-        {
-          "article_id": "article_09",
-          "entity_id": "e2",
-          "name": "Palo Alto"
-        }
-      ]
-    },
-    {
-      "canonical_name": "Sarah Chen",
-      "type": "person",
-      "occurrences": [
-        {
-          "article_id": "article_04",
-          "entity_id": "e1",
-          "name": "Sarah Chen"
-        },
-        {
-          "article_id": "article_05",
-          "entity_id": "e2",
-          "name": "Sarah Chen"
-        },
-        {
-          "article_id": "article_06",
-          "entity_id": "e4",
-          "name": "Sarah Chen"
-        },
-        {
-          "article_id": "article_06",
-          "entity_id": "e5",
-          "name": "S. Chen"
-        },
-        {
-          "article_id": "article_10",
-          "entity_id": "e1",
-          "name": "Sarah Chen"
         }
       ]
     },
     {
       "canonical_name": "Nextera Energy Solutions",
-      "type": "organization",
+      "type": "energy company",
       "occurrences": [
         {
           "article_id": "article_04",
-          "entity_id": "e2",
+          "entity_id": "nextera_energy",
           "name": "Nextera Energy Solutions"
         },
         {
-          "article_id": "article_05",
-          "entity_id": "e1",
-          "name": "Nextera Energy Solutions"
+          "article_id": "article_06",
+          "entity_id": "helios_power",
+          "name": "Helios Power"
         },
         {
           "article_id": "article_10",
-          "entity_id": "e2",
+          "entity_id": "helios_power",
+          "name": "Helios Power Group"
+        }
+      ]
+    },
+    {
+      "canonical_name": "Sarah Chen",
+      "type": "CEO",
+      "occurrences": [
+        {
+          "article_id": "article_04",
+          "entity_id": "sarah_chen",
+          "name": "Sarah Chen"
+        },
+        {
+          "article_id": "article_05",
+          "entity_id": "sarah_chen",
+          "name": "Sarah Chen"
+        },
+        {
+          "article_id": "article_06",
+          "entity_id": "sarah_chen",
+          "name": "Sarah Chen"
+        },
+        {
+          "article_id": "article_10",
+          "entity_id": "sarah_chen",
+          "name": "Sarah Chen"
+        }
+      ]
+    },
+    {
+      "canonical_name": "David Park",
+      "type": "CEO",
+      "occurrences": [
+        {
+          "article_id": "article_05",
+          "entity_id": "david_park",
+          "name": "David Park"
+        },
+        {
+          "article_id": "article_06",
+          "entity_id": "david_park",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "canonical_name": "Nextera Energy Solutions",
+      "type": "energy company",
+      "occurrences": [
+        {
+          "article_id": "article_05",
+          "entity_id": "nextera_energy_solutions",
+          "name": "Nextera Energy Solutions"
+        },
+        {
+          "article_id": "article_06",
+          "entity_id": "nextera",
+          "name": "NES"
+        },
+        {
+          "article_id": "article_10",
+          "entity_id": "nextera_energy",
           "name": "Nextera Energy Solutions"
         }
       ]
     },
     {
-      "canonical_name": "Helios Power Group",
-      "type": "organization",
+      "canonical_name": "R. Tanaka",
+      "type": "board chair",
       "occurrences": [
         {
-          "article_id": "article_04",
-          "entity_id": "e4",
-          "name": "Helios Power Group"
-        },
-        {
           "article_id": "article_06",
-          "entity_id": "e6",
-          "name": "Helios Power"
-        }
-      ]
-    },
-    {
-      "canonical_name": "Robert Tanaka",
-      "type": "person",
-      "occurrences": [
-        {
-          "article_id": "article_04",
-          "entity_id": "e5",
-          "name": "Robert Tanaka"
-        },
-        {
-          "article_id": "article_06",
-          "entity_id": "e7",
+          "entity_id": "r_tanaka",
           "name": "R. Tanaka"
         },
         {
           "article_id": "article_10",
-          "entity_id": "e7",
+          "entity_id": "robert_tanaka",
           "name": "Robert Tanaka"
-        }
-      ]
-    },
-    {
-      "canonical_name": "autonomous robotics hardware",
-      "type": "product",
-      "occurrences": [
-        {
-          "article_id": "article_07",
-          "entity_id": "e10",
-          "name": "autonomous robotics hardware"
-        },
-        {
-          "article_id": "article_09",
-          "entity_id": "e12",
-          "name": "robotics and warehouse automation"
         }
       ]
     },
     {
       "canonical_name": "Cascade Robotics",
-      "type": "organization",
+      "type": "robotics company",
       "occurrences": [
         {
           "article_id": "article_07",
-          "entity_id": "e2",
+          "entity_id": "cascade_robotics",
           "name": "Cascade Robotics"
         },
         {
           "article_id": "article_08",
-          "entity_id": "e1",
+          "entity_id": "cascade_robotics",
           "name": "Cascade Robotics"
         },
         {
           "article_id": "article_09",
-          "entity_id": "e5",
+          "entity_id": "cascade",
           "name": "Cascade Robotics"
         }
       ]
     },
     {
       "canonical_name": "Marcus Webb",
-      "type": "person",
+      "type": "CEO",
       "occurrences": [
         {
           "article_id": "article_07",
-          "entity_id": "e4",
+          "entity_id": "marcus_webb",
           "name": "Marcus Webb"
         },
         {
           "article_id": "article_08",
-          "entity_id": "e5",
+          "entity_id": "marcus_webb",
           "name": "Marcus Webb"
+        }
+      ]
+    },
+    {
+      "canonical_name": "five years",
+      "type": "partnership investment",
+      "occurrences": [
+        {
+          "article_id": "article_07",
+          "entity_id": "timeline",
+          "name": "five years"
+        },
+        {
+          "article_id": "article_09",
+          "entity_id": "partnership_price",
+          "name": "$500 million"
         }
       ]
     }
   ],
   "matched_triples": [
     {
-      "cluster_id": 16,
+      "cluster_id": 10,
       "cluster_label": "acquired",
       "source_match": 0,
       "target_match": 1,
       "confirming_articles": [
         "article_01",
+        "article_02",
         "article_03",
         "article_08",
         "article_09"
       ],
-      "source_count": 4
+      "source_count": 5
     },
     {
-      "cluster_id": 19,
-      "cluster_label": "paid amount",
+      "cluster_id": 9,
+      "cluster_label": "acquisition price",
       "source_match": 0,
       "target_match": 4,
       "confirming_articles": [
@@ -308,21 +304,10 @@
       "source_count": 2
     },
     {
-      "cluster_id": 29,
-      "cluster_label": "is located in",
+      "cluster_id": 2,
+      "cluster_label": "announces strategic partnership with",
       "source_match": 0,
-      "target_match": 5,
-      "confirming_articles": [
-        "article_02",
-        "article_09"
-      ],
-      "source_count": 2
-    },
-    {
-      "cluster_id": 38,
-      "cluster_label": "announced partnership with",
-      "source_match": 0,
-      "target_match": 11,
+      "target_match": 10,
       "confirming_articles": [
         "article_07",
         "article_09"
@@ -331,7 +316,18 @@
     },
     {
       "cluster_id": 3,
-      "cluster_label": "served as CEO for",
+      "cluster_label": "partnership value",
+      "source_match": 0,
+      "target_match": 12,
+      "confirming_articles": [
+        "article_07",
+        "article_09"
+      ],
+      "source_count": 2
+    },
+    {
+      "cluster_id": 38,
+      "cluster_label": "is CEO of",
       "source_match": 2,
       "target_match": 0,
       "confirming_articles": [
@@ -342,7 +338,7 @@
       "source_count": 3
     },
     {
-      "cluster_id": 39,
+      "cluster_id": 35,
       "cluster_label": "founded",
       "source_match": 3,
       "target_match": 1,
@@ -353,30 +349,41 @@
       "source_count": 2
     },
     {
-      "cluster_id": 3,
-      "cluster_label": "served as CEO for",
+      "cluster_id": 39,
+      "cluster_label": "was chief operating officer of",
       "source_match": 6,
-      "target_match": 7,
+      "target_match": 5,
       "confirming_articles": [
         "article_04",
-        "article_05",
+        "article_06",
         "article_10"
       ],
       "source_count": 3
     },
     {
-      "cluster_id": 3,
-      "cluster_label": "served as CEO for",
+      "cluster_id": 38,
+      "cluster_label": "is CEO of",
       "source_match": 6,
       "target_match": 8,
       "confirming_articles": [
-        "article_04",
+        "article_05",
+        "article_10"
+      ],
+      "source_count": 2
+    },
+    {
+      "cluster_id": 37,
+      "cluster_label": "announced resignation from",
+      "source_match": 7,
+      "target_match": 8,
+      "confirming_articles": [
+        "article_05",
         "article_06"
       ],
       "source_count": 2
     },
     {
-      "cluster_id": 41,
+      "cluster_id": 31,
       "cluster_label": "expressed confidence in",
       "source_match": 9,
       "target_match": 6,
@@ -387,32 +394,10 @@
       "source_count": 2
     },
     {
-      "cluster_id": 8,
-      "cluster_label": "remains on board of",
-      "source_match": 9,
-      "target_match": 7,
-      "confirming_articles": [
-        "article_04",
-        "article_10"
-      ],
-      "source_count": 2
-    },
-    {
-      "cluster_id": 25,
-      "cluster_label": "provides",
+      "cluster_id": 38,
+      "cluster_label": "is CEO of",
       "source_match": 11,
       "target_match": 10,
-      "confirming_articles": [
-        "article_07",
-        "article_09"
-      ],
-      "source_count": 2
-    },
-    {
-      "cluster_id": 3,
-      "cluster_label": "served as CEO for",
-      "source_match": 12,
-      "target_match": 11,
       "confirming_articles": [
         "article_07",
         "article_08"

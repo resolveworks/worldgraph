@@ -4,212 +4,212 @@
   "clusters": [
     {
       "id": 0,
-      "representative": "will establish joint research lab in",
-      "members": [
-        "will establish joint research lab in"
-      ]
-    },
-    {
-      "id": 1,
-      "representative": "plans to unveil prototype at",
-      "members": [
-        "plans to unveil prototype at"
-      ]
-    },
-    {
-      "id": 2,
-      "representative": "announced resignation from",
-      "members": [
-        "announced resignation from",
-        "resigned as CEO of"
-      ]
-    },
-    {
-      "id": 3,
-      "representative": "served as CEO for",
-      "members": [
-        "is CEO of",
-        "is CEO and co-founder of",
-        "appointed as Chief Executive Officer of",
-        "was Chief Executive Officer of",
-        "previously served as Chief Operating Officer at",
-        "named as CEO of",
-        "expected to start as CEO on",
-        "is chief operating officer of",
-        "assumes role as CEO of",
-        "served as CEO for",
-        "named CEO of"
-      ]
-    },
-    {
-      "id": 4,
-      "representative": "article published date",
-      "members": [
-        "published article on",
-        "article published date"
-      ]
-    },
-    {
-      "id": 5,
-      "representative": "reported on",
-      "members": [
-        "reported on",
-        "announced on"
-      ]
-    },
-    {
-      "id": 6,
-      "representative": "scheduled for",
-      "members": [
-        "scheduled for"
-      ]
-    },
-    {
-      "id": 7,
       "representative": "effective date",
       "members": [
         "effective date"
       ]
     },
     {
-      "id": 8,
-      "representative": "remains on board of",
+      "id": 1,
+      "representative": "product launch date",
       "members": [
-        "remains on board of",
-        "is board chair of"
+        "product launch date"
+      ]
+    },
+    {
+      "id": 2,
+      "representative": "announces strategic partnership with",
+      "members": [
+        "announces strategic partnership with",
+        "partnered with"
+      ]
+    },
+    {
+      "id": 3,
+      "representative": "partnership value",
+      "members": [
+        "partnership duration",
+        "partnership value"
+      ]
+    },
+    {
+      "id": 4,
+      "representative": "grew revenue to",
+      "members": [
+        "grew revenue from",
+        "grew revenue to"
+      ]
+    },
+    {
+      "id": 5,
+      "representative": "reported cloud revenue growth of",
+      "members": [
+        "reported cloud revenue growth of"
+      ]
+    },
+    {
+      "id": 6,
+      "representative": "backed by investment of",
+      "members": [
+        "investing in",
+        "backed by investment of"
+      ]
+    },
+    {
+      "id": 7,
+      "representative": "upgraded stock rating of",
+      "members": [
+        "upgraded stock rating of"
+      ]
+    },
+    {
+      "id": 8,
+      "representative": "stock price rise",
+      "members": [
+        "stock price rise"
       ]
     },
     {
       "id": 9,
-      "representative": "is backing",
+      "representative": "acquisition price",
       "members": [
-        "is backing"
+        "acquisition price",
+        "acquisition year",
+        "acquisition value"
       ]
     },
     {
       "id": 10,
-      "representative": "will become part of",
-      "members": [
-        "will be integrated into",
-        "will become part of",
-        "will join as"
-      ]
-    },
-    {
-      "id": 11,
-      "representative": "will serve as board adviser for",
-      "members": [
-        "will serve as board adviser for"
-      ]
-    },
-    {
-      "id": 12,
-      "representative": "raised",
-      "members": [
-        "raised"
-      ]
-    },
-    {
-      "id": 13,
-      "representative": "praised",
-      "members": [
-        "praised"
-      ]
-    },
-    {
-      "id": 14,
-      "representative": "led",
-      "members": [
-        "led"
-      ]
-    },
-    {
-      "id": 15,
-      "representative": "grew revenue from",
-      "members": [
-        "grew revenue from",
-        "grew revenue to",
-        "reported revenue growth of"
-      ]
-    },
-    {
-      "id": 16,
       "representative": "acquired",
       "members": [
-        "is acquiring",
-        "is acquiring for",
+        "acquires",
+        "agreed to purchase",
         "previously acquired",
-        "was acquired in year",
         "acquired"
       ]
     },
     {
-      "id": 17,
-      "representative": "stated about acquisition",
+      "id": 11,
+      "representative": "represents previous valuation of",
       "members": [
-        "announced acquisition of",
-        "acquisition expected to close in",
-        "paid amount for previous acquisition",
-        "acquisition expected to finalize by",
-        "stated about acquisition"
+        "represents transaction value of",
+        "represents previous valuation of"
+      ]
+    },
+    {
+      "id": 12,
+      "representative": "values acquisition at",
+      "members": [
+        "values acquisition at",
+        "valued at"
+      ]
+    },
+    {
+      "id": 13,
+      "representative": "is expected closing timeline for",
+      "members": [
+        "is expected closing timeline for"
+      ]
+    },
+    {
+      "id": 14,
+      "representative": "expected to finalize by",
+      "members": [
+        "expected to finalize by"
+      ]
+    },
+    {
+      "id": 15,
+      "representative": "begins position on",
+      "members": [
+        "begins position on"
+      ]
+    },
+    {
+      "id": 16,
+      "representative": "launched",
+      "members": [
+        "launched"
+      ]
+    },
+    {
+      "id": 17,
+      "representative": "aims to deploy in",
+      "members": [
+        "aims to deploy in"
       ]
     },
     {
       "id": 18,
-      "representative": "agreed to purchase",
+      "representative": "launched initiative under",
       "members": [
-        "agreed to purchase"
+        "launched initiative under"
       ]
     },
     {
       "id": 19,
-      "representative": "paid amount",
+      "representative": "will join",
       "members": [
-        "paid amount"
+        "will join",
+        "will join as",
+        "entered into alliance with",
+        "joined from"
       ]
     },
     {
       "id": 20,
-      "representative": "had previous valuation of",
+      "representative": "will be integrated into",
       "members": [
-        "valued at",
-        "had previous valuation of"
+        "will be integrated into"
       ]
     },
     {
       "id": 21,
-      "representative": "investing",
+      "representative": "expected to start role on",
       "members": [
-        "investing",
-        "investing in"
+        "expected to start role on"
       ]
     },
     {
       "id": 22,
-      "representative": "upgraded stock of",
+      "representative": "will assume top job at",
       "members": [
-        "stock rose",
-        "upgraded stock of"
+        "will assume top job at"
       ]
     },
     {
       "id": 23,
-      "representative": "held position of",
+      "representative": "based in",
       "members": [
-        "positioned to compete with",
-        "assumes position effective",
-        "held position of"
+        "based in",
+        "competes with",
+        "succeeded by"
       ]
     },
     {
       "id": 24,
-      "representative": "held position of COO at",
+      "representative": "is formally known as",
       "members": [
-        "held position of COO at"
+        "is formally known as"
       ]
     },
     {
       "id": 25,
+      "representative": "encountered",
+      "members": [
+        "encountered"
+      ]
+    },
+    {
+      "id": 26,
+      "representative": "oversaw expansion into",
+      "members": [
+        "oversaw expansion into",
+        "expanded into"
+      ]
+    },
+    {
+      "id": 27,
       "representative": "provides",
       "members": [
         "contributes",
@@ -217,220 +217,244 @@
       ]
     },
     {
-      "id": 26,
-      "representative": "replacing",
-      "members": [
-        "replacing"
-      ]
-    },
-    {
-      "id": 27,
-      "representative": "succeeds",
-      "members": [
-        "succeeds"
-      ]
-    },
-    {
       "id": 28,
-      "representative": "is developing",
+      "representative": "raised",
       "members": [
-        "is developing"
+        "raised"
       ]
     },
     {
       "id": 29,
-      "representative": "is located in",
+      "representative": "focused on",
       "members": [
-        "has offices in",
-        "is located in",
-        "has facility in"
+        "focused on"
       ]
     },
     {
       "id": 30,
-      "representative": "employs",
+      "representative": "announced on",
       "members": [
-        "employs",
-        "operates",
-        "previously worked at"
+        "announced on"
       ]
     },
     {
       "id": 31,
-      "representative": "specializes in",
-      "members": [
-        "specializes in"
-      ]
-    },
-    {
-      "id": 32,
-      "representative": "focuses on",
-      "members": [
-        "focuses on"
-      ]
-    },
-    {
-      "id": 33,
-      "representative": "is also known as",
-      "members": [
-        "is based in",
-        "is formally known as",
-        "is also known as"
-      ]
-    },
-    {
-      "id": 34,
-      "representative": "is product of",
-      "members": [
-        "is product of"
-      ]
-    },
-    {
-      "id": 35,
-      "representative": "strategic shift toward",
-      "members": [
-        "strategic shift toward",
-        "entered into strategic alliance with"
-      ]
-    },
-    {
-      "id": 36,
-      "representative": "oversaw expansion into",
-      "members": [
-        "oversaw expansion into"
-      ]
-    },
-    {
-      "id": 37,
-      "representative": "launched by",
-      "members": [
-        "launched by"
-      ]
-    },
-    {
-      "id": 38,
-      "representative": "announced partnership with",
-      "members": [
-        "announced partnership with",
-        "partnered with"
-      ]
-    },
-    {
-      "id": 39,
-      "representative": "founded",
-      "members": [
-        "founded in",
-        "founded",
-        "is founder of"
-      ]
-    },
-    {
-      "id": 40,
-      "representative": "encountered permitting delays in",
-      "members": [
-        "encountered permitting delays in"
-      ]
-    },
-    {
-      "id": 41,
       "representative": "expressed confidence in",
       "members": [
         "expressed confidence in"
       ]
     },
     {
-      "id": 42,
-      "representative": "expected market launch",
+      "id": 32,
+      "representative": "remains on board in advisory capacity through",
       "members": [
-        "expected market launch"
+        "remains on board in advisory capacity through"
+      ]
+    },
+    {
+      "id": 33,
+      "representative": "will stay on as board adviser at",
+      "members": [
+        "will stay on as board adviser at"
+      ]
+    },
+    {
+      "id": 34,
+      "representative": "is board chair of",
+      "members": [
+        "is board chair of"
+      ]
+    },
+    {
+      "id": 35,
+      "representative": "founded",
+      "members": [
+        "founded",
+        "founder of"
+      ]
+    },
+    {
+      "id": 36,
+      "representative": "praised contributions of",
+      "members": [
+        "praised contributions of"
+      ]
+    },
+    {
+      "id": 37,
+      "representative": "announced resignation from",
+      "members": [
+        "announced resignation from",
+        "resigned as CEO of"
+      ]
+    },
+    {
+      "id": 38,
+      "representative": "is CEO of",
+      "members": [
+        "is CEO of",
+        "is CEO and co-founder of",
+        "named as next CEO of",
+        "served as CEO for",
+        "serves as CEO of",
+        "named CEO of"
+      ]
+    },
+    {
+      "id": 39,
+      "representative": "was chief operating officer of",
+      "members": [
+        "appointed as Chief Executive Officer of",
+        "was Chief Executive Officer of",
+        "previously served as Chief Operating Officer at",
+        "was chief operating officer of",
+        "served as chief operating officer at"
+      ]
+    },
+    {
+      "id": 40,
+      "representative": "has offices in",
+      "members": [
+        "has offices in",
+        "employs"
+      ]
+    },
+    {
+      "id": 41,
+      "representative": "headquartered in",
+      "members": [
+        "headquartered in"
+      ]
+    },
+    {
+      "id": 42,
+      "representative": "specializes in",
+      "members": [
+        "specializes in"
+      ]
+    },
+    {
+      "id": 43,
+      "representative": "established research facility in",
+      "members": [
+        "established research facility in"
+      ]
+    },
+    {
+      "id": 44,
+      "representative": "previously held position of COO at",
+      "members": [
+        "previously held position of COO at"
+      ]
+    },
+    {
+      "id": 45,
+      "representative": "targets market sector",
+      "members": [
+        "targets market sector"
+      ]
+    },
+    {
+      "id": 46,
+      "representative": "led since",
+      "members": [
+        "led since"
+      ]
+    },
+    {
+      "id": 47,
+      "representative": "has experience navigating",
+      "members": [
+        "has experience navigating"
+      ]
+    },
+    {
+      "id": 48,
+      "representative": "plans to unveil prototype at",
+      "members": [
+        "plans to unveil prototype at"
       ]
     }
   ],
   "relation_map": {
-    "will establish joint research lab in": 0,
-    "plans to unveil prototype at": 1,
-    "announced resignation from": 2,
-    "resigned as CEO of": 2,
-    "is CEO of": 3,
-    "is CEO and co-founder of": 3,
-    "appointed as Chief Executive Officer of": 3,
-    "was Chief Executive Officer of": 3,
-    "previously served as Chief Operating Officer at": 3,
-    "named as CEO of": 3,
-    "expected to start as CEO on": 3,
-    "is chief operating officer of": 3,
-    "assumes role as CEO of": 3,
-    "served as CEO for": 3,
-    "named CEO of": 3,
-    "published article on": 4,
-    "article published date": 4,
-    "reported on": 5,
-    "announced on": 5,
-    "scheduled for": 6,
-    "effective date": 7,
-    "remains on board of": 8,
-    "is board chair of": 8,
-    "is backing": 9,
-    "will be integrated into": 10,
-    "will become part of": 10,
-    "will join as": 10,
-    "will serve as board adviser for": 11,
-    "raised": 12,
-    "praised": 13,
-    "led": 14,
-    "grew revenue from": 15,
-    "grew revenue to": 15,
-    "reported revenue growth of": 15,
-    "is acquiring": 16,
-    "is acquiring for": 16,
-    "previously acquired": 16,
-    "was acquired in year": 16,
-    "acquired": 16,
-    "announced acquisition of": 17,
-    "acquisition expected to close in": 17,
-    "paid amount for previous acquisition": 17,
-    "acquisition expected to finalize by": 17,
-    "stated about acquisition": 17,
-    "agreed to purchase": 18,
-    "paid amount": 19,
-    "valued at": 20,
-    "had previous valuation of": 20,
-    "investing": 21,
-    "investing in": 21,
-    "stock rose": 22,
-    "upgraded stock of": 22,
-    "positioned to compete with": 23,
-    "assumes position effective": 23,
-    "held position of": 23,
-    "held position of COO at": 24,
-    "contributes": 25,
-    "provides": 25,
-    "replacing": 26,
-    "succeeds": 27,
-    "is developing": 28,
-    "has offices in": 29,
-    "is located in": 29,
-    "has facility in": 29,
-    "employs": 30,
-    "operates": 30,
-    "previously worked at": 30,
-    "specializes in": 31,
-    "focuses on": 32,
-    "is based in": 33,
-    "is formally known as": 33,
-    "is also known as": 33,
-    "is product of": 34,
-    "strategic shift toward": 35,
-    "entered into strategic alliance with": 35,
-    "oversaw expansion into": 36,
-    "launched by": 37,
-    "announced partnership with": 38,
-    "partnered with": 38,
-    "founded in": 39,
-    "founded": 39,
-    "is founder of": 39,
-    "encountered permitting delays in": 40,
-    "expressed confidence in": 41,
-    "expected market launch": 42
+    "effective date": 0,
+    "product launch date": 1,
+    "announces strategic partnership with": 2,
+    "partnered with": 2,
+    "partnership duration": 3,
+    "partnership value": 3,
+    "grew revenue from": 4,
+    "grew revenue to": 4,
+    "reported cloud revenue growth of": 5,
+    "investing in": 6,
+    "backed by investment of": 6,
+    "upgraded stock rating of": 7,
+    "stock price rise": 8,
+    "acquisition price": 9,
+    "acquisition year": 9,
+    "acquisition value": 9,
+    "acquires": 10,
+    "agreed to purchase": 10,
+    "previously acquired": 10,
+    "acquired": 10,
+    "represents transaction value of": 11,
+    "represents previous valuation of": 11,
+    "values acquisition at": 12,
+    "valued at": 12,
+    "is expected closing timeline for": 13,
+    "expected to finalize by": 14,
+    "begins position on": 15,
+    "launched": 16,
+    "aims to deploy in": 17,
+    "launched initiative under": 18,
+    "will join": 19,
+    "will join as": 19,
+    "entered into alliance with": 19,
+    "joined from": 19,
+    "will be integrated into": 20,
+    "expected to start role on": 21,
+    "will assume top job at": 22,
+    "based in": 23,
+    "competes with": 23,
+    "succeeded by": 23,
+    "is formally known as": 24,
+    "encountered": 25,
+    "oversaw expansion into": 26,
+    "expanded into": 26,
+    "contributes": 27,
+    "provides": 27,
+    "raised": 28,
+    "focused on": 29,
+    "announced on": 30,
+    "expressed confidence in": 31,
+    "remains on board in advisory capacity through": 32,
+    "will stay on as board adviser at": 33,
+    "is board chair of": 34,
+    "founded": 35,
+    "founder of": 35,
+    "praised contributions of": 36,
+    "announced resignation from": 37,
+    "resigned as CEO of": 37,
+    "is CEO of": 38,
+    "is CEO and co-founder of": 38,
+    "named as next CEO of": 38,
+    "served as CEO for": 38,
+    "serves as CEO of": 38,
+    "named CEO of": 38,
+    "appointed as Chief Executive Officer of": 39,
+    "was Chief Executive Officer of": 39,
+    "previously served as Chief Operating Officer at": 39,
+    "was chief operating officer of": 39,
+    "served as chief operating officer at": 39,
+    "has offices in": 40,
+    "employs": 40,
+    "headquartered in": 41,
+    "specializes in": 42,
+    "established research facility in": 43,
+    "previously held position of COO at": 44,
+    "targets market sector": 45,
+    "led since": 46,
+    "has experience navigating": 47,
+    "plans to unveil prototype at": 48
   }
 }
