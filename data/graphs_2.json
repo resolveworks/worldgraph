@@ -43,10 +43,10 @@
   },
   "graphs": [
     {
-      "id": "43097922-bc0b-46e2-8d58-28013e8b38b8",
+      "id": "4a66bb4d-5d7f-4c95-b0b4-6c35a50d2c6d",
       "entities": [
         {
-          "id": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "id": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "name": "Meridian Technologies",
           "type": "tech company",
           "occurrences": [
@@ -73,7 +73,7 @@
           ]
         },
         {
-          "id": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
+          "id": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
           "name": "Lightwave Analytics",
           "type": "AI startup",
           "occurrences": [
@@ -95,7 +95,7 @@
           ]
         },
         {
-          "id": "c50e4c0c-508a-406b-a5a6-1be4e3fcace4",
+          "id": "192c6ce8-3738-4b45-b4e6-2741aca07b86",
           "name": "$2.3 billion",
           "type": "acquisition price",
           "occurrences": [
@@ -112,7 +112,7 @@
           ]
         },
         {
-          "id": "292ffdbc-1adf-48ad-9bce-dfb9b5b51f3e",
+          "id": "5adf7907-fa63-4241-94b8-a0a014a5d61e",
           "name": "third quarter",
           "type": "expected closing period",
           "occurrences": [
@@ -124,7 +124,7 @@
           ]
         },
         {
-          "id": "07bc29b8-8e2b-4b8e-b404-c55c7b49ec0c",
+          "id": "3a084bf2-36bc-4290-ae2c-a9b3e6ab7d90",
           "name": "James Xu",
           "type": "CEO of Meridian Technologies",
           "occurrences": [
@@ -136,7 +136,7 @@
           ]
         },
         {
-          "id": "c0a21250-ff33-40bd-bf30-faae3a25b252",
+          "id": "b2813751-bd76-475b-bbbb-7b70ef866aad",
           "name": "Dr. Priya Sharma",
           "type": "founder",
           "occurrences": [
@@ -153,7 +153,7 @@
           ]
         },
         {
-          "id": "0ffbeed9-988d-4380-84ac-b849690e1af9",
+          "id": "534abce5-f75c-46eb-a516-d63f650658c4",
           "name": "2019",
           "type": "founding year",
           "occurrences": [
@@ -165,7 +165,7 @@
           ]
         },
         {
-          "id": "69661e6d-efc8-49d3-94c9-8c37850800f3",
+          "id": "6c9fa6d4-8b07-4a60-81f0-eec6d0d99edc",
           "name": "$400 million",
           "type": "venture funding amount",
           "occurrences": [
@@ -177,7 +177,7 @@
           ]
         },
         {
-          "id": "62115c00-11d2-43e9-ab98-6996393e67b5",
+          "id": "aa5e441e-4725-4641-a152-bb33c9f0ff25",
           "name": "San Francisco",
           "type": "city",
           "occurrences": [
@@ -189,7 +189,7 @@
           ]
         },
         {
-          "id": "c34cbb52-e3d3-4120-9d74-fd1f7b57418c",
+          "id": "2dc35f14-492b-4269-bd03-ac0389dec069",
           "name": "Austin",
           "type": "city",
           "occurrences": [
@@ -201,7 +201,7 @@
           ]
         },
         {
-          "id": "6e71f985-6aa7-46ea-ab35-5eed2ed8f6cd",
+          "id": "ce164daa-7611-4a38-8a9c-6c2fbc992068",
           "name": "800 people",
           "type": "employee count",
           "occurrences": [
@@ -213,7 +213,7 @@
           ]
         },
         {
-          "id": "4b2435b3-395b-4e33-a21c-c5037352d5ec",
+          "id": "4c797afc-c2fa-4581-be2d-03da6a0ede0e",
           "name": "real-time analytics platform",
           "type": "product",
           "occurrences": [
@@ -225,7 +225,7 @@
           ]
         },
         {
-          "id": "5ade6ea1-44e1-442e-a966-fdc710258234",
+          "id": "41364146-acde-4027-9df8-d5baa2b30769",
           "name": "cloud infrastructure division",
           "type": "business division",
           "occurrences": [
@@ -237,7 +237,7 @@
           ]
         },
         {
-          "id": "eaafa643-9722-420e-b9c5-1af72e0be822",
+          "id": "b2845ff1-067e-4f04-82b3-c8e4001ec540",
           "name": "Palo Alto",
           "type": "city",
           "occurrences": [
@@ -254,7 +254,7 @@
           ]
         },
         {
-          "id": "a872e6ed-f51f-4b53-8908-b15920d46961",
+          "id": "3f13a6da-e885-4809-aabd-b6e852125d7a",
           "name": "CloudScale",
           "type": "tech company",
           "occurrences": [
@@ -266,7 +266,7 @@
           ]
         },
         {
-          "id": "59734469-1d28-4e0c-9de1-6ca98edfe951",
+          "id": "72c6f19a-f9f4-4c32-b558-909bcced60f0",
           "name": "$900 million",
           "type": "acquisition price",
           "occurrences": [
@@ -278,7 +278,7 @@
           ]
         },
         {
-          "id": "7717e13c-67a6-42c0-a3e5-1c7b7c8e0528",
+          "id": "2856773b-a618-4bb0-a808-5134cc5838f9",
           "name": "2023",
           "type": "year",
           "occurrences": [
@@ -290,7 +290,7 @@
           ]
         },
         {
-          "id": "0fbb9cb8-9447-4e04-ba05-4a8b59a0cb91",
+          "id": "c1246adc-56d1-48d3-a49c-1687179b1159",
           "name": "real-time data processing",
           "type": "business specialization",
           "occurrences": [
@@ -302,7 +302,7 @@
           ]
         },
         {
-          "id": "791eeaa2-04ce-4f62-be67-6943d45b48e5",
+          "id": "6969c542-2b61-4bbf-b16a-03c38ff21a1c",
           "name": "Meridian's cloud services unit",
           "type": "business unit",
           "occurrences": [
@@ -314,7 +314,7 @@
           ]
         },
         {
-          "id": "62382c1c-2c12-4b9e-ae88-61fe24d1f46c",
+          "id": "c7c8129a-67a7-4bb8-81d4-b99132da05ed",
           "name": "Senior Vice President of Analytics",
           "type": "job title",
           "occurrences": [
@@ -326,7 +326,7 @@
           ]
         },
         {
-          "id": "67b49216-3b82-4198-9d16-eef10647e6bb",
+          "id": "bb4cd9b7-d41d-4685-afd7-a59dacb736e0",
           "name": "2026-02-10",
           "type": "date",
           "occurrences": [
@@ -338,7 +338,7 @@
           ]
         },
         {
-          "id": "bd8adfbf-e498-4e90-abb4-50479e372e13",
+          "id": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
           "name": "Cascade Robotics",
           "type": "robotics company",
           "occurrences": [
@@ -355,7 +355,7 @@
           ]
         },
         {
-          "id": "012d205b-5569-4276-97ca-edbe22cad18a",
+          "id": "66a146e9-a140-49b9-9c19-0d9a4a6f43b6",
           "name": "James Xu",
           "type": "CEO",
           "occurrences": [
@@ -372,7 +372,7 @@
           ]
         },
         {
-          "id": "baf3612a-d1a9-4929-8e14-b821060d1bfc",
+          "id": "88575b54-635c-4ab3-98ab-6de8ae3d7137",
           "name": "Marcus Webb",
           "type": "CEO",
           "occurrences": [
@@ -384,7 +384,7 @@
           ]
         },
         {
-          "id": "a954645e-f712-435d-a9bc-d5e57ebffaa8",
+          "id": "e9d6e0d0-e37c-41f8-bb42-022a77a017cc",
           "name": "$500 million",
           "type": "partnership value",
           "occurrences": [
@@ -396,7 +396,7 @@
           ]
         },
         {
-          "id": "bd5b610c-63d8-45dd-991d-88fa0d8cec07",
+          "id": "247fca77-ca6a-4fea-8753-c57eaceea589",
           "name": "five years",
           "type": "partnership duration",
           "occurrences": [
@@ -408,7 +408,7 @@
           ]
         },
         {
-          "id": "1206395e-4dc4-4328-babd-10eaa663d20b",
+          "id": "422f668e-5780-4d96-8a7c-afa2688168e3",
           "name": "early 2027",
           "type": "product launch date",
           "occurrences": [
@@ -420,7 +420,7 @@
           ]
         },
         {
-          "id": "66b04680-9eba-4b91-9300-8269f10cd5b9",
+          "id": "f7a33b4e-e26d-48d3-87fd-9577fa86c3ed",
           "name": "cloud AI platform",
           "type": "software product",
           "occurrences": [
@@ -432,7 +432,7 @@
           ]
         },
         {
-          "id": "5889f64b-52ab-42ce-b0ff-4c7548cd564a",
+          "id": "6edadcac-6529-4ea0-b43b-26615920c4bc",
           "name": "autonomous robotics hardware",
           "type": "hardware product",
           "occurrences": [
@@ -444,7 +444,7 @@
           ]
         },
         {
-          "id": "60e8e020-e4d2-46c6-b5a4-68786d3d0329",
+          "id": "f0dbc4c5-c99c-4787-b187-3b0f298f2c37",
           "name": "AI-powered automation systems",
           "type": "product category",
           "occurrences": [
@@ -456,7 +456,7 @@
           ]
         },
         {
-          "id": "f46a8b55-8c30-4d74-8a24-bb0937346a14",
+          "id": "c51c20a2-ed35-4eba-9ad1-c8a4f7016d9c",
           "name": "industrial logistics",
           "type": "industry sector",
           "occurrences": [
@@ -468,7 +468,7 @@
           ]
         },
         {
-          "id": "c04b4542-07ee-434f-b2ef-610910563b8f",
+          "id": "62b43dd1-47d5-4fc5-89c9-37d7b7b45409",
           "name": "Morgan Stanley",
           "type": "financial services firm",
           "occurrences": [
@@ -480,7 +480,7 @@
           ]
         },
         {
-          "id": "d620f922-fd8c-4380-8c77-c2b625b97a56",
+          "id": "bc696fc5-ac2e-4b3c-8a56-cdb4773be21e",
           "name": "$2.3 billion",
           "type": "acquisition price",
           "occurrences": [
@@ -492,7 +492,7 @@
           ]
         },
         {
-          "id": "aabcf6de-2f27-4446-9ca7-53309c2fda5e",
+          "id": "1a7cda03-d778-4319-8055-90f02cbbe68d",
           "name": "$500 million",
           "type": "partnership value",
           "occurrences": [
@@ -504,7 +504,7 @@
           ]
         },
         {
-          "id": "4ca377ec-053b-4dc8-9caa-04630dc1edd3",
+          "id": "320ce551-8b13-4726-9b7a-d72cbef49a29",
           "name": "2026-02-15",
           "type": "date",
           "occurrences": [
@@ -516,7 +516,7 @@
           ]
         },
         {
-          "id": "c8fd5355-3ff1-44ee-9291-748ecac9fa9e",
+          "id": "6ab7c5cd-e1d7-4797-84cf-8d6bbdd6fa40",
           "name": "34% year-over-year revenue growth",
           "type": "financial metric",
           "occurrences": [
@@ -530,16 +530,16 @@
       ],
       "edges": [
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
           "cluster_id": 22,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "c50e4c0c-508a-406b-a5a6-1be4e3fcace4",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "192c6ce8-3738-4b45-b4e6-2741aca07b86",
           "cluster_id": 31,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb",
@@ -547,40 +547,40 @@
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
           "cluster_id": 10,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "07bc29b8-8e2b-4b8e-b404-c55c7b49ec0c",
-          "target": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "source": "3a084bf2-36bc-4290-ae2c-a9b3e6ab7d90",
+          "target": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "cluster_id": 2,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "07bc29b8-8e2b-4b8e-b404-c55c7b49ec0c",
-          "target": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
+          "source": "3a084bf2-36bc-4290-ae2c-a9b3e6ab7d90",
+          "target": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
           "cluster_id": 39,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "4b2435b3-395b-4e33-a21c-c5037352d5ec",
-          "target": "5ade6ea1-44e1-442e-a966-fdc710258234",
+          "source": "4c797afc-c2fa-4581-be2d-03da6a0ede0e",
+          "target": "41364146-acde-4027-9df8-d5baa2b30769",
           "cluster_id": 22,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "c0a21250-ff33-40bd-bf30-faae3a25b252",
-          "target": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
+          "source": "b2813751-bd76-475b-bbbb-7b70ef866aad",
+          "target": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
           "cluster_id": 13,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb",
@@ -588,48 +588,48 @@
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "0ffbeed9-988d-4380-84ac-b849690e1af9",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "534abce5-f75c-46eb-a516-d63f650658c4",
           "cluster_id": 13,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "69661e6d-efc8-49d3-94c9-8c37850800f3",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "6c9fa6d4-8b07-4a60-81f0-eec6d0d99edc",
           "cluster_id": 28,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "62115c00-11d2-43e9-ab98-6996393e67b5",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "aa5e441e-4725-4641-a152-bb33c9f0ff25",
           "cluster_id": 16,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "c34cbb52-e3d3-4120-9d74-fd1f7b57418c",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "2dc35f14-492b-4269-bd03-ac0389dec069",
           "cluster_id": 16,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "6e71f985-6aa7-46ea-ab35-5eed2ed8f6cd",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "ce164daa-7611-4a38-8a9c-6c2fbc992068",
           "cluster_id": 17,
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
           "cluster_id": 31,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
@@ -637,8 +637,8 @@
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "eaafa643-9722-420e-b9c5-1af72e0be822",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "b2845ff1-067e-4f04-82b3-c8e4001ec540",
           "cluster_id": 16,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
@@ -646,88 +646,88 @@
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "a872e6ed-f51f-4b53-8908-b15920d46961",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "3f13a6da-e885-4809-aabd-b6e852125d7a",
           "cluster_id": 31,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "a872e6ed-f51f-4b53-8908-b15920d46961",
-          "target": "59734469-1d28-4e0c-9de1-6ca98edfe951",
+          "source": "3f13a6da-e885-4809-aabd-b6e852125d7a",
+          "target": "72c6f19a-f9f4-4c32-b558-909bcced60f0",
           "cluster_id": 31,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "a872e6ed-f51f-4b53-8908-b15920d46961",
-          "target": "7717e13c-67a6-42c0-a3e5-1c7b7c8e0528",
+          "source": "3f13a6da-e885-4809-aabd-b6e852125d7a",
+          "target": "2856773b-a618-4bb0-a808-5134cc5838f9",
           "cluster_id": 31,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "0fbb9cb8-9447-4e04-ba05-4a8b59a0cb91",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "c1246adc-56d1-48d3-a49c-1687179b1159",
           "cluster_id": 17,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "791eeaa2-04ce-4f62-be67-6943d45b48e5",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "6969c542-2b61-4bbf-b16a-03c38ff21a1c",
           "cluster_id": 22,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "c0a21250-ff33-40bd-bf30-faae3a25b252",
-          "target": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "source": "b2813751-bd76-475b-bbbb-7b70ef866aad",
+          "target": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "cluster_id": 22,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "c0a21250-ff33-40bd-bf30-faae3a25b252",
-          "target": "62382c1c-2c12-4b9e-ae88-61fe24d1f46c",
+          "source": "b2813751-bd76-475b-bbbb-7b70ef866aad",
+          "target": "c7c8129a-67a7-4bb8-81d4-b99132da05ed",
           "cluster_id": 15,
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "bd8adfbf-e498-4e90-abb4-50479e372e13",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
           "cluster_id": 26,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "60e8e020-e4d2-46c6-b5a4-68786d3d0329",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "f0dbc4c5-c99c-4787-b187-3b0f298f2c37",
           "cluster_id": 32,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "bd8adfbf-e498-4e90-abb4-50479e372e13",
-          "target": "60e8e020-e4d2-46c6-b5a4-68786d3d0329",
+          "source": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
+          "target": "f0dbc4c5-c99c-4787-b187-3b0f298f2c37",
           "cluster_id": 32,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "bd8adfbf-e498-4e90-abb4-50479e372e13",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
           "cluster_id": 25,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a",
@@ -735,8 +735,8 @@
           ]
         },
         {
-          "source": "012d205b-5569-4276-97ca-edbe22cad18a",
-          "target": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "source": "66a146e9-a140-49b9-9c19-0d9a4a6f43b6",
+          "target": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "cluster_id": 2,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a",
@@ -744,56 +744,56 @@
           ]
         },
         {
-          "source": "baf3612a-d1a9-4929-8e14-b821060d1bfc",
-          "target": "bd8adfbf-e498-4e90-abb4-50479e372e13",
+          "source": "88575b54-635c-4ab3-98ab-6de8ae3d7137",
+          "target": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
           "cluster_id": 2,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "d16f9d62-2824-42e6-ada1-78db1232853d",
-          "target": "66b04680-9eba-4b91-9300-8269f10cd5b9",
+          "source": "31ede793-5333-42ed-9def-2d9feb8762cc",
+          "target": "f7a33b4e-e26d-48d3-87fd-9577fa86c3ed",
           "cluster_id": 25,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "bd8adfbf-e498-4e90-abb4-50479e372e13",
-          "target": "5889f64b-52ab-42ce-b0ff-4c7548cd564a",
+          "source": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
+          "target": "6edadcac-6529-4ea0-b43b-26615920c4bc",
           "cluster_id": 25,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "60e8e020-e4d2-46c6-b5a4-68786d3d0329",
-          "target": "f46a8b55-8c30-4d74-8a24-bb0937346a14",
+          "source": "f0dbc4c5-c99c-4787-b187-3b0f298f2c37",
+          "target": "c51c20a2-ed35-4eba-9ad1-c8a4f7016d9c",
           "cluster_id": 18,
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "c04b4542-07ee-434f-b2ef-610910563b8f",
-          "target": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "source": "62b43dd1-47d5-4fc5-89c9-37d7b7b45409",
+          "target": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "cluster_id": 36,
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
         },
         {
-          "source": "fc5f90e2-313d-4cba-9dd7-ffc66a297e8c",
-          "target": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "source": "0f8cb9b5-0b9a-4b5f-8800-7d9fa4101972",
+          "target": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "cluster_id": 31,
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
         },
         {
-          "source": "bd8adfbf-e498-4e90-abb4-50479e372e13",
-          "target": "d16f9d62-2824-42e6-ada1-78db1232853d",
+          "source": "c4baff62-8f2f-4708-8446-ff1c6e31e49e",
+          "target": "31ede793-5333-42ed-9def-2d9feb8762cc",
           "cluster_id": 25,
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
@@ -807,7 +807,7 @@
         {
           "id": "2c5e3a87-80aa-44ba-bc09-73059dbeba92",
           "name": "Lightwave Analytics",
-          "type": "data analytics firm",
+          "type": "analytics firm",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -819,7 +819,7 @@
         {
           "id": "a307fb1d-7719-44be-8071-c802afb2df52",
           "name": "Meridian Technologies",
-          "type": "tech giant",
+          "type": "tech company",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -855,7 +855,7 @@
         {
           "id": "f412102f-7493-4a2c-ad29-bd57a652cae3",
           "name": "Dr. P. Sharma",
-          "type": "CEO and co-founder",
+          "type": "CEO",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -867,7 +867,7 @@
         {
           "id": "15913de5-a244-434c-a09f-7268d1decbd8",
           "name": "Databricks",
-          "type": "analytics company",
+          "type": "analytics firm",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -879,7 +879,7 @@
         {
           "id": "20449f92-1762-4528-89d3-bd20886cb34d",
           "name": "Snowflake",
-          "type": "analytics company",
+          "type": "analytics firm",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -961,10 +961,10 @@
       ]
     },
     {
-      "id": "b3a1bf18-6fe1-41c9-8060-291e5ac4ad17",
+      "id": "d485b11b-6935-4eb9-8a55-39ec45989459",
       "entities": [
         {
-          "id": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
+          "id": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
           "name": "Sarah Chen",
           "type": "CEO",
           "occurrences": [
@@ -991,7 +991,7 @@
           ]
         },
         {
-          "id": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "id": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "name": "Nextera Energy Solutions",
           "type": "energy company",
           "occurrences": [
@@ -1018,9 +1018,9 @@
           ]
         },
         {
-          "id": "189afb1a-cda2-4e2a-9cec-fade9bcaa7f9",
+          "id": "de61a741-7e86-4bb5-91c5-4c21d297eb19",
           "name": "David Park",
-          "type": "former CEO",
+          "type": "CEO",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
@@ -1030,7 +1030,7 @@
           ]
         },
         {
-          "id": "2be6e84b-767a-4260-b6ce-03b84f9d1272",
+          "id": "880e932e-fc72-4723-966b-8bb44e063d22",
           "name": "Helios Power Group",
           "type": "energy company",
           "occurrences": [
@@ -1052,7 +1052,7 @@
           ]
         },
         {
-          "id": "10e1cddc-b082-431b-92b4-65cf84c6a30d",
+          "id": "247df152-a6f8-4f9b-9b8c-cecc5bb1f558",
           "name": "Robert Tanaka",
           "type": "board chair",
           "occurrences": [
@@ -1074,7 +1074,7 @@
           ]
         },
         {
-          "id": "d91d57a6-ef23-4ed9-878d-9d0212de3690",
+          "id": "6ec2d61e-7dd7-4428-8373-db2f6b6f8122",
           "name": "March 1",
           "type": "effective date",
           "occurrences": [
@@ -1086,9 +1086,9 @@
           ]
         },
         {
-          "id": "2cdf22d2-323d-414a-bc05-76a35a314122",
+          "id": "3e7358ab-5624-45f8-a2ff-65463ca032f3",
           "name": "renewable energy sector",
-          "type": "industry",
+          "type": "industry sector",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
@@ -1098,7 +1098,7 @@
           ]
         },
         {
-          "id": "09c49841-ccbe-4a55-8edf-2aff0ff760e4",
+          "id": "2df10d25-a1c7-40cc-9c6c-0b70dc3328b7",
           "name": "battery storage and grid modernization",
           "type": "strategic focus",
           "occurrences": [
@@ -1110,7 +1110,7 @@
           ]
         },
         {
-          "id": "8ba884f7-4689-426e-89b2-35a138df192f",
+          "id": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
           "name": "David Park",
           "type": "outgoing CEO",
           "occurrences": [
@@ -1132,7 +1132,7 @@
           ]
         },
         {
-          "id": "5c44137d-3947-4e92-9875-c756bbc35b23",
+          "id": "e0dfbda1-1d7b-4a0c-9cc4-8204c44bb9e2",
           "name": "Helios Power Group",
           "type": "energy company",
           "occurrences": [
@@ -1144,7 +1144,7 @@
           ]
         },
         {
-          "id": "5591b1b4-fc0b-4193-a320-f7c28611f64f",
+          "id": "caaf0c74-9a0b-467b-b6d5-94407f20b81d",
           "name": "$5 billion",
           "type": "investment amount",
           "occurrences": [
@@ -1156,9 +1156,9 @@
           ]
         },
         {
-          "id": "d3c564ab-2d78-43a6-9c7a-701fb8166cb0",
+          "id": "7615fc62-71c3-4cee-9d9d-a25ee57985f8",
           "name": "battery storage technology",
-          "type": "technology sector",
+          "type": "industry sector",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
@@ -1168,7 +1168,7 @@
           ]
         },
         {
-          "id": "3fb9f5f3-ffb4-4e63-a3b0-3dab7b4d53b0",
+          "id": "d3ed5e4e-66e6-4fc8-8faf-b4a007134684",
           "name": "March 1",
           "type": "date",
           "occurrences": [
@@ -1180,7 +1180,7 @@
           ]
         },
         {
-          "id": "1fafee9b-8220-4c4e-b1b6-427ba059f0d7",
+          "id": "9bf3753b-140d-4d78-9a4f-e54aa43ecc69",
           "name": "2019",
           "type": "year",
           "occurrences": [
@@ -1192,9 +1192,9 @@
           ]
         },
         {
-          "id": "233717fd-b8c6-45f4-ae5e-4ee191eebb5d",
+          "id": "0b32fb5d-a26b-40b1-a921-9a7d577f4d78",
           "name": "utility-scale solar",
-          "type": "technology sector",
+          "type": "industry sector",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
@@ -1204,7 +1204,7 @@
           ]
         },
         {
-          "id": "bb729381-5408-47c1-865f-fd65198b619a",
+          "id": "77a46169-1830-489e-a431-2eeb1263ddfe",
           "name": "Nextera Energy Solutions",
           "type": "former company name",
           "occurrences": [
@@ -1216,7 +1216,7 @@
           ]
         },
         {
-          "id": "b77ec27e-bcf6-471e-847d-1e2cf8075420",
+          "id": "961ded71-33e7-4fb8-9db9-67b9aae5f104",
           "name": "$2.1 billion",
           "type": "revenue figure",
           "occurrences": [
@@ -1228,7 +1228,7 @@
           ]
         },
         {
-          "id": "510a108c-1a68-4b70-829b-05882534370b",
+          "id": "e626668f-2249-41ad-9c37-93535f177e90",
           "name": "$8.7 billion",
           "type": "revenue figure",
           "occurrences": [
@@ -1240,7 +1240,7 @@
           ]
         },
         {
-          "id": "54a50449-1125-406a-8123-440e4cc42f79",
+          "id": "06f1e095-debc-4c8d-a2f2-e5f93e4671fa",
           "name": "seven years",
           "type": "tenure duration",
           "occurrences": [
@@ -1252,7 +1252,7 @@
           ]
         },
         {
-          "id": "98591af0-f072-4206-bcac-b54458e5d03e",
+          "id": "54630e07-1aaa-44d7-a470-74368d140ee7",
           "name": "14 new markets",
           "type": "market expansion",
           "occurrences": [
@@ -1264,7 +1264,7 @@
           ]
         },
         {
-          "id": "dd00141b-dba4-4114-91c4-9c129ab254b1",
+          "id": "f8681f39-6304-4408-b1f8-725cc33e4f7f",
           "name": "March 1",
           "type": "start date",
           "occurrences": [
@@ -1276,9 +1276,9 @@
           ]
         },
         {
-          "id": "1ce6978d-53f1-4e3f-b279-450d3d85a564",
+          "id": "04b6a04f-6d6f-4a8c-8da5-212606aeb66c",
           "name": "grid-scale energy storage",
-          "type": "business focus",
+          "type": "strategic focus",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1288,7 +1288,7 @@
           ]
         },
         {
-          "id": "39f717b7-2f52-4341-91d3-695c566ce50c",
+          "id": "6d2edd93-19b3-49de-86c5-7aa3be6796d7",
           "name": "$5 billion grid-scale battery storage program",
           "type": "corporate initiative",
           "occurrences": [
@@ -1300,7 +1300,7 @@
           ]
         },
         {
-          "id": "8ab0f95f-1b60-4e65-8425-27ebd1fe81a3",
+          "id": "356aed77-272e-4c62-b41e-eed1c25ed43f",
           "name": "Nevada",
           "type": "state",
           "occurrences": [
@@ -1312,7 +1312,7 @@
           ]
         },
         {
-          "id": "88c8eafc-c84b-4bfe-9a95-c7fb71f848ac",
+          "id": "04e1a93e-ba45-4303-bca5-3d5275832b3e",
           "name": "Nextera shares",
           "type": "stock",
           "occurrences": [
@@ -1326,24 +1326,24 @@
       ],
       "edges": [
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 3,
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "d91d57a6-ef23-4ed9-878d-9d0212de3690",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "6ec2d61e-7dd7-4428-8373-db2f6b6f8122",
           "cluster_id": 37,
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "2be6e84b-767a-4260-b6ce-03b84f9d1272",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "880e932e-fc72-4723-966b-8bb44e063d22",
           "cluster_id": 3,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1352,32 +1352,32 @@
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "2cdf22d2-323d-414a-bc05-76a35a314122",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "3e7358ab-5624-45f8-a2ff-65463ca032f3",
           "cluster_id": 8,
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "189afb1a-cda2-4e2a-9cec-fade9bcaa7f9",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "de61a741-7e86-4bb5-91c5-4c21d297eb19",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 3,
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "189afb1a-cda2-4e2a-9cec-fade9bcaa7f9",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "de61a741-7e86-4bb5-91c5-4c21d297eb19",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 1,
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "10e1cddc-b082-431b-92b4-65cf84c6a30d",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "247df152-a6f8-4f9b-9b8c-cecc5bb1f558",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 0,
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70",
@@ -1385,16 +1385,16 @@
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "09c49841-ccbe-4a55-8edf-2aff0ff760e4",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "2df10d25-a1c7-40cc-9c6c-0b70dc3328b7",
           "cluster_id": 24,
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 2,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1403,8 +1403,8 @@
           ]
         },
         {
-          "source": "8ba884f7-4689-426e-89b2-35a138df192f",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 7,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1412,56 +1412,56 @@
           ]
         },
         {
-          "source": "8ba884f7-4689-426e-89b2-35a138df192f",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 4,
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "5c44137d-3947-4e92-9875-c756bbc35b23",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "e0dfbda1-1d7b-4a0c-9cc4-8204c44bb9e2",
           "cluster_id": 6,
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "233717fd-b8c6-45f4-ae5e-4ee191eebb5d",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "0b32fb5d-a26b-40b1-a921-9a7d577f4d78",
           "cluster_id": 29,
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "8ba884f7-4689-426e-89b2-35a138df192f",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 5,
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "5591b1b4-fc0b-4193-a320-f7c28611f64f",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "caaf0c74-9a0b-467b-b6d5-94407f20b81d",
           "cluster_id": 27,
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "d3c564ab-2d78-43a6-9c7a-701fb8166cb0",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "7615fc62-71c3-4cee-9d9d-a25ee57985f8",
           "cluster_id": 27,
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "8ba884f7-4689-426e-89b2-35a138df192f",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 2,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1469,48 +1469,48 @@
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "bb729381-5408-47c1-865f-fd65198b619a",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "77a46169-1830-489e-a431-2eeb1263ddfe",
           "cluster_id": 13,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "b77ec27e-bcf6-471e-847d-1e2cf8075420",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "961ded71-33e7-4fb8-9db9-67b9aae5f104",
           "cluster_id": 30,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "510a108c-1a68-4b70-829b-05882534370b",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "e626668f-2249-41ad-9c37-93535f177e90",
           "cluster_id": 30,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
-          "target": "98591af0-f072-4206-bcac-b54458e5d03e",
+          "source": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
+          "target": "54630e07-1aaa-44d7-a470-74368d140ee7",
           "cluster_id": 29,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "10e1cddc-b082-431b-92b4-65cf84c6a30d",
-          "target": "8ba884f7-4689-426e-89b2-35a138df192f",
+          "source": "247df152-a6f8-4f9b-9b8c-cecc5bb1f558",
+          "target": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
           "cluster_id": 35,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "10e1cddc-b082-431b-92b4-65cf84c6a30d",
-          "target": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
+          "source": "247df152-a6f8-4f9b-9b8c-cecc5bb1f558",
+          "target": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
           "cluster_id": 12,
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1518,32 +1518,32 @@
           ]
         },
         {
-          "source": "fb337e90-3f43-4e27-b908-65b1a9c6fa13",
-          "target": "2be6e84b-767a-4260-b6ce-03b84f9d1272",
+          "source": "6eac3006-b2d0-4224-9e36-395fad4d2eff",
+          "target": "880e932e-fc72-4723-966b-8bb44e063d22",
           "cluster_id": 23,
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "8ba884f7-4689-426e-89b2-35a138df192f",
-          "target": "39f717b7-2f52-4341-91d3-695c566ce50c",
+          "source": "eedff15f-78b8-40d1-ae5c-61aea671c9af",
+          "target": "6d2edd93-19b3-49de-86c5-7aa3be6796d7",
           "cluster_id": 19,
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "39f717b7-2f52-4341-91d3-695c566ce50c",
-          "target": "3447528b-1b66-4e49-b285-3bb82e4c6e53",
+          "source": "6d2edd93-19b3-49de-86c5-7aa3be6796d7",
+          "target": "a67afb25-ff96-47d6-84f3-f5ff2f7473d1",
           "cluster_id": 20,
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "39f717b7-2f52-4341-91d3-695c566ce50c",
-          "target": "8ab0f95f-1b60-4e65-8425-27ebd1fe81a3",
+          "source": "6d2edd93-19b3-49de-86c5-7aa3be6796d7",
+          "target": "356aed77-272e-4c62-b41e-eed1c25ed43f",
           "cluster_id": 21,
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"

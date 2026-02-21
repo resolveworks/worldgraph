@@ -319,7 +319,7 @@
         {
           "id": "6ff31a28-ad2e-47b1-95ae-cd8353d8d636",
           "name": "Lightwave Analytics",
-          "type": "data startup",
+          "type": "data analytics startup",
           "occurrences": [
             {
               "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
@@ -546,7 +546,7 @@
         {
           "id": "2c5e3a87-80aa-44ba-bc09-73059dbeba92",
           "name": "Lightwave Analytics",
-          "type": "data analytics firm",
+          "type": "analytics firm",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -558,7 +558,7 @@
         {
           "id": "a307fb1d-7719-44be-8071-c802afb2df52",
           "name": "Meridian Technologies",
-          "type": "tech giant",
+          "type": "tech company",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -594,7 +594,7 @@
         {
           "id": "f412102f-7493-4a2c-ad29-bd57a652cae3",
           "name": "Dr. P. Sharma",
-          "type": "CEO and co-founder",
+          "type": "CEO",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -606,7 +606,7 @@
         {
           "id": "15913de5-a244-434c-a09f-7268d1decbd8",
           "name": "Databricks",
-          "type": "analytics company",
+          "type": "analytics firm",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -618,7 +618,7 @@
         {
           "id": "20449f92-1762-4528-89d3-bd20886cb34d",
           "name": "Snowflake",
-          "type": "analytics company",
+          "type": "analytics firm",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
@@ -729,7 +729,7 @@
         {
           "id": "63fa8f16-4cef-4588-81ff-f2fb24f1345f",
           "name": "David Park",
-          "type": "former CEO",
+          "type": "CEO",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
@@ -777,7 +777,7 @@
         {
           "id": "cc1c6cd4-1a7f-409a-af6b-7b2d695ff2c0",
           "name": "renewable energy sector",
-          "type": "industry",
+          "type": "industry sector",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
@@ -872,7 +872,7 @@
         {
           "id": "030ba747-9379-408d-b602-c6e71e135f62",
           "name": "Nextera Energy Solutions",
-          "type": "clean energy company",
+          "type": "energy company",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
@@ -932,7 +932,7 @@
         {
           "id": "cd4c3baf-82ed-45a6-ac26-8a64fd9a74cf",
           "name": "battery storage technology",
-          "type": "technology sector",
+          "type": "industry sector",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
@@ -968,7 +968,7 @@
         {
           "id": "835fffd9-928d-4f6b-9f4e-8c24fb923635",
           "name": "utility-scale solar",
-          "type": "technology sector",
+          "type": "industry sector",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
@@ -1071,7 +1071,7 @@
         {
           "id": "5c13d0cd-36db-4721-8cc0-18e2d82a2f27",
           "name": "NES",
-          "type": "renewable energy company",
+          "type": "energy company",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1119,7 +1119,7 @@
         {
           "id": "62cb6696-7998-4091-b8cb-dedd49423cb0",
           "name": "R. Tanaka",
-          "type": "Board chair",
+          "type": "board chair",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
@@ -1191,7 +1191,7 @@
         {
           "id": "8ab89f49-59a7-460b-8c05-2dccc7ac1cd2",
           "name": "grid-scale energy storage",
-          "type": "business focus",
+          "type": "strategic focus",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
