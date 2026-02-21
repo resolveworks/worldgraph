@@ -4,199 +4,128 @@
       "id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
       "entities": [
         {
-          "id": "9ff716b8-66be-41a3-bc88-9be69682131e",
+          "id": "a98df6d6-603d-4dc4-bda1-2b3ad0e6cde9",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "9ff716b8-66be-41a3-bc88-9be69682131e",
+              "entity_id": "a98df6d6-603d-4dc4-bda1-2b3ad0e6cde9",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "ea781960-58e2-42ac-8139-7822ef16e6c2",
+          "id": "1867d68e-90b4-4597-9fdf-2a018357f09d",
           "name": "Lightwave Analytics",
-          "type": "data analytics startup",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "ea781960-58e2-42ac-8139-7822ef16e6c2",
+              "entity_id": "1867d68e-90b4-4597-9fdf-2a018357f09d",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "230fe75f-4910-4fd2-9d91-ff79547aeea1",
-          "name": "$2.3 billion",
-          "type": "acquisition price",
-          "occurrences": [
-            {
-              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "230fe75f-4910-4fd2-9d91-ff79547aeea1",
-              "name": "$2.3 billion"
-            }
-          ]
-        },
-        {
-          "id": "fd5c59dd-1c84-441d-a0db-51f5866f8d38",
-          "name": "third quarter",
-          "type": "expected closing date",
-          "occurrences": [
-            {
-              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "fd5c59dd-1c84-441d-a0db-51f5866f8d38",
-              "name": "third quarter"
-            }
-          ]
-        },
-        {
-          "id": "7abd78cc-5787-4a95-a814-0fc7c3b04176",
+          "id": "6954e076-92ef-43c1-a99a-8d0cb107770c",
           "name": "James Xu",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "7abd78cc-5787-4a95-a814-0fc7c3b04176",
+              "entity_id": "6954e076-92ef-43c1-a99a-8d0cb107770c",
               "name": "James Xu"
             }
           ]
         },
         {
-          "id": "c3b27e36-c3f0-44f2-ae69-90a8e054dae9",
+          "id": "dd3389e5-78a3-498b-827a-ffcb51669973",
           "name": "Dr. Priya Sharma",
-          "type": "founder",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "c3b27e36-c3f0-44f2-ae69-90a8e054dae9",
+              "entity_id": "dd3389e5-78a3-498b-827a-ffcb51669973",
               "name": "Dr. Priya Sharma"
             }
           ]
         },
         {
-          "id": "6bfbaaa6-ece5-4684-9ac2-b34fa6d63610",
-          "name": "2019",
-          "type": "founding year",
-          "occurrences": [
-            {
-              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "6bfbaaa6-ece5-4684-9ac2-b34fa6d63610",
-              "name": "2019"
-            }
-          ]
-        },
-        {
-          "id": "a8e1fa08-48a1-4a5a-9277-18bfa723fccc",
-          "name": "$400 million",
-          "type": "venture funding amount",
-          "occurrences": [
-            {
-              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "a8e1fa08-48a1-4a5a-9277-18bfa723fccc",
-              "name": "$400 million"
-            }
-          ]
-        },
-        {
-          "id": "4ffbb382-d0e1-41c0-a17d-41b6154be485",
+          "id": "6bc2f5a6-5167-4146-b70e-99886703bda0",
           "name": "San Francisco",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "4ffbb382-d0e1-41c0-a17d-41b6154be485",
+              "entity_id": "6bc2f5a6-5167-4146-b70e-99886703bda0",
               "name": "San Francisco"
             }
           ]
         },
         {
-          "id": "d6faa35c-8572-4053-ae95-12072c32946b",
+          "id": "e1c219d2-4fbb-4568-bc13-3be09557f3dd",
           "name": "Austin",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "d6faa35c-8572-4053-ae95-12072c32946b",
+              "entity_id": "e1c219d2-4fbb-4568-bc13-3be09557f3dd",
               "name": "Austin"
             }
           ]
         },
         {
-          "id": "1eb245b6-c59c-42da-8c5a-37b0f571c027",
-          "name": "800",
-          "type": "employee count",
+          "id": "8aa61842-8bdf-401e-abb7-f1f770046460",
+          "name": "Meridian's cloud infrastructure division",
           "occurrences": [
             {
               "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
-              "entity_id": "1eb245b6-c59c-42da-8c5a-37b0f571c027",
-              "name": "800"
+              "entity_id": "8aa61842-8bdf-401e-abb7-f1f770046460",
+              "name": "Meridian's cloud infrastructure division"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "9ff716b8-66be-41a3-bc88-9be69682131e",
-          "target": "ea781960-58e2-42ac-8139-7822ef16e6c2",
-          "relation": "will acquire",
-          "articles": [
-            "05326419-cbf0-4fd7-8014-9b82233bdfeb"
-          ]
-        },
-        {
-          "source": "9ff716b8-66be-41a3-bc88-9be69682131e",
-          "target": "230fe75f-4910-4fd2-9d91-ff79547aeea1",
+          "source": "a98df6d6-603d-4dc4-bda1-2b3ad0e6cde9",
+          "target": "1867d68e-90b4-4597-9fdf-2a018357f09d",
           "relation": "acquired by",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "7abd78cc-5787-4a95-a814-0fc7c3b04176",
-          "target": "9ff716b8-66be-41a3-bc88-9be69682131e",
+          "source": "6954e076-92ef-43c1-a99a-8d0cb107770c",
+          "target": "a98df6d6-603d-4dc4-bda1-2b3ad0e6cde9",
           "relation": "CEO of",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "c3b27e36-c3f0-44f2-ae69-90a8e054dae9",
-          "target": "ea781960-58e2-42ac-8139-7822ef16e6c2",
+          "source": "dd3389e5-78a3-498b-827a-ffcb51669973",
+          "target": "1867d68e-90b4-4597-9fdf-2a018357f09d",
           "relation": "is founder of",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "ea781960-58e2-42ac-8139-7822ef16e6c2",
-          "target": "a8e1fa08-48a1-4a5a-9277-18bfa723fccc",
-          "relation": "raised",
+          "source": "1867d68e-90b4-4597-9fdf-2a018357f09d",
+          "target": "6bc2f5a6-5167-4146-b70e-99886703bda0",
+          "relation": "is located in",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "ea781960-58e2-42ac-8139-7822ef16e6c2",
-          "target": "4ffbb382-d0e1-41c0-a17d-41b6154be485",
-          "relation": "has offices in",
+          "source": "1867d68e-90b4-4597-9fdf-2a018357f09d",
+          "target": "e1c219d2-4fbb-4568-bc13-3be09557f3dd",
+          "relation": "is located in",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
         },
         {
-          "source": "ea781960-58e2-42ac-8139-7822ef16e6c2",
-          "target": "d6faa35c-8572-4053-ae95-12072c32946b",
-          "relation": "has offices in",
-          "articles": [
-            "05326419-cbf0-4fd7-8014-9b82233bdfeb"
-          ]
-        },
-        {
-          "source": "ea781960-58e2-42ac-8139-7822ef16e6c2",
-          "target": "1eb245b6-c59c-42da-8c5a-37b0f571c027",
-          "relation": "employs",
+          "source": "1867d68e-90b4-4597-9fdf-2a018357f09d",
+          "target": "8aa61842-8bdf-401e-abb7-f1f770046460",
+          "relation": "platform will be integrated into",
           "articles": [
             "05326419-cbf0-4fd7-8014-9b82233bdfeb"
           ]
@@ -207,195 +136,90 @@
       "id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
       "entities": [
         {
-          "id": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
+          "id": "db685d00-560d-48df-813e-e055f98e885d",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
+              "entity_id": "db685d00-560d-48df-813e-e055f98e885d",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "6fd38ee3-2248-4c1a-907e-12429eb83873",
+          "id": "124762bd-dae5-4355-a499-e6edbfd6964a",
           "name": "Lightwave Analytics",
-          "type": "data analytics startup",
           "occurrences": [
             {
               "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "6fd38ee3-2248-4c1a-907e-12429eb83873",
+              "entity_id": "124762bd-dae5-4355-a499-e6edbfd6964a",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "7b501e2a-b25e-45e0-9eb1-b81cfbec71d5",
-          "name": "$2.3 billion",
-          "type": "acquisition price",
-          "occurrences": [
-            {
-              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "7b501e2a-b25e-45e0-9eb1-b81cfbec71d5",
-              "name": "$2.3 billion"
-            }
-          ]
-        },
-        {
-          "id": "ccfc0cac-2e58-4745-b347-3a92a9bbd37c",
-          "name": "Palo Alto",
-          "type": "city",
-          "occurrences": [
-            {
-              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "ccfc0cac-2e58-4745-b347-3a92a9bbd37c",
-              "name": "Palo Alto"
-            }
-          ]
-        },
-        {
-          "id": "a9caea82-e5e2-4696-ba36-b472fba452bc",
+          "id": "7ed89425-8a8f-4c06-8467-0f40fc2cd408",
           "name": "CloudScale",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "a9caea82-e5e2-4696-ba36-b472fba452bc",
+              "entity_id": "7ed89425-8a8f-4c06-8467-0f40fc2cd408",
               "name": "CloudScale"
             }
           ]
         },
         {
-          "id": "95574bcc-e807-445e-8026-43c8d0c1c1d4",
-          "name": "$900 million",
-          "type": "acquisition price",
-          "occurrences": [
-            {
-              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "95574bcc-e807-445e-8026-43c8d0c1c1d4",
-              "name": "$900 million"
-            }
-          ]
-        },
-        {
-          "id": "64c90362-679d-43e7-b133-9eab16c0956f",
-          "name": "2023",
-          "type": "date",
-          "occurrences": [
-            {
-              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "64c90362-679d-43e7-b133-9eab16c0956f",
-              "name": "2023"
-            }
-          ]
-        },
-        {
-          "id": "5befb792-4447-4cec-9b9d-c3eac83146a2",
+          "id": "fb22952e-0ff4-481a-b205-403b33883334",
           "name": "Priya Sharma",
-          "type": "founder",
           "occurrences": [
             {
               "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "5befb792-4447-4cec-9b9d-c3eac83146a2",
+              "entity_id": "fb22952e-0ff4-481a-b205-403b33883334",
               "name": "Priya Sharma"
             }
           ]
         },
         {
-          "id": "ee39de9d-bd15-4c6b-b2cf-da076b4d6081",
+          "id": "aea12b86-3432-4f01-ab5b-b69ce60d566b",
           "name": "Meridian's cloud services unit",
-          "type": "business unit",
           "occurrences": [
             {
               "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "ee39de9d-bd15-4c6b-b2cf-da076b4d6081",
+              "entity_id": "aea12b86-3432-4f01-ab5b-b69ce60d566b",
               "name": "Meridian's cloud services unit"
-            }
-          ]
-        },
-        {
-          "id": "710e5b4d-f67f-4340-bdaa-1a08bbf8b68d",
-          "name": "2026-02-10",
-          "type": "date",
-          "occurrences": [
-            {
-              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
-              "entity_id": "710e5b4d-f67f-4340-bdaa-1a08bbf8b68d",
-              "name": "2026-02-10"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
-          "target": "6fd38ee3-2248-4c1a-907e-12429eb83873",
-          "relation": "agrees to purchase",
-          "articles": [
-            "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
-          ]
-        },
-        {
-          "source": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
-          "target": "7b501e2a-b25e-45e0-9eb1-b81cfbec71d5",
+          "source": "db685d00-560d-48df-813e-e055f98e885d",
+          "target": "124762bd-dae5-4355-a499-e6edbfd6964a",
           "relation": "acquired by",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
-          "target": "ccfc0cac-2e58-4745-b347-3a92a9bbd37c",
-          "relation": "is based in",
-          "articles": [
-            "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
-          ]
-        },
-        {
-          "source": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
-          "target": "a9caea82-e5e2-4696-ba36-b472fba452bc",
+          "source": "db685d00-560d-48df-813e-e055f98e885d",
+          "target": "7ed89425-8a8f-4c06-8467-0f40fc2cd408",
           "relation": "acquired by",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
-          "target": "95574bcc-e807-445e-8026-43c8d0c1c1d4",
-          "relation": "acquired by",
+          "source": "124762bd-dae5-4355-a499-e6edbfd6964a",
+          "target": "aea12b86-3432-4f01-ab5b-b69ce60d566b",
+          "relation": "will combine",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
         },
         {
-          "source": "a9caea82-e5e2-4696-ba36-b472fba452bc",
-          "target": "64c90362-679d-43e7-b133-9eab16c0956f",
-          "relation": "acquired by",
-          "articles": [
-            "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
-          ]
-        },
-        {
-          "source": "6fd38ee3-2248-4c1a-907e-12429eb83873",
-          "target": "ee39de9d-bd15-4c6b-b2cf-da076b4d6081",
-          "relation": "becomes part of",
-          "articles": [
-            "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
-          ]
-        },
-        {
-          "source": "5befb792-4447-4cec-9b9d-c3eac83146a2",
-          "target": "6fd38ee3-2248-4c1a-907e-12429eb83873",
-          "relation": "is founder of",
-          "articles": [
-            "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
-          ]
-        },
-        {
-          "source": "5befb792-4447-4cec-9b9d-c3eac83146a2",
-          "target": "1a8e97f7-6a57-4ce4-b8f8-e3cb8f57b206",
-          "relation": "joins as Senior Vice President of Analytics",
+          "source": "fb22952e-0ff4-481a-b205-403b33883334",
+          "target": "db685d00-560d-48df-813e-e055f98e885d",
+          "relation": "will join as Senior Vice President of Analytics",
           "articles": [
             "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
           ]
@@ -406,155 +230,90 @@
       "id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
       "entities": [
         {
-          "id": "c8902559-dee9-4ab5-8021-c64ebd9a6fbe",
+          "id": "ccc6cc17-d28b-4386-8b9b-9384c03ddc23",
           "name": "Lightwave Analytics",
-          "type": "analytics company",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "c8902559-dee9-4ab5-8021-c64ebd9a6fbe",
+              "entity_id": "ccc6cc17-d28b-4386-8b9b-9384c03ddc23",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "9cbf5be0-079d-4d58-bc05-929eb028d0c0",
+          "id": "e3755af8-bb3e-4d26-ad5c-1579aaf22284",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "9cbf5be0-079d-4d58-bc05-929eb028d0c0",
+              "entity_id": "e3755af8-bb3e-4d26-ad5c-1579aaf22284",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "c2415ba0-3839-4c2c-9bd3-7ffa89fccd9c",
+          "id": "dac849a6-b281-43c2-8073-669cb35dd6d8",
           "name": "Dr. P. Sharma",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "c2415ba0-3839-4c2c-9bd3-7ffa89fccd9c",
+              "entity_id": "dac849a6-b281-43c2-8073-669cb35dd6d8",
               "name": "Dr. P. Sharma"
             }
           ]
         },
         {
-          "id": "88f2edc2-ce5e-44f2-8fb4-00f4170ddd04",
-          "name": "$2.3 billion",
-          "type": "acquisition price",
-          "occurrences": [
-            {
-              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "88f2edc2-ce5e-44f2-8fb4-00f4170ddd04",
-              "name": "$2.3 billion"
-            }
-          ]
-        },
-        {
-          "id": "215171ec-f0ef-464b-9a72-e1e785068567",
-          "name": "$1.4 billion",
-          "type": "previous valuation",
-          "occurrences": [
-            {
-              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "215171ec-f0ef-464b-9a72-e1e785068567",
-              "name": "$1.4 billion"
-            }
-          ]
-        },
-        {
-          "id": "2d2d9e0d-6887-42f5-9857-9e1c0e9f183e",
+          "id": "cd81fafc-4ee4-4227-8539-ac54c7e0fde5",
           "name": "Databricks",
-          "type": "analytics company",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "2d2d9e0d-6887-42f5-9857-9e1c0e9f183e",
+              "entity_id": "cd81fafc-4ee4-4227-8539-ac54c7e0fde5",
               "name": "Databricks"
             }
           ]
         },
         {
-          "id": "f34db967-8340-494b-91f5-c35a948c58f9",
+          "id": "74dcac24-4d71-4c5f-91d1-cc8cf085d2a4",
           "name": "Snowflake",
-          "type": "analytics company",
           "occurrences": [
             {
               "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "f34db967-8340-494b-91f5-c35a948c58f9",
+              "entity_id": "74dcac24-4d71-4c5f-91d1-cc8cf085d2a4",
               "name": "Snowflake"
-            }
-          ]
-        },
-        {
-          "id": "933adc1f-f6b3-46d2-a054-9774346ffdc6",
-          "name": "Q3 2026",
-          "type": "expected completion date",
-          "occurrences": [
-            {
-              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
-              "entity_id": "933adc1f-f6b3-46d2-a054-9774346ffdc6",
-              "name": "Q3 2026"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "9cbf5be0-079d-4d58-bc05-929eb028d0c0",
-          "target": "c8902559-dee9-4ab5-8021-c64ebd9a6fbe",
+          "source": "e3755af8-bb3e-4d26-ad5c-1579aaf22284",
+          "target": "ccc6cc17-d28b-4386-8b9b-9384c03ddc23",
           "relation": "acquired by",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
         },
         {
-          "source": "c8902559-dee9-4ab5-8021-c64ebd9a6fbe",
-          "target": "88f2edc2-ce5e-44f2-8fb4-00f4170ddd04",
-          "relation": "previously valued at",
-          "articles": [
-            "afda7932-54e8-4a98-be6d-8d2f8944448f"
-          ]
-        },
-        {
-          "source": "c8902559-dee9-4ab5-8021-c64ebd9a6fbe",
-          "target": "215171ec-f0ef-464b-9a72-e1e785068567",
-          "relation": "previously valued at",
-          "articles": [
-            "afda7932-54e8-4a98-be6d-8d2f8944448f"
-          ]
-        },
-        {
-          "source": "c2415ba0-3839-4c2c-9bd3-7ffa89fccd9c",
-          "target": "c8902559-dee9-4ab5-8021-c64ebd9a6fbe",
+          "source": "ccc6cc17-d28b-4386-8b9b-9384c03ddc23",
+          "target": "dac849a6-b281-43c2-8073-669cb35dd6d8",
           "relation": "CEO of",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
         },
         {
-          "source": "9cbf5be0-079d-4d58-bc05-929eb028d0c0",
-          "target": "2d2d9e0d-6887-42f5-9857-9e1c0e9f183e",
-          "relation": "is based in",
+          "source": "e3755af8-bb3e-4d26-ad5c-1579aaf22284",
+          "target": "cd81fafc-4ee4-4227-8539-ac54c7e0fde5",
+          "relation": "competes with",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
         },
         {
-          "source": "9cbf5be0-079d-4d58-bc05-929eb028d0c0",
-          "target": "f34db967-8340-494b-91f5-c35a948c58f9",
-          "relation": "is based in",
-          "articles": [
-            "afda7932-54e8-4a98-be6d-8d2f8944448f"
-          ]
-        },
-        {
-          "source": "9cbf5be0-079d-4d58-bc05-929eb028d0c0",
-          "target": "933adc1f-f6b3-46d2-a054-9774346ffdc6",
-          "relation": "expected to finalize by",
+          "source": "e3755af8-bb3e-4d26-ad5c-1579aaf22284",
+          "target": "74dcac24-4d71-4c5f-91d1-cc8cf085d2a4",
+          "relation": "competes with",
           "articles": [
             "afda7932-54e8-4a98-be6d-8d2f8944448f"
           ]
@@ -565,183 +324,98 @@
       "id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
       "entities": [
         {
-          "id": "5e0ac035-06a8-4cb9-b286-f12b958ed8e5",
+          "id": "77139f0c-c125-49ec-bb22-17038abc3b62",
           "name": "Sarah Chen",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "5e0ac035-06a8-4cb9-b286-f12b958ed8e5",
+              "entity_id": "77139f0c-c125-49ec-bb22-17038abc3b62",
               "name": "Sarah Chen"
             }
           ]
         },
         {
-          "id": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
+          "id": "b0f9e4ab-25dc-42f8-9e6f-70113b1b072f",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
+              "entity_id": "b0f9e4ab-25dc-42f8-9e6f-70113b1b072f",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "0927d102-24c1-4800-9f63-bc245a51ab74",
+          "id": "4b6dbc23-e530-465f-861d-47156fcff88a",
           "name": "David Park",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "0927d102-24c1-4800-9f63-bc245a51ab74",
+              "entity_id": "4b6dbc23-e530-465f-861d-47156fcff88a",
               "name": "David Park"
             }
           ]
         },
         {
-          "id": "3d1a4dab-ac80-4b7b-87af-44fcdf9175b5",
+          "id": "ceb27fa0-dd09-4dfb-8f84-60a13193e31e",
           "name": "Helios Power Group",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "3d1a4dab-ac80-4b7b-87af-44fcdf9175b5",
+              "entity_id": "ceb27fa0-dd09-4dfb-8f84-60a13193e31e",
               "name": "Helios Power Group"
             }
           ]
         },
         {
-          "id": "7234826a-6d38-4a6c-89b4-2fa8f4f2b39c",
+          "id": "b2dfcdf2-9695-45b9-8a6c-06c92edf5898",
           "name": "Robert Tanaka",
-          "type": "board chair",
           "occurrences": [
             {
               "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "7234826a-6d38-4a6c-89b4-2fa8f4f2b39c",
+              "entity_id": "b2dfcdf2-9695-45b9-8a6c-06c92edf5898",
               "name": "Robert Tanaka"
-            }
-          ]
-        },
-        {
-          "id": "bc289e42-5108-4163-8361-fd921fdb1320",
-          "name": "March 1",
-          "type": "date",
-          "occurrences": [
-            {
-              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "bc289e42-5108-4163-8361-fd921fdb1320",
-              "name": "March 1"
-            }
-          ]
-        },
-        {
-          "id": "4c3e67b0-c7b8-4287-911c-d10c1d2c1f03",
-          "name": "renewable energy sector",
-          "type": "market sector",
-          "occurrences": [
-            {
-              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "4c3e67b0-c7b8-4287-911c-d10c1d2c1f03",
-              "name": "renewable energy sector"
-            }
-          ]
-        },
-        {
-          "id": "4266bc49-98d3-4b0e-b21d-384b55720ffc",
-          "name": "next-generation battery storage",
-          "type": "technology focus",
-          "occurrences": [
-            {
-              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "4266bc49-98d3-4b0e-b21d-384b55720ffc",
-              "name": "next-generation battery storage"
-            }
-          ]
-        },
-        {
-          "id": "f26df108-c6c7-40ec-99e4-6c70e5026515",
-          "name": "grid modernization",
-          "type": "technology focus",
-          "occurrences": [
-            {
-              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
-              "entity_id": "f26df108-c6c7-40ec-99e4-6c70e5026515",
-              "name": "grid modernization"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "5e0ac035-06a8-4cb9-b286-f12b958ed8e5",
-          "target": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
-          "relation": "currently chief operating officer of",
+          "source": "77139f0c-c125-49ec-bb22-17038abc3b62",
+          "target": "b0f9e4ab-25dc-42f8-9e6f-70113b1b072f",
+          "relation": "currently serves as chief operating officer of",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "5e0ac035-06a8-4cb9-b286-f12b958ed8e5",
-          "target": "bc289e42-5108-4163-8361-fd921fdb1320",
-          "relation": "effective date",
+          "source": "4b6dbc23-e530-465f-861d-47156fcff88a",
+          "target": "b0f9e4ab-25dc-42f8-9e6f-70113b1b072f",
+          "relation": "currently serves as chief operating officer of",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "5e0ac035-06a8-4cb9-b286-f12b958ed8e5",
-          "target": "3d1a4dab-ac80-4b7b-87af-44fcdf9175b5",
-          "relation": "currently chief operating officer of",
+          "source": "77139f0c-c125-49ec-bb22-17038abc3b62",
+          "target": "ceb27fa0-dd09-4dfb-8f84-60a13193e31e",
+          "relation": "currently serves as chief operating officer of",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "0927d102-24c1-4800-9f63-bc245a51ab74",
-          "target": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
-          "relation": "stepping down after seven years as CEO",
+          "source": "b2dfcdf2-9695-45b9-8a6c-06c92edf5898",
+          "target": "b0f9e4ab-25dc-42f8-9e6f-70113b1b072f",
+          "relation": "Chair of",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
         },
         {
-          "source": "0927d102-24c1-4800-9f63-bc245a51ab74",
-          "target": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
-          "relation": "remains on board in advisory capacity",
-          "articles": [
-            "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
-          ]
-        },
-        {
-          "source": "7234826a-6d38-4a6c-89b4-2fa8f4f2b39c",
-          "target": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
-          "relation": "is chair of",
-          "articles": [
-            "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
-          ]
-        },
-        {
-          "source": "5e0ac035-06a8-4cb9-b286-f12b958ed8e5",
-          "target": "4c3e67b0-c7b8-4287-911c-d10c1d2c1f03",
-          "relation": "has experience in",
-          "articles": [
-            "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
-          ]
-        },
-        {
-          "source": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
-          "target": "4266bc49-98d3-4b0e-b21d-384b55720ffc",
-          "relation": "enters strategic alliance with",
-          "articles": [
-            "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
-          ]
-        },
-        {
-          "source": "66ccf3ad-0fb0-49b7-b3bb-7fe34848650a",
-          "target": "f26df108-c6c7-40ec-99e4-6c70e5026515",
-          "relation": "enters strategic alliance with",
+          "source": "4b6dbc23-e530-465f-861d-47156fcff88a",
+          "target": "b0f9e4ab-25dc-42f8-9e6f-70113b1b072f",
+          "relation": "added to board of",
           "articles": [
             "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
           ]
@@ -752,159 +426,87 @@
       "id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
       "entities": [
         {
-          "id": "cd3cb430-bdda-4922-86b0-a37af06f566b",
+          "id": "698846f1-3996-46fd-9e07-f506cd379bef",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "cd3cb430-bdda-4922-86b0-a37af06f566b",
+              "entity_id": "698846f1-3996-46fd-9e07-f506cd379bef",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "9132ec93-9435-49e2-b0c8-ecad05283a5a",
+          "id": "378f709e-e3b4-4db3-aee6-096a7bc1e62a",
           "name": "Sarah Chen",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "9132ec93-9435-49e2-b0c8-ecad05283a5a",
+              "entity_id": "378f709e-e3b4-4db3-aee6-096a7bc1e62a",
               "name": "Sarah Chen"
             }
           ]
         },
         {
-          "id": "36409826-2cac-43ed-8a73-3bdf80998c6f",
+          "id": "6032e600-cebc-4c17-a34c-97846e6a9e8d",
           "name": "David Park",
-          "type": "outgoing CEO",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "36409826-2cac-43ed-8a73-3bdf80998c6f",
+              "entity_id": "6032e600-cebc-4c17-a34c-97846e6a9e8d",
               "name": "David Park"
             }
           ]
         },
         {
-          "id": "8016c476-0a55-40d8-847a-1ac49f5723a4",
+          "id": "e4d6c752-299f-49d1-b778-a1d00b0d7819",
           "name": "Helios Power Group",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "8016c476-0a55-40d8-847a-1ac49f5723a4",
+              "entity_id": "e4d6c752-299f-49d1-b778-a1d00b0d7819",
               "name": "Helios Power Group"
-            }
-          ]
-        },
-        {
-          "id": "1ea09226-2ed0-4f11-b8a6-6ff7e9d1ee2f",
-          "name": "March 1",
-          "type": "date",
-          "occurrences": [
-            {
-              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "1ea09226-2ed0-4f11-b8a6-6ff7e9d1ee2f",
-              "name": "March 1"
-            }
-          ]
-        },
-        {
-          "id": "94aef583-d341-4845-bb77-b05d467a71a2",
-          "name": "$5 billion",
-          "type": "investment amount",
-          "occurrences": [
-            {
-              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "94aef583-d341-4845-bb77-b05d467a71a2",
-              "name": "$5 billion"
-            }
-          ]
-        },
-        {
-          "id": "ce3219f6-e76e-41d6-b300-443bbe9a02c3",
-          "name": "battery storage technology",
-          "type": "technology focus",
-          "occurrences": [
-            {
-              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
-              "entity_id": "ce3219f6-e76e-41d6-b300-443bbe9a02c3",
-              "name": "battery storage technology"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "9132ec93-9435-49e2-b0c8-ecad05283a5a",
-          "target": "cd3cb430-bdda-4922-86b0-a37af06f566b",
+          "source": "378f709e-e3b4-4db3-aee6-096a7bc1e62a",
+          "target": "698846f1-3996-46fd-9e07-f506cd379bef",
           "relation": "CEO of",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "36409826-2cac-43ed-8a73-3bdf80998c6f",
-          "target": "cd3cb430-bdda-4922-86b0-a37af06f566b",
-          "relation": "CEO of",
+          "source": "6032e600-cebc-4c17-a34c-97846e6a9e8d",
+          "target": "698846f1-3996-46fd-9e07-f506cd379bef",
+          "relation": "led since",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "36409826-2cac-43ed-8a73-3bdf80998c6f",
-          "target": "cd3cb430-bdda-4922-86b0-a37af06f566b",
-          "relation": "announced resignation from",
-          "articles": [
-            "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
-          ]
-        },
-        {
-          "source": "9132ec93-9435-49e2-b0c8-ecad05283a5a",
-          "target": "8016c476-0a55-40d8-847a-1ac49f5723a4",
+          "source": "378f709e-e3b4-4db3-aee6-096a7bc1e62a",
+          "target": "e4d6c752-299f-49d1-b778-a1d00b0d7819",
           "relation": "held position of COO at",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "9132ec93-9435-49e2-b0c8-ecad05283a5a",
-          "target": "8016c476-0a55-40d8-847a-1ac49f5723a4",
+          "source": "378f709e-e3b4-4db3-aee6-096a7bc1e62a",
+          "target": "e4d6c752-299f-49d1-b778-a1d00b0d7819",
           "relation": "oversaw expansion into utility-scale solar at",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
         },
         {
-          "source": "36409826-2cac-43ed-8a73-3bdf80998c6f",
-          "target": "cd3cb430-bdda-4922-86b0-a37af06f566b",
+          "source": "6032e600-cebc-4c17-a34c-97846e6a9e8d",
+          "target": "698846f1-3996-46fd-9e07-f506cd379bef",
           "relation": "will stay on as board adviser to",
-          "articles": [
-            "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
-          ]
-        },
-        {
-          "source": "9132ec93-9435-49e2-b0c8-ecad05283a5a",
-          "target": "cd3cb430-bdda-4922-86b0-a37af06f566b",
-          "relation": "expected to start role on",
-          "articles": [
-            "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
-          ]
-        },
-        {
-          "source": "cd3cb430-bdda-4922-86b0-a37af06f566b",
-          "target": "94aef583-d341-4845-bb77-b05d467a71a2",
-          "relation": "made investment of",
-          "articles": [
-            "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
-          ]
-        },
-        {
-          "source": "cd3cb430-bdda-4922-86b0-a37af06f566b",
-          "target": "ce3219f6-e76e-41d6-b300-443bbe9a02c3",
-          "relation": "made investment of",
           "articles": [
             "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
           ]
@@ -915,227 +517,133 @@
       "id": "766c3545-affc-4872-9918-edaa7929e5de",
       "entities": [
         {
-          "id": "88202a9a-3750-482b-a8ba-54b243e4f1f7",
+          "id": "9cbdea4c-7668-433a-b944-33e873b0eb72",
           "name": "David Park",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "88202a9a-3750-482b-a8ba-54b243e4f1f7",
+              "entity_id": "9cbdea4c-7668-433a-b944-33e873b0eb72",
               "name": "David Park"
             }
           ]
         },
         {
-          "id": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
+          "id": "58b15078-41bb-4a9e-880b-b568f0d5858a",
           "name": "NES",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
+              "entity_id": "58b15078-41bb-4a9e-880b-b568f0d5858a",
               "name": "NES"
             }
           ]
         },
         {
-          "id": "57ccb2f9-a5e3-42b2-a967-fdcd584fc7a0",
+          "id": "b0438949-42c0-42b2-b42f-c52fe73dece1",
           "name": "Nextera Energy Solutions",
-          "type": "former company name",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "57ccb2f9-a5e3-42b2-a967-fdcd584fc7a0",
+              "entity_id": "b0438949-42c0-42b2-b42f-c52fe73dece1",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "452cb590-29a6-4f3d-ade0-81d233baa0e9",
+          "id": "f68a0beb-7103-48a9-9129-1db356522d4f",
           "name": "Sarah Chen",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "452cb590-29a6-4f3d-ade0-81d233baa0e9",
+              "entity_id": "f68a0beb-7103-48a9-9129-1db356522d4f",
               "name": "Sarah Chen"
             }
           ]
         },
         {
-          "id": "f7278016-53b1-41dc-af33-105d6b715e36",
+          "id": "e95c1612-17e5-45c4-9bb3-ad00314df2be",
           "name": "Helios Power",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "f7278016-53b1-41dc-af33-105d6b715e36",
+              "entity_id": "e95c1612-17e5-45c4-9bb3-ad00314df2be",
               "name": "Helios Power"
             }
           ]
         },
         {
-          "id": "c356b209-f2f3-471a-a0e4-0d6b2721b092",
+          "id": "4d200de8-00b6-425f-b8be-661510970820",
           "name": "R. Tanaka",
-          "type": "board chair",
           "occurrences": [
             {
               "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "c356b209-f2f3-471a-a0e4-0d6b2721b092",
+              "entity_id": "4d200de8-00b6-425f-b8be-661510970820",
               "name": "R. Tanaka"
-            }
-          ]
-        },
-        {
-          "id": "c96c778a-0a88-445f-8c10-977c4cdf29f9",
-          "name": "$2.1 billion",
-          "type": "revenue figure",
-          "occurrences": [
-            {
-              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "c96c778a-0a88-445f-8c10-977c4cdf29f9",
-              "name": "$2.1 billion"
-            }
-          ]
-        },
-        {
-          "id": "cc51a9dc-5f9e-4bbc-8fee-96fb35605ea0",
-          "name": "$8.7 billion",
-          "type": "revenue figure",
-          "occurrences": [
-            {
-              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "cc51a9dc-5f9e-4bbc-8fee-96fb35605ea0",
-              "name": "$8.7 billion"
-            }
-          ]
-        },
-        {
-          "id": "d401b17e-c09b-44f3-bc41-78bcf2b8d897",
-          "name": "seven years",
-          "type": "tenure duration",
-          "occurrences": [
-            {
-              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "d401b17e-c09b-44f3-bc41-78bcf2b8d897",
-              "name": "seven years"
-            }
-          ]
-        },
-        {
-          "id": "665906a5-d491-4761-9b0c-c5db2dcf96bb",
-          "name": "14 new markets",
-          "type": "expansion metric",
-          "occurrences": [
-            {
-              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "665906a5-d491-4761-9b0c-c5db2dcf96bb",
-              "name": "14 new markets"
-            }
-          ]
-        },
-        {
-          "id": "1565b567-f7b2-40e8-9f7c-8e469747e39c",
-          "name": "March 1",
-          "type": "start date",
-          "occurrences": [
-            {
-              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "1565b567-f7b2-40e8-9f7c-8e469747e39c",
-              "name": "March 1"
-            }
-          ]
-        },
-        {
-          "id": "eaaa9196-bc44-4343-8cbf-81340cf61979",
-          "name": "grid-scale energy storage",
-          "type": "technology focus",
-          "occurrences": [
-            {
-              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
-              "entity_id": "eaaa9196-bc44-4343-8cbf-81340cf61979",
-              "name": "grid-scale energy storage"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "88202a9a-3750-482b-a8ba-54b243e4f1f7",
-          "target": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
+          "source": "9cbdea4c-7668-433a-b944-33e873b0eb72",
+          "target": "58b15078-41bb-4a9e-880b-b568f0d5858a",
           "relation": "CEO of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
-          "target": "57ccb2f9-a5e3-42b2-a967-fdcd584fc7a0",
-          "relation": "formally known as",
-          "articles": [
-            "766c3545-affc-4872-9918-edaa7929e5de"
-          ]
-        },
-        {
-          "source": "452cb590-29a6-4f3d-ade0-81d233baa0e9",
-          "target": "f7278016-53b1-41dc-af33-105d6b715e36",
-          "relation": "currently chief operating officer of",
-          "articles": [
-            "766c3545-affc-4872-9918-edaa7929e5de"
-          ]
-        },
-        {
-          "source": "452cb590-29a6-4f3d-ade0-81d233baa0e9",
-          "target": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
-          "relation": "will become executive at",
-          "articles": [
-            "766c3545-affc-4872-9918-edaa7929e5de"
-          ]
-        },
-        {
-          "source": "88202a9a-3750-482b-a8ba-54b243e4f1f7",
-          "target": "d401b17e-c09b-44f3-bc41-78bcf2b8d897",
+          "source": "f68a0beb-7103-48a9-9129-1db356522d4f",
+          "target": "58b15078-41bb-4a9e-880b-b568f0d5858a",
           "relation": "CEO of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "88202a9a-3750-482b-a8ba-54b243e4f1f7",
-          "target": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
-          "relation": "scaled to revenue of",
+          "source": "f68a0beb-7103-48a9-9129-1db356522d4f",
+          "target": "e95c1612-17e5-45c4-9bb3-ad00314df2be",
+          "relation": "currently serves as chief operating officer of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
-          "target": "665906a5-d491-4761-9b0c-c5db2dcf96bb",
-          "relation": "expanded into",
+          "source": "58b15078-41bb-4a9e-880b-b568f0d5858a",
+          "target": "b0438949-42c0-42b2-b42f-c52fe73dece1",
+          "relation": "also known as",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "c356b209-f2f3-471a-a0e4-0d6b2721b092",
-          "target": "88202a9a-3750-482b-a8ba-54b243e4f1f7",
+          "source": "9cbdea4c-7668-433a-b944-33e873b0eb72",
+          "target": "58b15078-41bb-4a9e-880b-b568f0d5858a",
+          "relation": "led since",
+          "articles": [
+            "766c3545-affc-4872-9918-edaa7929e5de"
+          ]
+        },
+        {
+          "source": "4d200de8-00b6-425f-b8be-661510970820",
+          "target": "58b15078-41bb-4a9e-880b-b568f0d5858a",
+          "relation": "Chair of",
+          "articles": [
+            "766c3545-affc-4872-9918-edaa7929e5de"
+          ]
+        },
+        {
+          "source": "4d200de8-00b6-425f-b8be-661510970820",
+          "target": "9cbdea4c-7668-433a-b944-33e873b0eb72",
           "relation": "praised contributions of",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
         },
         {
-          "source": "c356b209-f2f3-471a-a0e4-0d6b2721b092",
-          "target": "452cb590-29a6-4f3d-ade0-81d233baa0e9",
+          "source": "4d200de8-00b6-425f-b8be-661510970820",
+          "target": "f68a0beb-7103-48a9-9129-1db356522d4f",
           "relation": "expressed confidence in",
-          "articles": [
-            "766c3545-affc-4872-9918-edaa7929e5de"
-          ]
-        },
-        {
-          "source": "ea21d853-cdd0-4534-9f8c-720f8c30221c",
-          "target": "eaaa9196-bc44-4343-8cbf-81340cf61979",
-          "relation": "focuses on growth in",
           "articles": [
             "766c3545-affc-4872-9918-edaa7929e5de"
           ]
@@ -1146,171 +654,136 @@
       "id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
       "entities": [
         {
-          "id": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
+          "id": "02c20422-f7c4-461c-9265-e11dd35cb7e9",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
+              "entity_id": "02c20422-f7c4-461c-9265-e11dd35cb7e9",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "4d3215fe-a016-4fc1-943b-99855aa54902",
+          "id": "a3ab6619-0375-4bf1-99fc-d499983c583f",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "4d3215fe-a016-4fc1-943b-99855aa54902",
+              "entity_id": "a3ab6619-0375-4bf1-99fc-d499983c583f",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "5f86db4b-f213-45f8-8922-f9ed32bff281",
+          "id": "f2c0180b-56a2-4fdd-b41d-261e62dee19c",
           "name": "James Xu",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "5f86db4b-f213-45f8-8922-f9ed32bff281",
+              "entity_id": "f2c0180b-56a2-4fdd-b41d-261e62dee19c",
               "name": "James Xu"
             }
           ]
         },
         {
-          "id": "92f367ed-a397-410d-8e54-4ea6d09777f4",
+          "id": "9ed927b3-7f98-4890-b94b-eb3784ae7648",
           "name": "Marcus Webb",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "92f367ed-a397-410d-8e54-4ea6d09777f4",
+              "entity_id": "9ed927b3-7f98-4890-b94b-eb3784ae7648",
               "name": "Marcus Webb"
             }
           ]
         },
         {
-          "id": "ff4bb502-c6c1-4fd6-abf1-d34e6911ba8b",
-          "name": "$500 million",
-          "type": "partnership value",
-          "occurrences": [
-            {
-              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "ff4bb502-c6c1-4fd6-abf1-d34e6911ba8b",
-              "name": "$500 million"
-            }
-          ]
-        },
-        {
-          "id": "98cf5647-4c7f-4094-aae8-1fccc5c95d59",
-          "name": "five years",
-          "type": "partnership duration",
-          "occurrences": [
-            {
-              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "98cf5647-4c7f-4094-aae8-1fccc5c95d59",
-              "name": "five years"
-            }
-          ]
-        },
-        {
-          "id": "cf330d19-49f7-4e4c-bb5c-1e080b119ab7",
-          "name": "early 2027",
-          "type": "market launch date",
-          "occurrences": [
-            {
-              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "cf330d19-49f7-4e4c-bb5c-1e080b119ab7",
-              "name": "early 2027"
-            }
-          ]
-        },
-        {
-          "id": "1db06520-33d4-4920-b7ac-e4888af98060",
+          "id": "dea05f79-f123-499b-88a5-fc03011f0812",
           "name": "AI-powered automation systems for industrial logistics",
-          "type": "product category",
           "occurrences": [
             {
               "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
-              "entity_id": "1db06520-33d4-4920-b7ac-e4888af98060",
+              "entity_id": "dea05f79-f123-499b-88a5-fc03011f0812",
               "name": "AI-powered automation systems for industrial logistics"
+            }
+          ]
+        },
+        {
+          "id": "348724aa-1efb-44ed-b1f2-07ff22cfa1b4",
+          "name": "cloud AI platform",
+          "occurrences": [
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "348724aa-1efb-44ed-b1f2-07ff22cfa1b4",
+              "name": "cloud AI platform"
+            }
+          ]
+        },
+        {
+          "id": "e362b080-3bc4-4874-9669-18532c9cd829",
+          "name": "autonomous robotics hardware",
+          "occurrences": [
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "e362b080-3bc4-4874-9669-18532c9cd829",
+              "name": "autonomous robotics hardware"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
-          "target": "4d3215fe-a016-4fc1-943b-99855aa54902",
-          "relation": "partnership with",
+          "source": "02c20422-f7c4-461c-9265-e11dd35cb7e9",
+          "target": "a3ab6619-0375-4bf1-99fc-d499983c583f",
+          "relation": "announced partnership with",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
-          "target": "1db06520-33d4-4920-b7ac-e4888af98060",
-          "relation": "will acquire",
+          "source": "02c20422-f7c4-461c-9265-e11dd35cb7e9",
+          "target": "dea05f79-f123-499b-88a5-fc03011f0812",
+          "relation": "jointly develop",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "4d3215fe-a016-4fc1-943b-99855aa54902",
-          "target": "1db06520-33d4-4920-b7ac-e4888af98060",
-          "relation": "will acquire",
+          "source": "a3ab6619-0375-4bf1-99fc-d499983c583f",
+          "target": "dea05f79-f123-499b-88a5-fc03011f0812",
+          "relation": "jointly develop",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
-          "target": "ff4bb502-c6c1-4fd6-abf1-d34e6911ba8b",
-          "relation": "partnership with",
+          "source": "02c20422-f7c4-461c-9265-e11dd35cb7e9",
+          "target": "348724aa-1efb-44ed-b1f2-07ff22cfa1b4",
+          "relation": "will combine",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
-          "target": "5f86db4b-f213-45f8-8922-f9ed32bff281",
+          "source": "a3ab6619-0375-4bf1-99fc-d499983c583f",
+          "target": "e362b080-3bc4-4874-9669-18532c9cd829",
+          "relation": "will combine",
+          "articles": [
+            "de309c6d-c824-478f-afeb-90b8b9cde06a"
+          ]
+        },
+        {
+          "source": "f2c0180b-56a2-4fdd-b41d-261e62dee19c",
+          "target": "02c20422-f7c4-461c-9265-e11dd35cb7e9",
           "relation": "CEO of",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
         },
         {
-          "source": "4d3215fe-a016-4fc1-943b-99855aa54902",
-          "target": "92f367ed-a397-410d-8e54-4ea6d09777f4",
+          "source": "9ed927b3-7f98-4890-b94b-eb3784ae7648",
+          "target": "a3ab6619-0375-4bf1-99fc-d499983c583f",
           "relation": "CEO of",
-          "articles": [
-            "de309c6d-c824-478f-afeb-90b8b9cde06a"
-          ]
-        },
-        {
-          "source": "5f86db4b-f213-45f8-8922-f9ed32bff281",
-          "target": "6f3c9f92-3c9d-4c9e-bf21-f30baa636c23",
-          "relation": "CEO of",
-          "articles": [
-            "de309c6d-c824-478f-afeb-90b8b9cde06a"
-          ]
-        },
-        {
-          "source": "92f367ed-a397-410d-8e54-4ea6d09777f4",
-          "target": "4d3215fe-a016-4fc1-943b-99855aa54902",
-          "relation": "CEO of",
-          "articles": [
-            "de309c6d-c824-478f-afeb-90b8b9cde06a"
-          ]
-        },
-        {
-          "source": "1db06520-33d4-4920-b7ac-e4888af98060",
-          "target": "cf330d19-49f7-4e4c-bb5c-1e080b119ab7",
-          "relation": "expected to reach market in",
           "articles": [
             "de309c6d-c824-478f-afeb-90b8b9cde06a"
           ]
@@ -1321,191 +794,117 @@
       "id": "e160a592-867e-4e0e-9689-8c4a61839c83",
       "entities": [
         {
-          "id": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
+          "id": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
+              "entity_id": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "27db63d5-f7d9-41e6-aefb-17dba4934023",
+          "id": "6ec64ec0-4707-4a46-8774-830825f58e62",
           "name": "Meridian Technologies",
-          "type": "AI infrastructure company",
           "occurrences": [
             {
               "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "27db63d5-f7d9-41e6-aefb-17dba4934023",
+              "entity_id": "6ec64ec0-4707-4a46-8774-830825f58e62",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "d555dae4-2fe3-4581-abc2-47837ebd8db7",
-          "name": "$500 million",
-          "type": "investment amount",
-          "occurrences": [
-            {
-              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "d555dae4-2fe3-4581-abc2-47837ebd8db7",
-              "name": "$500 million"
-            }
-          ]
-        },
-        {
-          "id": "6fd2d8f5-2fd5-484b-ad57-b62cb01e760b",
-          "name": "Pittsburgh",
-          "type": "city",
-          "occurrences": [
-            {
-              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "6fd2d8f5-2fd5-484b-ad57-b62cb01e760b",
-              "name": "Pittsburgh"
-            }
-          ]
-        },
-        {
-          "id": "65169ca4-0aa7-44c8-8ba2-9925f0ea132e",
+          "id": "f4424d70-5e17-46db-aa82-b32bd4161821",
           "name": "Marcus Webb",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "65169ca4-0aa7-44c8-8ba2-9925f0ea132e",
+              "entity_id": "f4424d70-5e17-46db-aa82-b32bd4161821",
               "name": "Marcus Webb"
             }
           ]
         },
         {
-          "id": "88098501-9e5c-4639-880d-c67dd4352431",
-          "name": "2017",
-          "type": "founding year",
-          "occurrences": [
-            {
-              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "88098501-9e5c-4639-880d-c67dd4352431",
-              "name": "2017"
-            }
-          ]
-        },
-        {
-          "id": "ff5230f7-7244-442d-a659-1dc2763fe364",
+          "id": "c16165d0-f659-4304-b4e7-7a7e370be628",
           "name": "Lightwave",
-          "type": "analytics company",
           "occurrences": [
             {
               "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "ff5230f7-7244-442d-a659-1dc2763fe364",
+              "entity_id": "c16165d0-f659-4304-b4e7-7a7e370be628",
               "name": "Lightwave"
             }
           ]
         },
         {
-          "id": "ddc6c214-d420-4e34-8080-42251e859b57",
-          "name": "Automation World Expo",
-          "type": "industry event",
+          "id": "b7992e02-49f0-42d6-8bd2-2c36844d3fae",
+          "name": "Pittsburgh",
           "occurrences": [
             {
               "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "ddc6c214-d420-4e34-8080-42251e859b57",
-              "name": "Automation World Expo"
+              "entity_id": "b7992e02-49f0-42d6-8bd2-2c36844d3fae",
+              "name": "Pittsburgh"
             }
           ]
         },
         {
-          "id": "140c9135-bd70-4dde-9b4c-098cd395cd9a",
-          "name": "November",
-          "type": "month",
+          "id": "800a831f-f25b-4399-a812-58e4ab4c5064",
+          "name": "Automation World Expo",
           "occurrences": [
             {
               "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
-              "entity_id": "140c9135-bd70-4dde-9b4c-098cd395cd9a",
-              "name": "November"
+              "entity_id": "800a831f-f25b-4399-a812-58e4ab4c5064",
+              "name": "Automation World Expo"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
-          "target": "27db63d5-f7d9-41e6-aefb-17dba4934023",
-          "relation": "enters strategic alliance with",
+          "source": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
+          "target": "6ec64ec0-4707-4a46-8774-830825f58e62",
+          "relation": "entered into strategic alliance with",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
         },
         {
-          "source": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
-          "target": "d555dae4-2fe3-4581-abc2-47837ebd8db7",
-          "relation": "made investment of",
+          "source": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
+          "target": "b7992e02-49f0-42d6-8bd2-2c36844d3fae",
+          "relation": "will establish joint research lab in",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
         },
         {
-          "source": "27db63d5-f7d9-41e6-aefb-17dba4934023",
-          "target": "d555dae4-2fe3-4581-abc2-47837ebd8db7",
-          "relation": "made investment of",
+          "source": "f4424d70-5e17-46db-aa82-b32bd4161821",
+          "target": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
+          "relation": "is founder of",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
         },
         {
-          "source": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
-          "target": "6fd2d8f5-2fd5-484b-ad57-b62cb01e760b",
-          "relation": "has joint research lab in",
-          "articles": [
-            "e160a592-867e-4e0e-9689-8c4a61839c83"
-          ]
-        },
-        {
-          "source": "27db63d5-f7d9-41e6-aefb-17dba4934023",
-          "target": "6fd2d8f5-2fd5-484b-ad57-b62cb01e760b",
-          "relation": "has joint research lab in",
-          "articles": [
-            "e160a592-867e-4e0e-9689-8c4a61839c83"
-          ]
-        },
-        {
-          "source": "65169ca4-0aa7-44c8-8ba2-9925f0ea132e",
-          "target": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
+          "source": "f4424d70-5e17-46db-aa82-b32bd4161821",
+          "target": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
           "relation": "CEO of",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
         },
         {
-          "source": "65169ca4-0aa7-44c8-8ba2-9925f0ea132e",
-          "target": "88098501-9e5c-4639-880d-c67dd4352431",
-          "relation": "founded company in year",
-          "articles": [
-            "e160a592-867e-4e0e-9689-8c4a61839c83"
-          ]
-        },
-        {
-          "source": "27db63d5-f7d9-41e6-aefb-17dba4934023",
-          "target": "ff5230f7-7244-442d-a659-1dc2763fe364",
+          "source": "6ec64ec0-4707-4a46-8774-830825f58e62",
+          "target": "c16165d0-f659-4304-b4e7-7a7e370be628",
           "relation": "acquired by",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
         },
         {
-          "source": "58b96530-934c-4f09-8ffa-481ce0be4d4a",
-          "target": "ddc6c214-d420-4e34-8080-42251e859b57",
-          "relation": "plans to unveil prototype system at",
-          "articles": [
-            "e160a592-867e-4e0e-9689-8c4a61839c83"
-          ]
-        },
-        {
-          "source": "27db63d5-f7d9-41e6-aefb-17dba4934023",
-          "target": "ddc6c214-d420-4e34-8080-42251e859b57",
-          "relation": "plans to unveil prototype system at",
+          "source": "d4e5b73f-4c1d-4dd0-b725-9922686f9185",
+          "target": "800a831f-f25b-4399-a812-58e4ab4c5064",
+          "relation": "plan to unveil prototype system at",
           "articles": [
             "e160a592-867e-4e0e-9689-8c4a61839c83"
           ]
@@ -1516,295 +915,120 @@
       "id": "f5a893f0-6851-418c-a368-382915967333",
       "entities": [
         {
-          "id": "11736dda-fb00-4656-a4e8-15e2054241f9",
+          "id": "10cd6592-110e-4fec-b6da-29013509c892",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "11736dda-fb00-4656-a4e8-15e2054241f9",
+              "entity_id": "10cd6592-110e-4fec-b6da-29013509c892",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "2b41ed39-5168-45c5-b400-b55dfcfb67bb",
+          "id": "a5b28434-f79e-4873-9c16-83285d0bd989",
           "name": "Lightwave Analytics",
-          "type": "AI startup",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "2b41ed39-5168-45c5-b400-b55dfcfb67bb",
+              "entity_id": "a5b28434-f79e-4873-9c16-83285d0bd989",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "9ef40c66-bf25-470c-9e49-ea839251e9b3",
+          "id": "f3893007-8e5a-4574-84ce-04164d04876b",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "9ef40c66-bf25-470c-9e49-ea839251e9b3",
+              "entity_id": "f3893007-8e5a-4574-84ce-04164d04876b",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "451309ba-9b05-4234-8ebb-fe52410b8f8c",
+          "id": "7ed9b18d-3eed-404d-91e7-3d84d54e1566",
           "name": "J. Xu",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "451309ba-9b05-4234-8ebb-fe52410b8f8c",
+              "entity_id": "7ed9b18d-3eed-404d-91e7-3d84d54e1566",
               "name": "J. Xu"
             }
           ]
         },
         {
-          "id": "e9163858-80a8-4c3d-8f22-e6c3b44888d6",
+          "id": "f1e82fbd-eb43-43e7-9987-3d14d26414e2",
           "name": "Morgan Stanley",
-          "type": "financial analyst firm",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "e9163858-80a8-4c3d-8f22-e6c3b44888d6",
+              "entity_id": "f1e82fbd-eb43-43e7-9987-3d14d26414e2",
               "name": "Morgan Stanley"
             }
           ]
         },
         {
-          "id": "36ce3556-9800-4e20-bf8f-687bbd3776d6",
+          "id": "bffa3dfc-a58e-4284-b157-201ea9b4ae2f",
           "name": "Palo Alto",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "36ce3556-9800-4e20-bf8f-687bbd3776d6",
+              "entity_id": "bffa3dfc-a58e-4284-b157-201ea9b4ae2f",
               "name": "Palo Alto"
             }
           ]
         },
         {
-          "id": "8bb14ed6-3849-4dd6-bd7b-a09b126def67",
-          "name": "$2.3 billion",
-          "type": "acquisition price",
+          "id": "96b803f8-d2ba-4813-b33a-8eb27c4099a9",
+          "name": "Silicon Valley Chronicle",
           "occurrences": [
             {
               "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "8bb14ed6-3849-4dd6-bd7b-a09b126def67",
-              "name": "$2.3 billion"
-            }
-          ]
-        },
-        {
-          "id": "8a759ac8-e15e-41cd-a393-091af5227690",
-          "name": "$500 million",
-          "type": "partnership value",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "8a759ac8-e15e-41cd-a393-091af5227690",
-              "name": "$500 million"
-            }
-          ]
-        },
-        {
-          "id": "f53c2e86-ff04-493e-9b58-433a27f9ce1a",
-          "name": "34%",
-          "type": "growth rate",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "f53c2e86-ff04-493e-9b58-433a27f9ce1a",
-              "name": "34%"
-            }
-          ]
-        },
-        {
-          "id": "0648101f-09fb-419e-8fe1-791bdefcfeab",
-          "name": "data processing",
-          "type": "AI capability",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "0648101f-09fb-419e-8fe1-791bdefcfeab",
-              "name": "data processing"
-            }
-          ]
-        },
-        {
-          "id": "d61526ed-241b-4279-a464-f845878663ac",
-          "name": "cloud infrastructure",
-          "type": "AI capability",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "d61526ed-241b-4279-a464-f845878663ac",
-              "name": "cloud infrastructure"
-            }
-          ]
-        },
-        {
-          "id": "8ff7ffe2-7a7c-47f0-9637-edeabf0ea95f",
-          "name": "physical automation",
-          "type": "AI capability",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "8ff7ffe2-7a7c-47f0-9637-edeabf0ea95f",
-              "name": "physical automation"
-            }
-          ]
-        },
-        {
-          "id": "4000beb8-6af1-492b-84cf-bda56ebc3bdf",
-          "name": "real-time analytics",
-          "type": "technology",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "4000beb8-6af1-492b-84cf-bda56ebc3bdf",
-              "name": "real-time analytics"
-            }
-          ]
-        },
-        {
-          "id": "e1cf8e58-20eb-41b1-8cf4-168c3185faaf",
-          "name": "autonomous logistics systems",
-          "type": "robotics system",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "e1cf8e58-20eb-41b1-8cf4-168c3185faaf",
-              "name": "autonomous logistics systems"
-            }
-          ]
-        },
-        {
-          "id": "eabfe382-d66b-4123-8709-35f12d4f25dd",
-          "name": "warehouse automation",
-          "type": "robotics system",
-          "occurrences": [
-            {
-              "article_id": "f5a893f0-6851-418c-a368-382915967333",
-              "entity_id": "eabfe382-d66b-4123-8709-35f12d4f25dd",
-              "name": "warehouse automation"
+              "entity_id": "96b803f8-d2ba-4813-b33a-8eb27c4099a9",
+              "name": "Silicon Valley Chronicle"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "2b41ed39-5168-45c5-b400-b55dfcfb67bb",
+          "source": "10cd6592-110e-4fec-b6da-29013509c892",
+          "target": "a5b28434-f79e-4873-9c16-83285d0bd989",
           "relation": "acquired by",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
         },
         {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "8bb14ed6-3849-4dd6-bd7b-a09b126def67",
-          "relation": "acquired by",
+          "source": "10cd6592-110e-4fec-b6da-29013509c892",
+          "target": "f3893007-8e5a-4574-84ce-04164d04876b",
+          "relation": "announced partnership with",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
         },
         {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "9ef40c66-bf25-470c-9e49-ea839251e9b3",
-          "relation": "partnership with",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "8a759ac8-e15e-41cd-a393-091af5227690",
-          "relation": "partnership with",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "451309ba-9b05-4234-8ebb-fe52410b8f8c",
-          "target": "11736dda-fb00-4656-a4e8-15e2054241f9",
+          "source": "7ed9b18d-3eed-404d-91e7-3d84d54e1566",
+          "target": "10cd6592-110e-4fec-b6da-29013509c892",
           "relation": "CEO of",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
         },
         {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "36ce3556-9800-4e20-bf8f-687bbd3776d6",
-          "relation": "is based in",
+          "source": "f1e82fbd-eb43-43e7-9987-3d14d26414e2",
+          "target": "10cd6592-110e-4fec-b6da-29013509c892",
+          "relation": "upgraded stock rating to overweight",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
         },
         {
-          "source": "e9163858-80a8-4c3d-8f22-e6c3b44888d6",
-          "target": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "relation": "upgraded stock to overweight",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "2b41ed39-5168-45c5-b400-b55dfcfb67bb",
-          "target": "4000beb8-6af1-492b-84cf-bda56ebc3bdf",
-          "relation": "provides",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "9ef40c66-bf25-470c-9e49-ea839251e9b3",
-          "target": "e1cf8e58-20eb-41b1-8cf4-168c3185faaf",
-          "relation": "is based in",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "9ef40c66-bf25-470c-9e49-ea839251e9b3",
-          "target": "eabfe382-d66b-4123-8709-35f12d4f25dd",
-          "relation": "specializes in",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "0648101f-09fb-419e-8fe1-791bdefcfeab",
-          "relation": "intends to offer",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "d61526ed-241b-4279-a464-f845878663ac",
-          "relation": "intends to offer",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "8ff7ffe2-7a7c-47f0-9637-edeabf0ea95f",
-          "relation": "intends to offer",
-          "articles": [
-            "f5a893f0-6851-418c-a368-382915967333"
-          ]
-        },
-        {
-          "source": "11736dda-fb00-4656-a4e8-15e2054241f9",
-          "target": "f53c2e86-ff04-493e-9b58-433a27f9ce1a",
-          "relation": "reported cloud revenue growth of",
+          "source": "10cd6592-110e-4fec-b6da-29013509c892",
+          "target": "bffa3dfc-a58e-4284-b157-201ea9b4ae2f",
+          "relation": "is located in",
           "articles": [
             "f5a893f0-6851-418c-a368-382915967333"
           ]
@@ -1815,171 +1039,155 @@
       "id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
       "entities": [
         {
-          "id": "7734de29-e621-482c-9c8d-a26dcdebe918",
+          "id": "b580f608-84cf-4eea-a6ce-8cbcf90183d8",
           "name": "Sarah Chen",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "7734de29-e621-482c-9c8d-a26dcdebe918",
+              "entity_id": "b580f608-84cf-4eea-a6ce-8cbcf90183d8",
               "name": "Sarah Chen"
             }
           ]
         },
         {
-          "id": "320f38ba-8f2b-4071-84d2-183c4ccec727",
+          "id": "ca0d3258-6f72-49c9-aff6-80cf60bc68d5",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "320f38ba-8f2b-4071-84d2-183c4ccec727",
+              "entity_id": "ca0d3258-6f72-49c9-aff6-80cf60bc68d5",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "0ad35d98-30d6-4e6f-a426-85c5abbfca1f",
+          "id": "2be9301d-512d-496b-8715-199d7036bf9b",
           "name": "$5 billion grid-scale battery storage program",
-          "type": "corporate initiative",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "0ad35d98-30d6-4e6f-a426-85c5abbfca1f",
+              "entity_id": "2be9301d-512d-496b-8715-199d7036bf9b",
               "name": "$5 billion grid-scale battery storage program"
             }
           ]
         },
         {
-          "id": "b2803a2c-0b04-41fb-9d0e-62253062c398",
+          "id": "7ed4821d-248a-4f74-9f0d-a7d2879bdd30",
           "name": "David Park",
-          "type": "outgoing CEO",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "b2803a2c-0b04-41fb-9d0e-62253062c398",
+              "entity_id": "7ed4821d-248a-4f74-9f0d-a7d2879bdd30",
               "name": "David Park"
             }
           ]
         },
         {
-          "id": "d33f1157-de41-4f12-8d55-7f86a6a6604a",
+          "id": "310c4986-3827-410b-9a7a-c0e6d2865385",
           "name": "Helios Power Group",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "d33f1157-de41-4f12-8d55-7f86a6a6604a",
+              "entity_id": "310c4986-3827-410b-9a7a-c0e6d2865385",
               "name": "Helios Power Group"
             }
           ]
         },
         {
-          "id": "36912170-170e-44f6-98b4-c3333cb7dfe2",
+          "id": "64338518-0499-4bcc-aa6e-ecec75b4fbcb",
           "name": "Robert Tanaka",
-          "type": "board chair",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "36912170-170e-44f6-98b4-c3333cb7dfe2",
+              "entity_id": "64338518-0499-4bcc-aa6e-ecec75b4fbcb",
               "name": "Robert Tanaka"
             }
           ]
         },
         {
-          "id": "994d5e17-cc1a-4b36-8f53-0ea6d19f729b",
+          "id": "4fb6dbef-1de7-4c2a-9289-2e41bf42d12e",
           "name": "Nevada",
-          "type": "state",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "994d5e17-cc1a-4b36-8f53-0ea6d19f729b",
+              "entity_id": "4fb6dbef-1de7-4c2a-9289-2e41bf42d12e",
               "name": "Nevada"
             }
           ]
         },
         {
-          "id": "583666ce-7a34-43f2-a31c-1343ddcb4a04",
-          "name": "three states",
-          "type": "geographic region",
+          "id": "192e6fae-fd9c-4c72-ac46-0fd031c7a59a",
+          "name": "Nextera shares",
           "occurrences": [
             {
               "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
-              "entity_id": "583666ce-7a34-43f2-a31c-1343ddcb4a04",
-              "name": "three states"
+              "entity_id": "192e6fae-fd9c-4c72-ac46-0fd031c7a59a",
+              "name": "Nextera shares"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "7734de29-e621-482c-9c8d-a26dcdebe918",
-          "target": "320f38ba-8f2b-4071-84d2-183c4ccec727",
+          "source": "b580f608-84cf-4eea-a6ce-8cbcf90183d8",
+          "target": "ca0d3258-6f72-49c9-aff6-80cf60bc68d5",
           "relation": "CEO of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "320f38ba-8f2b-4071-84d2-183c4ccec727",
-          "target": "0ad35d98-30d6-4e6f-a426-85c5abbfca1f",
-          "relation": "launched under",
+          "source": "ca0d3258-6f72-49c9-aff6-80cf60bc68d5",
+          "target": "2be9301d-512d-496b-8715-199d7036bf9b",
+          "relation": "launched",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "b2803a2c-0b04-41fb-9d0e-62253062c398",
-          "target": "0ad35d98-30d6-4e6f-a426-85c5abbfca1f",
-          "relation": "launched under",
+          "source": "7ed4821d-248a-4f74-9f0d-a7d2879bdd30",
+          "target": "2be9301d-512d-496b-8715-199d7036bf9b",
+          "relation": "launched",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "0ad35d98-30d6-4e6f-a426-85c5abbfca1f",
-          "target": "583666ce-7a34-43f2-a31c-1343ddcb4a04",
-          "relation": "encountered permitting delays in",
-          "articles": [
-            "86953832-4d00-4cdc-ad11-5a074fcf2f70"
-          ]
-        },
-        {
-          "source": "0ad35d98-30d6-4e6f-a426-85c5abbfca1f",
-          "target": "994d5e17-cc1a-4b36-8f53-0ea6d19f729b",
+          "source": "2be9301d-512d-496b-8715-199d7036bf9b",
+          "target": "4fb6dbef-1de7-4c2a-9289-2e41bf42d12e",
           "relation": "has flagship facility in",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "7734de29-e621-482c-9c8d-a26dcdebe918",
-          "target": "d33f1157-de41-4f12-8d55-7f86a6a6604a",
+          "source": "b580f608-84cf-4eea-a6ce-8cbcf90183d8",
+          "target": "310c4986-3827-410b-9a7a-c0e6d2865385",
           "relation": "joining from",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "7734de29-e621-482c-9c8d-a26dcdebe918",
-          "target": "d33f1157-de41-4f12-8d55-7f86a6a6604a",
-          "relation": "currently chief operating officer of",
+          "source": "b580f608-84cf-4eea-a6ce-8cbcf90183d8",
+          "target": "310c4986-3827-410b-9a7a-c0e6d2865385",
+          "relation": "currently serves as chief operating officer of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
         },
         {
-          "source": "36912170-170e-44f6-98b4-c3333cb7dfe2",
-          "target": "7734de29-e621-482c-9c8d-a26dcdebe918",
+          "source": "64338518-0499-4bcc-aa6e-ecec75b4fbcb",
+          "target": "ca0d3258-6f72-49c9-aff6-80cf60bc68d5",
+          "relation": "Chair of",
+          "articles": [
+            "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+          ]
+        },
+        {
+          "source": "64338518-0499-4bcc-aa6e-ecec75b4fbcb",
+          "target": "b580f608-84cf-4eea-a6ce-8cbcf90183d8",
           "relation": "expressed confidence in",
-          "articles": [
-            "86953832-4d00-4cdc-ad11-5a074fcf2f70"
-          ]
-        },
-        {
-          "source": "36912170-170e-44f6-98b4-c3333cb7dfe2",
-          "target": "320f38ba-8f2b-4071-84d2-183c4ccec727",
-          "relation": "is chair of",
           "articles": [
             "86953832-4d00-4cdc-ad11-5a074fcf2f70"
           ]
@@ -1990,211 +1198,136 @@
       "id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
       "entities": [
         {
-          "id": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
+          "id": "ada4e92c-08b1-4149-8939-0926f0ffcf57",
           "name": "Federal Trade Commission",
-          "type": "government agency",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
+              "entity_id": "ada4e92c-08b1-4149-8939-0926f0ffcf57",
               "name": "Federal Trade Commission"
             }
           ]
         },
         {
-          "id": "4e968a5e-543e-44b2-a2de-acfec5e072af",
+          "id": "4a29a6a5-fd40-497d-94af-70ece46f5f77",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "4e968a5e-543e-44b2-a2de-acfec5e072af",
+              "entity_id": "4a29a6a5-fd40-497d-94af-70ece46f5f77",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "ce1c0b44-d3ee-4625-b172-ca0f79289995",
+          "id": "2d4aff71-e8d4-4f52-9054-ca852665fd71",
           "name": "Lightwave Analytics",
-          "type": "analytics company",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "ce1c0b44-d3ee-4625-b172-ca0f79289995",
+              "entity_id": "2d4aff71-e8d4-4f52-9054-ca852665fd71",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "5f1fccb7-bf05-4ab9-b828-7b0f90686d88",
-          "name": "$2.3 billion",
-          "type": "acquisition price",
-          "occurrences": [
-            {
-              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "5f1fccb7-bf05-4ab9-b828-7b0f90686d88",
-              "name": "$2.3 billion"
-            }
-          ]
-        },
-        {
-          "id": "f20db8ba-9884-427b-b046-4e1c24e14ea2",
+          "id": "b1813821-8f2b-48e9-9ee0-d24e9c9aa439",
           "name": "Angela Torres",
-          "type": "FTC Chair",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "f20db8ba-9884-427b-b046-4e1c24e14ea2",
+              "entity_id": "b1813821-8f2b-48e9-9ee0-d24e9c9aa439",
               "name": "Angela Torres"
             }
           ]
         },
         {
-          "id": "78bc0f43-332b-40e4-9073-6630de49bb7f",
-          "name": "real-time data analytics market",
-          "type": "market sector",
-          "occurrences": [
-            {
-              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "78bc0f43-332b-40e4-9073-6630de49bb7f",
-              "name": "real-time data analytics market"
-            }
-          ]
-        },
-        {
-          "id": "9243e2bb-7738-4156-ad5d-0c6ccba6d714",
-          "name": "Q3",
-          "type": "expected closing date",
-          "occurrences": [
-            {
-              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "9243e2bb-7738-4156-ad5d-0c6ccba6d714",
-              "name": "Q3"
-            }
-          ]
-        },
-        {
-          "id": "89e7c73a-bed7-43b1-9a44-b3616199ed2c",
+          "id": "2a76b424-c458-4bfe-ba9e-8a95d1f562b3",
           "name": "Laura Kim",
-          "type": "Meridian spokesperson",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "89e7c73a-bed7-43b1-9a44-b3616199ed2c",
+              "entity_id": "2a76b424-c458-4bfe-ba9e-8a95d1f562b3",
               "name": "Laura Kim"
             }
           ]
         },
         {
-          "id": "c0340f5b-958f-4528-9a57-ba0322c2f847",
+          "id": "7a93b7e5-a5a6-40da-a6d6-1a0933cc0267",
           "name": "Dr. Priya Sharma",
-          "type": "Lightwave co-founder",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "c0340f5b-958f-4528-9a57-ba0322c2f847",
+              "entity_id": "7a93b7e5-a5a6-40da-a6d6-1a0933cc0267",
               "name": "Dr. Priya Sharma"
             }
           ]
         },
         {
-          "id": "18784210-e56b-4e84-b0f6-20f127f003bd",
-          "name": "2026-02-18",
-          "type": "date",
+          "id": "bedddcfd-94a4-4f41-a8b8-b0c3d5117295",
+          "name": "real-time data analytics market",
           "occurrences": [
             {
               "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
-              "entity_id": "18784210-e56b-4e84-b0f6-20f127f003bd",
-              "name": "2026-02-18"
+              "entity_id": "bedddcfd-94a4-4f41-a8b8-b0c3d5117295",
+              "name": "real-time data analytics market"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
-          "target": "4e968a5e-543e-44b2-a2de-acfec5e072af",
+          "source": "ada4e92c-08b1-4149-8939-0926f0ffcf57",
+          "target": "4a29a6a5-fd40-497d-94af-70ece46f5f77",
           "relation": "launched antitrust review of",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
         },
         {
-          "source": "4e968a5e-543e-44b2-a2de-acfec5e072af",
-          "target": "ce1c0b44-d3ee-4625-b172-ca0f79289995",
+          "source": "4a29a6a5-fd40-497d-94af-70ece46f5f77",
+          "target": "2d4aff71-e8d4-4f52-9054-ca852665fd71",
           "relation": "acquired by",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
         },
         {
-          "source": "4e968a5e-543e-44b2-a2de-acfec5e072af",
-          "target": "5f1fccb7-bf05-4ab9-b828-7b0f90686d88",
-          "relation": "acquired by",
+          "source": "b1813821-8f2b-48e9-9ee0-d24e9c9aa439",
+          "target": "ada4e92c-08b1-4149-8939-0926f0ffcf57",
+          "relation": "Chair of",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
         },
         {
-          "source": "f20db8ba-9884-427b-b046-4e1c24e14ea2",
-          "target": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
-          "relation": "is chair of",
+          "source": "ada4e92c-08b1-4149-8939-0926f0ffcf57",
+          "target": "4a29a6a5-fd40-497d-94af-70ece46f5f77",
+          "relation": "examining whether deal gives undue dominance in market",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
         },
         {
-          "source": "f20db8ba-9884-427b-b046-4e1c24e14ea2",
-          "target": "4e968a5e-543e-44b2-a2de-acfec5e072af",
-          "relation": "would gain dominance in",
+          "source": "2a76b424-c458-4bfe-ba9e-8a95d1f562b3",
+          "target": "4a29a6a5-fd40-497d-94af-70ece46f5f77",
+          "relation": "is spokesperson for",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
         },
         {
-          "source": "4e968a5e-543e-44b2-a2de-acfec5e072af",
-          "target": "78bc0f43-332b-40e4-9073-6630de49bb7f",
-          "relation": "would gain dominance in",
-          "articles": [
-            "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
-          ]
-        },
-        {
-          "source": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
-          "target": "4e968a5e-543e-44b2-a2de-acfec5e072af",
-          "relation": "encountered permitting delays in",
-          "articles": [
-            "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
-          ]
-        },
-        {
-          "source": "89e7c73a-bed7-43b1-9a44-b3616199ed2c",
-          "target": "4e968a5e-543e-44b2-a2de-acfec5e072af",
-          "relation": "spokesperson for",
-          "articles": [
-            "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
-          ]
-        },
-        {
-          "source": "89e7c73a-bed7-43b1-9a44-b3616199ed2c",
-          "target": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
-          "relation": "stated company is cooperating with",
-          "articles": [
-            "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
-          ]
-        },
-        {
-          "source": "c0340f5b-958f-4528-9a57-ba0322c2f847",
-          "target": "ce1c0b44-d3ee-4625-b172-ca0f79289995",
+          "source": "7a93b7e5-a5a6-40da-a6d6-1a0933cc0267",
+          "target": "2d4aff71-e8d4-4f52-9054-ca852665fd71",
           "relation": "is founder of",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
         },
         {
-          "source": "c0340f5b-958f-4528-9a57-ba0322c2f847",
-          "target": "b0c5eb29-0a84-4ff1-b7c5-739f3c200563",
-          "relation": "asked to provide testimony to",
+          "source": "ada4e92c-08b1-4149-8939-0926f0ffcf57",
+          "target": "7a93b7e5-a5a6-40da-a6d6-1a0933cc0267",
+          "relation": "asked for testimony from",
           "articles": [
             "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
           ]
@@ -2205,159 +1338,152 @@
       "id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
       "entities": [
         {
-          "id": "a8740733-0dd8-4159-9f94-87e721f7e11a",
+          "id": "8ce4706c-4d98-47c8-8004-1ba5cf416a05",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "a8740733-0dd8-4159-9f94-87e721f7e11a",
+              "entity_id": "8ce4706c-4d98-47c8-8004-1ba5cf416a05",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "d72d91c0-9510-4de6-ba76-63cdb78b5bf7",
+          "id": "1ecedbf6-4923-481f-a58a-49fc5cea1168",
           "name": "Lightwave Analytics",
-          "type": "analytics company",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "d72d91c0-9510-4de6-ba76-63cdb78b5bf7",
+              "entity_id": "1ecedbf6-4923-481f-a58a-49fc5cea1168",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
+          "id": "c7d6dd73-adae-4632-91f2-efc71aca5905",
           "name": "Federal Trade Commission",
-          "type": "government agency",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
+              "entity_id": "c7d6dd73-adae-4632-91f2-efc71aca5905",
               "name": "Federal Trade Commission"
             }
           ]
         },
         {
-          "id": "04a2becf-5770-4cd9-b267-517d8298c42e",
-          "name": "A. Torres",
-          "type": "FTC Commissioner",
+          "id": "0f155972-760a-43fa-aaba-b6dcf02e463b",
+          "name": "Commissioner A. Torres",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "04a2becf-5770-4cd9-b267-517d8298c42e",
-              "name": "A. Torres"
+              "entity_id": "0f155972-760a-43fa-aaba-b6dcf02e463b",
+              "name": "Commissioner A. Torres"
             }
           ]
         },
         {
-          "id": "bd510251-c685-4302-a680-8438ae41e9cd",
+          "id": "161fbdc7-9575-4ec6-8112-1b655eec6e89",
           "name": "P. Sharma",
-          "type": "Lightwave co-founder",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "bd510251-c685-4302-a680-8438ae41e9cd",
+              "entity_id": "161fbdc7-9575-4ec6-8112-1b655eec6e89",
               "name": "P. Sharma"
             }
           ]
         },
         {
-          "id": "a7cb9a98-d7e2-49be-93a3-a698282e9aed",
+          "id": "523331be-7c6b-44c4-8fca-6058de278b26",
           "name": "James Xu",
-          "type": "Meridian spokesperson",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "a7cb9a98-d7e2-49be-93a3-a698282e9aed",
+              "entity_id": "523331be-7c6b-44c4-8fca-6058de278b26",
               "name": "James Xu"
             }
           ]
         },
         {
-          "id": "4ce3115a-7452-44ad-9a37-440faeb23e36",
-          "name": "cloud analytics sector",
-          "type": "market sector",
+          "id": "8d14201a-0bbe-411c-ac9b-7779a9ec57be",
+          "name": "FTC",
           "occurrences": [
             {
               "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
-              "entity_id": "4ce3115a-7452-44ad-9a37-440faeb23e36",
-              "name": "cloud analytics sector"
+              "entity_id": "8d14201a-0bbe-411c-ac9b-7779a9ec57be",
+              "name": "FTC"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "a8740733-0dd8-4159-9f94-87e721f7e11a",
-          "target": "d72d91c0-9510-4de6-ba76-63cdb78b5bf7",
-          "relation": "partnership with",
+          "source": "8ce4706c-4d98-47c8-8004-1ba5cf416a05",
+          "target": "1ecedbf6-4923-481f-a58a-49fc5cea1168",
+          "relation": "joining from",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
-          "target": "a8740733-0dd8-4159-9f94-87e721f7e11a",
+          "source": "c7d6dd73-adae-4632-91f2-efc71aca5905",
+          "target": "8ce4706c-4d98-47c8-8004-1ba5cf416a05",
           "relation": "issued second request for documents to",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
-          "target": "d72d91c0-9510-4de6-ba76-63cdb78b5bf7",
+          "source": "c7d6dd73-adae-4632-91f2-efc71aca5905",
+          "target": "1ecedbf6-4923-481f-a58a-49fc5cea1168",
           "relation": "issued second request for documents to",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "04a2becf-5770-4cd9-b267-517d8298c42e",
-          "target": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
-          "relation": "is commissioner of",
+          "source": "0f155972-760a-43fa-aaba-b6dcf02e463b",
+          "target": "c7d6dd73-adae-4632-91f2-efc71aca5905",
+          "relation": "serves as Commissioner of",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "bd510251-c685-4302-a680-8438ae41e9cd",
-          "target": "d72d91c0-9510-4de6-ba76-63cdb78b5bf7",
+          "source": "161fbdc7-9575-4ec6-8112-1b655eec6e89",
+          "target": "1ecedbf6-4923-481f-a58a-49fc5cea1168",
           "relation": "is founder of",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "bd510251-c685-4302-a680-8438ae41e9cd",
-          "target": "a8740733-0dd8-4159-9f94-87e721f7e11a",
+          "source": "161fbdc7-9575-4ec6-8112-1b655eec6e89",
+          "target": "8ce4706c-4d98-47c8-8004-1ba5cf416a05",
           "relation": "set to join as SVP of Analytics",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "bd510251-c685-4302-a680-8438ae41e9cd",
-          "target": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
-          "relation": "met with staff at",
+          "source": "161fbdc7-9575-4ec6-8112-1b655eec6e89",
+          "target": "8d14201a-0bbe-411c-ac9b-7779a9ec57be",
+          "relation": "met with staff of",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "a7cb9a98-d7e2-49be-93a3-a698282e9aed",
-          "target": "a8740733-0dd8-4159-9f94-87e721f7e11a",
+          "source": "523331be-7c6b-44c4-8fca-6058de278b26",
+          "target": "8ce4706c-4d98-47c8-8004-1ba5cf416a05",
           "relation": "CEO of",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
         },
         {
-          "source": "4bd42a5c-7aef-4b65-a03c-bebce9241331",
-          "target": "4ce3115a-7452-44ad-9a37-440faeb23e36",
-          "relation": "scrutinizing consolidation in",
+          "source": "0f155972-760a-43fa-aaba-b6dcf02e463b",
+          "target": "8d14201a-0bbe-411c-ac9b-7779a9ec57be",
+          "relation": "has blocked three major tech deals under leadership of",
           "articles": [
             "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
           ]
@@ -2368,183 +1494,90 @@
       "id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
       "entities": [
         {
-          "id": "346445cc-18d2-4ec4-bdfc-8c5e012a2400",
+          "id": "034e1414-02b0-4905-ae5e-d763e0948f21",
           "name": "David Park",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "346445cc-18d2-4ec4-bdfc-8c5e012a2400",
+              "entity_id": "034e1414-02b0-4905-ae5e-d763e0948f21",
               "name": "David Park"
             }
           ]
         },
         {
-          "id": "1f8a4123-c890-4dd7-9d32-9d8bafbc23d8",
+          "id": "c37c0578-180d-4058-bf3d-5443c58e25a1",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "1f8a4123-c890-4dd7-9d32-9d8bafbc23d8",
+              "entity_id": "c37c0578-180d-4058-bf3d-5443c58e25a1",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
+          "id": "bdd2e7d6-c678-4ff8-a525-8628d6ebb980",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
+              "entity_id": "bdd2e7d6-c678-4ff8-a525-8628d6ebb980",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "8179d025-1b47-4c61-a7d4-a55517288257",
+          "id": "a383a6c3-66d2-40a6-9055-77e3633c057d",
           "name": "Marcus Webb",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "8179d025-1b47-4c61-a7d4-a55517288257",
+              "entity_id": "a383a6c3-66d2-40a6-9055-77e3633c057d",
               "name": "Marcus Webb"
             }
           ]
         },
         {
-          "id": "0095229b-30cc-4249-8400-8e159610447b",
+          "id": "f32455cd-e82d-4e1a-b1d4-7bc635e25141",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "0095229b-30cc-4249-8400-8e159610447b",
+              "entity_id": "f32455cd-e82d-4e1a-b1d4-7bc635e25141",
               "name": "Meridian Technologies"
-            }
-          ]
-        },
-        {
-          "id": "f55d8e71-c849-4345-a92c-5a1a1865a453",
-          "name": "Pittsburgh",
-          "type": "city",
-          "occurrences": [
-            {
-              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "f55d8e71-c849-4345-a92c-5a1a1865a453",
-              "name": "Pittsburgh"
-            }
-          ]
-        },
-        {
-          "id": "728abef4-be19-490f-a8e3-4e8c15777ec4",
-          "name": "$2 billion",
-          "type": "revenue figure",
-          "occurrences": [
-            {
-              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "728abef4-be19-490f-a8e3-4e8c15777ec4",
-              "name": "$2 billion"
-            }
-          ]
-        },
-        {
-          "id": "e7e2ed7a-83f7-4b68-931a-6f31b3d5bf5c",
-          "name": "$9 billion",
-          "type": "revenue figure",
-          "occurrences": [
-            {
-              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "e7e2ed7a-83f7-4b68-931a-6f31b3d5bf5c",
-              "name": "$9 billion"
-            }
-          ]
-        },
-        {
-          "id": "2a1ff475-b108-4105-a76e-b88e874606bc",
-          "name": "$500 million",
-          "type": "partnership value",
-          "occurrences": [
-            {
-              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
-              "entity_id": "2a1ff475-b108-4105-a76e-b88e874606bc",
-              "name": "$500 million"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "346445cc-18d2-4ec4-bdfc-8c5e012a2400",
-          "target": "1f8a4123-c890-4dd7-9d32-9d8bafbc23d8",
+          "source": "034e1414-02b0-4905-ae5e-d763e0948f21",
+          "target": "c37c0578-180d-4058-bf3d-5443c58e25a1",
           "relation": "CEO of",
           "articles": [
             "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
           ]
         },
         {
-          "source": "346445cc-18d2-4ec4-bdfc-8c5e012a2400",
-          "target": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
-          "relation": "joined board of directors",
+          "source": "034e1414-02b0-4905-ae5e-d763e0948f21",
+          "target": "bdd2e7d6-c678-4ff8-a525-8628d6ebb980",
+          "relation": "appointed to the board of",
           "articles": [
             "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
           ]
         },
         {
-          "source": "346445cc-18d2-4ec4-bdfc-8c5e012a2400",
-          "target": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
-          "relation": "advises on energy and sustainability initiatives",
-          "articles": [
-            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
-          ]
-        },
-        {
-          "source": "8179d025-1b47-4c61-a7d4-a55517288257",
-          "target": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
+          "source": "a383a6c3-66d2-40a6-9055-77e3633c057d",
+          "target": "bdd2e7d6-c678-4ff8-a525-8628d6ebb980",
           "relation": "CEO of",
           "articles": [
             "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
           ]
         },
         {
-          "source": "1f8a4123-c890-4dd7-9d32-9d8bafbc23d8",
-          "target": "728abef4-be19-490f-a8e3-4e8c15777ec4",
-          "relation": "scaled to revenue of",
-          "articles": [
-            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
-          ]
-        },
-        {
-          "source": "1f8a4123-c890-4dd7-9d32-9d8bafbc23d8",
-          "target": "e7e2ed7a-83f7-4b68-931a-6f31b3d5bf5c",
-          "relation": "scaled to revenue of",
-          "articles": [
-            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
-          ]
-        },
-        {
-          "source": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
-          "target": "f55d8e71-c849-4345-a92c-5a1a1865a453",
-          "relation": "is based in",
-          "articles": [
-            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
-          ]
-        },
-        {
-          "source": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
-          "target": "0095229b-30cc-4249-8400-8e159610447b",
-          "relation": "partnership with",
-          "articles": [
-            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
-          ]
-        },
-        {
-          "source": "6e015ac8-36d9-4c85-903e-332bb47b5a79",
-          "target": "2a1ff475-b108-4105-a76e-b88e874606bc",
-          "relation": "partnership with",
+          "source": "bdd2e7d6-c678-4ff8-a525-8628d6ebb980",
+          "target": "f32455cd-e82d-4e1a-b1d4-7bc635e25141",
+          "relation": "announced partnership with",
           "articles": [
             "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
           ]
@@ -2555,143 +1588,133 @@
       "id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
       "entities": [
         {
-          "id": "49b8b85c-c67b-4c25-8db7-4039a7c197ca",
+          "id": "ea60d3e4-bb31-46c2-9edb-287a0c315ceb",
           "name": "David Park",
-          "type": "veteran energy executive",
           "occurrences": [
             {
               "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "49b8b85c-c67b-4c25-8db7-4039a7c197ca",
+              "entity_id": "ea60d3e4-bb31-46c2-9edb-287a0c315ceb",
               "name": "David Park"
             }
           ]
         },
         {
-          "id": "c78ecb1e-880d-4969-afce-e0e413e2b38e",
+          "id": "8ef930a8-8b6a-4fb6-8b8a-b1df7ba30bc1",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "c78ecb1e-880d-4969-afce-e0e413e2b38e",
+              "entity_id": "8ef930a8-8b6a-4fb6-8b8a-b1df7ba30bc1",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "317b2430-9541-4956-97c1-659fdd09068f",
+          "id": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "317b2430-9541-4956-97c1-659fdd09068f",
+              "entity_id": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "3617bfdf-f516-4303-a2a9-4781300739b3",
+          "id": "7f03b8d1-f814-4291-ac0d-eaf64e1eb031",
           "name": "Helen Choi",
-          "type": "board member",
           "occurrences": [
             {
               "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "3617bfdf-f516-4303-a2a9-4781300739b3",
+              "entity_id": "7f03b8d1-f814-4291-ac0d-eaf64e1eb031",
               "name": "Helen Choi"
             }
           ]
         },
         {
-          "id": "5f22672a-9a7f-4b1c-af49-f09d7afce7e1",
+          "id": "243f799b-273b-426b-9746-fab98e531c5a",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "5f22672a-9a7f-4b1c-af49-f09d7afce7e1",
+              "entity_id": "243f799b-273b-426b-9746-fab98e531c5a",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "4d1285a8-9e35-481c-97db-e9b6eabcdae2",
+          "id": "17f39d5b-5ae5-4631-a586-602b7570ae4d",
           "name": "Webb",
-          "type": "founder",
           "occurrences": [
             {
               "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "4d1285a8-9e35-481c-97db-e9b6eabcdae2",
+              "entity_id": "17f39d5b-5ae5-4631-a586-602b7570ae4d",
               "name": "Webb"
-            }
-          ]
-        },
-        {
-          "id": "1b5cd2ad-10a8-4cb6-bd57-c7f641b62dd7",
-          "name": "sustainability committee",
-          "type": "board member",
-          "occurrences": [
-            {
-              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
-              "entity_id": "1b5cd2ad-10a8-4cb6-bd57-c7f641b62dd7",
-              "name": "sustainability committee"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "49b8b85c-c67b-4c25-8db7-4039a7c197ca",
-          "target": "c78ecb1e-880d-4969-afce-e0e413e2b38e",
+          "source": "ea60d3e4-bb31-46c2-9edb-287a0c315ceb",
+          "target": "8ef930a8-8b6a-4fb6-8b8a-b1df7ba30bc1",
           "relation": "CEO of",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
         },
         {
-          "source": "49b8b85c-c67b-4c25-8db7-4039a7c197ca",
-          "target": "317b2430-9541-4956-97c1-659fdd09068f",
-          "relation": "joined board of directors",
+          "source": "ea60d3e4-bb31-46c2-9edb-287a0c315ceb",
+          "target": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
+          "relation": "appointed to the board of",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
         },
         {
-          "source": "49b8b85c-c67b-4c25-8db7-4039a7c197ca",
-          "target": "1b5cd2ad-10a8-4cb6-bd57-c7f641b62dd7",
-          "relation": "is chair of",
+          "source": "ea60d3e4-bb31-46c2-9edb-287a0c315ceb",
+          "target": "7f03b8d1-f814-4291-ac0d-eaf64e1eb031",
+          "relation": "replaces",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
         },
         {
-          "source": "3617bfdf-f516-4303-a2a9-4781300739b3",
-          "target": "317b2430-9541-4956-97c1-659fdd09068f",
+          "source": "7f03b8d1-f814-4291-ac0d-eaf64e1eb031",
+          "target": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
           "relation": "retiring from board of",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
         },
         {
-          "source": "317b2430-9541-4956-97c1-659fdd09068f",
-          "target": "5f22672a-9a7f-4b1c-af49-f09d7afce7e1",
-          "relation": "partnership with",
+          "source": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
+          "target": "243f799b-273b-426b-9746-fab98e531c5a",
+          "relation": "announced partnership with",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
         },
         {
-          "source": "4d1285a8-9e35-481c-97db-e9b6eabcdae2",
-          "target": "317b2430-9541-4956-97c1-659fdd09068f",
+          "source": "ea60d3e4-bb31-46c2-9edb-287a0c315ceb",
+          "target": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
+          "relation": "chair sustainability committee at",
+          "articles": [
+            "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+          ]
+        },
+        {
+          "source": "17f39d5b-5ae5-4631-a586-602b7570ae4d",
+          "target": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
           "relation": "is founder of",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
         },
         {
-          "source": "5f22672a-9a7f-4b1c-af49-f09d7afce7e1",
-          "target": "317b2430-9541-4956-97c1-659fdd09068f",
-          "relation": "on acquisition spree affecting",
+          "source": "243f799b-273b-426b-9746-fab98e531c5a",
+          "target": "8bb2d69f-a0bf-4ea8-b940-37eb88a4752f",
+          "relation": "acquired by",
           "articles": [
             "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
           ]
@@ -2702,199 +1725,155 @@
       "id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
       "entities": [
         {
-          "id": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
+          "id": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
+              "entity_id": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "530aac7a-2750-43b3-9ebc-4966f3b654d1",
+          "id": "7433ea76-50b6-4b9e-a9c5-58c344219808",
           "name": "Meridian Tech",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "530aac7a-2750-43b3-9ebc-4966f3b654d1",
+              "entity_id": "7433ea76-50b6-4b9e-a9c5-58c344219808",
               "name": "Meridian Tech"
             }
           ]
         },
         {
-          "id": "e714c5b9-2f99-45ce-b5ae-bd09fa9de9bb",
+          "id": "ce4bed9b-e2fd-4395-9490-3ca8b27d8841",
           "name": "D. Park",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "e714c5b9-2f99-45ce-b5ae-bd09fa9de9bb",
+              "entity_id": "ce4bed9b-e2fd-4395-9490-3ca8b27d8841",
               "name": "D. Park"
             }
           ]
         },
         {
-          "id": "cee85a14-6355-4b60-8854-4607f9a8af77",
+          "id": "2af66750-2461-496a-b5ee-45c914a6cc5e",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "cee85a14-6355-4b60-8854-4607f9a8af77",
+              "entity_id": "2af66750-2461-496a-b5ee-45c914a6cc5e",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "55c5d8fe-d7f0-40dc-8f4d-6671cafb144e",
+          "id": "3776e8cf-95cc-453f-af54-af95f0f2afbf",
           "name": "Teresa Nakamura",
-          "type": "chief financial officer",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "55c5d8fe-d7f0-40dc-8f4d-6671cafb144e",
+              "entity_id": "3776e8cf-95cc-453f-af54-af95f0f2afbf",
               "name": "Teresa Nakamura"
             }
           ]
         },
         {
-          "id": "6588ca6c-7850-4541-85f7-3e62448864b9",
+          "id": "7b1793f0-f5ba-4966-9b91-949cb9f4950d",
           "name": "CloudScale",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "6588ca6c-7850-4541-85f7-3e62448864b9",
+              "entity_id": "7b1793f0-f5ba-4966-9b91-949cb9f4950d",
               "name": "CloudScale"
             }
           ]
         },
         {
-          "id": "8ea88f54-32f3-4106-91ee-e80b1de5e7a3",
+          "id": "e9dec3b6-13a8-4cb5-a780-b6e41e8dbdbc",
           "name": "Marcus Webb",
-          "type": "executive",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "8ea88f54-32f3-4106-91ee-e80b1de5e7a3",
+              "entity_id": "e9dec3b6-13a8-4cb5-a780-b6e41e8dbdbc",
               "name": "Marcus Webb"
             }
           ]
         },
         {
-          "id": "f96dd397-3d97-4220-8ef0-27f077980f6d",
+          "id": "4769de5a-e5df-409c-b961-66af478951f2",
           "name": "Pittsburgh",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "f96dd397-3d97-4220-8ef0-27f077980f6d",
+              "entity_id": "4769de5a-e5df-409c-b961-66af478951f2",
               "name": "Pittsburgh"
-            }
-          ]
-        },
-        {
-          "id": "58302daa-4093-45d1-9e19-f1e23bc1a39a",
-          "name": "$500 million",
-          "type": "partnership value",
-          "occurrences": [
-            {
-              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "58302daa-4093-45d1-9e19-f1e23bc1a39a",
-              "name": "$500 million"
-            }
-          ]
-        },
-        {
-          "id": "8512f613-ef47-41f4-9333-616dc14498c4",
-          "name": "2023",
-          "type": "year",
-          "occurrences": [
-            {
-              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "8512f613-ef47-41f4-9333-616dc14498c4",
-              "name": "2023"
-            }
-          ]
-        },
-        {
-          "id": "7dc516b3-f8de-49fc-94b7-c9e41050b86a",
-          "name": "seven",
-          "type": "board size",
-          "occurrences": [
-            {
-              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
-              "entity_id": "7dc516b3-f8de-49fc-94b7-c9e41050b86a",
-              "name": "seven"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
-          "target": "530aac7a-2750-43b3-9ebc-4966f3b654d1",
-          "relation": "formed $500 million AI automation partnership with",
+          "source": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
+          "target": "7433ea76-50b6-4b9e-a9c5-58c344219808",
+          "relation": "has $500 million AI automation partnership with",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
         },
         {
-          "source": "e714c5b9-2f99-45ce-b5ae-bd09fa9de9bb",
-          "target": "cee85a14-6355-4b60-8854-4607f9a8af77",
-          "relation": "CEO of",
-          "articles": [
-            "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
-          ]
-        },
-        {
-          "source": "e714c5b9-2f99-45ce-b5ae-bd09fa9de9bb",
-          "target": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
+          "source": "ce4bed9b-e2fd-4395-9490-3ca8b27d8841",
+          "target": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
           "relation": "added to board of",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
         },
         {
-          "source": "55c5d8fe-d7f0-40dc-8f4d-6671cafb144e",
-          "target": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
-          "relation": "currently chief operating officer of",
+          "source": "ce4bed9b-e2fd-4395-9490-3ca8b27d8841",
+          "target": "2af66750-2461-496a-b5ee-45c914a6cc5e",
+          "relation": "CEO of",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
         },
         {
-          "source": "55c5d8fe-d7f0-40dc-8f4d-6671cafb144e",
-          "target": "6588ca6c-7850-4541-85f7-3e62448864b9",
+          "source": "3776e8cf-95cc-453f-af54-af95f0f2afbf",
+          "target": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
+          "relation": "currently serves as chief operating officer of",
+          "articles": [
+            "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+          ]
+        },
+        {
+          "source": "3776e8cf-95cc-453f-af54-af95f0f2afbf",
+          "target": "7b1793f0-f5ba-4966-9b91-949cb9f4950d",
           "relation": "previously held CFO role at",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
         },
         {
-          "source": "6588ca6c-7850-4541-85f7-3e62448864b9",
-          "target": "530aac7a-2750-43b3-9ebc-4966f3b654d1",
+          "source": "7b1793f0-f5ba-4966-9b91-949cb9f4950d",
+          "target": "7433ea76-50b6-4b9e-a9c5-58c344219808",
           "relation": "acquired by",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
         },
         {
-          "source": "8ea88f54-32f3-4106-91ee-e80b1de5e7a3",
-          "target": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
-          "relation": "spokesperson for",
+          "source": "e9dec3b6-13a8-4cb5-a780-b6e41e8dbdbc",
+          "target": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
+          "relation": "CEO of",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
         },
         {
-          "source": "0eb26408-d2e1-470e-97c5-a24fee86f13c",
-          "target": "f96dd397-3d97-4220-8ef0-27f077980f6d",
-          "relation": "has joint research lab in",
+          "source": "f7ec5e71-f51f-486e-b8eb-f6a975f005e7",
+          "target": "4769de5a-e5df-409c-b961-66af478951f2",
+          "relation": "will establish joint research lab in",
           "articles": [
             "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
           ]
@@ -2905,306 +1884,211 @@
       "id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
       "entities": [
         {
-          "id": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
-          "name": "Global AI Summit",
-          "type": "conference",
-          "occurrences": [
-            {
-              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
-              "name": "Global AI Summit"
-            }
-          ]
-        },
-        {
-          "id": "adf1e603-792e-43e7-9fa9-3900a8824cd1",
+          "id": "56060b1a-ab70-4139-8996-63542e792e39",
           "name": "San Francisco",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "adf1e603-792e-43e7-9fa9-3900a8824cd1",
+              "entity_id": "56060b1a-ab70-4139-8996-63542e792e39",
               "name": "San Francisco"
             }
           ]
         },
         {
-          "id": "3f0bf1fc-5f96-40e3-bc28-deda995b22e1",
-          "name": "Dr. Priya Sharma",
-          "type": "AI researcher and founder",
+          "id": "90189457-b516-440a-ae93-cc2628edef93",
+          "name": "Global AI Summit",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "3f0bf1fc-5f96-40e3-bc28-deda995b22e1",
+              "entity_id": "90189457-b516-440a-ae93-cc2628edef93",
+              "name": "Global AI Summit"
+            }
+          ]
+        },
+        {
+          "id": "a6ce83e7-1043-486d-9487-4cc161a3112b",
+          "name": "Dr. Priya Sharma",
+          "occurrences": [
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "a6ce83e7-1043-486d-9487-4cc161a3112b",
               "name": "Dr. Priya Sharma"
             }
           ]
         },
         {
-          "id": "fff36965-7ae0-4f67-b5ed-482710971a30",
+          "id": "17e0588e-4278-4566-a5d7-d10c1b530959",
           "name": "Lightwave Analytics",
-          "type": "AI infrastructure company",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "fff36965-7ae0-4f67-b5ed-482710971a30",
+              "entity_id": "17e0588e-4278-4566-a5d7-d10c1b530959",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "746fa43b-64c4-4c4f-848d-e6178ac83f9b",
+          "id": "f14b2924-7cc0-4e3c-8879-6b16165fe576",
           "name": "Meridian Technologies",
-          "type": "tech company",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "746fa43b-64c4-4c4f-848d-e6178ac83f9b",
+              "entity_id": "f14b2924-7cc0-4e3c-8879-6b16165fe576",
               "name": "Meridian Technologies"
             }
           ]
         },
         {
-          "id": "ba33eca2-916d-4bcd-a7e9-dbe9c73d25c1",
-          "name": "SVP of Analytics",
-          "type": "executive",
-          "occurrences": [
-            {
-              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "ba33eca2-916d-4bcd-a7e9-dbe9c73d25c1",
-              "name": "SVP of Analytics"
-            }
-          ]
-        },
-        {
-          "id": "a3526069-4e34-42ef-91b5-76d1e1fe1571",
-          "name": "federated real-time intelligence",
-          "type": "AI capability",
-          "occurrences": [
-            {
-              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "a3526069-4e34-42ef-91b5-76d1e1fe1571",
-              "name": "federated real-time intelligence"
-            }
-          ]
-        },
-        {
-          "id": "49bd8b0b-3e9f-44f7-aae4-3164d40f41d2",
+          "id": "2a4fbea3-8b64-45c2-a39c-a586fd3fbe5d",
           "name": "Marcus Webb",
-          "type": "executive",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "49bd8b0b-3e9f-44f7-aae4-3164d40f41d2",
+              "entity_id": "2a4fbea3-8b64-45c2-a39c-a586fd3fbe5d",
               "name": "Marcus Webb"
             }
           ]
         },
         {
-          "id": "1bfc2481-363d-4520-9415-200feda01e83",
+          "id": "732a47d4-7163-44f4-ae8b-6c8fe74e32a0",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "1bfc2481-363d-4520-9415-200feda01e83",
+              "entity_id": "732a47d4-7163-44f4-ae8b-6c8fe74e32a0",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "cd1c5217-51fa-474e-b9a2-9b5b8e6d395e",
-          "name": "autonomous warehouse system",
-          "type": "technology",
-          "occurrences": [
-            {
-              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "cd1c5217-51fa-474e-b9a2-9b5b8e6d395e",
-              "name": "autonomous warehouse system"
-            }
-          ]
-        },
-        {
-          "id": "3e74336d-5754-4d39-ab40-b263fe04db08",
+          "id": "07a5cc79-4b49-43d0-86ce-7112517bd519",
           "name": "Sarah Chen",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "3e74336d-5754-4d39-ab40-b263fe04db08",
+              "entity_id": "07a5cc79-4b49-43d0-86ce-7112517bd519",
               "name": "Sarah Chen"
             }
           ]
         },
         {
-          "id": "cd3a0105-0d56-4103-b5e6-6f64e6350212",
+          "id": "e183226d-cc08-492b-8a31-d146fc8e273b",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "cd3a0105-0d56-4103-b5e6-6f64e6350212",
+              "entity_id": "e183226d-cc08-492b-8a31-d146fc8e273b",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "ade22f16-531e-435f-8a35-138a4c9b32f6",
-          "name": "grid management and energy storage",
-          "type": "technology focus",
+          "id": "f171ac3d-3644-49a2-9255-e0a2e969f966",
+          "name": "FTC Commissioner Angela Torres",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "ade22f16-531e-435f-8a35-138a4c9b32f6",
-              "name": "grid management and energy storage"
+              "entity_id": "f171ac3d-3644-49a2-9255-e0a2e969f966",
+              "name": "FTC Commissioner Angela Torres"
             }
           ]
         },
         {
-          "id": "b595a557-09f4-4076-914c-9b44e1ab42ff",
-          "name": "Angela Torres",
-          "type": "FTC Commissioner",
-          "occurrences": [
-            {
-              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "b595a557-09f4-4076-914c-9b44e1ab42ff",
-              "name": "Angela Torres"
-            }
-          ]
-        },
-        {
-          "id": "814a2af2-956e-4b6e-ba71-908991e1c2fd",
+          "id": "c9c971f3-c0a3-416a-8c39-1b3575439d6e",
           "name": "Raymond Liu",
-          "type": "venture capitalist",
           "occurrences": [
             {
               "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "814a2af2-956e-4b6e-ba71-908991e1c2fd",
+              "entity_id": "c9c971f3-c0a3-416a-8c39-1b3575439d6e",
               "name": "Raymond Liu"
-            }
-          ]
-        },
-        {
-          "id": "84991a86-c005-4576-b1ed-0f7b5dca4e60",
-          "name": "antitrust enforcement",
-          "type": "regulatory focus",
-          "occurrences": [
-            {
-              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
-              "entity_id": "84991a86-c005-4576-b1ed-0f7b5dca4e60",
-              "name": "antitrust enforcement"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
-          "target": "adf1e603-792e-43e7-9fa9-3900a8824cd1",
-          "relation": "appeared at",
+          "source": "90189457-b516-440a-ae93-cc2628edef93",
+          "target": "56060b1a-ab70-4139-8996-63542e792e39",
+          "relation": "held in",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "3f0bf1fc-5f96-40e3-bc28-deda995b22e1",
-          "target": "fff36965-7ae0-4f67-b5ed-482710971a30",
-          "relation": "is founder of",
-          "articles": [
-            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
-          ]
-        },
-        {
-          "source": "3f0bf1fc-5f96-40e3-bc28-deda995b22e1",
-          "target": "746fa43b-64c4-4c4f-848d-e6178ac83f9b",
-          "relation": "set to join as SVP of Analytics",
-          "articles": [
-            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
-          ]
-        },
-        {
-          "source": "3f0bf1fc-5f96-40e3-bc28-deda995b22e1",
-          "target": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
+          "source": "a6ce83e7-1043-486d-9487-4cc161a3112b",
+          "target": "90189457-b516-440a-ae93-cc2628edef93",
           "relation": "gave keynote at",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "3f0bf1fc-5f96-40e3-bc28-deda995b22e1",
-          "target": "a3526069-4e34-42ef-91b5-76d1e1fe1571",
-          "relation": "outlined vision for",
+          "source": "a6ce83e7-1043-486d-9487-4cc161a3112b",
+          "target": "17e0588e-4278-4566-a5d7-d10c1b530959",
+          "relation": "is founder of",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "49bd8b0b-3e9f-44f7-aae4-3164d40f41d2",
-          "target": "1bfc2481-363d-4520-9415-200feda01e83",
-          "relation": "employs",
+          "source": "a6ce83e7-1043-486d-9487-4cc161a3112b",
+          "target": "f14b2924-7cc0-4e3c-8879-6b16165fe576",
+          "relation": "set to join as SVP of Analytics",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "49bd8b0b-3e9f-44f7-aae4-3164d40f41d2",
-          "target": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
+          "source": "2a4fbea3-8b64-45c2-a39c-a586fd3fbe5d",
+          "target": "732a47d4-7163-44f4-ae8b-6c8fe74e32a0",
+          "relation": "works at",
+          "articles": [
+            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+          ]
+        },
+        {
+          "source": "2a4fbea3-8b64-45c2-a39c-a586fd3fbe5d",
+          "target": "90189457-b516-440a-ae93-cc2628edef93",
           "relation": "spoke at",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "1bfc2481-363d-4520-9415-200feda01e83",
-          "target": "cd1c5217-51fa-474e-b9a2-9b5b8e6d395e",
-          "relation": "developed",
+          "source": "732a47d4-7163-44f4-ae8b-6c8fe74e32a0",
+          "target": "f14b2924-7cc0-4e3c-8879-6b16165fe576",
+          "relation": "announced partnership with",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "1bfc2481-363d-4520-9415-200feda01e83",
-          "target": "746fa43b-64c4-4c4f-848d-e6178ac83f9b",
-          "relation": "partnership with",
-          "articles": [
-            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
-          ]
-        },
-        {
-          "source": "3e74336d-5754-4d39-ab40-b263fe04db08",
-          "target": "cd3a0105-0d56-4103-b5e6-6f64e6350212",
+          "source": "07a5cc79-4b49-43d0-86ce-7112517bd519",
+          "target": "e183226d-cc08-492b-8a31-d146fc8e273b",
           "relation": "CEO of",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "3e74336d-5754-4d39-ab40-b263fe04db08",
-          "target": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
+          "source": "07a5cc79-4b49-43d0-86ce-7112517bd519",
+          "target": "90189457-b516-440a-ae93-cc2628edef93",
           "relation": "spoke at",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "b595a557-09f4-4076-914c-9b44e1ab42ff",
-          "target": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
+          "source": "f171ac3d-3644-49a2-9255-e0a2e969f966",
+          "target": "90189457-b516-440a-ae93-cc2628edef93",
           "relation": "participated in fireside chat at",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
           ]
         },
         {
-          "source": "814a2af2-956e-4b6e-ba71-908991e1c2fd",
-          "target": "fca259ec-5ae1-45b8-8208-a7ea5bb68db3",
-          "relation": "participated in fireside chat at",
-          "articles": [
-            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
-          ]
-        },
-        {
-          "source": "b595a557-09f4-4076-914c-9b44e1ab42ff",
-          "target": "814a2af2-956e-4b6e-ba71-908991e1c2fd",
+          "source": "c9c971f3-c0a3-416a-8c39-1b3575439d6e",
+          "target": "90189457-b516-440a-ae93-cc2628edef93",
           "relation": "participated in fireside chat at",
           "articles": [
             "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
@@ -3216,327 +2100,285 @@
       "id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
       "entities": [
         {
-          "id": "6fc39ced-fb30-4db9-896a-d946cefcc154",
+          "id": "6310ff76-1380-4d87-a0a3-b782cbc013bc",
           "name": "P. Sharma",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "6fc39ced-fb30-4db9-896a-d946cefcc154",
+              "entity_id": "6310ff76-1380-4d87-a0a3-b782cbc013bc",
               "name": "P. Sharma"
             }
           ]
         },
         {
-          "id": "c63b2ba7-6912-4001-9b4e-e75148159820",
+          "id": "d30ce258-720e-4fb9-9ed9-f2377baf46e0",
           "name": "Lightwave Analytics",
-          "type": "AI infrastructure company",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "c63b2ba7-6912-4001-9b4e-e75148159820",
+              "entity_id": "d30ce258-720e-4fb9-9ed9-f2377baf46e0",
               "name": "Lightwave Analytics"
             }
           ]
         },
         {
-          "id": "e7de56a5-1581-45f4-b49e-163b8a74cc9f",
+          "id": "55e4127e-3d07-4c3b-a075-23ca0bfbfdfe",
           "name": "Meridian",
-          "type": "AI infrastructure company",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "e7de56a5-1581-45f4-b49e-163b8a74cc9f",
+              "entity_id": "55e4127e-3d07-4c3b-a075-23ca0bfbfdfe",
               "name": "Meridian"
             }
           ]
         },
         {
-          "id": "34549b8e-6199-4756-8202-0d3ae0e280bb",
+          "id": "ca129d2f-5f76-449e-8708-009e2c1f9b32",
           "name": "M. Webb",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "34549b8e-6199-4756-8202-0d3ae0e280bb",
+              "entity_id": "ca129d2f-5f76-449e-8708-009e2c1f9b32",
               "name": "M. Webb"
             }
           ]
         },
         {
-          "id": "4bb6aded-db4e-4443-884e-b8055f7e3213",
+          "id": "ed33ae8d-4156-4517-9ce3-eb1707d06154",
           "name": "Cascade Robotics",
-          "type": "robotics company",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "4bb6aded-db4e-4443-884e-b8055f7e3213",
+              "entity_id": "ed33ae8d-4156-4517-9ce3-eb1707d06154",
               "name": "Cascade Robotics"
             }
           ]
         },
         {
-          "id": "f01de7f2-afb1-4e80-b47b-e062ced8cc50",
+          "id": "04579134-419d-4309-9b1b-0736b3f18556",
           "name": "Cascade-Meridian joint lab",
-          "type": "research facility",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "f01de7f2-afb1-4e80-b47b-e062ced8cc50",
+              "entity_id": "04579134-419d-4309-9b1b-0736b3f18556",
               "name": "Cascade-Meridian joint lab"
             }
           ]
         },
         {
-          "id": "a50443a9-99f8-4fec-a6e2-2a43ebe05982",
+          "id": "e452767f-4fc5-461b-a08f-6cc3911211cf",
           "name": "Pittsburgh",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "a50443a9-99f8-4fec-a6e2-2a43ebe05982",
+              "entity_id": "e452767f-4fc5-461b-a08f-6cc3911211cf",
               "name": "Pittsburgh"
             }
           ]
         },
         {
-          "id": "096649a1-c0a5-48b8-80aa-3b7dc3b85408",
+          "id": "2f1dad54-9eb5-4737-a334-1dec12c9ee2d",
           "name": "S. Chen",
-          "type": "CEO and co-founder",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "096649a1-c0a5-48b8-80aa-3b7dc3b85408",
+              "entity_id": "2f1dad54-9eb5-4737-a334-1dec12c9ee2d",
               "name": "S. Chen"
             }
           ]
         },
         {
-          "id": "62ec3da5-b2ea-45f7-9b82-3216a990d0c7",
+          "id": "52541204-0c6a-42cc-bb7c-70a65d649fad",
           "name": "Nextera Energy Solutions",
-          "type": "energy company",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "62ec3da5-b2ea-45f7-9b82-3216a990d0c7",
+              "entity_id": "52541204-0c6a-42cc-bb7c-70a65d649fad",
               "name": "Nextera Energy Solutions"
             }
           ]
         },
         {
-          "id": "926c8298-ce27-46de-9888-02244eec1760",
-          "name": "machine learning",
-          "type": "technology",
+          "id": "f834ea92-49df-48d5-be05-0096bfbdff56",
+          "name": "NES",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "926c8298-ce27-46de-9888-02244eec1760",
-              "name": "machine learning"
+              "entity_id": "f834ea92-49df-48d5-be05-0096bfbdff56",
+              "name": "NES"
             }
           ]
         },
         {
-          "id": "4468cf4b-c575-42c0-a20b-73167ecfb3fb",
-          "name": "$5 billion battery storage investment",
-          "type": "investment amount",
-          "occurrences": [
-            {
-              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "4468cf4b-c575-42c0-a20b-73167ecfb3fb",
-              "name": "$5 billion battery storage investment"
-            }
-          ]
-        },
-        {
-          "id": "e35ecc2f-d75d-4f78-a7ad-ac5c6c9e4f00",
+          "id": "a2e4f9fa-1eed-4ed5-a2b2-a92469b5fef4",
           "name": "Torres",
-          "type": "FTC Chair",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "e35ecc2f-d75d-4f78-a7ad-ac5c6c9e4f00",
+              "entity_id": "a2e4f9fa-1eed-4ed5-a2b2-a92469b5fef4",
               "name": "Torres"
             }
           ]
         },
         {
-          "id": "3c6cfb9a-6ddb-45fc-8976-f1107df5cf6b",
+          "id": "d9960007-7ed6-484b-9fd2-345abe6f2e4d",
           "name": "FTC",
-          "type": "government agency",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "3c6cfb9a-6ddb-45fc-8976-f1107df5cf6b",
+              "entity_id": "d9960007-7ed6-484b-9fd2-345abe6f2e4d",
               "name": "FTC"
             }
           ]
         },
         {
-          "id": "5838abfe-4d10-42b9-a552-a0f027356144",
-          "name": "Meridian-Lightwave deal",
-          "type": "business deal",
-          "occurrences": [
-            {
-              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "5838abfe-4d10-42b9-a552-a0f027356144",
-              "name": "Meridian-Lightwave deal"
-            }
-          ]
-        },
-        {
-          "id": "54a913aa-98f6-42a3-baa7-041847feaee6",
+          "id": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
           "name": "Global AI Summit",
-          "type": "conference",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "54a913aa-98f6-42a3-baa7-041847feaee6",
+              "entity_id": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
               "name": "Global AI Summit"
             }
           ]
         },
         {
-          "id": "62ad2ff8-5a5e-4b0b-a760-5fb7696c4c49",
+          "id": "7ecdb8c1-2527-479e-8110-08877b3413fa",
           "name": "San Francisco",
-          "type": "city",
           "occurrences": [
             {
               "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "62ad2ff8-5a5e-4b0b-a760-5fb7696c4c49",
+              "entity_id": "7ecdb8c1-2527-479e-8110-08877b3413fa",
               "name": "San Francisco"
-            }
-          ]
-        },
-        {
-          "id": "10be07ed-3877-469b-bed8-11488db910a0",
-          "name": "2026-02-21",
-          "type": "date",
-          "occurrences": [
-            {
-              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
-              "entity_id": "10be07ed-3877-469b-bed8-11488db910a0",
-              "name": "2026-02-21"
             }
           ]
         }
       ],
       "edges": [
         {
-          "source": "6fc39ced-fb30-4db9-896a-d946cefcc154",
-          "target": "c63b2ba7-6912-4001-9b4e-e75148159820",
+          "source": "6310ff76-1380-4d87-a0a3-b782cbc013bc",
+          "target": "d30ce258-720e-4fb9-9ed9-f2377baf46e0",
           "relation": "is founder of",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]
         },
         {
-          "source": "6fc39ced-fb30-4db9-896a-d946cefcc154",
-          "target": "e7de56a5-1581-45f4-b49e-163b8a74cc9f",
-          "relation": "will become executive at",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "34549b8e-6199-4756-8202-0d3ae0e280bb",
-          "target": "4bb6aded-db4e-4443-884e-b8055f7e3213",
+          "source": "6310ff76-1380-4d87-a0a3-b782cbc013bc",
+          "target": "55e4127e-3d07-4c3b-a075-23ca0bfbfdfe",
           "relation": "CEO of",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]
         },
         {
-          "source": "4bb6aded-db4e-4443-884e-b8055f7e3213",
-          "target": "f01de7f2-afb1-4e80-b47b-e062ced8cc50",
-          "relation": "employs",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "f01de7f2-afb1-4e80-b47b-e062ced8cc50",
-          "target": "a50443a9-99f8-4fec-a6e2-2a43ebe05982",
-          "relation": "has offices in",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "096649a1-c0a5-48b8-80aa-3b7dc3b85408",
-          "target": "62ec3da5-b2ea-45f7-9b82-3216a990d0c7",
-          "relation": "CEO of",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "62ec3da5-b2ea-45f7-9b82-3216a990d0c7",
-          "target": "926c8298-ce27-46de-9888-02244eec1760",
-          "relation": "plans to deploy",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "62ec3da5-b2ea-45f7-9b82-3216a990d0c7",
-          "target": "4468cf4b-c575-42c0-a20b-73167ecfb3fb",
-          "relation": "made investment of",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "e35ecc2f-d75d-4f78-a7ad-ac5c6c9e4f00",
-          "target": "3c6cfb9a-6ddb-45fc-8976-f1107df5cf6b",
-          "relation": "is chair of",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "e35ecc2f-d75d-4f78-a7ad-ac5c6c9e4f00",
-          "target": "5838abfe-4d10-42b9-a552-a0f027356144",
-          "relation": "is conducting regulatory review of",
-          "articles": [
-            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
-          ]
-        },
-        {
-          "source": "6fc39ced-fb30-4db9-896a-d946cefcc154",
-          "target": "54a913aa-98f6-42a3-baa7-041847feaee6",
+          "source": "6310ff76-1380-4d87-a0a3-b782cbc013bc",
+          "target": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
           "relation": "gave keynote at",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]
         },
         {
-          "source": "34549b8e-6199-4756-8202-0d3ae0e280bb",
-          "target": "54a913aa-98f6-42a3-baa7-041847feaee6",
-          "relation": "appeared at",
+          "source": "ca129d2f-5f76-449e-8708-009e2c1f9b32",
+          "target": "ed33ae8d-4156-4517-9ce3-eb1707d06154",
+          "relation": "CEO of",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]
         },
         {
-          "source": "096649a1-c0a5-48b8-80aa-3b7dc3b85408",
-          "target": "54a913aa-98f6-42a3-baa7-041847feaee6",
-          "relation": "appeared at",
+          "source": "ca129d2f-5f76-449e-8708-009e2c1f9b32",
+          "target": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
+          "relation": "works at",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]
         },
         {
-          "source": "54a913aa-98f6-42a3-baa7-041847feaee6",
-          "target": "62ad2ff8-5a5e-4b0b-a760-5fb7696c4c49",
-          "relation": "appeared at",
+          "source": "ed33ae8d-4156-4517-9ce3-eb1707d06154",
+          "target": "04579134-419d-4309-9b1b-0736b3f18556",
+          "relation": "part of",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]
         },
         {
-          "source": "54a913aa-98f6-42a3-baa7-041847feaee6",
-          "target": "10be07ed-3877-469b-bed8-11488db910a0",
-          "relation": "appeared at",
+          "source": "04579134-419d-4309-9b1b-0736b3f18556",
+          "target": "e452767f-4fc5-461b-a08f-6cc3911211cf",
+          "relation": "is located in",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "2f1dad54-9eb5-4737-a334-1dec12c9ee2d",
+          "target": "52541204-0c6a-42cc-bb7c-70a65d649fad",
+          "relation": "CEO of",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "52541204-0c6a-42cc-bb7c-70a65d649fad",
+          "target": "f834ea92-49df-48d5-be05-0096bfbdff56",
+          "relation": "also known as",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "2f1dad54-9eb5-4737-a334-1dec12c9ee2d",
+          "target": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
+          "relation": "works at",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "f834ea92-49df-48d5-be05-0096bfbdff56",
+          "target": "55e4127e-3d07-4c3b-a075-23ca0bfbfdfe",
+          "relation": "plans to draw on resources from",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "a2e4f9fa-1eed-4ed5-a2b2-a92469b5fef4",
+          "target": "d9960007-7ed6-484b-9fd2-345abe6f2e4d",
+          "relation": "Chair of",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "a2e4f9fa-1eed-4ed5-a2b2-a92469b5fef4",
+          "target": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
+          "relation": "cautioned at",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "d9960007-7ed6-484b-9fd2-345abe6f2e4d",
+          "target": "d30ce258-720e-4fb9-9ed9-f2377baf46e0",
+          "relation": "reviewing deal with",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "d9960007-7ed6-484b-9fd2-345abe6f2e4d",
+          "target": "55e4127e-3d07-4c3b-a075-23ca0bfbfdfe",
+          "relation": "reviewing deal with",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "782b1f86-d44e-482b-a7d1-bdfb7e53bc5f",
+          "target": "7ecdb8c1-2527-479e-8110-08877b3413fa",
+          "relation": "held in",
           "articles": [
             "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
           ]

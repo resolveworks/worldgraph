@@ -16,13 +16,12 @@ SYSTEM_PROMPT = """You are an entity-relation extraction system. Given a news ar
 
 Be thorough: capture every entity and relation mentioned in the article. Use the exact names as they appear in the text. Each relation should be a concise verb phrase.
 
-For entity types, use short descriptive phrases like "tech company", "CEO", "city", "acquisition price", "date", "AI startup", "energy company", etc. Be specific rather than generic."""
+Each entity should have a short unique id and the name as it appears in the text."""
 
 
 class Entity(BaseModel):
     id: str = Field(description="Short unique identifier for this entity, e.g. 'e1', 'e2'")
     name: str = Field(description="Entity name as it appears in the article")
-    type: str = Field(description="Short type phrase, e.g. 'tech company', 'CEO', 'city'")
 
 
 class Relation(BaseModel):

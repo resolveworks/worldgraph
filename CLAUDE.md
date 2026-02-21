@@ -11,7 +11,7 @@ The core idea: news redundancy is the signal, not noise. Multiple outlets report
 The pipeline uses a unified **graph format** that flows between stages. After the initial cluster stage, every intermediate file is a graph JSON with `{cluster_labels, graphs}`. The match stage consumes and produces this format, so iteration is just calling match repeatedly.
 
 1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs (triples)
-2. **Embed & Cluster Relations** — Embed relation phrases, cluster synonyms, build per-article graphs → `graphs_0.json`
+2. **Cluster Relations** — Embed relation phrases, cluster synonyms, build per-article graphs → `graphs_0.json`
 3. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_N.json` (run repeatedly until convergence)
 4. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
 
