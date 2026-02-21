@@ -1,0 +1,1313 @@
+[
+  {
+    "article_id": "article_01",
+    "source": "TechWire Daily",
+    "title": "Meridian Technologies to Acquire Lightwave Analytics in $2.3B Deal",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Meridian Technologies",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Lightwave Analytics",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "San Francisco",
+        "type": "location"
+      },
+      {
+        "id": "e4",
+        "name": "$2.3 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e5",
+        "name": "2026-02-10",
+        "type": "date"
+      },
+      {
+        "id": "e6",
+        "name": "third quarter",
+        "type": "date"
+      },
+      {
+        "id": "e7",
+        "name": "James Xu",
+        "type": "person"
+      },
+      {
+        "id": "e8",
+        "name": "Dr. Priya Sharma",
+        "type": "person"
+      },
+      {
+        "id": "e9",
+        "name": "$400 million",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e10",
+        "name": "2019",
+        "type": "date"
+      },
+      {
+        "id": "e11",
+        "name": "Austin",
+        "type": "location"
+      },
+      {
+        "id": "e12",
+        "name": "Meridian's cloud infrastructure division",
+        "type": "organization"
+      },
+      {
+        "id": "e13",
+        "name": "Lightwave's real-time analytics platform",
+        "type": "product"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "announced acquisition of",
+        "target": "e2",
+        "context": "Meridian Technologies announced Monday that it will acquire Lightwave Analytics"
+      },
+      {
+        "source": "e1",
+        "relation": "is acquiring",
+        "target": "e2",
+        "context": "it will acquire Lightwave Analytics, a San Francisco-based data analytics startup, in a deal valued at approximately $2.3 billion"
+      },
+      {
+        "source": "e2",
+        "relation": "is based in",
+        "target": "e3",
+        "context": "Lightwave Analytics, a San Francisco-based data analytics startup"
+      },
+      {
+        "source": "e1",
+        "relation": "is acquiring for",
+        "target": "e4",
+        "context": "in a deal valued at approximately $2.3 billion"
+      },
+      {
+        "source": "e1",
+        "relation": "acquisition expected to close in",
+        "target": "e6",
+        "context": "The acquisition, which is expected to close in the third quarter"
+      },
+      {
+        "source": "e7",
+        "relation": "is CEO of",
+        "target": "e1",
+        "context": "Meridian CEO James Xu"
+      },
+      {
+        "source": "e2",
+        "relation": "founded in",
+        "target": "e10",
+        "context": "Lightwave was founded in 2019"
+      },
+      {
+        "source": "e8",
+        "relation": "founded",
+        "target": "e2",
+        "context": "Lightwave was founded in 2019 by Dr. Priya Sharma"
+      },
+      {
+        "source": "e2",
+        "relation": "raised",
+        "target": "e9",
+        "context": "Lightwave...has raised over $400 million in venture funding to date"
+      },
+      {
+        "source": "e2",
+        "relation": "has offices in",
+        "target": "e3",
+        "context": "offices in San Francisco and Austin"
+      },
+      {
+        "source": "e2",
+        "relation": "has offices in",
+        "target": "e11",
+        "context": "offices in San Francisco and Austin"
+      },
+      {
+        "source": "e2",
+        "relation": "employs",
+        "target": "e1",
+        "context": "The company employs roughly 800 people at its offices in San Francisco and Austin"
+      },
+      {
+        "source": "e13",
+        "relation": "is product of",
+        "target": "e2",
+        "context": "Lightwave's real-time analytics platform"
+      },
+      {
+        "source": "e13",
+        "relation": "will be integrated into",
+        "target": "e12",
+        "context": "Lightwave's real-time analytics platform will be integrated into Meridian's cloud infrastructure division"
+      }
+    ]
+  },
+  {
+    "article_id": "article_02",
+    "source": "The Business Standard",
+    "title": "Meridian Tech Buys Data Startup Lightwave for $2.3 Billion",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Meridian Technologies",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Lightwave Analytics",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "$2.3 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e4",
+        "name": "The Business Standard",
+        "type": "organization"
+      },
+      {
+        "id": "e5",
+        "name": "2026-02-10",
+        "type": "date"
+      },
+      {
+        "id": "e6",
+        "name": "Palo Alto",
+        "type": "location"
+      },
+      {
+        "id": "e7",
+        "name": "CloudScale",
+        "type": "organization"
+      },
+      {
+        "id": "e8",
+        "name": "$900 million",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e9",
+        "name": "2023",
+        "type": "date"
+      },
+      {
+        "id": "e10",
+        "name": "Priya Sharma",
+        "type": "person"
+      },
+      {
+        "id": "e11",
+        "name": "Meridian's cloud services unit",
+        "type": "organization"
+      },
+      {
+        "id": "e12",
+        "name": "4%",
+        "type": "other"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "agreed to purchase",
+        "target": "e2",
+        "context": "Meridian Technologies has agreed to purchase Lightwave Analytics for $2.3 billion"
+      },
+      {
+        "source": "e1",
+        "relation": "paid amount",
+        "target": "e3",
+        "context": "agreed to purchase Lightwave Analytics for $2.3 billion"
+      },
+      {
+        "source": "e1",
+        "relation": "is located in",
+        "target": "e6",
+        "context": "Palo Alto-based Meridian Technologies"
+      },
+      {
+        "source": "e1",
+        "relation": "previously acquired",
+        "target": "e7",
+        "context": "Meridian's largest acquisition since its $900 million purchase of CloudScale in 2023"
+      },
+      {
+        "source": "e1",
+        "relation": "paid amount for previous acquisition",
+        "target": "e8",
+        "context": "$900 million purchase of CloudScale in 2023"
+      },
+      {
+        "source": "e7",
+        "relation": "was acquired in year",
+        "target": "e9",
+        "context": "$900 million purchase of CloudScale in 2023"
+      },
+      {
+        "source": "e2",
+        "relation": "specializes in",
+        "target": "real-time data processing",
+        "context": "Lightwave, which specializes in real-time data processing"
+      },
+      {
+        "source": "e2",
+        "relation": "will become part of",
+        "target": "e11",
+        "context": "Lightwave will become part of Meridian's cloud services unit"
+      },
+      {
+        "source": "e10",
+        "relation": "is founder of",
+        "target": "e2",
+        "context": "Lightwave founder Priya Sharma"
+      },
+      {
+        "source": "e10",
+        "relation": "will join as",
+        "target": "e1",
+        "context": "Priya Sharma will join Meridian as Senior Vice President of Analytics"
+      },
+      {
+        "source": "e1",
+        "relation": "stock rose",
+        "target": "e12",
+        "context": "Meridian shares rose 4% in early trading"
+      },
+      {
+        "source": "e4",
+        "relation": "reported on",
+        "target": "e1",
+        "context": "The Business Standard is the source of the article"
+      }
+    ]
+  },
+  {
+    "article_id": "article_03",
+    "source": "Data Economy Report",
+    "title": "Lightwave Analytics Acquired by Meridian in Multi-Billion Dollar Transaction",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Lightwave Analytics",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Meridian Technologies",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "Dr. P. Sharma",
+        "type": "person"
+      },
+      {
+        "id": "e4",
+        "name": "$2.3 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e5",
+        "name": "$1.4 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e6",
+        "name": "Databricks",
+        "type": "organization"
+      },
+      {
+        "id": "e7",
+        "name": "Snowflake",
+        "type": "organization"
+      },
+      {
+        "id": "e8",
+        "name": "Q3 2026",
+        "type": "date"
+      },
+      {
+        "id": "e9",
+        "name": "Tuesday",
+        "type": "date"
+      },
+      {
+        "id": "e10",
+        "name": "Data Economy Report",
+        "type": "organization"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e2",
+        "relation": "acquired",
+        "target": "e1",
+        "context": "tech giant Meridian Technologies in a transaction worth $2.3 billion"
+      },
+      {
+        "source": "e3",
+        "relation": "is CEO and co-founder of",
+        "target": "e1",
+        "context": "Lightwave CEO and co-founder Dr. P. Sharma"
+      },
+      {
+        "source": "e1",
+        "relation": "valued at",
+        "target": "e4",
+        "context": "transaction worth $2.3 billion"
+      },
+      {
+        "source": "e1",
+        "relation": "had previous valuation of",
+        "target": "e5",
+        "context": "Lightwave's last private valuation of $1.4 billion"
+      },
+      {
+        "source": "e2",
+        "relation": "positioned to compete with",
+        "target": "e6",
+        "context": "positions Meridian to compete more directly with Databricks and Snowflake"
+      },
+      {
+        "source": "e2",
+        "relation": "positioned to compete with",
+        "target": "e7",
+        "context": "positions Meridian to compete more directly with Databricks and Snowflake"
+      },
+      {
+        "source": "e2",
+        "relation": "acquisition expected to finalize by",
+        "target": "e8",
+        "context": "expected to finalize by Q3 2026"
+      },
+      {
+        "source": "e3",
+        "relation": "stated about acquisition",
+        "target": "e1",
+        "context": "Lightwave CEO and co-founder Dr. P. Sharma said the acquisition would allow the company to 'scale its technology to a global customer base.'"
+      }
+    ]
+  },
+  {
+    "article_id": "article_04",
+    "source": "Energy & Markets Journal",
+    "title": "Sarah Chen Named Chief Executive of Nextera Energy Solutions",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Sarah Chen",
+        "type": "person"
+      },
+      {
+        "id": "e2",
+        "name": "Nextera Energy Solutions",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "David Park",
+        "type": "person"
+      },
+      {
+        "id": "e4",
+        "name": "Helios Power Group",
+        "type": "organization"
+      },
+      {
+        "id": "e5",
+        "name": "Robert Tanaka",
+        "type": "person"
+      },
+      {
+        "id": "e6",
+        "name": "2026-03-01",
+        "type": "date"
+      },
+      {
+        "id": "e7",
+        "name": "2026-02-12",
+        "type": "date"
+      },
+      {
+        "id": "e8",
+        "name": "Energy & Markets Journal",
+        "type": "organization"
+      },
+      {
+        "id": "e9",
+        "name": "next-generation battery storage",
+        "type": "product"
+      },
+      {
+        "id": "e10",
+        "name": "grid modernization",
+        "type": "product"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "appointed as Chief Executive Officer of",
+        "target": "e2",
+        "context": "Nextera Energy Solutions announced Wednesday that its board of directors has appointed Sarah Chen as the company's new Chief Executive Officer, effective March 1"
+      },
+      {
+        "source": "e1",
+        "relation": "effective date",
+        "target": "e6",
+        "context": "effective March 1"
+      },
+      {
+        "source": "e1",
+        "relation": "succeeds",
+        "target": "e3",
+        "context": "Chen succeeds David Park, who is stepping down after seven years in the role"
+      },
+      {
+        "source": "e3",
+        "relation": "was Chief Executive Officer of",
+        "target": "e2",
+        "context": "David Park, who is stepping down after seven years in the role"
+      },
+      {
+        "source": "e3",
+        "relation": "remains on board of",
+        "target": "e2",
+        "context": "Park will remain on the board in an advisory capacity through the end of the year"
+      },
+      {
+        "source": "e1",
+        "relation": "previously served as Chief Operating Officer at",
+        "target": "e4",
+        "context": "Chen, who previously served as Chief Operating Officer at Helios Power Group"
+      },
+      {
+        "source": "e5",
+        "relation": "is board chair of",
+        "target": "e2",
+        "context": "Nextera's board chair, Robert Tanaka"
+      },
+      {
+        "source": "e2",
+        "relation": "strategic shift toward",
+        "target": "e9",
+        "context": "the company's strategic shift toward next-generation battery storage and grid modernization"
+      },
+      {
+        "source": "e2",
+        "relation": "strategic shift toward",
+        "target": "e10",
+        "context": "the company's strategic shift toward next-generation battery storage and grid modernization"
+      },
+      {
+        "source": "e8",
+        "relation": "published article on",
+        "target": "e2",
+        "context": "Source: Energy & Markets Journal"
+      },
+      {
+        "source": "e7",
+        "relation": "article published date",
+        "target": "e2",
+        "context": "Date: 2026-02-12"
+      }
+    ]
+  },
+  {
+    "article_id": "article_05",
+    "source": "The Business Standard",
+    "title": "Nextera Energy Taps Former Helios Exec to Replace Outgoing CEO",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Nextera Energy Solutions",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Sarah Chen",
+        "type": "person"
+      },
+      {
+        "id": "e3",
+        "name": "David Park",
+        "type": "person"
+      },
+      {
+        "id": "e4",
+        "name": "Helios Power Group",
+        "type": "organization"
+      },
+      {
+        "id": "e5",
+        "name": "$5 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e6",
+        "name": "2019",
+        "type": "date"
+      },
+      {
+        "id": "e7",
+        "name": "March 1",
+        "type": "date"
+      },
+      {
+        "id": "e8",
+        "name": "battery storage technology",
+        "type": "product"
+      },
+      {
+        "id": "e9",
+        "name": "utility-scale solar",
+        "type": "product"
+      },
+      {
+        "id": "e10",
+        "name": "The Business Standard",
+        "type": "organization"
+      },
+      {
+        "id": "e11",
+        "name": "2026-02-12",
+        "type": "date"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e2",
+        "relation": "named as CEO of",
+        "target": "e1",
+        "context": "Nextera Energy Solutions has named Sarah Chen as its next CEO"
+      },
+      {
+        "source": "e2",
+        "relation": "replacing",
+        "target": "e3",
+        "context": "Sarah Chen as its next CEO, replacing David Park"
+      },
+      {
+        "source": "e3",
+        "relation": "announced resignation from",
+        "target": "e1",
+        "context": "David Park, who announced his resignation"
+      },
+      {
+        "source": "e3",
+        "relation": "led",
+        "target": "e1",
+        "context": "Park, who led Nextera since 2019"
+      },
+      {
+        "source": "e3",
+        "relation": "will serve as board adviser for",
+        "target": "e1",
+        "context": "will stay on as a board adviser"
+      },
+      {
+        "source": "e2",
+        "relation": "held position of COO at",
+        "target": "e4",
+        "context": "Chen most recently held the position of COO at Helios Power Group"
+      },
+      {
+        "source": "e2",
+        "relation": "oversaw expansion into",
+        "target": "e9",
+        "context": "where she oversaw the company's expansion into utility-scale solar"
+      },
+      {
+        "source": "e1",
+        "relation": "investing",
+        "target": "e5",
+        "context": "Nextera is in the midst of a $5 billion investment program"
+      },
+      {
+        "source": "e1",
+        "relation": "investing in",
+        "target": "e8",
+        "context": "$5 billion investment program in battery storage technology"
+      },
+      {
+        "source": "e2",
+        "relation": "expected to start as CEO on",
+        "target": "e7",
+        "context": "Chen is expected to start in the role on March 1"
+      }
+    ]
+  },
+  {
+    "article_id": "article_06",
+    "source": "CleanTech Insider",
+    "title": "David Park Steps Down as Nextera CEO; Sarah Chen to Take Over",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "David Park",
+        "type": "person"
+      },
+      {
+        "id": "e2",
+        "name": "NES",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "Nextera Energy Solutions",
+        "type": "organization"
+      },
+      {
+        "id": "e4",
+        "name": "Sarah Chen",
+        "type": "person"
+      },
+      {
+        "id": "e5",
+        "name": "S. Chen",
+        "type": "person"
+      },
+      {
+        "id": "e6",
+        "name": "Helios Power",
+        "type": "organization"
+      },
+      {
+        "id": "e7",
+        "name": "R. Tanaka",
+        "type": "person"
+      },
+      {
+        "id": "e8",
+        "name": "$2.1 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e9",
+        "name": "$8.7 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e10",
+        "name": "March 1",
+        "type": "date"
+      },
+      {
+        "id": "e11",
+        "name": "2026-02-12",
+        "type": "date"
+      },
+      {
+        "id": "e12",
+        "name": "seven years",
+        "type": "date"
+      },
+      {
+        "id": "e13",
+        "name": "grid-scale energy storage",
+        "type": "product"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "resigned as CEO of",
+        "target": "e2",
+        "context": "David Park has resigned as CEO of NES"
+      },
+      {
+        "source": "e2",
+        "relation": "is formally known as",
+        "target": "e3",
+        "context": "NES, the renewable energy company formally known as Nextera Energy Solutions"
+      },
+      {
+        "source": "e4",
+        "relation": "is also known as",
+        "target": "e5",
+        "context": "S. Chen, currently the chief operating officer of Helios Power, will assume the top job (referring to Sarah Chen)"
+      },
+      {
+        "source": "e5",
+        "relation": "is chief operating officer of",
+        "target": "e6",
+        "context": "S. Chen, currently the chief operating officer of Helios Power"
+      },
+      {
+        "source": "e4",
+        "relation": "assumes role as CEO of",
+        "target": "e2",
+        "context": "will assume the top job starting March 1"
+      },
+      {
+        "source": "e4",
+        "relation": "assumes position effective",
+        "target": "e10",
+        "context": "will assume the top job starting March 1"
+      },
+      {
+        "source": "e1",
+        "relation": "served as CEO for",
+        "target": "e12",
+        "context": "Park had been at the helm of the company for seven years"
+      },
+      {
+        "source": "e2",
+        "relation": "grew revenue from",
+        "target": "e8",
+        "context": "Nextera grew its revenue from $2.1 billion to $8.7 billion"
+      },
+      {
+        "source": "e2",
+        "relation": "grew revenue to",
+        "target": "e9",
+        "context": "Nextera grew its revenue from $2.1 billion to $8.7 billion"
+      },
+      {
+        "source": "e7",
+        "relation": "is board chair of",
+        "target": "e2",
+        "context": "Board chair R. Tanaka praised Park's contributions"
+      },
+      {
+        "source": "e7",
+        "relation": "praised",
+        "target": "e1",
+        "context": "Board chair R. Tanaka praised Park's contributions"
+      },
+      {
+        "source": "e7",
+        "relation": "expressed confidence in",
+        "target": "e4",
+        "context": "expressed confidence in Chen's ability to lead the company's next phase of growth"
+      }
+    ]
+  },
+  {
+    "article_id": "article_07",
+    "source": "TechWire Daily",
+    "title": "Meridian Technologies and Cascade Robotics Announce Joint AI Venture",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Meridian Technologies",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Cascade Robotics",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "James Xu",
+        "type": "person"
+      },
+      {
+        "id": "e4",
+        "name": "Marcus Webb",
+        "type": "person"
+      },
+      {
+        "id": "e5",
+        "name": "$500 million",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e6",
+        "name": "2026-02-14",
+        "type": "date"
+      },
+      {
+        "id": "e7",
+        "name": "early 2027",
+        "type": "date"
+      },
+      {
+        "id": "e8",
+        "name": "AI-powered automation systems for industrial logistics",
+        "type": "product"
+      },
+      {
+        "id": "e9",
+        "name": "cloud AI platform",
+        "type": "product"
+      },
+      {
+        "id": "e10",
+        "name": "autonomous robotics hardware",
+        "type": "product"
+      },
+      {
+        "id": "e11",
+        "name": "joint venture",
+        "type": "event"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "announced partnership with",
+        "target": "e2",
+        "context": "Meridian Technologies and Cascade Robotics announced a strategic partnership"
+      },
+      {
+        "source": "e1",
+        "relation": "is developing",
+        "target": "e8",
+        "context": "jointly develop AI-powered automation systems for industrial logistics"
+      },
+      {
+        "source": "e2",
+        "relation": "is developing",
+        "target": "e8",
+        "context": "jointly develop AI-powered automation systems for industrial logistics"
+      },
+      {
+        "source": "e11",
+        "relation": "valued at",
+        "target": "e5",
+        "context": "The partnership, valued at $500 million over five years"
+      },
+      {
+        "source": "e1",
+        "relation": "contributes",
+        "target": "e9",
+        "context": "combine Meridian's cloud AI platform with Cascade's autonomous robotics hardware"
+      },
+      {
+        "source": "e2",
+        "relation": "contributes",
+        "target": "e10",
+        "context": "combine Meridian's cloud AI platform with Cascade's autonomous robotics hardware"
+      },
+      {
+        "source": "e3",
+        "relation": "is CEO of",
+        "target": "e1",
+        "context": "Meridian CEO James Xu"
+      },
+      {
+        "source": "e4",
+        "relation": "is CEO of",
+        "target": "e2",
+        "context": "Cascade Robotics CEO Marcus Webb"
+      },
+      {
+        "source": "e8",
+        "relation": "expected market launch",
+        "target": "e7",
+        "context": "The first products from the joint venture are expected to reach market in early 2027"
+      },
+      {
+        "source": "e1",
+        "relation": "announced on",
+        "target": "e6",
+        "context": "announced a strategic partnership Friday to jointly develop"
+      },
+      {
+        "source": "e2",
+        "relation": "announced on",
+        "target": "e6",
+        "context": "announced a strategic partnership Friday to jointly develop"
+      }
+    ]
+  },
+  {
+    "article_id": "article_08",
+    "source": "Robotics & Automation Weekly",
+    "title": "Cascade Robotics Partners with Meridian on $500M Automation Initiative",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Cascade Robotics",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Meridian Technologies",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "Pittsburgh",
+        "type": "location"
+      },
+      {
+        "id": "e4",
+        "name": "$500 million",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e5",
+        "name": "Marcus Webb",
+        "type": "person"
+      },
+      {
+        "id": "e6",
+        "name": "2017",
+        "type": "date"
+      },
+      {
+        "id": "e7",
+        "name": "Lightwave",
+        "type": "organization"
+      },
+      {
+        "id": "e8",
+        "name": "Automation World Expo",
+        "type": "event"
+      },
+      {
+        "id": "e9",
+        "name": "November",
+        "type": "date"
+      },
+      {
+        "id": "e10",
+        "name": "2026-02-14",
+        "type": "date"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "entered into strategic alliance with",
+        "target": "e2",
+        "context": "Cascade Robotics has entered into a five-year strategic alliance with Meridian Technologies to develop AI-driven automation solutions for the logistics and warehousing sector"
+      },
+      {
+        "source": "e1",
+        "relation": "is developing",
+        "target": "e1",
+        "context": "to develop AI-driven automation solutions for the logistics and warehousing sector"
+      },
+      {
+        "source": "e1",
+        "relation": "will establish joint research lab in",
+        "target": "e3",
+        "context": "The initiative...will establish a joint research lab in Pittsburgh"
+      },
+      {
+        "source": "e2",
+        "relation": "will establish joint research lab in",
+        "target": "e3",
+        "context": "The initiative...will establish a joint research lab in Pittsburgh"
+      },
+      {
+        "source": "e4",
+        "relation": "is backing",
+        "target": "e1",
+        "context": "The initiative, backed by $500 million in combined investment"
+      },
+      {
+        "source": "e4",
+        "relation": "is backing",
+        "target": "e2",
+        "context": "The initiative, backed by $500 million in combined investment"
+      },
+      {
+        "source": "e5",
+        "relation": "founded",
+        "target": "e1",
+        "context": "Marcus Webb, who founded Cascade in 2017 and serves as its CEO"
+      },
+      {
+        "source": "e5",
+        "relation": "is CEO of",
+        "target": "e1",
+        "context": "Marcus Webb, who founded Cascade in 2017 and serves as its CEO"
+      },
+      {
+        "source": "e1",
+        "relation": "founded in",
+        "target": "e6",
+        "context": "Marcus Webb, who founded Cascade in 2017"
+      },
+      {
+        "source": "e2",
+        "relation": "acquired",
+        "target": "e7",
+        "context": "Meridian, which recently announced its acquisition of analytics firm Lightwave"
+      },
+      {
+        "source": "e1",
+        "relation": "plans to unveil prototype at",
+        "target": "e8",
+        "context": "The companies plan to unveil a prototype system at the Automation World Expo in November"
+      },
+      {
+        "source": "e2",
+        "relation": "plans to unveil prototype at",
+        "target": "e8",
+        "context": "The companies plan to unveil a prototype system at the Automation World Expo in November"
+      },
+      {
+        "source": "e8",
+        "relation": "scheduled for",
+        "target": "e9",
+        "context": "The companies plan to unveil a prototype system at the Automation World Expo in November"
+      }
+    ]
+  },
+  {
+    "article_id": "article_09",
+    "source": "Silicon Valley Chronicle",
+    "title": "Meridian Expands AI Ambitions with Robotics Deal and Analytics Acquisition",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Meridian Technologies",
+        "type": "organization"
+      },
+      {
+        "id": "e2",
+        "name": "Palo Alto",
+        "type": "location"
+      },
+      {
+        "id": "e3",
+        "name": "Lightwave Analytics",
+        "type": "organization"
+      },
+      {
+        "id": "e4",
+        "name": "$2.3 billion",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e5",
+        "name": "Cascade Robotics",
+        "type": "organization"
+      },
+      {
+        "id": "e6",
+        "name": "$500 million",
+        "type": "monetary_amount"
+      },
+      {
+        "id": "e7",
+        "name": "J. Xu",
+        "type": "person"
+      },
+      {
+        "id": "e8",
+        "name": "Morgan Stanley",
+        "type": "organization"
+      },
+      {
+        "id": "e9",
+        "name": "2026-02-15",
+        "type": "date"
+      },
+      {
+        "id": "e10",
+        "name": "autonomous logistics systems",
+        "type": "product"
+      },
+      {
+        "id": "e11",
+        "name": "real-time analytics capabilities",
+        "type": "product"
+      },
+      {
+        "id": "e12",
+        "name": "robotics and warehouse automation",
+        "type": "product"
+      },
+      {
+        "id": "e13",
+        "name": "34%",
+        "type": "other"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "is located in",
+        "target": "e2",
+        "context": "the Palo Alto company"
+      },
+      {
+        "source": "e1",
+        "relation": "acquired",
+        "target": "e3",
+        "context": "$2.3 billion acquisition of data analytics startup Lightwave Analytics"
+      },
+      {
+        "source": "e1",
+        "relation": "paid amount",
+        "target": "e4",
+        "context": "$2.3 billion acquisition of data analytics startup Lightwave Analytics"
+      },
+      {
+        "source": "e1",
+        "relation": "partnered with",
+        "target": "e5",
+        "context": "$500 million partnership with Cascade Robotics focused on autonomous logistics systems"
+      },
+      {
+        "source": "e1",
+        "relation": "paid amount",
+        "target": "e6",
+        "context": "$500 million partnership with Cascade Robotics"
+      },
+      {
+        "source": "e7",
+        "relation": "is CEO of",
+        "target": "e1",
+        "context": "CEO J. Xu"
+      },
+      {
+        "source": "e8",
+        "relation": "upgraded stock of",
+        "target": "e1",
+        "context": "Analysts at Morgan Stanley upgraded Meridian's stock to 'overweight'"
+      },
+      {
+        "source": "e3",
+        "relation": "provides",
+        "target": "e11",
+        "context": "The Lightwave deal brings real-time analytics capabilities"
+      },
+      {
+        "source": "e5",
+        "relation": "focuses on",
+        "target": "e10",
+        "context": "partnership with Cascade Robotics focused on autonomous logistics systems"
+      },
+      {
+        "source": "e5",
+        "relation": "provides",
+        "target": "e12",
+        "context": "the Cascade alliance adds robotics and warehouse automation"
+      },
+      {
+        "source": "e1",
+        "relation": "reported revenue growth of",
+        "target": "e13",
+        "context": "Meridian's cloud division reported 34% year-over-year revenue growth last quarter"
+      }
+    ]
+  },
+  {
+    "article_id": "article_10",
+    "source": "Energy & Markets Journal",
+    "title": "Nextera's New CEO Faces Immediate Challenge with Grid Storage Push",
+    "entities": [
+      {
+        "id": "e1",
+        "name": "Sarah Chen",
+        "type": "person"
+      },
+      {
+        "id": "e2",
+        "name": "Nextera Energy Solutions",
+        "type": "organization"
+      },
+      {
+        "id": "e3",
+        "name": "$5 billion grid-scale battery storage program",
+        "type": "product"
+      },
+      {
+        "id": "e4",
+        "name": "David Park",
+        "type": "person"
+      },
+      {
+        "id": "e5",
+        "name": "Nevada",
+        "type": "location"
+      },
+      {
+        "id": "e6",
+        "name": "Helios Power Group",
+        "type": "organization"
+      },
+      {
+        "id": "e7",
+        "name": "Robert Tanaka",
+        "type": "person"
+      },
+      {
+        "id": "e8",
+        "name": "2026-02-17",
+        "type": "date"
+      }
+    ],
+    "relations": [
+      {
+        "source": "e1",
+        "relation": "named CEO of",
+        "target": "e2",
+        "context": "Sarah Chen has barely been named CEO of Nextera Energy Solutions"
+      },
+      {
+        "source": "e3",
+        "relation": "launched by",
+        "target": "e4",
+        "context": "The initiative, launched under outgoing CEO David Park"
+      },
+      {
+        "source": "e2",
+        "relation": "operates",
+        "target": "e3",
+        "context": "the company's ambitious $5 billion grid-scale battery storage program"
+      },
+      {
+        "source": "e3",
+        "relation": "has facility in",
+        "target": "e5",
+        "context": "cost overruns at its flagship facility in Nevada"
+      },
+      {
+        "source": "e1",
+        "relation": "previously worked at",
+        "target": "e6",
+        "context": "Chen, who is joining from Helios Power Group where she served as chief operating officer"
+      },
+      {
+        "source": "e1",
+        "relation": "held position of",
+        "target": "chief operating officer",
+        "context": "served as chief operating officer"
+      },
+      {
+        "source": "e7",
+        "relation": "is board chair of",
+        "target": "e2",
+        "context": "Board chair Robert Tanaka"
+      },
+      {
+        "source": "e7",
+        "relation": "expressed confidence in",
+        "target": "e1",
+        "context": "Board chair Robert Tanaka expressed confidence that Chen's operational background makes her the right leader"
+      },
+      {
+        "source": "e3",
+        "relation": "encountered permitting delays in",
+        "target": "three states",
+        "context": "the company's ambitious $5 billion grid-scale battery storage program. The initiative, launched under outgoing CEO David Park, has encountered permitting delays in three states"
+      }
+    ]
+  }
+]
