@@ -1,4 +1,5 @@
 import json
+import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
 from itertools import combinations
@@ -67,6 +68,99 @@ class UnionFind:
             self.rank[rx] += 1
 
 
+# ---------------------------------------------------------------------------
+# Graph I/O
+# ---------------------------------------------------------------------------
+
+
+def load_graphs(
+    path: Path,
+) -> tuple[list[ArticleGraph], dict[str, list[dict]], dict[tuple, list[str]], dict[str, str]]:
+    """Load graph JSON into ArticleGraph objects + provenance.
+
+    Returns:
+        graphs: list of ArticleGraph (graph id used as article_id)
+        entity_occurrences: entity_id → list of {article_id, entity_id, name}
+        edge_articles: (graph_id, src, tgt, cluster_id) → list of article_ids
+        cluster_labels: cluster_id (str) → representative label
+    """
+    with open(path) as f:
+        data = json.load(f)
+
+    cluster_labels = data["cluster_labels"]
+    entity_occurrences: dict[str, list[dict]] = {}
+    edge_articles: dict[tuple, list[str]] = {}
+    graphs: list[ArticleGraph] = []
+
+    for g in data["graphs"]:
+        graph_id = g["id"]
+        entities: dict[str, Entity] = {}
+
+        for e in g["entities"]:
+            eid = e["id"]
+            entities[eid] = Entity(
+                id=eid, name=e["name"], type=e["type"], article_id=graph_id
+            )
+            entity_occurrences[eid] = e["occurrences"]
+
+        edges: list[Edge] = []
+        for ed in g["edges"]:
+            edge = Edge(source=ed["source"], target=ed["target"], cluster_id=ed["cluster_id"])
+            edges.append(edge)
+            edge_articles[(graph_id, edge.source, edge.target, edge.cluster_id)] = ed["articles"]
+
+        graphs.append(ArticleGraph(article_id=graph_id, entities=entities, edges=edges))
+
+    return graphs, entity_occurrences, edge_articles, cluster_labels
+
+
+def save_graphs(
+    graphs: list[ArticleGraph],
+    entity_occurrences: dict[str, list[dict]],
+    edge_articles: dict[tuple, list[str]],
+    cluster_labels: dict[str, str],
+    path: Path,
+) -> None:
+    """Write graphs + provenance to graph JSON format."""
+    output_graphs = []
+    for g in graphs:
+        entities = []
+        for e in g.entities.values():
+            entities.append(
+                {
+                    "id": e.id,
+                    "name": e.name,
+                    "type": e.type,
+                    "occurrences": entity_occurrences[e.id],
+                }
+            )
+
+        edges = []
+        for edge in g.edges:
+            key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+            edges.append(
+                {
+                    "source": edge.source,
+                    "target": edge.target,
+                    "cluster_id": edge.cluster_id,
+                    "articles": edge_articles[key],
+                }
+            )
+
+        output_graphs.append({"id": g.article_id, "entities": entities, "edges": edges})
+
+    output = {"cluster_labels": cluster_labels, "graphs": output_graphs}
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(output, f, indent=2)
+
+
+# ---------------------------------------------------------------------------
+# Entity embedding & comparison
+# ---------------------------------------------------------------------------
+
+
 def embed_entity_names(
     names: list[str], model: TextEmbedding
 ) -> dict[str, np.ndarray]:
@@ -104,32 +198,9 @@ def entity_compatible(
     return cosine_similarity(emb1, emb2) >= threshold
 
 
-def build_article_graph(
-    article_data: dict, relation_map: dict[str, int]
-) -> ArticleGraph:
-    """Build a normalized ArticleGraph from extraction data."""
-    article_id = article_data["article_id"]
-    entity_ids = {e["id"] for e in article_data["entities"]}
-    entities = {
-        e["id"]: Entity(
-            id=e["id"], name=e["name"], type=e["type"], article_id=article_id
-        )
-        for e in article_data["entities"]
-    }
-
-    edges = []
-    for rel in article_data["relations"]:
-        src, tgt = rel["source"], rel["target"]
-        # Skip edges where source or target isn't a known entity ID
-        if src not in entity_ids or tgt not in entity_ids:
-            continue
-        phrase = rel["relation"]
-        cluster_id = relation_map.get(phrase)
-        if cluster_id is None:
-            continue
-        edges.append(Edge(source=src, target=tgt, cluster_id=cluster_id))
-
-    return ArticleGraph(article_id=article_id, entities=entities, edges=edges)
+# ---------------------------------------------------------------------------
+# Compatibility graph & max clique matching
+# ---------------------------------------------------------------------------
 
 
 def build_compatibility_graph(
@@ -240,6 +311,7 @@ def match_article_pair(
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
     threshold: float,
+    min_edges: int = 1,
 ) -> PairMatch | None:
     """Find the maximum common subgraph between two article graphs."""
     nodes, adjacency = build_compatibility_graph(
@@ -250,7 +322,7 @@ def match_article_pair(
         return None
 
     clique = bron_kerbosch(adjacency, len(nodes))
-    if not clique:
+    if len(clique) < min_edges:
         return None
 
     # Extract aligned edges and entity mappings from the clique
@@ -273,161 +345,203 @@ def match_article_pair(
     )
 
 
+# ---------------------------------------------------------------------------
+# Graph merging
+# ---------------------------------------------------------------------------
+
+
+def merge_graphs(
+    graphs: list[ArticleGraph],
+    all_pair_matches: list[PairMatch],
+    uf: UnionFind,
+    entity_occurrences: dict[str, list[dict]],
+    edge_articles: dict[tuple, list[str]],
+) -> tuple[list[ArticleGraph], dict[str, list[dict]], dict[tuple, list[str]]]:
+    """Merge matched graphs into larger graphs, pass singletons through.
+
+    Returns (new_graphs, new_entity_occurrences, new_edge_articles).
+    """
+    # Find connected components of graphs via matched entities
+    graph_uf = UnionFind()
+    for pm in all_pair_matches:
+        if pm.aligned_edges:
+            graph_uf.union(pm.article_a, pm.article_b)
+
+    graph_by_id = {g.article_id: g for g in graphs}
+    components: dict[str, list[ArticleGraph]] = defaultdict(list)
+    for g in graphs:
+        root = graph_uf.find(g.article_id)
+        components[root].append(g)
+
+    new_graphs: list[ArticleGraph] = []
+    new_entity_occ: dict[str, list[dict]] = {}
+    new_edge_art: dict[tuple, list[str]] = {}
+
+    for root, component_graphs in components.items():
+        if len(component_graphs) == 1:
+            # Singleton — pass through unchanged
+            g = component_graphs[0]
+            new_graphs.append(g)
+            for e in g.entities.values():
+                new_entity_occ[e.id] = entity_occurrences[e.id]
+            for edge in g.edges:
+                key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+                new_edge_art[key] = edge_articles[key]
+            continue
+
+        # --- Merge component ---
+        merged_id = str(uuid.uuid4())
+
+        # 1. Group entities by UF root
+        entity_groups: dict[tuple, list[tuple[str, str]]] = defaultdict(list)
+        for g in component_graphs:
+            for e in g.entities.values():
+                uf_root = uf.find((g.article_id, e.id))
+                entity_groups[uf_root].append((g.article_id, e.id))
+
+        # 2. Create merged entities
+        old_to_new: dict[tuple[str, str], str] = {}  # (graph_id, entity_id) → new_id
+        merged_entities: dict[str, Entity] = {}
+
+        for uf_root, members in entity_groups.items():
+            new_eid = str(uuid.uuid4())
+
+            pooled_occ: list[dict] = []
+            name_counts: dict[str, int] = defaultdict(int)
+            entity_type = None
+            for graph_id, entity_id in members:
+                for occ in entity_occurrences[entity_id]:
+                    pooled_occ.append(occ)
+                    name_counts[occ["name"]] += 1
+                entity_type = graph_by_id[graph_id].entities[entity_id].type
+                old_to_new[(graph_id, entity_id)] = new_eid
+
+            canonical_name = max(name_counts, key=name_counts.get)
+            merged_entities[new_eid] = Entity(
+                id=new_eid, name=canonical_name, type=entity_type, article_id=merged_id
+            )
+            new_entity_occ[new_eid] = pooled_occ
+
+        # 3. Remap and dedup edges
+        edge_pool: dict[tuple[str, str, int], list[str]] = defaultdict(list)
+        for g in component_graphs:
+            for edge in g.edges:
+                new_src = old_to_new.get((g.article_id, edge.source))
+                new_tgt = old_to_new.get((g.article_id, edge.target))
+                if new_src is None or new_tgt is None:
+                    continue
+                old_key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+                articles = edge_articles.get(old_key, [])
+                edge_pool[(new_src, new_tgt, edge.cluster_id)].extend(articles)
+
+        merged_edges: list[Edge] = []
+        for (src, tgt, cid), articles in edge_pool.items():
+            deduped = sorted(set(articles))
+            merged_edges.append(Edge(source=src, target=tgt, cluster_id=cid))
+            new_edge_art[(merged_id, src, tgt, cid)] = deduped
+
+        new_graphs.append(
+            ArticleGraph(article_id=merged_id, entities=merged_entities, edges=merged_edges)
+        )
+
+    return new_graphs, new_entity_occ, new_edge_art
+
+
+# ---------------------------------------------------------------------------
+# Main pipeline
+# ---------------------------------------------------------------------------
+
+
 def run_matching(
-    extractions_path: Path,
-    clusters_path: Path,
+    input_path: Path,
     output_path: Path,
     threshold: float,
+    min_edges: int = 1,
 ) -> None:
-    """Run the full structural matching pipeline."""
-    with open(extractions_path) as f:
-        extractions = json.load(f)
-    with open(clusters_path) as f:
-        clusters_data = json.load(f)
-
-    relation_map = clusters_data["relation_map"]
-    # Build cluster_id -> representative label lookup
-    cluster_labels = {c["id"]: c["representative"] for c in clusters_data["clusters"]}
-
-    # Build article graphs
-    click.echo(f"Building graphs for {len(extractions)} articles...")
-    graphs = [build_article_graph(art, relation_map) for art in extractions]
+    """Run structural matching: load graphs, match pairs, merge, save."""
+    # 1. Load
+    graphs, entity_occurrences, edge_articles, cluster_labels = load_graphs(input_path)
+    click.echo(f"Loaded {len(graphs)} graphs from {input_path}")
     for g in graphs:
-        click.echo(f"  {g.article_id}: {len(g.entities)} entities, {len(g.edges)} edges")
+        n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
+        click.echo(
+            f"  {g.article_id[:12]}: {len(g.entities)} entities "
+            f"({n_occ} occurrences), {len(g.edges)} edges"
+        )
 
-    # Collect all unique entity embed keys ("{type}: {name}") and embed them
-    all_names = set()
+    # 2. Embed entity names
+    all_names: set[str] = set()
     for g in graphs:
         for e in g.entities.values():
             all_names.add(entity_embed_key(e))
-    all_names = sorted(all_names)
+    sorted_names = sorted(all_names)
 
-    click.echo(f"\nEmbedding {len(all_names)} unique entity keys...")
+    click.echo(f"\nEmbedding {len(sorted_names)} unique entity keys...")
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    name_embeddings = embed_entity_names(all_names, model)
+    name_embeddings = embed_entity_names(sorted_names, model)
 
-    # Match all article pairs
+    # 3. Match all pairs
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
-    click.echo(f"\nMatching {n_pairs} article pairs (threshold={threshold})...")
+    click.echo(f"\nMatching {n_pairs} pairs (threshold={threshold}, min_edges={min_edges})...")
 
     uf = UnionFind()
-    # Track which edges (as entity_group_pair + cluster_id) are confirmed by which articles
     all_pair_matches: list[PairMatch] = []
 
     for i in range(len(graphs)):
         for j in range(i + 1, len(graphs)):
-            pm = match_article_pair(graphs[i], graphs[j], name_embeddings, threshold)
+            pm = match_article_pair(graphs[i], graphs[j], name_embeddings, threshold, min_edges)
             if pm and pm.aligned_edges:
                 all_pair_matches.append(pm)
-                # Union matched entities
                 for ea, eb in pm.aligned_edges:
-                    key_a_src = (pm.article_a, ea.source)
-                    key_b_src = (pm.article_b, eb.source)
-                    key_a_tgt = (pm.article_a, ea.target)
-                    key_b_tgt = (pm.article_b, eb.target)
-                    uf.union(key_a_src, key_b_src)
-                    uf.union(key_a_tgt, key_b_tgt)
+                    uf.union(
+                        (pm.article_a, ea.source),
+                        (pm.article_b, eb.source),
+                    )
+                    uf.union(
+                        (pm.article_a, ea.target),
+                        (pm.article_b, eb.target),
+                    )
 
     click.echo(f"  {len(all_pair_matches)} pairs with matches")
 
-    # Build entity groups from Union-Find
-    entity_lookup: dict[str, Entity] = {}
-    for g in graphs:
+    # 4. Merge
+    merged_graphs, merged_occ, merged_edges = merge_graphs(
+        graphs, all_pair_matches, uf, entity_occurrences, edge_articles
+    )
+
+    # 5. Save
+    save_graphs(merged_graphs, merged_occ, merged_edges, cluster_labels, output_path)
+
+    # Summary
+    matched_entities = []
+    for g in merged_graphs:
         for e in g.entities.values():
-            entity_lookup[(g.article_id, e.id)] = e
+            occs = merged_occ[e.id]
+            if len(occs) > 1:
+                matched_entities.append((e, occs))
 
-    # Group by root
-    groups: dict[tuple, list[tuple[str, str]]] = defaultdict(list)
-    for key in uf.parent:
-        root = uf.find(key)
-        groups[root].append(key)
+    confirmed_edges = []
+    for g in merged_graphs:
+        for edge in g.edges:
+            key = (g.article_id, edge.source, edge.target, edge.cluster_id)
+            arts = merged_edges[key]
+            if len(arts) > 1:
+                confirmed_edges.append((g, edge, arts))
 
-    # Filter to groups with >1 occurrence and build output
-    entity_matches = []
-    # Map: root key -> index in entity_matches
-    root_to_idx: dict[tuple, int] = {}
+    click.echo(f"\n{len(merged_graphs)} graphs after merging (was {len(graphs)})")
 
-    for root, members in sorted(groups.items()):
-        if len(members) < 2:
-            continue
-        occurrences = []
-        name_counts: dict[str, int] = defaultdict(int)
-        entity_type = None
-        for article_id, entity_id in sorted(members):
-            ent = entity_lookup.get((article_id, entity_id))
-            if ent is None:
-                continue
-            occurrences.append(
-                {"article_id": article_id, "entity_id": entity_id, "name": ent.name}
-            )
-            name_counts[ent.name] += 1
-            entity_type = ent.type
+    if matched_entities:
+        click.echo(f"\n{len(matched_entities)} matched entities:")
+        for e, occs in matched_entities:
+            names = sorted(set(o["name"] for o in occs))
+            click.echo(f"  {e.name} ({e.type}) — {len(occs)} occurrences: {', '.join(names)}")
 
-        if not occurrences:
-            continue
-
-        canonical_name = max(name_counts, key=name_counts.get)
-        idx = len(entity_matches)
-        root_to_idx[root] = idx
-        entity_matches.append(
-            {
-                "canonical_name": canonical_name,
-                "type": entity_type,
-                "occurrences": occurrences,
-            }
-        )
-
-    # Build matched triples: for each aligned edge across all pair matches,
-    # group by (source_entity_group, target_entity_group, cluster_id)
-    triple_key_articles: dict[tuple, set[str]] = defaultdict(set)
-
-    for pm in all_pair_matches:
-        for ea, eb in pm.aligned_edges:
-            src_root = uf.find((pm.article_a, ea.source))
-            tgt_root = uf.find((pm.article_a, ea.target))
-            src_idx = root_to_idx.get(src_root)
-            tgt_idx = root_to_idx.get(tgt_root)
-            if src_idx is None or tgt_idx is None:
-                continue
-            key = (src_idx, tgt_idx, ea.cluster_id)
-            triple_key_articles[key].add(pm.article_a)
-            triple_key_articles[key].add(pm.article_b)
-
-    matched_triples = []
-    for (src_idx, tgt_idx, cluster_id), articles in sorted(triple_key_articles.items()):
-        matched_triples.append(
-            {
-                "cluster_id": cluster_id,
-                "cluster_label": cluster_labels.get(cluster_id, "?"),
-                "source_match": src_idx,
-                "target_match": tgt_idx,
-                "confirming_articles": sorted(articles),
-                "source_count": len(articles),
-            }
-        )
-
-    output = {
-        "parameters": {"name_threshold": threshold},
-        "entity_matches": entity_matches,
-        "matched_triples": matched_triples,
-    }
-
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump(output, f, indent=2)
-
-    click.echo(f"\n{len(entity_matches)} entity groups:")
-    for i, em in enumerate(entity_matches):
-        arts = [o["article_id"] for o in em["occurrences"]]
-        click.echo(f"  [{i}] {em['canonical_name']} ({em['type']}) — {', '.join(arts)}")
-
-    click.echo(f"\n{len(matched_triples)} matched triples:")
-    for mt in matched_triples:
-        src = entity_matches[mt["source_match"]]["canonical_name"]
-        tgt = entity_matches[mt["target_match"]]["canonical_name"]
-        click.echo(
-            f"  {src} —[{mt['cluster_label']}]→ {tgt} "
-            f"({mt['source_count']} sources: {', '.join(mt['confirming_articles'])})"
-        )
+    if confirmed_edges:
+        click.echo(f"\n{len(confirmed_edges)} confirmed edges:")
+        for g, edge, arts in confirmed_edges:
+            src = g.entities[edge.source].name
+            tgt = g.entities[edge.target].name
+            label = cluster_labels.get(str(edge.cluster_id), "?")
+            click.echo(f"  {src} —[{label}]→ {tgt} ({len(arts)} sources)")
 
     click.echo(f"\nWrote {output_path}")
