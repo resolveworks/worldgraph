@@ -2,7 +2,6 @@ from pathlib import Path
 
 import click
 
-from worldgraph.cluster import run_clustering
 from worldgraph.extract import run_extraction
 from worldgraph.match import run_matching
 
@@ -23,9 +22,9 @@ def cli():
 @click.option(
     "--output",
     "output_path",
-    default="data/extractions.json",
+    default="data/graphs_0.json",
     type=click.Path(path_type=Path),
-    help="Output extractions JSON file.",
+    help="Output graph JSON file.",
 )
 @click.option(
     "--model",
@@ -35,37 +34,6 @@ def cli():
 def extract(input_path: Path, output_path: Path, model: str):
     """Stage 1: Extract entities and relations from articles."""
     run_extraction(input_path, output_path, model)
-
-
-@cli.command()
-@click.option(
-    "--input",
-    "input_path",
-    default="data/extractions.json",
-    type=click.Path(exists=True, path_type=Path),
-    help="Input extractions JSON file.",
-)
-@click.option(
-    "--output",
-    "output_path",
-    default="data/graphs_0.json",
-    type=click.Path(path_type=Path),
-    help="Output graph JSON file.",
-)
-@click.option(
-    "--model",
-    default="sentence-transformers/all-MiniLM-L6-v2",
-    help="Sentence embedding model name.",
-)
-@click.option(
-    "--threshold",
-    default=0.7,
-    type=float,
-    help="Cosine similarity threshold for clustering.",
-)
-def cluster(input_path: Path, output_path: Path, model: str, threshold: float):
-    """Stage 2: Embed and cluster similar relations, build initial graphs."""
-    run_clustering(input_path, output_path, model, threshold)
 
 
 @cli.command()
@@ -92,19 +60,25 @@ def cluster(input_path: Path, output_path: Path, model: str, threshold: float):
     help="Cosine similarity threshold for entity name matching.",
 )
 @click.option(
+    "--rel-threshold",
+    default=0.8,
+    type=float,
+    help="Cosine similarity floor for relation phrase matching.",
+)
+@click.option(
     "--min-edges",
     default=2,
     type=int,
     help="Minimum matched edges to accept a pair match.",
 )
-def match(input_path: Path, output_path: Path, name_threshold: float, min_edges: int):
-    """Stage 3: Structural matching — merge overlapping graphs."""
-    run_matching(input_path, output_path, name_threshold, min_edges)
+def match(input_path: Path, output_path: Path, name_threshold: float, rel_threshold: float, min_edges: int):
+    """Stage 2: Structural matching — merge overlapping graphs."""
+    run_matching(input_path, output_path, name_threshold, rel_threshold, min_edges)
 
 
 @cli.command()
 def score():
-    """Stage 5: Score facts by cross-source agreement. (not yet implemented)"""
+    """Stage 3: Score facts by cross-source agreement. (not yet implemented)"""
     click.echo("Not yet implemented.")
 
 

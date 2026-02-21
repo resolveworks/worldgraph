@@ -58,23 +58,41 @@ Date: {article['date']}
 
 
 def run_extraction(input_path: Path, output_path: Path, model: str) -> None:
-    """Run extraction on all articles and write results."""
+    """Run extraction on all articles and write graph JSON directly."""
     with open(input_path) as f:
         articles = json.load(f)
 
     client = anthropic.Anthropic()
-    results = []
+    graphs = []
 
     for i, article in enumerate(articles, 1):
         click.echo(f"[{i}/{len(articles)}] Extracting from: {article['title']}")
         extraction = extract_article(client, article, model)
         data = extraction.model_dump()
 
+        article_id = article["id"]
+
         # Replace LLM-generated entity IDs with UUIDs
         id_map = {e["id"]: str(uuid.uuid4()) for e in data["entities"]}
+
+        entities = []
         for entity in data["entities"]:
-            entity["id"] = id_map[entity["id"]]
-        remapped_relations = []
+            new_id = id_map[entity["id"]]
+            entities.append(
+                {
+                    "id": new_id,
+                    "name": entity["name"],
+                    "occurrences": [
+                        {
+                            "article_id": article_id,
+                            "entity_id": new_id,
+                            "name": entity["name"],
+                        }
+                    ],
+                }
+            )
+
+        edges = []
         for rel in data["relations"]:
             if rel["source"] not in id_map or rel["target"] not in id_map:
                 bad = [k for k in ("source", "target") if rel[k] not in id_map]
@@ -85,22 +103,19 @@ def run_extraction(input_path: Path, output_path: Path, model: str) -> None:
                     ", ".join(repr(rel[k]) for k in bad),
                 )
                 continue
-            rel["source"] = id_map[rel["source"]]
-            rel["target"] = id_map[rel["target"]]
-            remapped_relations.append(rel)
+            edges.append(
+                {
+                    "source": id_map[rel["source"]],
+                    "target": id_map[rel["target"]],
+                    "relation": rel["relation"],
+                    "articles": [article_id],
+                }
+            )
 
-        results.append(
-            {
-                "article_id": article["id"],
-                "source": article["source"],
-                "title": article["title"],
-                "entities": data["entities"],
-                "relations": remapped_relations,
-            }
-        )
+        graphs.append({"id": article_id, "entities": entities, "edges": edges})
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
-        json.dump(results, f, indent=2)
+        json.dump({"graphs": graphs}, f, indent=2)
 
-    click.echo(f"\nWrote {len(results)} extractions to {output_path}")
+    click.echo(f"\nWrote {len(graphs)} article graphs to {output_path}")

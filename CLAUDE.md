@@ -8,17 +8,15 @@ The core idea: news redundancy is the signal, not noise. Multiple outlets report
 
 ## Architecture (PoC Pipeline)
 
-The pipeline uses a unified **graph format** that flows between stages. After the initial cluster stage, every intermediate file is a graph JSON with `{cluster_labels, graphs}`. The match stage consumes and produces this format, so iteration is just calling match repeatedly.
+The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages. The extract stage outputs this format directly, and the match stage consumes and produces it, so iteration is just calling match repeatedly.
 
-1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs (triples)
-2. **Cluster Relations** — Embed relation phrases, cluster synonyms, build per-article graphs → `graphs_0.json`
-3. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_N.json` (run repeatedly until convergence)
-4. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
+1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs, output directly as graph JSON → `graphs_0.json`
+2. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_N.json` (run repeatedly until convergence). Entities are compared by name embedding similarity; relations are compared by phrase embedding similarity (original phrases preserved, no flattening).
+3. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
 
 ```bash
-worldgraph extract                               # articles.json → extractions.json
-worldgraph cluster                               # extractions.json → graphs_0.json
-worldgraph match --output data/graphs_1.json     # graphs_0.json → graphs_1.json
+worldgraph extract                               # articles.json → graphs_0.json
+worldgraph match                                 # graphs_0.json → graphs_1.json
 worldgraph match -i data/graphs_1.json -o data/graphs_2.json  # repeat until stable
 ```
 
@@ -29,15 +27,13 @@ In the graph format, entities with >1 occurrence are matched entities, edges wit
 ```
 data/
   articles.json           # Input: fake news articles for testing (17 articles, 6 events)
-  extractions.json        # Output of stage 1 (entity-relation subgraphs per article)
-  graphs_0.json           # Output of stage 2 (initial per-article graphs with clustered relations)
-  graphs_N.json           # Output of stage 3 iterations (merged graphs, N = iteration number)
+  graphs_0.json           # Output of stage 1 (per-article graphs with original relation phrases)
+  graphs_N.json           # Output of stage 2 iterations (merged graphs, N = iteration number)
 worldgraph/
   __init__.py
   cli.py                  # Click CLI entry point (worldgraph command group)
-  extract.py              # Stage 1: LLM-based entity/relation extraction
-  cluster.py              # Stage 2: Embed relation phrases, cluster synonyms, build initial graphs
-  match.py                # Stage 3: Structural matching + graph merging (iterative)
+  extract.py              # Stage 1: LLM-based entity/relation extraction → graph JSON
+  match.py                # Stage 2: Structural matching + graph merging (iterative)
 .env.example              # Template for API key configuration
 pyproject.toml            # Project config, dependencies, CLI entry point
 README.md                 # Project proposal / discussion document
@@ -66,7 +62,7 @@ Articles 11-17 are designed to exercise **iterative merging**:
 
 - Python 3.12, managed with **uv** (`uv run`, `uv add`, etc.)
 - LLM (Claude API) for entity/relation extraction
-- Sentence embeddings for relation clustering
+- Sentence embeddings for entity name and relation phrase comparison during matching
 - Stack otherwise TBD — keep it simple, this is a proof of concept
 
 ## Conventions
