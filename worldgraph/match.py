@@ -1,8 +1,7 @@
 import json
 import uuid
 from collections import defaultdict
-from dataclasses import dataclass, field
-from itertools import combinations
+from dataclasses import dataclass
 from pathlib import Path
 
 import click
@@ -166,6 +165,20 @@ def embed_entity_names(
     return {name: np.array(emb) for name, emb in zip(names, embeddings)}
 
 
+def embed_relation_phrases(
+    phrases: list[str], model: TextEmbedding
+) -> dict[str, np.ndarray]:
+    """Embed relation phrases, return phrase -> embedding vector.
+
+    Wraps each phrase as "A {phrase} B" to give the model syntactic context.
+    """
+    if not phrases:
+        return {}
+    wrapped = [f"A {phrase} B" for phrase in phrases]
+    embeddings = list(model.embed(wrapped))
+    return {phrase: np.array(emb) for phrase, emb in zip(phrases, embeddings)}
+
+
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     dot = np.dot(a, b)
     norm = np.linalg.norm(a) * np.linalg.norm(b)
@@ -201,20 +214,25 @@ def build_compatibility_graph(
     graph_a: ArticleGraph,
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
+    relation_embeddings: dict[str, np.ndarray],
     floor: float = 0.3,
-) -> tuple[list[tuple[int, int]], dict[int, set[int]], list[tuple[float, float]]]:
+    rel_floor: float = 0.8,
+) -> tuple[list[tuple[int, int]], dict[int, set[int]], list[tuple[float, float, float]]]:
     """Build compatibility graph over edge pairs.
 
     Returns (nodes, adjacency, similarities) where each node is
     (edge_a_idx, edge_b_idx), adjacency maps node index -> set of compatible
-    node indices, and similarities[i] = (src_sim, tgt_sim) for node i.
+    node indices, and similarities[i] = (src_sim, tgt_sim, rel_sim) for node i.
     """
-    # Step 1: Find compatible edge pairs (same relation, endpoints above floor)
+    # Step 1: Find compatible edge pairs (similar relation + endpoints above floor)
     nodes: list[tuple[int, int]] = []
-    similarities: list[tuple[float, float]] = []
+    similarities: list[tuple[float, float, float]] = []
     for i, ea in enumerate(graph_a.edges):
         for j, eb in enumerate(graph_b.edges):
-            if ea.relation != eb.relation:
+            rel_sim = cosine_similarity(
+                relation_embeddings[ea.relation], relation_embeddings[eb.relation]
+            )
+            if rel_sim < rel_floor:
                 continue
             src_a = graph_a.entities[ea.source]
             src_b = graph_b.entities[eb.source]
@@ -225,7 +243,7 @@ def build_compatibility_graph(
             if min(src_sim, tgt_sim) < floor:
                 continue
             nodes.append((i, j))
-            similarities.append((src_sim, tgt_sim))
+            similarities.append((src_sim, tgt_sim, rel_sim))
 
     # Step 2: Build adjacency — two nodes are compatible if entity mappings don't conflict
     adjacency: dict[int, set[int]] = defaultdict(set)
@@ -356,12 +374,15 @@ def find_structural_matches(
     graph_a: ArticleGraph,
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
+    relation_embeddings: dict[str, np.ndarray],
     threshold: float,
+    rel_floor: float = 0.8,
     min_edges: int = 1,
 ) -> PairMatch | None:
     """Find structurally connected common subgraphs between two article graphs."""
     nodes, adjacency, similarities = build_compatibility_graph(
-        graph_a, graph_b, name_embeddings
+        graph_a, graph_b, name_embeddings, relation_embeddings,
+        rel_floor=rel_floor,
     )
 
     if not nodes:
@@ -379,12 +400,11 @@ def find_structural_matches(
             if len(component) < min_edges:
                 continue
 
-            # Score by average endpoint similarity
+            # Score by average similarity (endpoints + relation)
             comp_sims = []
             for node_idx in component:
-                src_sim, tgt_sim = similarities[node_idx]
-                comp_sims.append(src_sim)
-                comp_sims.append(tgt_sim)
+                src_sim, tgt_sim, rel_sim = similarities[node_idx]
+                comp_sims.extend([src_sim, tgt_sim, rel_sim])
             avg_sim = sum(comp_sims) / len(comp_sims)
             if avg_sim < threshold:
                 continue
@@ -418,6 +438,7 @@ def merge_graphs(
     graphs: list[ArticleGraph],
     all_pair_matches: list[PairMatch],
     uf: UnionFind,
+    relation_uf: UnionFind,
     entity_occurrences: dict[str, list[dict]],
     edge_articles: dict[tuple, list[str]],
 ) -> tuple[list[ArticleGraph], dict[str, list[dict]], dict[tuple, list[str]]]:
@@ -431,7 +452,6 @@ def merge_graphs(
         if pm.aligned_edges:
             graph_uf.union(pm.article_a, pm.article_b)
 
-    graph_by_id = {g.article_id: g for g in graphs}
     components: dict[str, list[ArticleGraph]] = defaultdict(list)
     for g in graphs:
         root = graph_uf.find(g.article_id)
@@ -484,23 +504,35 @@ def merge_graphs(
             )
             new_entity_occ[new_eid] = pooled_occ
 
-        # 3. Remap and dedup edges
+        # 3. Remap and dedup edges (normalize relations via relation_uf)
+        # Pool by (new_src, new_tgt, canonical_relation)
         edge_pool: dict[tuple[str, str, str], list[str]] = defaultdict(list)
+        # Track original relation phrases per pool key for frequency-based naming
+        edge_rel_phrases: dict[tuple[str, str, str], list[str]] = defaultdict(list)
         for g in component_graphs:
             for edge in g.edges:
                 new_src = old_to_new.get((g.article_id, edge.source))
                 new_tgt = old_to_new.get((g.article_id, edge.target))
                 if new_src is None or new_tgt is None:
                     continue
+                canonical_rel = relation_uf.find(edge.relation)
+                pool_key = (new_src, new_tgt, canonical_rel)
                 old_key = (g.article_id, edge.source, edge.target, edge.relation)
                 articles = edge_articles.get(old_key, [])
-                edge_pool[(new_src, new_tgt, edge.relation)].extend(articles)
+                edge_pool[pool_key].extend(articles)
+                edge_rel_phrases[pool_key].append(edge.relation)
 
         merged_edges: list[Edge] = []
-        for (src, tgt, rel), articles in edge_pool.items():
+        for (src, tgt, canonical_rel), articles in edge_pool.items():
+            # Pick most common original phrase as the relation name
+            phrases = edge_rel_phrases[(src, tgt, canonical_rel)]
+            phrase_counts: dict[str, int] = defaultdict(int)
+            for p in phrases:
+                phrase_counts[p] += 1
+            best_rel = max(phrase_counts, key=phrase_counts.get)
             deduped = sorted(set(articles))
-            merged_edges.append(Edge(source=src, target=tgt, relation=rel))
-            new_edge_art[(merged_id, src, tgt, rel)] = deduped
+            merged_edges.append(Edge(source=src, target=tgt, relation=best_rel))
+            new_edge_art[(merged_id, src, tgt, best_rel)] = deduped
 
         new_graphs.append(
             ArticleGraph(article_id=merged_id, entities=merged_entities, edges=merged_edges)
@@ -518,6 +550,7 @@ def run_matching(
     input_path: Path,
     output_path: Path,
     threshold: float,
+    rel_floor: float = 0.8,
     min_edges: int = 1,
 ) -> None:
     """Run structural matching: load graphs, match pairs, merge, save."""
@@ -531,27 +564,36 @@ def run_matching(
             f"({n_occ} occurrences), {len(g.edges)} edges"
         )
 
-    # 2. Embed entity names
+    # 2. Embed entity names and relation phrases
     all_names: set[str] = set()
+    all_relations: set[str] = set()
     for g in graphs:
         for e in g.entities.values():
             all_names.add(entity_embed_key(e))
+        for edge in g.edges:
+            all_relations.add(edge.relation)
     sorted_names = sorted(all_names)
+    sorted_relations = sorted(all_relations)
 
-    click.echo(f"\nEmbedding {len(sorted_names)} unique entity keys...")
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    click.echo(f"\nEmbedding {len(sorted_names)} entity names + {len(sorted_relations)} relation phrases...")
     name_embeddings = embed_entity_names(sorted_names, model)
+    relation_embeddings = embed_relation_phrases(sorted_relations, model)
 
     # 3. Match all pairs
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
     click.echo(f"\nMatching {n_pairs} pairs (threshold={threshold}, min_edges={min_edges})...")
 
     uf = UnionFind()
+    relation_uf = UnionFind()
     all_pair_matches: list[PairMatch] = []
 
     for i in range(len(graphs)):
         for j in range(i + 1, len(graphs)):
-            pm = find_structural_matches(graphs[i], graphs[j], name_embeddings, threshold, min_edges)
+            pm = find_structural_matches(
+                graphs[i], graphs[j], name_embeddings, relation_embeddings,
+                threshold, rel_floor, min_edges,
+            )
             if pm and pm.aligned_edges:
                 all_pair_matches.append(pm)
                 for ea, eb in pm.aligned_edges:
@@ -563,12 +605,13 @@ def run_matching(
                         (pm.article_a, ea.target),
                         (pm.article_b, eb.target),
                     )
+                    relation_uf.union(ea.relation, eb.relation)
 
     click.echo(f"  {len(all_pair_matches)} pairs with matches")
 
     # 4. Merge
     merged_graphs, merged_occ, merged_edges = merge_graphs(
-        graphs, all_pair_matches, uf, entity_occurrences, edge_articles
+        graphs, all_pair_matches, uf, relation_uf, entity_occurrences, edge_articles
     )
 
     # 5. Save
