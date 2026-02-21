@@ -14,7 +14,6 @@ from fastembed import TextEmbedding
 class Entity:
     id: str
     name: str
-    type: str
     article_id: str
 
 
@@ -97,7 +96,7 @@ def load_graphs(
         for e in g["entities"]:
             eid = e["id"]
             entities[eid] = Entity(
-                id=eid, name=e["name"], type=e["type"], article_id=graph_id
+                id=eid, name=e["name"], article_id=graph_id
             )
             entity_occurrences[eid] = e["occurrences"]
 
@@ -127,7 +126,6 @@ def save_graphs(
                 {
                     "id": e.id,
                     "name": e.name,
-                    "type": e.type,
                     "occurrences": entity_occurrences[e.id],
                 }
             )
@@ -177,8 +175,8 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def entity_embed_key(e: Entity) -> str:
-    """Build the embedding key for an entity: '{type}: {name}'."""
-    return f"{e.type}: {e.name}"
+    """Build the embedding key for an entity."""
+    return e.name
 
 
 def entity_compatible(
@@ -405,17 +403,15 @@ def merge_graphs(
 
             pooled_occ: list[dict] = []
             name_counts: dict[str, int] = defaultdict(int)
-            entity_type = None
             for graph_id, entity_id in members:
                 for occ in entity_occurrences[entity_id]:
                     pooled_occ.append(occ)
                     name_counts[occ["name"]] += 1
-                entity_type = graph_by_id[graph_id].entities[entity_id].type
                 old_to_new[(graph_id, entity_id)] = new_eid
 
             canonical_name = max(name_counts, key=name_counts.get)
             merged_entities[new_eid] = Entity(
-                id=new_eid, name=canonical_name, type=entity_type, article_id=merged_id
+                id=new_eid, name=canonical_name, article_id=merged_id
             )
             new_entity_occ[new_eid] = pooled_occ
 
@@ -531,7 +527,7 @@ def run_matching(
         click.echo(f"\n{len(matched_entities)} matched entities:")
         for e, occs in matched_entities:
             names = sorted(set(o["name"] for o in occs))
-            click.echo(f"  {e.name} ({e.type}) — {len(occs)} occurrences: {', '.join(names)}")
+            click.echo(f"  {e.name} — {len(occs)} occurrences: {', '.join(names)}")
 
     if confirmed_edges:
         click.echo(f"\n{len(confirmed_edges)} confirmed edges:")
