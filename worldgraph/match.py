@@ -279,15 +279,13 @@ def _mappings_consistent(ea1: Edge, eb1: Edge, ea2: Edge, eb2: Edge) -> bool:
 
 def bron_kerbosch(
     adjacency: dict[int, set[int]], nodes_count: int
-) -> list[int]:
-    """Bron-Kerbosch with pivoting. Returns the maximum clique."""
-    best_clique: list[int] = []
+) -> list[list[int]]:
+    """Bron-Kerbosch with pivoting. Returns all maximal cliques."""
+    cliques: list[list[int]] = []
 
     def _bk(R: set[int], P: set[int], X: set[int]):
-        nonlocal best_clique
         if not P and not X:
-            if len(R) > len(best_clique):
-                best_clique = list(R)
+            cliques.append(list(R))
             return
         # Pick pivot with most connections in P ∪ X
         union = P | X
@@ -300,17 +298,68 @@ def bron_kerbosch(
 
     all_nodes = set(range(nodes_count))
     _bk(set(), all_nodes, set())
-    return best_clique
+    return cliques
 
 
-def match_article_pair(
+def connected_components(
+    clique: list[int],
+    nodes: list[tuple[int, int]],
+    graph_a: ArticleGraph,
+    graph_b: ArticleGraph,
+) -> list[list[int]]:
+    """Split a clique into connected components via shared entities.
+
+    Two clique edges are neighbors if they share an entity endpoint
+    in graph_a or graph_b.
+    """
+    if len(clique) <= 1:
+        return [clique]
+
+    # Build adjacency within the clique based on shared entities
+    adj: dict[int, set[int]] = defaultdict(set)
+    for ci in range(len(clique)):
+        ia, ib = nodes[clique[ci]]
+        ea = graph_a.edges[ia]
+        eb = graph_b.edges[ib]
+        ents_ci = {ea.source, ea.target, eb.source, eb.target}
+        for cj in range(ci + 1, len(clique)):
+            ja, jb = nodes[clique[cj]]
+            ea2 = graph_a.edges[ja]
+            eb2 = graph_b.edges[jb]
+            ents_cj = {ea2.source, ea2.target, eb2.source, eb2.target}
+            if ents_ci & ents_cj:
+                adj[ci].add(cj)
+                adj[cj].add(ci)
+
+    # BFS to find components
+    visited = set()
+    components: list[list[int]] = []
+    for i in range(len(clique)):
+        if i in visited:
+            continue
+        component = []
+        queue = [i]
+        visited.add(i)
+        while queue:
+            node = queue.pop()
+            component.append(clique[node])
+            for neighbor in adj.get(node, set()):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+        components.append(component)
+
+    return components
+
+
+def find_structural_matches(
     graph_a: ArticleGraph,
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
     threshold: float,
     min_edges: int = 1,
 ) -> PairMatch | None:
-    """Find the maximum common subgraph between two article graphs."""
+    """Find structurally connected common subgraphs between two article graphs."""
     nodes, adjacency, similarities = build_compatibility_graph(
         graph_a, graph_b, name_embeddings
     )
@@ -318,31 +367,39 @@ def match_article_pair(
     if not nodes:
         return None
 
-    clique = bron_kerbosch(adjacency, len(nodes))
-    if len(clique) < min_edges:
-        return None
+    cliques = bron_kerbosch(adjacency, len(nodes))
 
-    # Score clique by average endpoint similarity
-    all_sims = []
-    for node_idx in clique:
-        src_sim, tgt_sim = similarities[node_idx]
-        all_sims.append(src_sim)
-        all_sims.append(tgt_sim)
-    avg_sim = sum(all_sims) / len(all_sims)
-    if avg_sim < threshold:
-        return None
-
-    # Extract aligned edges and entity mappings from the clique
+    # For each clique, split into connected components and accept those that pass
     aligned_edges = []
     entity_map: dict[str, str] = {}
 
-    for node_idx in clique:
-        ia, ib = nodes[node_idx]
-        ea = graph_a.edges[ia]
-        eb = graph_b.edges[ib]
-        aligned_edges.append((ea, eb))
-        entity_map[ea.source] = eb.source
-        entity_map[ea.target] = eb.target
+    for clique in cliques:
+        components = connected_components(clique, nodes, graph_a, graph_b)
+        for component in components:
+            if len(component) < min_edges:
+                continue
+
+            # Score by average endpoint similarity
+            comp_sims = []
+            for node_idx in component:
+                src_sim, tgt_sim = similarities[node_idx]
+                comp_sims.append(src_sim)
+                comp_sims.append(tgt_sim)
+            avg_sim = sum(comp_sims) / len(comp_sims)
+            if avg_sim < threshold:
+                continue
+
+            # Collect entity mappings from this component
+            for node_idx in component:
+                ia, ib = nodes[node_idx]
+                ea = graph_a.edges[ia]
+                eb = graph_b.edges[ib]
+                aligned_edges.append((ea, eb))
+                entity_map[ea.source] = eb.source
+                entity_map[ea.target] = eb.target
+
+    if not aligned_edges:
+        return None
 
     return PairMatch(
         article_a=graph_a.article_id,
@@ -494,7 +551,7 @@ def run_matching(
 
     for i in range(len(graphs)):
         for j in range(i + 1, len(graphs)):
-            pm = match_article_pair(graphs[i], graphs[j], name_embeddings, threshold, min_edges)
+            pm = find_structural_matches(graphs[i], graphs[j], name_embeddings, threshold, min_edges)
             if pm and pm.aligned_edges:
                 all_pair_matches.append(pm)
                 for ea, eb in pm.aligned_edges:
