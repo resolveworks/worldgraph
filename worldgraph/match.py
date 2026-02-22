@@ -242,7 +242,6 @@ def build_compatibility_graph(
     name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
     relation_specificities: dict[str, float],
-    floor: float = 0.3,
     rel_floor: float = 0.8,
 ) -> tuple[list[tuple[int, int]], dict[int, set[int]], list[tuple[float, float, float]]]:
     """Build compatibility graph over edge pairs.
@@ -253,7 +252,7 @@ def build_compatibility_graph(
     node i. specificity is the avg semantic uniqueness of the two relation
     phrases — how far each sits from all other relations in the corpus.
     """
-    # Step 1: Find compatible edge pairs (similar relation + endpoints above floor)
+    # Step 1: Find compatible edge pairs (similar relation, no name floor — evidence decay handles that)
     nodes: list[tuple[int, int]] = []
     similarities: list[tuple[float, float, float]] = []
     for i, ea in enumerate(graph_a.edges):
@@ -269,8 +268,6 @@ def build_compatibility_graph(
             tgt_b = graph_b.entities[eb.target]
             src_sim = entity_similarity(src_a, src_b, name_embeddings)
             tgt_sim = entity_similarity(tgt_a, tgt_b, name_embeddings)
-            if min(src_sim, tgt_sim) < floor:
-                continue
             specificity = (
                 relation_specificities.get(ea.relation, 1.0)
                 + relation_specificities.get(eb.relation, 1.0)
