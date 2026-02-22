@@ -15,7 +15,7 @@ The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows be
 3. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
 
 ```bash
-worldgraph extract                               # articles.json → graphs_0.json
+worldgraph extract                               # data/articles/ → graphs_0.json
 worldgraph match                                 # graphs_0.json → graphs_1.json
 worldgraph match -i data/graphs_1.json -o data/graphs_2.json  # repeat until stable
 ```
@@ -26,7 +26,7 @@ In the graph format, entities with >1 occurrence are matched entities, edges wit
 
 ```
 data/
-  articles.json           # Input: fake news articles for testing (17 articles, 6 events)
+  articles/               # Input: one {uuid}.json per article (17 articles, 6 events)
   graphs_0.json           # Output of stage 1 (per-article graphs with original relation phrases)
   graphs_N.json           # Output of stage 2 iterations (merged graphs, N = iteration number)
 worldgraph/
@@ -42,7 +42,7 @@ CLAUDE.md                 # This file
 
 ## Test Data
 
-`data/articles.json` contains 17 synthetic news articles covering 6 events:
+`data/articles/` contains 17 synthetic news articles (one `{uuid}.json` per article) covering 6 events:
 
 - **Acquisition**: Meridian Technologies acquires Lightwave Analytics ($2.3B)
 - **CEO change**: Sarah Chen replaces David Park at Nextera Energy Solutions
