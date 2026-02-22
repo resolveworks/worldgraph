@@ -206,7 +206,7 @@ def entity_similarity(
 
 
 # ---------------------------------------------------------------------------
-# Compatibility graph & max clique matching
+# Compatibility graph & connected-component matching
 # ---------------------------------------------------------------------------
 
 
@@ -245,7 +245,8 @@ def build_compatibility_graph(
             nodes.append((i, j))
             similarities.append((src_sim, tgt_sim, rel_sim))
 
-    # Step 2: Build adjacency — two nodes are compatible if entity mappings don't conflict
+    # Step 2: Build adjacency — two nodes are adjacent iff they share an entity
+    # endpoint in graph_a or graph_b AND their implied mappings are consistent.
     adjacency: dict[int, set[int]] = defaultdict(set)
     for ni in range(len(nodes)):
         for nj in range(ni + 1, len(nodes)):
@@ -254,6 +255,12 @@ def build_compatibility_graph(
 
             ea1, eb1 = graph_a.edges[ia], graph_b.edges[ib]
             ea2, eb2 = graph_a.edges[ja], graph_b.edges[jb]
+
+            # Structural connectivity: share an entity endpoint in either graph
+            ents_ni = {ea1.source, ea1.target, eb1.source, eb1.target}
+            ents_nj = {ea2.source, ea2.target, eb2.source, eb2.target}
+            if not (ents_ni & ents_nj):
+                continue
 
             if _mappings_consistent(ea1, eb1, ea2, eb2):
                 adjacency[ni].add(nj)
@@ -295,81 +302,6 @@ def _mappings_consistent(ea1: Edge, eb1: Edge, ea2: Edge, eb2: Edge) -> bool:
     return True
 
 
-def bron_kerbosch(
-    adjacency: dict[int, set[int]], nodes_count: int
-) -> list[list[int]]:
-    """Bron-Kerbosch with pivoting. Returns all maximal cliques."""
-    cliques: list[list[int]] = []
-
-    def _bk(R: set[int], P: set[int], X: set[int]):
-        if not P and not X:
-            cliques.append(list(R))
-            return
-        # Pick pivot with most connections in P ∪ X
-        union = P | X
-        pivot = max(union, key=lambda u: len(adjacency.get(u, set()) & P))
-        for v in P - adjacency.get(pivot, set()):
-            neighbors = adjacency.get(v, set())
-            _bk(R | {v}, P & neighbors, X & neighbors)
-            P = P - {v}
-            X = X | {v}
-
-    all_nodes = set(range(nodes_count))
-    _bk(set(), all_nodes, set())
-    return cliques
-
-
-def connected_components(
-    clique: list[int],
-    nodes: list[tuple[int, int]],
-    graph_a: ArticleGraph,
-    graph_b: ArticleGraph,
-) -> list[list[int]]:
-    """Split a clique into connected components via shared entities.
-
-    Two clique edges are neighbors if they share an entity endpoint
-    in graph_a or graph_b.
-    """
-    if len(clique) <= 1:
-        return [clique]
-
-    # Build adjacency within the clique based on shared entities
-    adj: dict[int, set[int]] = defaultdict(set)
-    for ci in range(len(clique)):
-        ia, ib = nodes[clique[ci]]
-        ea = graph_a.edges[ia]
-        eb = graph_b.edges[ib]
-        ents_ci = {ea.source, ea.target, eb.source, eb.target}
-        for cj in range(ci + 1, len(clique)):
-            ja, jb = nodes[clique[cj]]
-            ea2 = graph_a.edges[ja]
-            eb2 = graph_b.edges[jb]
-            ents_cj = {ea2.source, ea2.target, eb2.source, eb2.target}
-            if ents_ci & ents_cj:
-                adj[ci].add(cj)
-                adj[cj].add(ci)
-
-    # BFS to find components
-    visited = set()
-    components: list[list[int]] = []
-    for i in range(len(clique)):
-        if i in visited:
-            continue
-        component = []
-        queue = [i]
-        visited.add(i)
-        while queue:
-            node = queue.pop()
-            component.append(clique[node])
-            for neighbor in adj.get(node, set()):
-                if neighbor not in visited:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
-        components.append(component)
-
-    return components
-
-
 def find_structural_matches(
     graph_a: ArticleGraph,
     graph_b: ArticleGraph,
@@ -388,35 +320,46 @@ def find_structural_matches(
     if not nodes:
         return None
 
-    cliques = bron_kerbosch(adjacency, len(nodes))
-
-    # For each clique, split into connected components and accept those that pass
+    # Find connected components via BFS over the compatibility graph
+    visited: set[int] = set()
     aligned_edges = []
     entity_map: dict[str, str] = {}
 
-    for clique in cliques:
-        components = connected_components(clique, nodes, graph_a, graph_b)
-        for component in components:
-            if len(component) < min_edges:
-                continue
+    for start in range(len(nodes)):
+        if start in visited:
+            continue
+        # BFS
+        component: list[int] = []
+        queue = [start]
+        visited.add(start)
+        while queue:
+            node = queue.pop()
+            component.append(node)
+            for neighbor in adjacency.get(node, set()):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
 
-            # Score by average similarity (endpoints + relation)
-            comp_sims = []
-            for node_idx in component:
-                src_sim, tgt_sim, rel_sim = similarities[node_idx]
-                comp_sims.extend([src_sim, tgt_sim, rel_sim])
-            avg_sim = sum(comp_sims) / len(comp_sims)
-            if avg_sim < threshold:
-                continue
+        if len(component) < min_edges:
+            continue
 
-            # Collect entity mappings from this component
-            for node_idx in component:
-                ia, ib = nodes[node_idx]
-                ea = graph_a.edges[ia]
-                eb = graph_b.edges[ib]
-                aligned_edges.append((ea, eb))
-                entity_map[ea.source] = eb.source
-                entity_map[ea.target] = eb.target
+        # Score by average similarity (endpoints + relation)
+        comp_sims = []
+        for node_idx in component:
+            src_sim, tgt_sim, rel_sim = similarities[node_idx]
+            comp_sims.extend([src_sim, tgt_sim, rel_sim])
+        avg_sim = sum(comp_sims) / len(comp_sims)
+        if avg_sim < threshold:
+            continue
+
+        # Collect entity mappings from this component
+        for node_idx in component:
+            ia, ib = nodes[node_idx]
+            ea = graph_a.edges[ia]
+            eb = graph_b.edges[ib]
+            aligned_edges.append((ea, eb))
+            entity_map[ea.source] = eb.source
+            entity_map[ea.target] = eb.target
 
     if not aligned_edges:
         return None
