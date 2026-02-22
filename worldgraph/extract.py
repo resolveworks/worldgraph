@@ -59,8 +59,11 @@ Date: {article['date']}
 
 def run_extraction(input_path: Path, output_path: Path, model: str) -> None:
     """Run extraction on all articles and write graph JSON directly."""
-    with open(input_path) as f:
-        articles = json.load(f)
+    article_files = sorted(input_path.glob("*.json"))
+    articles = []
+    for f in article_files:
+        with open(f) as fh:
+            articles.append(json.load(fh))
 
     client = anthropic.Anthropic()
     graphs = []

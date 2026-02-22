@@ -15,9 +15,9 @@ def cli():
 @click.option(
     "--input",
     "input_path",
-    default="data/articles.json",
-    type=click.Path(exists=True, path_type=Path),
-    help="Input articles JSON file.",
+    default="data/articles",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Input articles directory (one JSON file per article).",
 )
 @click.option(
     "--output",
