@@ -340,7 +340,6 @@ def find_structural_matches(
     relation_specificities: dict[str, float],
     threshold: float,
     rel_floor: float = 0.8,
-    min_edges: int = 1,
     evidence_scale: float = 2.0,
 ) -> PairMatch | None:
     """Find structurally connected common subgraphs between two article graphs.
@@ -381,9 +380,6 @@ def find_structural_matches(
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append(neighbor)
-
-        if len(component) < min_edges:
-            continue
 
         # Accumulate specificity-weighted evidence per entity endpoint
         entity_evidence: dict[str, float] = defaultdict(float)
@@ -555,7 +551,6 @@ def run_matching(
     output_path: Path,
     threshold: float,
     rel_floor: float = 0.8,
-    min_edges: int = 1,
 ) -> None:
     """Run structural matching: load graphs, match pairs, merge, save."""
     # 1. Load
@@ -587,7 +582,7 @@ def run_matching(
 
     # 3. Match all pairs
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
-    click.echo(f"\nMatching {n_pairs} pairs (threshold={threshold}, min_edges={min_edges})...")
+    click.echo(f"\nMatching {n_pairs} pairs (threshold={threshold})...")
 
     uf = UnionFind()
     relation_uf = UnionFind()
@@ -597,7 +592,7 @@ def run_matching(
         for j in range(i + 1, len(graphs)):
             pm = find_structural_matches(
                 graphs[i], graphs[j], name_embeddings, relation_embeddings,
-                relation_specificities, threshold, rel_floor, min_edges,
+                relation_specificities, threshold, rel_floor,
             )
             if pm and pm.aligned_edges:
                 all_pair_matches.append(pm)

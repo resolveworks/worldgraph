@@ -66,15 +66,9 @@ def extract(input_path: Path, output_path: Path, model: str):
     type=float,
     help="Cosine similarity floor for relation phrase matching.",
 )
-@click.option(
-    "--min-edges",
-    default=2,
-    type=int,
-    help="Minimum matched edges to accept a pair match.",
-)
-def match(input_path: Path, output_path: Path, name_threshold: float, rel_threshold: float, min_edges: int):
+def match(input_path: Path, output_path: Path, name_threshold: float, rel_threshold: float):
     """Stage 2: Structural matching — merge overlapping graphs."""
-    run_matching(input_path, output_path, name_threshold, rel_threshold, min_edges)
+    run_matching(input_path, output_path, name_threshold, rel_threshold)
 
 
 @cli.command()
