@@ -5,6 +5,7 @@ import click
 from worldgraph.eval import evaluate
 from worldgraph.extract import run_extraction
 from worldgraph.match import run_matching
+from worldgraph.tune import run_sweep
 
 
 @click.group()
@@ -91,6 +92,27 @@ def match(input_path: Path, output_path: Path, name_threshold: float, rel_thresh
 def eval(input_path: Path, ground_truth_path: Path, verbose: bool):
     """Evaluate matching output against ground truth."""
     evaluate(input_path, ground_truth_path, verbose)
+
+
+@cli.command()
+@click.option(
+    "-i",
+    "--input",
+    "input_path",
+    default="data/graphs_0.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Input graph JSON file (pre-embedding stage output).",
+)
+@click.option(
+    "--ground-truth",
+    "ground_truth_path",
+    default="data/ground_truth_entities.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Ground truth entity canonical IDs.",
+)
+def tune(input_path: Path, ground_truth_path: Path):
+    """Sweep threshold × evidence_scale to find best matching parameters."""
+    run_sweep(input_path, ground_truth_path)
 
 
 @cli.command()
