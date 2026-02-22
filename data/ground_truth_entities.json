@@ -1,0 +1,512 @@
+{
+  "name_to_canonical": {
+    "Meridian Technologies": "meridian-technologies",
+    "Meridian Tech": "meridian-technologies",
+    "Meridian": "meridian-technologies",
+
+    "Lightwave Analytics": "lightwave-analytics",
+    "Lightwave": "lightwave-analytics",
+
+    "Dr. Priya Sharma": "dr-priya-sharma",
+    "Priya Sharma": "dr-priya-sharma",
+    "P. Sharma": "dr-priya-sharma",
+    "Dr. P. Sharma": "dr-priya-sharma",
+    "Sharma": "dr-priya-sharma",
+
+    "James Xu": "james-xu",
+    "J. Xu": "james-xu",
+
+    "Cascade Robotics": "cascade-robotics",
+    "Cascade": "cascade-robotics",
+
+    "Marcus Webb": "marcus-webb",
+    "M. Webb": "marcus-webb",
+    "Webb": "marcus-webb",
+
+    "Nextera Energy Solutions": "nextera-energy-solutions",
+    "NES": "nextera-energy-solutions",
+    "Nextera": "nextera-energy-solutions",
+
+    "Sarah Chen": "sarah-chen",
+    "S. Chen": "sarah-chen",
+    "Chen": "sarah-chen",
+
+    "David Park": "david-park",
+    "D. Park": "david-park",
+    "Park": "david-park",
+
+    "Robert Tanaka": "robert-tanaka",
+    "R. Tanaka": "robert-tanaka",
+
+    "Helios Power Group": "helios-power-group",
+    "Helios Power": "helios-power-group",
+
+    "Angela Torres": "angela-torres",
+    "A. Torres": "angela-torres",
+    "Commissioner Torres": "angela-torres",
+    "FTC Chair Torres": "angela-torres",
+    "FTC Commissioner Angela Torres": "angela-torres",
+
+    "Federal Trade Commission": "ftc",
+    "FTC": "ftc",
+
+    "Vantara AI": "vantara-ai",
+    "Vantara": "vantara-ai",
+
+    "Nils Bergström": "nils-bergstrom",
+    "Bergström": "nils-bergstrom",
+
+    "Data Protection Commission": "dpc-ireland",
+    "DPC": "dpc-ireland",
+    "Ireland's Data Protection Commission": "dpc-ireland",
+
+    "DataWatch EU": "datawatch-eu",
+
+    "Hanseong Group": "hanseong-group",
+    "Hanseong": "hanseong-group",
+
+    "Ji-Yeon Kwon": "ji-yeon-kwon",
+    "Kwon": "ji-yeon-kwon",
+
+    "Volta Systems": "volta-systems",
+    "Volta": "volta-systems",
+
+    "Rolf Andersen": "rolf-andersen",
+    "Andersen": "rolf-andersen",
+
+    "Apex Ventures": "apex-ventures",
+    "Apex": "apex-ventures",
+
+    "Diana Chu": "diana-chu",
+    "Chu": "diana-chu",
+
+    "Dr. Elena Vasquez": "dr-elena-vasquez",
+    "Elena Vasquez": "dr-elena-vasquez",
+    "E. Vasquez": "dr-elena-vasquez",
+    "Vasquez": "dr-elena-vasquez",
+
+    "LuminCore Technologies": "lumincore-technologies",
+    "LuminCore": "lumincore-technologies",
+
+    "Pieter van der Berg": "pieter-van-der-berg",
+    "van der Berg": "pieter-van-der-berg",
+
+    "Marta Hoekstra": "marta-hoekstra",
+
+    "Halcyon Genomics": "halcyon-genomics",
+    "Halcyon": "halcyon-genomics",
+
+    "Dominic Ferrara": "dominic-ferrara",
+    "Ferrara": "dominic-ferrara",
+
+    "Oryza Therapeutics": "oryza-therapeutics",
+    "Oryza": "oryza-therapeutics",
+
+    "Dr. Lena Vasquez": "dr-lena-vasquez",
+    "Lena Vasquez": "dr-lena-vasquez",
+    "Dr. Vasquez": "dr-lena-vasquez",
+
+    "Northveil Energy Partners": "northveil-energy-partners",
+    "Northveil Energy": "northveil-energy-partners",
+    "Northveil": "northveil-energy-partners",
+
+    "Warren Gault": "warren-gault",
+    "Gault": "warren-gault",
+
+    "Sustain Ratings": "sustain-ratings",
+
+    "Stelmark Freight": "stelmark-freight",
+    "Stelmark": "stelmark-freight",
+
+    "Miriam Solano": "miriam-solano",
+    "Solano": "miriam-solano",
+
+    "International Longshoremen's Association": "ila",
+    "ILA": "ila",
+
+    "Clyde Okafor": "clyde-okafor",
+    "Okafor": "clyde-okafor",
+
+    "Port of Galveston": "port-of-galveston",
+
+    "Bernard Tran": "bernard-tran",
+    "Tran": "bernard-tran",
+
+    "Renata Solis": "renata-solis",
+    "Solis": "renata-solis",
+
+    "National Labor Relations Board": "nlrb",
+    "NLRB": "nlrb",
+
+    "Department of Transportation": "us-dot",
+    "DOT": "us-dot",
+
+    "Sequoia Capital": "sequoia-capital",
+
+    "IBM Research": "ibm-research",
+    "IBM": "ibm-research",
+
+    "European Commission": "european-commission",
+    "EU": "european-commission",
+
+    "Florian Hartmann": "florian-hartmann",
+
+    "Maeve Clancy": "maeve-clancy",
+
+    "Teresa Nakamura": "teresa-nakamura",
+
+    "Raymond Liu": "raymond-liu",
+
+    "Helen Choi": "helen-choi",
+
+    "National Rare Disease Coalition": "national-rare-disease-coalition",
+
+    "Laura Kim": "laura-kim",
+
+    "San Francisco": "san-francisco",
+    "Austin": "austin",
+    "Palo Alto": "palo-alto",
+    "Pittsburgh": "pittsburgh",
+    "Berlin": "berlin",
+    "Dresden": "dresden",
+    "Eindhoven": "eindhoven",
+    "Stockholm": "stockholm",
+    "Frankfurt": "frankfurt",
+    "Amsterdam": "amsterdam",
+    "Brussels": "brussels",
+    "Seoul": "seoul",
+    "Houston": "houston",
+    "Galveston": "galveston",
+    "Nevada": "nevada",
+    "Savannah": "savannah",
+    "Long Beach": "long-beach",
+    "West Texas": "west-texas",
+    "Culberson County": "culberson-county",
+
+    "CloudScale": "cloudscale",
+
+    "Mirae Asset": "mirae-asset",
+
+    "Linden Capital Markets": "linden-capital-markets",
+
+    "Morgan Stanley": "morgan-stanley",
+
+    "Centre for European Technology Policy": "centre-for-european-technology-policy",
+
+    "Beurs van Berlage": "beurs-van-berlage"
+  },
+  "canonicals": {
+    "meridian-technologies": {
+      "type": "organization",
+      "canonical_name": "Meridian Technologies"
+    },
+    "lightwave-analytics": {
+      "type": "organization",
+      "canonical_name": "Lightwave Analytics"
+    },
+    "dr-priya-sharma": {
+      "type": "person",
+      "canonical_name": "Dr. Priya Sharma"
+    },
+    "james-xu": {
+      "type": "person",
+      "canonical_name": "James Xu"
+    },
+    "cascade-robotics": {
+      "type": "organization",
+      "canonical_name": "Cascade Robotics"
+    },
+    "marcus-webb": {
+      "type": "person",
+      "canonical_name": "Marcus Webb"
+    },
+    "nextera-energy-solutions": {
+      "type": "organization",
+      "canonical_name": "Nextera Energy Solutions"
+    },
+    "sarah-chen": {
+      "type": "person",
+      "canonical_name": "Sarah Chen"
+    },
+    "david-park": {
+      "type": "person",
+      "canonical_name": "David Park"
+    },
+    "robert-tanaka": {
+      "type": "person",
+      "canonical_name": "Robert Tanaka"
+    },
+    "helios-power-group": {
+      "type": "organization",
+      "canonical_name": "Helios Power Group"
+    },
+    "angela-torres": {
+      "type": "person",
+      "canonical_name": "Angela Torres"
+    },
+    "ftc": {
+      "type": "organization",
+      "canonical_name": "Federal Trade Commission"
+    },
+    "vantara-ai": {
+      "type": "organization",
+      "canonical_name": "Vantara AI"
+    },
+    "nils-bergstrom": {
+      "type": "person",
+      "canonical_name": "Nils Bergström"
+    },
+    "dpc-ireland": {
+      "type": "organization",
+      "canonical_name": "Data Protection Commission"
+    },
+    "datawatch-eu": {
+      "type": "organization",
+      "canonical_name": "DataWatch EU"
+    },
+    "hanseong-group": {
+      "type": "organization",
+      "canonical_name": "Hanseong Group"
+    },
+    "ji-yeon-kwon": {
+      "type": "person",
+      "canonical_name": "Ji-Yeon Kwon"
+    },
+    "volta-systems": {
+      "type": "organization",
+      "canonical_name": "Volta Systems"
+    },
+    "rolf-andersen": {
+      "type": "person",
+      "canonical_name": "Rolf Andersen"
+    },
+    "apex-ventures": {
+      "type": "organization",
+      "canonical_name": "Apex Ventures"
+    },
+    "diana-chu": {
+      "type": "person",
+      "canonical_name": "Diana Chu"
+    },
+    "dr-elena-vasquez": {
+      "type": "person",
+      "canonical_name": "Dr. Elena Vasquez"
+    },
+    "lumincore-technologies": {
+      "type": "organization",
+      "canonical_name": "LuminCore Technologies"
+    },
+    "pieter-van-der-berg": {
+      "type": "person",
+      "canonical_name": "Pieter van der Berg"
+    },
+    "marta-hoekstra": {
+      "type": "person",
+      "canonical_name": "Marta Hoekstra"
+    },
+    "halcyon-genomics": {
+      "type": "organization",
+      "canonical_name": "Halcyon Genomics"
+    },
+    "dominic-ferrara": {
+      "type": "person",
+      "canonical_name": "Dominic Ferrara"
+    },
+    "oryza-therapeutics": {
+      "type": "organization",
+      "canonical_name": "Oryza Therapeutics"
+    },
+    "dr-lena-vasquez": {
+      "type": "person",
+      "canonical_name": "Dr. Lena Vasquez"
+    },
+    "northveil-energy-partners": {
+      "type": "organization",
+      "canonical_name": "Northveil Energy Partners"
+    },
+    "warren-gault": {
+      "type": "person",
+      "canonical_name": "Warren Gault"
+    },
+    "sustain-ratings": {
+      "type": "organization",
+      "canonical_name": "Sustain Ratings"
+    },
+    "stelmark-freight": {
+      "type": "organization",
+      "canonical_name": "Stelmark Freight"
+    },
+    "miriam-solano": {
+      "type": "person",
+      "canonical_name": "Miriam Solano"
+    },
+    "ila": {
+      "type": "organization",
+      "canonical_name": "International Longshoremen's Association"
+    },
+    "clyde-okafor": {
+      "type": "person",
+      "canonical_name": "Clyde Okafor"
+    },
+    "port-of-galveston": {
+      "type": "location",
+      "canonical_name": "Port of Galveston"
+    },
+    "bernard-tran": {
+      "type": "person",
+      "canonical_name": "Bernard Tran"
+    },
+    "renata-solis": {
+      "type": "person",
+      "canonical_name": "Renata Solis"
+    },
+    "nlrb": {
+      "type": "organization",
+      "canonical_name": "National Labor Relations Board"
+    },
+    "us-dot": {
+      "type": "organization",
+      "canonical_name": "Department of Transportation"
+    },
+    "sequoia-capital": {
+      "type": "organization",
+      "canonical_name": "Sequoia Capital"
+    },
+    "ibm-research": {
+      "type": "organization",
+      "canonical_name": "IBM Research"
+    },
+    "european-commission": {
+      "type": "organization",
+      "canonical_name": "European Commission"
+    },
+    "florian-hartmann": {
+      "type": "person",
+      "canonical_name": "Florian Hartmann"
+    },
+    "maeve-clancy": {
+      "type": "person",
+      "canonical_name": "Maeve Clancy"
+    },
+    "teresa-nakamura": {
+      "type": "person",
+      "canonical_name": "Teresa Nakamura"
+    },
+    "raymond-liu": {
+      "type": "person",
+      "canonical_name": "Raymond Liu"
+    },
+    "helen-choi": {
+      "type": "person",
+      "canonical_name": "Helen Choi"
+    },
+    "national-rare-disease-coalition": {
+      "type": "organization",
+      "canonical_name": "National Rare Disease Coalition"
+    },
+    "laura-kim": {
+      "type": "person",
+      "canonical_name": "Laura Kim"
+    },
+    "san-francisco": {
+      "type": "location",
+      "canonical_name": "San Francisco"
+    },
+    "austin": {
+      "type": "location",
+      "canonical_name": "Austin"
+    },
+    "palo-alto": {
+      "type": "location",
+      "canonical_name": "Palo Alto"
+    },
+    "pittsburgh": {
+      "type": "location",
+      "canonical_name": "Pittsburgh"
+    },
+    "berlin": {
+      "type": "location",
+      "canonical_name": "Berlin"
+    },
+    "dresden": {
+      "type": "location",
+      "canonical_name": "Dresden"
+    },
+    "eindhoven": {
+      "type": "location",
+      "canonical_name": "Eindhoven"
+    },
+    "stockholm": {
+      "type": "location",
+      "canonical_name": "Stockholm"
+    },
+    "frankfurt": {
+      "type": "location",
+      "canonical_name": "Frankfurt"
+    },
+    "amsterdam": {
+      "type": "location",
+      "canonical_name": "Amsterdam"
+    },
+    "brussels": {
+      "type": "location",
+      "canonical_name": "Brussels"
+    },
+    "seoul": {
+      "type": "location",
+      "canonical_name": "Seoul"
+    },
+    "houston": {
+      "type": "location",
+      "canonical_name": "Houston"
+    },
+    "galveston": {
+      "type": "location",
+      "canonical_name": "Galveston"
+    },
+    "nevada": {
+      "type": "location",
+      "canonical_name": "Nevada"
+    },
+    "savannah": {
+      "type": "location",
+      "canonical_name": "Savannah"
+    },
+    "long-beach": {
+      "type": "location",
+      "canonical_name": "Long Beach"
+    },
+    "west-texas": {
+      "type": "location",
+      "canonical_name": "West Texas"
+    },
+    "culberson-county": {
+      "type": "location",
+      "canonical_name": "Culberson County"
+    },
+    "cloudscale": {
+      "type": "organization",
+      "canonical_name": "CloudScale"
+    },
+    "mirae-asset": {
+      "type": "organization",
+      "canonical_name": "Mirae Asset"
+    },
+    "linden-capital-markets": {
+      "type": "organization",
+      "canonical_name": "Linden Capital Markets"
+    },
+    "morgan-stanley": {
+      "type": "organization",
+      "canonical_name": "Morgan Stanley"
+    },
+    "centre-for-european-technology-policy": {
+      "type": "organization",
+      "canonical_name": "Centre for European Technology Policy"
+    },
+    "beurs-van-berlage": {
+      "type": "location",
+      "canonical_name": "Beurs van Berlage"
+    }
+  }
+}

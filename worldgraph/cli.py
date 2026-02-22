@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+from worldgraph.eval import evaluate
 from worldgraph.extract import run_extraction
 from worldgraph.match import run_matching
 
@@ -74,6 +75,28 @@ def extract(input_path: Path, output_path: Path, model: str):
 def match(input_path: Path, output_path: Path, name_threshold: float, rel_threshold: float, min_edges: int):
     """Stage 2: Structural matching — merge overlapping graphs."""
     run_matching(input_path, output_path, name_threshold, rel_threshold, min_edges)
+
+
+@cli.command()
+@click.option(
+    "-i",
+    "--input",
+    "input_path",
+    default="data/graphs_1.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Graph JSON file to evaluate.",
+)
+@click.option(
+    "--ground-truth",
+    "ground_truth_path",
+    default="data/ground_truth_entities.json",
+    type=click.Path(exists=True, path_type=Path),
+    help="Ground truth entity canonical IDs.",
+)
+@click.option("--verbose", "-v", is_flag=True, help="Show entity names in output.")
+def eval(input_path: Path, ground_truth_path: Path, verbose: bool):
+    """Evaluate matching output against ground truth."""
+    evaluate(input_path, ground_truth_path, verbose)
 
 
 @cli.command()
