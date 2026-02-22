@@ -36,10 +36,7 @@ class PairMatch:
 
     article_a: str
     article_b: str
-    # Each aligned edge: ((edge_a_idx, edge_b_idx), implied entity mappings)
     aligned_edges: list[tuple[Edge, Edge]]
-    # Entity mappings: (article_a entity id) -> (article_b entity id)
-    entity_map: dict[str, str]
 
 
 class UnionFind:
@@ -213,19 +210,14 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     return float(dot / norm)
 
 
-def entity_embed_key(e: Entity) -> str:
-    """Build the embedding key for an entity."""
-    return e.name
-
-
 def entity_similarity(
     e1: Entity,
     e2: Entity,
     name_embeddings: dict[str, np.ndarray],
 ) -> float:
     """Cosine similarity between two entity name embeddings."""
-    emb1 = name_embeddings.get(entity_embed_key(e1))
-    emb2 = name_embeddings.get(entity_embed_key(e2))
+    emb1 = name_embeddings.get(e1.name)
+    emb2 = name_embeddings.get(e2.name)
     if emb1 is None or emb2 is None:
         return 0.0
     return cosine_similarity(emb1, emb2)
@@ -349,9 +341,9 @@ def find_structural_matches(
 
         required = threshold * exp(-evidence_scale * total_evidence)
 
-    where total_evidence = sum of (rel_sim * avg_relation_specificity) over all
-    matched edges touching that entity. With zero evidence the full threshold is
-    required; with strong, specific-relation evidence the name floor drops toward 0.
+    where total_evidence = sum of specificity over all matched edges touching
+    that entity. With zero evidence the full threshold is required; with strong,
+    specific-relation evidence the name floor drops toward 0.
     """
     nodes, adjacency, similarities = build_compatibility_graph(
         graph_a, graph_b, name_embeddings, relation_embeddings,
@@ -364,7 +356,6 @@ def find_structural_matches(
     # Find connected components via BFS over the compatibility graph
     visited: set[int] = set()
     aligned_edges = []
-    entity_map: dict[str, str] = {}
 
     for start in range(len(nodes)):
         if start in visited:
@@ -409,14 +400,9 @@ def find_structural_matches(
         if not component_ok:
             continue
 
-        # Collect entity mappings from this component
         for node_idx in component:
             ia, ib = nodes[node_idx]
-            ea = graph_a.edges[ia]
-            eb = graph_b.edges[ib]
-            aligned_edges.append((ea, eb))
-            entity_map[ea.source] = eb.source
-            entity_map[ea.target] = eb.target
+            aligned_edges.append((graph_a.edges[ia], graph_b.edges[ib]))
 
     if not aligned_edges:
         return None
@@ -425,7 +411,6 @@ def find_structural_matches(
         article_a=graph_a.article_id,
         article_b=graph_b.article_id,
         aligned_edges=aligned_edges,
-        entity_map=entity_map,
     )
 
 
@@ -568,7 +553,7 @@ def run_matching(
     all_relations: set[str] = set()
     for g in graphs:
         for e in g.entities.values():
-            all_names.add(entity_embed_key(e))
+            all_names.add(e.name)
         for edge in g.edges:
             all_relations.add(edge.relation)
     sorted_names = sorted(all_names)
