@@ -179,6 +179,32 @@ def embed_relation_phrases(
     return {phrase: np.array(emb) for phrase, emb in zip(phrases, embeddings)}
 
 
+def compute_relation_specificities(
+    relation_embeddings: dict[str, np.ndarray],
+) -> dict[str, float]:
+    """Compute specificity score for each relation phrase.
+
+    Specificity = average cosine distance to all other relations.
+    A relation that is semantically far from everything else is rare/specific (score ~1).
+    A relation that clusters tightly with many others is common (score ~0).
+    With only one relation, specificity defaults to 1.0.
+    """
+    phrases = list(relation_embeddings.keys())
+    if len(phrases) <= 1:
+        return {p: 1.0 for p in phrases}
+
+    specificities: dict[str, float] = {}
+    for phrase in phrases:
+        emb = relation_embeddings[phrase]
+        distances = [
+            1.0 - cosine_similarity(emb, relation_embeddings[other])
+            for other in phrases
+            if other != phrase
+        ]
+        specificities[phrase] = sum(distances) / len(distances)
+    return specificities
+
+
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
     dot = np.dot(a, b)
     norm = np.linalg.norm(a) * np.linalg.norm(b)
@@ -215,6 +241,7 @@ def build_compatibility_graph(
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
+    relation_specificities: dict[str, float],
     floor: float = 0.3,
     rel_floor: float = 0.8,
 ) -> tuple[list[tuple[int, int]], dict[int, set[int]], list[tuple[float, float, float]]]:
@@ -222,7 +249,9 @@ def build_compatibility_graph(
 
     Returns (nodes, adjacency, similarities) where each node is
     (edge_a_idx, edge_b_idx), adjacency maps node index -> set of compatible
-    node indices, and similarities[i] = (src_sim, tgt_sim, rel_sim) for node i.
+    node indices, and similarities[i] = (src_sim, tgt_sim, specificity) for
+    node i. specificity is the avg semantic uniqueness of the two relation
+    phrases — how far each sits from all other relations in the corpus.
     """
     # Step 1: Find compatible edge pairs (similar relation + endpoints above floor)
     nodes: list[tuple[int, int]] = []
@@ -242,8 +271,12 @@ def build_compatibility_graph(
             tgt_sim = entity_similarity(tgt_a, tgt_b, name_embeddings)
             if min(src_sim, tgt_sim) < floor:
                 continue
+            specificity = (
+                relation_specificities.get(ea.relation, 1.0)
+                + relation_specificities.get(eb.relation, 1.0)
+            ) / 2.0
             nodes.append((i, j))
-            similarities.append((src_sim, tgt_sim, rel_sim))
+            similarities.append((src_sim, tgt_sim, specificity))
 
     # Step 2: Build adjacency — two nodes are adjacent iff they share an entity
     # endpoint in graph_a or graph_b AND their implied mappings are consistent.
@@ -307,14 +340,26 @@ def find_structural_matches(
     graph_b: ArticleGraph,
     name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
+    relation_specificities: dict[str, float],
     threshold: float,
     rel_floor: float = 0.8,
     min_edges: int = 1,
+    evidence_scale: float = 2.0,
 ) -> PairMatch | None:
-    """Find structurally connected common subgraphs between two article graphs."""
+    """Find structurally connected common subgraphs between two article graphs.
+
+    The required name similarity for each entity pair decays as structural
+    evidence accumulates:
+
+        required = threshold * exp(-evidence_scale * total_evidence)
+
+    where total_evidence = sum of (rel_sim * avg_relation_specificity) over all
+    matched edges touching that entity. With zero evidence the full threshold is
+    required; with strong, specific-relation evidence the name floor drops toward 0.
+    """
     nodes, adjacency, similarities = build_compatibility_graph(
         graph_a, graph_b, name_embeddings, relation_embeddings,
-        rel_floor=rel_floor,
+        relation_specificities, rel_floor=rel_floor,
     )
 
     if not nodes:
@@ -343,13 +388,32 @@ def find_structural_matches(
         if len(component) < min_edges:
             continue
 
-        # Score by average similarity (endpoints + relation)
-        comp_sims = []
+        # Accumulate specificity-weighted evidence per entity endpoint
+        entity_evidence: dict[str, float] = defaultdict(float)
         for node_idx in component:
-            src_sim, tgt_sim, rel_sim = similarities[node_idx]
-            comp_sims.extend([src_sim, tgt_sim, rel_sim])
-        avg_sim = sum(comp_sims) / len(comp_sims)
-        if avg_sim < threshold:
+            ia, ib = nodes[node_idx]
+            src_sim, tgt_sim, specificity = similarities[node_idx]
+            ea = graph_a.edges[ia]
+            eb = graph_b.edges[ib]
+            entity_evidence[(ea.source, eb.source)] += specificity
+            entity_evidence[(ea.target, eb.target)] += specificity
+
+        # Check each entity pair: name_sim >= threshold * exp(-evidence_scale * evidence)
+        component_ok = True
+        for node_idx in component:
+            ia, ib = nodes[node_idx]
+            src_sim, tgt_sim, _ = similarities[node_idx]
+            ea = graph_a.edges[ia]
+            eb = graph_b.edges[ib]
+            src_evidence = entity_evidence[(ea.source, eb.source)]
+            tgt_evidence = entity_evidence[(ea.target, eb.target)]
+            src_required = threshold * np.exp(-evidence_scale * src_evidence)
+            tgt_required = threshold * np.exp(-evidence_scale * tgt_evidence)
+            if src_sim < src_required or tgt_sim < tgt_required:
+                component_ok = False
+                break
+
+        if not component_ok:
             continue
 
         # Collect entity mappings from this component
@@ -522,6 +586,7 @@ def run_matching(
     click.echo(f"\nEmbedding {len(sorted_names)} entity names + {len(sorted_relations)} relation phrases...")
     name_embeddings = embed_entity_names(sorted_names, model)
     relation_embeddings = embed_relation_phrases(sorted_relations, model)
+    relation_specificities = compute_relation_specificities(relation_embeddings)
 
     # 3. Match all pairs
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
@@ -535,7 +600,7 @@ def run_matching(
         for j in range(i + 1, len(graphs)):
             pm = find_structural_matches(
                 graphs[i], graphs[j], name_embeddings, relation_embeddings,
-                threshold, rel_floor, min_edges,
+                relation_specificities, threshold, rel_floor, min_edges,
             )
             if pm and pm.aligned_edges:
                 all_pair_matches.append(pm)
