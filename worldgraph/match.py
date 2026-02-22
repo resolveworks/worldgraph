@@ -531,24 +531,13 @@ def merge_graphs(
 # ---------------------------------------------------------------------------
 
 
-def run_matching(
-    input_path: Path,
-    output_path: Path,
-    threshold: float,
-    rel_floor: float = 0.8,
-) -> None:
-    """Run structural matching: load graphs, match pairs, merge, save."""
-    # 1. Load
-    graphs, entity_occurrences, edge_articles = load_graphs(input_path)
-    click.echo(f"Loaded {len(graphs)} graphs from {input_path}")
-    for g in graphs:
-        n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
-        click.echo(
-            f"  {g.article_id[:12]}: {len(g.entities)} entities "
-            f"({n_occ} occurrences), {len(g.edges)} edges"
-        )
+def prepare_embeddings(
+    graphs: list[ArticleGraph],
+) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float]]:
+    """Load embedding model, embed all entity names and relation phrases.
 
-    # 2. Embed entity names and relation phrases
+    Returns (name_embeddings, relation_embeddings, relation_specificities).
+    """
     all_names: set[str] = set()
     all_relations: set[str] = set()
     for g in graphs:
@@ -556,19 +545,30 @@ def run_matching(
             all_names.add(e.name)
         for edge in g.edges:
             all_relations.add(edge.relation)
-    sorted_names = sorted(all_names)
-    sorted_relations = sorted(all_relations)
 
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    click.echo(f"\nEmbedding {len(sorted_names)} entity names + {len(sorted_relations)} relation phrases...")
-    name_embeddings = embed_entity_names(sorted_names, model)
-    relation_embeddings = embed_relation_phrases(sorted_relations, model)
+    name_embeddings = embed_entity_names(sorted(all_names), model)
+    relation_embeddings = embed_relation_phrases(sorted(all_relations), model)
     relation_specificities = compute_relation_specificities(relation_embeddings)
 
-    # 3. Match all pairs
-    n_pairs = len(graphs) * (len(graphs) - 1) // 2
-    click.echo(f"\nMatching {n_pairs} pairs (threshold={threshold})...")
+    return name_embeddings, relation_embeddings, relation_specificities
 
+
+def run_match_merge(
+    graphs: list[ArticleGraph],
+    entity_occurrences: dict[str, list[dict]],
+    edge_articles: dict[tuple, list[str]],
+    name_embeddings: dict[str, np.ndarray],
+    relation_embeddings: dict[str, np.ndarray],
+    relation_specificities: dict[str, float],
+    threshold: float,
+    rel_floor: float,
+    evidence_scale: float,
+) -> tuple[list[ArticleGraph], dict[str, list[dict]], dict[tuple, list[str]]]:
+    """Match all graph pairs and merge — no I/O, no printing.
+
+    Returns (merged_graphs, merged_entity_occurrences, merged_edge_articles).
+    """
     uf = UnionFind()
     relation_uf = UnionFind()
     all_pair_matches: list[PairMatch] = []
@@ -577,7 +577,7 @@ def run_matching(
         for j in range(i + 1, len(graphs)):
             pm = find_structural_matches(
                 graphs[i], graphs[j], name_embeddings, relation_embeddings,
-                relation_specificities, threshold, rel_floor,
+                relation_specificities, threshold, rel_floor, evidence_scale,
             )
             if pm and pm.aligned_edges:
                 all_pair_matches.append(pm)
@@ -592,14 +592,44 @@ def run_matching(
                     )
                     relation_uf.union(ea.relation, eb.relation)
 
-    click.echo(f"  {len(all_pair_matches)} pairs with matches")
-
-    # 4. Merge
-    merged_graphs, merged_occ, merged_edges = merge_graphs(
+    return merge_graphs(
         graphs, all_pair_matches, uf, relation_uf, entity_occurrences, edge_articles
     )
 
-    # 5. Save
+
+def run_matching(
+    input_path: Path,
+    output_path: Path,
+    threshold: float,
+    rel_floor: float = 0.8,
+    evidence_scale: float = 2.0,
+) -> None:
+    """Run structural matching: load graphs, match pairs, merge, save."""
+    # 1. Load
+    graphs, entity_occurrences, edge_articles = load_graphs(input_path)
+    click.echo(f"Loaded {len(graphs)} graphs from {input_path}")
+    for g in graphs:
+        n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
+        click.echo(
+            f"  {g.article_id[:12]}: {len(g.entities)} entities "
+            f"({n_occ} occurrences), {len(g.edges)} edges"
+        )
+
+    # 2. Embed
+    click.echo(f"\nEmbedding entity names and relation phrases...")
+    name_embeddings, relation_embeddings, relation_specificities = prepare_embeddings(graphs)
+
+    # 3. Match and merge
+    n_pairs = len(graphs) * (len(graphs) - 1) // 2
+    click.echo(f"\nMatching {n_pairs} pairs (threshold={threshold}, evidence_scale={evidence_scale})...")
+
+    merged_graphs, merged_occ, merged_edges = run_match_merge(
+        graphs, entity_occurrences, edge_articles,
+        name_embeddings, relation_embeddings, relation_specificities,
+        threshold, rel_floor, evidence_scale,
+    )
+
+    # 4. Save
     save_graphs(merged_graphs, merged_occ, merged_edges, output_path)
 
     # Summary

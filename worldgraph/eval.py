@@ -22,7 +22,48 @@ def load_ground_truth(path: Path) -> dict[str, str]:
         return json.load(f)["name_to_canonical"]
 
 
-def evaluate(graphs_path: Path, ground_truth_path: Path, verbose: bool) -> None:
+def score_graphs(
+    merged_graphs,
+    entity_occurrences: dict,
+    name_to_canonical: dict[str, str],
+) -> tuple[float, float, float]:
+    """Compute precision, recall, f1 from in-memory merged output.
+
+    merged_graphs: list of ArticleGraph (from match.py)
+    entity_occurrences: entity_id -> list of {name, ...} dicts
+    name_to_canonical: name -> canonical_id mapping (from ground truth)
+
+    Returns (precision, recall, f1).
+    """
+    entity_canonicals: dict[str, set[str]] = defaultdict(set)
+    canonical_to_entities: dict[str, set[str]] = defaultdict(set)
+
+    for g in merged_graphs:
+        for e in g.entities.values():
+            eid = e.id
+            for occ in entity_occurrences.get(eid, []):
+                name = occ["name"]
+                canonical = name_to_canonical.get(name)
+                if canonical is not None:
+                    entity_canonicals[eid].add(canonical)
+                    canonical_to_entities[canonical].add(eid)
+
+    known_entities = {eid for eid, c in entity_canonicals.items() if c}
+    false_merges = {eid for eid, c in entity_canonicals.items() if len(c) > 1}
+    correct = len(known_entities) - len(false_merges)
+    total_known = len(known_entities)
+    precision = correct / total_known if total_known else 0.0
+
+    total_canonicals = len(canonical_to_entities)
+    fully_merged = sum(1 for c in canonical_to_entities.values() if len(c) == 1)
+    recall = fully_merged / total_canonicals if total_canonicals else 0.0
+
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+    return precision, recall, f1
+
+
+def evaluate(graphs_path: Path, ground_truth_path: Path, verbose: bool) -> tuple[float, float]:
+    """Evaluate matching output. Prints results and returns (precision, recall)."""
     with open(graphs_path) as f:
         data = json.load(f)
 
@@ -103,3 +144,7 @@ def evaluate(graphs_path: Path, ground_truth_path: Path, verbose: bool) -> None:
                 click.echo(f"  {canonical} ({len(entities)} fragments)")
     else:
         click.echo("No missed merges.")
+
+    precision = correct / total_known if total_known else 0.0
+    recall = fully_merged / total_canonicals if total_canonicals else 0.0
+    return precision, recall
