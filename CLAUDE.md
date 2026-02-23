@@ -8,15 +8,15 @@ The core idea: news redundancy is the signal, not noise. Multiple outlets report
 
 ## Architecture (PoC Pipeline)
 
-The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages. The extract stage outputs this format directly, and the match stage consumes and produces it.
+The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages.
 
-1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs, output directly as graph JSON → `graphs_0.json`
-2. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_1.json`. Uses similarity propagation: start with name embedding similarity scores for all candidate entity pairs, then iteratively propagate scores through the graph (neighbor similarity reinforces pair similarity, weighted by relation specificity) until convergence, then threshold. Relations are compared by phrase embedding similarity (original phrases preserved, no flattening).
-3. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
+1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs → `graphs_0.json`
+2. **Match** — Align entities across graphs using similarity propagation → `graphs_1.json`
+3. **Score** — Score each deduplicated fact by cross-source agreement
 
 ```bash
 worldgraph extract                               # data/articles/ → graphs_0.json
-worldgraph match                                 # graphs_0.json → graphs_1.json (converges internally)
+worldgraph match                                 # graphs_0.json → graphs_1.json
 ```
 
 In the graph format, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
@@ -27,15 +27,15 @@ In the graph format, entities with >1 occurrence are matched entities, edges wit
 data/
   articles/               # Input: one {uuid}.json per article
   graphs_0.json           # Output of stage 1 (per-article graphs with original relation phrases)
-  graphs_1.json           # Output of stage 2 (merged graphs, converged in a single match run)
+  graphs_1.json           # Output of stage 2 (merged graphs)
 worldgraph/
   __init__.py
   cli.py                  # Click CLI entry point (worldgraph command group)
   extract.py              # Stage 1: LLM-based entity/relation extraction → graph JSON
-  match.py                # Stage 2: Structural matching + graph merging (iterative)
+  match.py                # Stage 2: Structural matching + graph merging
 .env.example              # Template for API key configuration
 pyproject.toml            # Project config, dependencies, CLI entry point
-README.md                 # Project proposal / discussion document
+README.md                 # Project proposal / algorithm design
 CLAUDE.md                 # This file
 ```
 
@@ -47,23 +47,52 @@ The articles are designed to exercise the algorithm's key challenges:
 
 - **Entity name variation**: same entity referred to differently across articles (e.g. "Meridian Technologies" / "Meridian Tech", "Dr. Priya Sharma" / "P. Sharma")
 - **Relation phrasing variation**: same fact expressed with different verbs/phrases (e.g. "acquired" / "buys" / "purchase")
-- **Cross-event entity linking**: entities that appear in multiple event clusters, requiring resolution across clusters
-- **Iterative merging**: transitive chains that only fully resolve after earlier matches propagate similarity to neighboring entities
+- **Cross-event entity linking**: entities that appear in multiple event clusters
+- **Dangling entities**: most entities in any given article have no counterpart in most other articles
 
-## Matching Approach
+## Matching Algorithm
 
-The matching stage uses **similarity propagation**, following the approach of Melnik et al. ("Similarity Flooding", 2002) and iterative entity alignment methods in the knowledge graph literature.
+The matching stage implements a **PARIS-style similarity propagation** adapted for free-text relation phrases.
 
-The core insight: entity resolution is circular — to match two entities you need to know if their neighbors match, but matching neighbors requires knowing if they match. Similarity propagation dissolves this by never making hard early decisions. Instead, soft similarity scores for all candidate entity pairs are propagated through the graph iteratively (neighbor similarity reinforces pair similarity), weighted by **relation specificity** (rare relations carry more signal than common ones like "is located in"). After convergence, a single threshold decides which pairs to merge.
+### Key concepts from the literature
 
-This is preferable to hard early merges because a bad early decision can cascade — incorrect merges combine relationship sets, potentially triggering further incorrect merges.
+**Similarity Flooding** (Melnik et al., 2002): entity similarity propagates through graph structure iteratively. To know if two entities match you need to know if their neighbors match — propagation dissolves this circularity by never making hard early decisions.
+
+**PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with *functionality weighting* — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones.
+
+**FLORA** (Peng, Bonald, Suchanek, 2025): PARIS successor using fuzzy logic (t-norms/t-conorms) instead of probability, with proven convergence and explicit dangling-entity handling.
+
+### Our adaptations
+
+Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free-text phrases. Adaptations:
+
+1. **Relation similarity via sentence embeddings**: instead of requiring identical edge labels to allow propagation, weight propagation paths by cosine similarity of relation phrase embeddings. "acquired" and "buys" propagate similarity at weight ~0.85 rather than 0 (no path) or 1 (exact match).
+
+2. **Functionality from phrase frequency**: a relation phrase appearing as the unique connection between two specific entities is maximally specific. Approximate PARIS functionality as inverse average degree of the relation in the graph.
+
+3. **Dangling entities by default**: most entities won't match anything across most graph pairs. Threshold-based finalization naturally leaves them unmerged — no special handling needed.
+
+### Algorithm sketch
+
+For each pair of graphs (Gi, Gj):
+1. **Init** σ[(ei, ej)] from name-embedding cosine similarity for all entity pairs
+2. **Propagation**: each iteration, `σ[(ei, ej)] += Σ σ[(ei', ej')] * rel_sim(r, r') * functionality(r, r')` over all edges ei→ei' (via r) and ej→ej' (via r'), normalized
+3. **Converge** until residual < ε
+4. **Threshold**: apply relative-similarity filter (SelectThreshold from SF paper), merge matched pairs
+
+Optionally: run single propagation over the full K-partite entity-pair graph (all N graphs simultaneously) to get transitive matches without O(N²) pairwise passes.
+
+### What we don't do (yet)
+
+- PARIS-style joint relation alignment loop (relation similarities updated from entity similarities, alternately) — we pre-compute relation similarity from embeddings and hold it fixed
+- The full IsoRankN spectral clustering for N-graph alignment — we run pairwise and merge transitively
 
 ## Tech Stack
 
 - Python 3.12, managed with **uv** (`uv run`, `uv add`, etc.)
 - LLM (Claude API) for entity/relation extraction
-- Sentence embeddings for entity name and relation phrase comparison during matching
-- Stack otherwise TBD — keep it simple, this is a proof of concept
+- Sentence embeddings (fastembed) for name and relation phrase similarity
+- No ML training — fully unsupervised, classical graph methods
 
 ## Conventions
 

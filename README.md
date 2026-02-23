@@ -21,26 +21,58 @@ Another article covering the same event produces a structurally similar subgraph
 
 ### 2. Match
 
-Entity pairs across graphs are compared using similarity propagation (following Melnik et al., "Similarity Flooding", 2002):
+Entity pairs across graphs are compared using **PARIS-style similarity propagation** (Suchanek et al., 2011), adapted for free-text relation phrases:
 
 - Initialize similarity scores from name embeddings
-- Each iteration: boost a pair's score if their neighbors also score highly, weighted by relation specificity (rare relations carry more signal than common ones)
+- Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones)
 - Repeat until scores converge, then threshold to decide which pairs to merge
 
-Relations are matched by embedding similarity — "acquired", "bought", "completed the purchase of" all cluster together without requiring a predefined schema.
+Relations are compared via sentence embedding similarity — "acquired", "bought", "completed the purchase of" all cluster together without requiring a predefined schema. The standard Similarity Flooding algorithm (Melnik et al., 2002) requires identical edge labels to propagate similarity; we replace that binary gate with continuous relation-phrase similarity.
+
+Entities with no credible match in another graph are simply left unmerged (dangling entities, following FLORA, Peng et al., 2025).
 
 ### 3. Score
 
 After merging, each unique fact is scored by how many independent sources report it. Entities with multiple occurrences are matched entities; edges with multiple source articles are confirmed facts.
 
+## Algorithm Design
+
+### The circularity problem
+
+Entity resolution is inherently circular: to know if two entities are the same you need to know if they have the same relations to the same other entities — but resolving *those* entities has the same problem. Hard early decisions cascade: one wrong merge combines relationship sets and can trigger further wrong merges.
+
+Similarity propagation dissolves this by never making hard decisions during propagation. Soft scores iterate to a fixpoint; a single threshold at the end produces the final merge decisions.
+
+### Relation functionality
+
+Not all relations carry equal evidence. "Is headquartered in" connects many companies to a few cities — knowing two entities share that relation weakly implies identity. "Signed a definitive merger agreement with" is rare and specific — two entities sharing that relation are almost certainly the same pair.
+
+This is PARIS's *functionality* concept: a relation's weight is proportional to how often it maps a subject to a unique object. We approximate this with inverse average degree of the relation in the graph.
+
+### Free-text relations
+
+Standard methods (SF, PARIS, FLORA) assume relations come from a controlled vocabulary. We have free-text extraction, so every relation phrase is potentially unique. We handle this by pre-computing pairwise sentence-embedding similarity for all relation phrases and using it to weight propagation paths continuously, rather than gating on exact label match.
+
+This means the propagation graph is fully connected (every entity pair can potentially influence every other via weighted paths), but paths through semantically distant relations contribute negligibly.
+
+### N-graph alignment
+
+Each article produces one graph. We run pairwise propagation across all graph pairs and merge transitively. This is O(N²) in the number of articles, which is fine for a PoC. A production system could follow IsoRankN (Liao et al., 2009) and cluster over the full K-partite entity-pair similarity graph instead.
+
 ## Open Problems
 
-**Common structural templates.** Acquisitions, appointments, and earnings reports all produce similar subgraph shapes. Structural matching alone risks false positives between unrelated events that share the same topology.
+**Common structural templates.** Acquisitions, appointments, and earnings reports all produce similar subgraph shapes. Two unrelated acquisition events will have similar topology. The defense is that entity names from unrelated events won't match, so propagation between those graphs won't fire — but this relies on named entities being sufficiently distinct.
 
-**Sparse entities.** Entities appearing in only one or two articles have weak structural signal and can't be validated through cross-source overlap.
-
-**Relation granularity.** "Acquired" vs. "announced plans to acquire" involves different levels of commitment. Embedding similarity doesn't distinguish these.
+**Relation granularity.** "Acquired" vs. "announced plans to acquire" involves different levels of commitment. Embedding similarity doesn't distinguish these, and functionality weighting won't help either.
 
 **Source independence.** Wire services get rewritten in ways that look superficially independent. True source independence is hard to estimate.
 
 **Temporal dynamics.** Facts change over time. The system doesn't yet handle edges that should be timestamped or expired.
+
+## References
+
+- Melnik, Garcia-Molina, Rahm. "Similarity Flooding: A Versatile Graph Matching Algorithm." ICDE 2002.
+- Suchanek, Abiteboul, Senellart. "PARIS: Probabilistic Alignment of Relations, Instances, and Schema." PVLDB 2011.
+- Liao, Sabetiansfahani, Bhatt, Ben-Hur. "IsoRankN: Spectral Methods for Global Alignment of Multiple Protein Networks." Bioinformatics 2009.
+- Peng, Bonald, Suchanek. "FLORA: Unsupervised Knowledge Graph Alignment by Fuzzy Logic." ISWC 2025 (Best Paper).
+- Chen et al. "What Makes Entities Similar? A Similarity Flooding Perspective for Multi-sourced Knowledge Graph Embeddings." ICML 2023.
