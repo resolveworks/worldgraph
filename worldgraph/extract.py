@@ -28,7 +28,6 @@ class Relation(BaseModel):
     source: str = Field(description="The 'id' of the source entity")
     target: str = Field(description="The 'id' of the target entity")
     relation: str = Field(description="Concise verb phrase describing the relation")
-    context: str = Field(description="Supporting quote from the article")
 
 
 class Extraction(BaseModel):

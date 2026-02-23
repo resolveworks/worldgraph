@@ -68,15 +68,3 @@ def extract(input_path: Path, output_path: Path, model: str):
 def match(input_path: Path, output_path: Path, threshold: float, max_iter: int):
     """Stage 2: Entity alignment via similarity propagation — merge matched graphs."""
     run_matching(input_path, output_path, threshold, max_iter=max_iter)
-
-
-@cli.command()
-def score():
-    """Stage 3: Score facts by cross-source agreement. (not yet implemented)"""
-    click.echo("Not yet implemented.")
-
-
-@cli.command()
-def run():
-    """Run the full pipeline. (not yet implemented)"""
-    click.echo("Not yet implemented.")
