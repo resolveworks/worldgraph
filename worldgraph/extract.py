@@ -20,7 +20,9 @@ Each entity should have a short unique id and the name as it appears in the text
 
 
 class Entity(BaseModel):
-    id: str = Field(description="Short unique identifier for this entity, e.g. 'e1', 'e2'")
+    id: str = Field(
+        description="Short unique identifier for this entity, e.g. 'e1', 'e2'"
+    )
     name: str = Field(description="Entity name as it appears in the article")
 
 
@@ -35,15 +37,17 @@ class Extraction(BaseModel):
     relations: list[Relation]
 
 
-def extract_article(client: anthropic.Anthropic, article: dict, model: str) -> Extraction:
+def extract_article(
+    client: anthropic.Anthropic, article: dict, model: str
+) -> Extraction:
     """Extract entities and relations from a single article."""
     prompt = f"""Extract all entities and relations from this news article.
 
-Title: {article['title']}
-Source: {article['source']}
-Date: {article['date']}
+Title: {article["title"]}
+Source: {article["source"]}
+Date: {article["date"]}
 
-{article['body']}"""
+{article["body"]}"""
 
     response = client.messages.parse(
         model=model,

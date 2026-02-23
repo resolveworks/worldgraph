@@ -137,9 +137,13 @@ def load_graphs(
 
         edges: list[Edge] = []
         for ed in g["edges"]:
-            edge = Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
+            edge = Edge(
+                source=ed["source"], target=ed["target"], relation=ed["relation"]
+            )
             edges.append(edge)
-            edge_articles[(graph_id, edge.source, edge.target, edge.relation)] = ed["articles"]
+            edge_articles[(graph_id, edge.source, edge.target, edge.relation)] = ed[
+                "articles"
+            ]
 
         graph = Graph(id=graph_id, entities=entities, edges=edges)
         graph.index_edges()
@@ -166,7 +170,9 @@ def save_graphs(
                 "source": edge.source,
                 "target": edge.target,
                 "relation": edge.relation,
-                "articles": edge_articles[(g.id, edge.source, edge.target, edge.relation)],
+                "articles": edge_articles[
+                    (g.id, edge.source, edge.target, edge.relation)
+                ],
             }
             for edge in g.edges
         ]
@@ -270,19 +276,27 @@ def compute_functionality(
         for src, tgt in pairs:
             targets_per_source[src].add(tgt)
             sources_per_target[tgt].add(src)
-        avg_out_degree = sum(len(v) for v in targets_per_source.values()) / len(targets_per_source)
-        avg_in_degree = sum(len(v) for v in sources_per_target.values()) / len(sources_per_target)
+        avg_out_degree = sum(len(v) for v in targets_per_source.values()) / len(
+            targets_per_source
+        )
+        avg_in_degree = sum(len(v) for v in sources_per_target.values()) / len(
+            sources_per_target
+        )
         cluster_func[cid] = 1.0 / avg_out_degree
         cluster_inv_func[cid] = 1.0 / avg_in_degree
 
     functionality = {phrase: cluster_func[cid] for phrase, cid in cluster_of.items()}
-    inv_functionality = {phrase: cluster_inv_func[cid] for phrase, cid in cluster_of.items()}
+    inv_functionality = {
+        phrase: cluster_inv_func[cid] for phrase, cid in cluster_of.items()
+    }
     return functionality, inv_functionality
 
 
 def prepare_embeddings(
     graphs: list[Graph],
-) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float], dict[str, float]]:
+) -> tuple[
+    dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float], dict[str, float]
+]:
     """Embed all entity names and relation phrases; compute functionality weights.
 
     Returns (name_embeddings, relation_embeddings, functionality, inv_functionality).
@@ -295,9 +309,13 @@ def prepare_embeddings(
     # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
     wrapped = [f"A {r} B" for r in all_relations]
     relation_embeddings = embed(wrapped, model)
-    relation_embeddings = {r: relation_embeddings[w] for r, w in zip(all_relations, wrapped)}
+    relation_embeddings = {
+        r: relation_embeddings[w] for r, w in zip(all_relations, wrapped)
+    }
 
-    functionality, inv_functionality = compute_functionality(graphs, relation_embeddings)
+    functionality, inv_functionality = compute_functionality(
+        graphs, relation_embeddings
+    )
 
     return name_embeddings, relation_embeddings, functionality, inv_functionality
 
@@ -358,10 +376,14 @@ def propagate(
                         rel_sim = max(0.0, cosine_sim(emb_r, emb_r2))
                         if rel_sim == 0.0:
                             continue
-                        w = rel_sim * (
-                            functionality.get(edge_a.relation, 1.0)
-                            + functionality.get(edge_b.relation, 1.0)
-                        ) / 2.0
+                        w = (
+                            rel_sim
+                            * (
+                                functionality.get(edge_a.relation, 1.0)
+                                + functionality.get(edge_b.relation, 1.0)
+                            )
+                            / 2.0
+                        )
                         neighbor_sim = sigma.get((edge_a.target, edge_b.target), 0.0)
                         increment[(eid_a, eid_b)] += neighbor_sim * w
 
@@ -377,10 +399,14 @@ def propagate(
                         rel_sim = max(0.0, cosine_sim(emb_r, emb_r2))
                         if rel_sim == 0.0:
                             continue
-                        w = rel_sim * (
-                            inv_functionality.get(edge_a.relation, 1.0)
-                            + inv_functionality.get(edge_b.relation, 1.0)
-                        ) / 2.0
+                        w = (
+                            rel_sim
+                            * (
+                                inv_functionality.get(edge_a.relation, 1.0)
+                                + inv_functionality.get(edge_b.relation, 1.0)
+                            )
+                            / 2.0
+                        )
                         neighbor_sim = sigma.get((edge_a.source, edge_b.source), 0.0)
                         increment[(eid_a, eid_b)] += neighbor_sim * w
 
@@ -514,7 +540,9 @@ def merge_graphs(
                     name_counts[occ["name"]] += 1
                 old_to_new[(graph_id, entity_id)] = new_eid
             canonical_name = max(name_counts, key=name_counts.get)
-            merged_entities[new_eid] = Entity(id=new_eid, name=canonical_name, graph_id=merged_id)
+            merged_entities[new_eid] = Entity(
+                id=new_eid, name=canonical_name, graph_id=merged_id
+            )
             new_entity_occ[new_eid] = pooled_occ
 
         # Remap edges, pool article provenance, pick most common relation phrase
@@ -573,9 +601,14 @@ def run_match_merge(
     for i in range(len(graphs)):
         for j in range(i + 1, len(graphs)):
             sigma = propagate(
-                graphs[i], graphs[j],
-                name_embeddings, relation_embeddings, functionality, inv_functionality,
-                max_iter=max_iter, epsilon=epsilon,
+                graphs[i],
+                graphs[j],
+                name_embeddings,
+                relation_embeddings,
+                functionality,
+                inv_functionality,
+                max_iter=max_iter,
+                epsilon=epsilon,
             )
             ids_a = list(graphs[i].entities)
             ids_b = list(graphs[j].entities)
@@ -598,18 +631,31 @@ def run_matching(
     click.echo(f"Loaded {len(graphs)} graphs from {input_path}")
     for g in graphs:
         n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
-        click.echo(f"  {g.id[:12]}: {len(g.entities)} entities ({n_occ} occurrences), {len(g.edges)} edges")
+        click.echo(
+            f"  {g.id[:12]}: {len(g.entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
+        )
 
     click.echo("\nEmbedding entity names and relation phrases...")
-    name_embeddings, relation_embeddings, functionality, inv_functionality = prepare_embeddings(graphs)
+    name_embeddings, relation_embeddings, functionality, inv_functionality = (
+        prepare_embeddings(graphs)
+    )
 
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
-    click.echo(f"\nPropagating similarities over {n_pairs} graph pairs (threshold={threshold})...")
+    click.echo(
+        f"\nPropagating similarities over {n_pairs} graph pairs (threshold={threshold})..."
+    )
 
     merged_graphs, merged_occ, merged_edges = run_match_merge(
-        graphs, entity_occurrences, edge_articles,
-        name_embeddings, relation_embeddings, functionality, inv_functionality,
-        threshold=threshold, max_iter=max_iter, epsilon=epsilon,
+        graphs,
+        entity_occurrences,
+        edge_articles,
+        name_embeddings,
+        relation_embeddings,
+        functionality,
+        inv_functionality,
+        threshold=threshold,
+        max_iter=max_iter,
+        epsilon=epsilon,
     )
 
     save_graphs(merged_graphs, merged_occ, merged_edges, output_path)
