@@ -210,6 +210,8 @@ def cluster_relations(
     so 0.3 corresponds to cosine similarity ~0.7.
     """
     phrases = list(relation_embeddings)
+    if len(phrases) == 0:
+        return {}
     if len(phrases) == 1:
         return {phrases[0]: 0}
 
@@ -292,7 +294,8 @@ def prepare_embeddings(
     name_embeddings = embed(all_names, model)
     # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
     wrapped = [f"A {r} B" for r in all_relations]
-    relation_embeddings = {r: v for r, v in zip(all_relations, model.embed(wrapped))}
+    relation_embeddings = embed(wrapped, model)
+    relation_embeddings = {r: relation_embeddings[w] for r, w in zip(all_relations, wrapped)}
 
     functionality, inv_functionality = compute_functionality(graphs, relation_embeddings)
 
