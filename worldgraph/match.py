@@ -111,23 +111,23 @@ class UnionFind:
 
 
 def load_graphs(
-    path: Path,
+    graphs_dir: Path,
 ) -> tuple[list[Graph], dict[str, list[dict]], dict[tuple, list[str]]]:
-    """Load graph JSON.
+    """Load per-article graph JSON files from a directory.
 
     Returns:
         graphs: list of Graph objects
         entity_occurrences: entity_id -> list of {article_id, entity_id, name}
         edge_articles: (graph_id, src, tgt, relation) -> list of article_ids
     """
-    with open(path) as f:
-        data = json.load(f)
-
     entity_occurrences: dict[str, list[dict]] = {}
     edge_articles: dict[tuple, list[str]] = {}
     graphs: list[Graph] = []
 
-    for g in data["graphs"]:
+    for path in sorted(graphs_dir.glob("*.json")):
+        with open(path) as f:
+            g = json.load(f)
+
         graph_id = g["id"]
         entities: dict[str, Entity] = {}
 
@@ -580,15 +580,15 @@ def merge_graphs(
 
 
 def run_matching(
-    input_path: Path,
+    graphs_dir: Path,
     output_path: Path,
     threshold: float,
     max_iter: int = 30,
     epsilon: float = 1e-4,
 ) -> None:
     """Load graphs, run similarity propagation, merge, save."""
-    graphs, entity_occurrences, edge_articles = load_graphs(input_path)
-    click.echo(f"Loaded {len(graphs)} graphs from {input_path}")
+    graphs, entity_occurrences, edge_articles = load_graphs(graphs_dir)
+    click.echo(f"Loaded {len(graphs)} graphs from {graphs_dir}/")
     for g in graphs:
         n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
         click.echo(

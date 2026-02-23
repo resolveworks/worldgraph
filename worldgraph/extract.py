@@ -60,23 +60,29 @@ Date: {article["date"]}
     return response.parsed_output
 
 
-def run_extraction(input_path: Path, output_path: Path, model: str) -> None:
-    """Run extraction on all articles and write graph JSON directly."""
-    article_files = sorted(input_path.glob("*.json"))
+def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
+    """Run extraction on all articles, writing one graph JSON per article."""
+    article_files = sorted(articles_dir.glob("*.json"))
     articles = []
     for f in article_files:
         with open(f) as fh:
             articles.append(json.load(fh))
 
+    graphs_dir.mkdir(parents=True, exist_ok=True)
     client = anthropic.Anthropic()
-    graphs = []
 
     for i, article in enumerate(articles, 1):
+        article_id = article["id"]
+        out_path = graphs_dir / f"{article_id}.json"
+        if out_path.exists():
+            click.echo(
+                f"[{i}/{len(articles)}] Skipping (already extracted): {article['title']}"
+            )
+            continue
+
         click.echo(f"[{i}/{len(articles)}] Extracting from: {article['title']}")
         extraction = extract_article(client, article, model)
         data = extraction.model_dump()
-
-        article_id = article["id"]
 
         # Replace LLM-generated entity IDs with UUIDs
         id_map = {e["id"]: str(uuid.uuid4()) for e in data["entities"]}
@@ -118,10 +124,8 @@ def run_extraction(input_path: Path, output_path: Path, model: str) -> None:
                 }
             )
 
-        graphs.append({"id": article_id, "entities": entities, "edges": edges})
+        graph = {"id": article_id, "entities": entities, "edges": edges}
+        with open(out_path, "w") as f:
+            json.dump(graph, f, indent=2)
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w") as f:
-        json.dump({"graphs": graphs}, f, indent=2)
-
-    click.echo(f"\nWrote {len(graphs)} article graphs to {output_path}")
+    click.echo(f"\nWrote graphs to {graphs_dir}/")
