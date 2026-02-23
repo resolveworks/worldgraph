@@ -1,0 +1,205 @@
+{
+  "id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+  "entities": [
+    {
+      "id": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "name": "Halcyon Genomics",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+          "name": "Halcyon Genomics"
+        }
+      ]
+    },
+    {
+      "id": "3e5ab114-7296-4372-9d96-1adc06f095dd",
+      "name": "Northveil Energy Partners",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "3e5ab114-7296-4372-9d96-1adc06f095dd",
+          "name": "Northveil Energy Partners"
+        }
+      ]
+    },
+    {
+      "id": "c6ae5123-66f8-426b-8417-ad08245231e5",
+      "name": "Linden Capital Markets",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "c6ae5123-66f8-426b-8417-ad08245231e5",
+          "name": "Linden Capital Markets"
+        }
+      ]
+    },
+    {
+      "id": "8c8e3cca-991f-42fc-8f19-065c8df79513",
+      "name": "Orion Healthcare Equity",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "8c8e3cca-991f-42fc-8f19-065c8df79513",
+          "name": "Orion Healthcare Equity"
+        }
+      ]
+    },
+    {
+      "id": "f1881094-de86-4cbd-8029-51ea00020b9d",
+      "name": "Kevin Fitch",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "f1881094-de86-4cbd-8029-51ea00020b9d",
+          "name": "Kevin Fitch"
+        }
+      ]
+    },
+    {
+      "id": "2423de1e-42d0-4e92-8d94-df2fb14789d5",
+      "name": "Oryza",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "2423de1e-42d0-4e92-8d94-df2fb14789d5",
+          "name": "Oryza"
+        }
+      ]
+    },
+    {
+      "id": "1c34cb3f-d343-4509-9a7c-3b5442b5df40",
+      "name": "Dominic Ferrara",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "1c34cb3f-d343-4509-9a7c-3b5442b5df40",
+          "name": "Dominic Ferrara"
+        }
+      ]
+    },
+    {
+      "id": "861fa8de-9984-432a-b6a8-e87a384bd5b0",
+      "name": "Dr. Lena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "861fa8de-9984-432a-b6a8-e87a384bd5b0",
+          "name": "Dr. Lena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "aed670c7-18f6-4942-9d4c-9fd339644424",
+      "name": "Northveil bond",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "aed670c7-18f6-4942-9d4c-9fd339644424",
+          "name": "Northveil bond"
+        }
+      ]
+    },
+    {
+      "id": "0395faf9-c2c4-4709-a205-9d9197d71f52",
+      "name": "BioPharma Dispatch",
+      "occurrences": [
+        {
+          "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+          "entity_id": "0395faf9-c2c4-4709-a205-9d9197d71f52",
+          "name": "BioPharma Dispatch"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "target": "3e5ab114-7296-4372-9d96-1adc06f095dd",
+      "relation": "considered as prospective buyer of",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "c6ae5123-66f8-426b-8417-ad08245231e5",
+      "target": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "relation": "provides analyst coverage of",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "8c8e3cca-991f-42fc-8f19-065c8df79513",
+      "target": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "relation": "provides analyst coverage of",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "f1881094-de86-4cbd-8029-51ea00020b9d",
+      "target": "8c8e3cca-991f-42fc-8f19-065c8df79513",
+      "relation": "is analyst at",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "f1881094-de86-4cbd-8029-51ea00020b9d",
+      "target": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "relation": "wrote analysis on",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "target": "2423de1e-42d0-4e92-8d94-df2fb14789d5",
+      "relation": "acquiring",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "1c34cb3f-d343-4509-9a7c-3b5442b5df40",
+      "target": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "relation": "is CEO of",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "861fa8de-9984-432a-b6a8-e87a384bd5b0",
+      "target": "2423de1e-42d0-4e92-8d94-df2fb14789d5",
+      "relation": "founded",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "861fa8de-9984-432a-b6a8-e87a384bd5b0",
+      "target": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "relation": "heading rare disease division at",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "3e5ab114-7296-4372-9d96-1adc06f095dd",
+      "target": "aed670c7-18f6-4942-9d4c-9fd339644424",
+      "relation": "issued",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    },
+    {
+      "source": "aed670c7-18f6-4942-9d4c-9fd339644424",
+      "target": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+      "relation": "prospective buyer was",
+      "articles": [
+        "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a"
+      ]
+    }
+  ]
+}

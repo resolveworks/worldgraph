@@ -1,0 +1,178 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+  "entities": [
+    {
+      "id": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "bc3cf608-aa05-4e3f-805b-ca335bf43fcc",
+      "name": "Berlin",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "bc3cf608-aa05-4e3f-805b-ca335bf43fcc",
+          "name": "Berlin"
+        }
+      ]
+    },
+    {
+      "id": "ebf0d0d2-e62d-4663-b210-482fb2f5ba72",
+      "name": "Apex Ventures",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "ebf0d0d2-e62d-4663-b210-482fb2f5ba72",
+          "name": "Apex Ventures"
+        }
+      ]
+    },
+    {
+      "id": "21fab4eb-3900-436e-a272-ff9decf728c9",
+      "name": "Sequoia Capital",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "21fab4eb-3900-436e-a272-ff9decf728c9",
+          "name": "Sequoia Capital"
+        }
+      ]
+    },
+    {
+      "id": "0961844d-edd9-4b6d-82f1-ef9769513563",
+      "name": "sovereign wealth funds",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "0961844d-edd9-4b6d-82f1-ef9769513563",
+          "name": "sovereign wealth funds"
+        }
+      ]
+    },
+    {
+      "id": "bede68b4-8c4c-456c-af42-ddf0ba232b2f",
+      "name": "Rolf Andersen",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "bede68b4-8c4c-456c-af42-ddf0ba232b2f",
+          "name": "Rolf Andersen"
+        }
+      ]
+    },
+    {
+      "id": "4fd9491b-ff4f-450e-ab32-6d4a6b98fb89",
+      "name": "Dresden facility",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "4fd9491b-ff4f-450e-ab32-6d4a6b98fb89",
+          "name": "Dresden facility"
+        }
+      ]
+    },
+    {
+      "id": "8c781fd4-9603-4a7e-8546-f4c8e1109f39",
+      "name": "Diana Chu",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "8c781fd4-9603-4a7e-8546-f4c8e1109f39",
+          "name": "Diana Chu"
+        }
+      ]
+    },
+    {
+      "id": "b120ec48-6dc0-4b12-b774-30faa5977b60",
+      "name": "pharmaceutical companies",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+          "entity_id": "b120ec48-6dc0-4b12-b774-30faa5977b60",
+          "name": "pharmaceutical companies"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "target": "bc3cf608-aa05-4e3f-805b-ca335bf43fcc",
+      "relation": "is based in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "ebf0d0d2-e62d-4663-b210-482fb2f5ba72",
+      "target": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "relation": "led funding round for",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "21fab4eb-3900-436e-a272-ff9decf728c9",
+      "target": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "relation": "participated in funding for",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "0961844d-edd9-4b6d-82f1-ef9769513563",
+      "target": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "relation": "participated in funding for",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "bede68b4-8c4c-456c-af42-ddf0ba232b2f",
+      "target": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "relation": "is CEO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "target": "4fd9491b-ff4f-450e-ab32-6d4a6b98fb89",
+      "relation": "has new facility at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "8c781fd4-9603-4a7e-8546-f4c8e1109f39",
+      "target": "ebf0d0d2-e62d-4663-b210-482fb2f5ba72",
+      "relation": "is managing partner of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "8c781fd4-9603-4a7e-8546-f4c8e1109f39",
+      "target": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "relation": "tracked for two years",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    },
+    {
+      "source": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+      "target": "b120ec48-6dc0-4b12-b774-30faa5977b60",
+      "relation": "signed letters of intent with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567801"
+      ]
+    }
+  ]
+}

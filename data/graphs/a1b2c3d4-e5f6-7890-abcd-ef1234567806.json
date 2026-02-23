@@ -1,0 +1,121 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+  "entities": [
+    {
+      "id": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+          "entity_id": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "2c19eca3-5023-481a-9cc4-7f6407fde31e",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+          "entity_id": "2c19eca3-5023-481a-9cc4-7f6407fde31e",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "92ea063e-97da-409e-b01a-4d5216637a92",
+      "name": "European Commission",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+          "entity_id": "92ea063e-97da-409e-b01a-4d5216637a92",
+          "name": "European Commission"
+        }
+      ]
+    },
+    {
+      "id": "d79c2029-0040-4eb9-87d1-875db9282711",
+      "name": "IBM",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+          "entity_id": "d79c2029-0040-4eb9-87d1-875db9282711",
+          "name": "IBM"
+        }
+      ]
+    },
+    {
+      "id": "3ae0b71a-cd1f-4eb0-a990-329a96bd6b9f",
+      "name": "Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+          "entity_id": "3ae0b71a-cd1f-4eb0-a990-329a96bd6b9f",
+          "name": "Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "8e125ba2-3613-429d-9ce0-1b1627d9241c",
+      "name": "Semiconductor Week",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+          "entity_id": "8e125ba2-3613-429d-9ce0-1b1627d9241c",
+          "name": "Semiconductor Week"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+      "target": "2c19eca3-5023-481a-9cc4-7f6407fde31e",
+      "relation": "announced buying",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+      ]
+    },
+    {
+      "source": "2c19eca3-5023-481a-9cc4-7f6407fde31e",
+      "target": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+      "relation": "makes photonic interconnect components for",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+      ]
+    },
+    {
+      "source": "3ae0b71a-cd1f-4eb0-a990-329a96bd6b9f",
+      "target": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+      "relation": "is new CTO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+      ]
+    },
+    {
+      "source": "3ae0b71a-cd1f-4eb0-a990-329a96bd6b9f",
+      "target": "d79c2029-0040-4eb9-87d1-875db9282711",
+      "relation": "was recruited from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+      ]
+    },
+    {
+      "source": "3ae0b71a-cd1f-4eb0-a990-329a96bd6b9f",
+      "target": "2c19eca3-5023-481a-9cc4-7f6407fde31e",
+      "relation": "was involved in identifying as target",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+      ]
+    },
+    {
+      "source": "92ea063e-97da-409e-b01a-4d5216637a92",
+      "target": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+      "relation": "taking preliminary look at deal",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+      ]
+    }
+  ]
+}

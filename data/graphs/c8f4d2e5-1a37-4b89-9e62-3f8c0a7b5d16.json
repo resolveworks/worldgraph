@@ -1,0 +1,210 @@
+{
+  "id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+  "entities": [
+    {
+      "id": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "name": "FTC",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+          "name": "FTC"
+        }
+      ]
+    },
+    {
+      "id": "ecfbc912-cad4-435e-9c67-dd21452cd96d",
+      "name": "Commissioner A. Torres",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "ecfbc912-cad4-435e-9c67-dd21452cd96d",
+          "name": "Commissioner A. Torres"
+        }
+      ]
+    },
+    {
+      "id": "e1222cc8-0fb3-427d-81d9-cf6e4cf7c860",
+      "name": "P. Sharma",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "e1222cc8-0fb3-427d-81d9-cf6e4cf7c860",
+          "name": "P. Sharma"
+        }
+      ]
+    },
+    {
+      "id": "97d1a986-e58f-4c23-854a-d5c3d701e1a6",
+      "name": "James Xu",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "97d1a986-e58f-4c23-854a-d5c3d701e1a6",
+          "name": "James Xu"
+        }
+      ]
+    },
+    {
+      "id": "f2c059a2-d4bc-43cd-b8a6-3e22436fe094",
+      "name": "cloud analytics sector",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "f2c059a2-d4bc-43cd-b8a6-3e22436fe094",
+          "name": "cloud analytics sector"
+        }
+      ]
+    },
+    {
+      "id": "f32ad5d8-0bb2-4eda-9300-b9b1e5b5ac57",
+      "name": "data processing",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "f32ad5d8-0bb2-4eda-9300-b9b1e5b5ac57",
+          "name": "data processing"
+        }
+      ]
+    },
+    {
+      "id": "764075c0-c73b-4dd7-92bd-688828705920",
+      "name": "cloud infrastructure",
+      "occurrences": [
+        {
+          "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+          "entity_id": "764075c0-c73b-4dd7-92bd-688828705920",
+          "name": "cloud infrastructure"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "target": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+      "relation": "is merging with",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "target": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "relation": "issued second request to",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "target": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+      "relation": "issued second request to",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "ecfbc912-cad4-435e-9c67-dd21452cd96d",
+      "target": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "relation": "is commissioner of",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "e1222cc8-0fb3-427d-81d9-cf6e4cf7c860",
+      "target": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+      "relation": "co-founded",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "e1222cc8-0fb3-427d-81d9-cf6e4cf7c860",
+      "target": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "relation": "is set to become SVP of Analytics at",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "97d1a986-e58f-4c23-854a-d5c3d701e1a6",
+      "target": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "relation": "is CEO of",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "target": "f32ad5d8-0bb2-4eda-9300-b9b1e5b5ac57",
+      "relation": "operates in",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "target": "764075c0-c73b-4dd7-92bd-688828705920",
+      "relation": "operates in",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+      "target": "f2c059a2-d4bc-43cd-b8a6-3e22436fe094",
+      "relation": "operates in",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "target": "ecfbc912-cad4-435e-9c67-dd21452cd96d",
+      "relation": "led by",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "target": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+      "relation": "is scrutinizing merger",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    },
+    {
+      "source": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+      "target": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+      "relation": "is scrutinizing merger",
+      "articles": [
+        "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+  "entities": [
+    {
+      "id": "80a04a15-b948-4ce6-85ec-5d56cc55fd11",
+      "name": "Nils Bergstr\u00f6m",
+      "occurrences": [
+        {
+          "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+          "entity_id": "80a04a15-b948-4ce6-85ec-5d56cc55fd11",
+          "name": "Nils Bergstr\u00f6m"
+        }
+      ]
+    },
+    {
+      "id": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+          "entity_id": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "57fe9e0e-dbb3-46b8-b36e-a513d68a738c",
+      "name": "Data Protection Commission",
+      "occurrences": [
+        {
+          "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+          "entity_id": "57fe9e0e-dbb3-46b8-b36e-a513d68a738c",
+          "name": "Data Protection Commission"
+        }
+      ]
+    },
+    {
+      "id": "d655d41a-18c4-4031-a38d-7d734cd3ffd7",
+      "name": "Nasdaq Stockholm",
+      "occurrences": [
+        {
+          "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+          "entity_id": "d655d41a-18c4-4031-a38d-7d734cd3ffd7",
+          "name": "Nasdaq Stockholm"
+        }
+      ]
+    },
+    {
+      "id": "7e6d0779-a4a0-46d1-811f-e9c76ccf8e9f",
+      "name": "EuroPrivacy Wire",
+      "occurrences": [
+        {
+          "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+          "entity_id": "7e6d0779-a4a0-46d1-811f-e9c76ccf8e9f",
+          "name": "EuroPrivacy Wire"
+        }
+      ]
+    },
+    {
+      "id": "947c7ba4-0591-4cd6-8cec-8d89a9d52be4",
+      "name": "South Korean firm",
+      "occurrences": [
+        {
+          "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+          "entity_id": "947c7ba4-0591-4cd6-8cec-8d89a9d52be4",
+          "name": "South Korean firm"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "80a04a15-b948-4ce6-85ec-5d56cc55fd11",
+      "target": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+      "relation": "is chief executive of",
+      "articles": [
+        "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"
+      ]
+    },
+    {
+      "source": "80a04a15-b948-4ce6-85ec-5d56cc55fd11",
+      "target": "57fe9e0e-dbb3-46b8-b36e-a513d68a738c",
+      "relation": "exchanged correspondence with",
+      "articles": [
+        "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"
+      ]
+    },
+    {
+      "source": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+      "target": "57fe9e0e-dbb3-46b8-b36e-a513d68a738c",
+      "relation": "received information request from",
+      "articles": [
+        "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"
+      ]
+    },
+    {
+      "source": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+      "target": "d655d41a-18c4-4031-a38d-7d734cd3ffd7",
+      "relation": "listed on",
+      "articles": [
+        "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"
+      ]
+    },
+    {
+      "source": "7e6d0779-a4a0-46d1-811f-e9c76ccf8e9f",
+      "target": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+      "relation": "published report about",
+      "articles": [
+        "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"
+      ]
+    },
+    {
+      "source": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+      "target": "947c7ba4-0591-4cd6-8cec-8d89a9d52be4",
+      "relation": "potential partnership with",
+      "articles": [
+        "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f"
+      ]
+    }
+  ]
+}

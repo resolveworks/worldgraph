@@ -1,0 +1,186 @@
+{
+  "id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+  "entities": [
+    {
+      "id": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "name": "Northveil Energy Partners",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+          "name": "Northveil Energy Partners"
+        }
+      ]
+    },
+    {
+      "id": "5a58979d-8d51-4aba-9b88-a4e384f2a04b",
+      "name": "Sustain Ratings",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "5a58979d-8d51-4aba-9b88-a4e384f2a04b",
+          "name": "Sustain Ratings"
+        }
+      ]
+    },
+    {
+      "id": "26068a85-4512-4c62-bdc4-84ec433c7c16",
+      "name": "Houston",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "26068a85-4512-4c62-bdc4-84ec433c7c16",
+          "name": "Houston"
+        }
+      ]
+    },
+    {
+      "id": "57c9fe79-82c1-43f4-856e-609fa443f0c5",
+      "name": "West Texas",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "57c9fe79-82c1-43f4-856e-609fa443f0c5",
+          "name": "West Texas"
+        }
+      ]
+    },
+    {
+      "id": "7d479859-900e-456e-8b53-127d3e029095",
+      "name": "Permian Basin",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "7d479859-900e-456e-8b53-127d3e029095",
+          "name": "Permian Basin"
+        }
+      ]
+    },
+    {
+      "id": "c4eceea3-e7bd-45fd-8d95-644ccee53d42",
+      "name": "Warren Gault",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "c4eceea3-e7bd-45fd-8d95-644ccee53d42",
+          "name": "Warren Gault"
+        }
+      ]
+    },
+    {
+      "id": "a0d32bc2-038e-4f08-91e9-ab142f8bcf07",
+      "name": "Halcyon Genomics",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "a0d32bc2-038e-4f08-91e9-ab142f8bcf07",
+          "name": "Halcyon Genomics"
+        }
+      ]
+    },
+    {
+      "id": "1b95a831-dc54-4eaf-8792-859514123fc8",
+      "name": "green bond market",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "1b95a831-dc54-4eaf-8792-859514123fc8",
+          "name": "green bond market"
+        }
+      ]
+    },
+    {
+      "id": "f81f103f-bfc9-45d8-9b36-fa4cc738e921",
+      "name": "environmental research group",
+      "occurrences": [
+        {
+          "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+          "entity_id": "f81f103f-bfc9-45d8-9b36-fa4cc738e921",
+          "name": "environmental research group"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "target": "5a58979d-8d51-4aba-9b88-a4e384f2a04b",
+      "relation": "received downgrade from",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "5a58979d-8d51-4aba-9b88-a4e384f2a04b",
+      "target": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "relation": "downgraded",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "target": "26068a85-4512-4c62-bdc4-84ec433c7c16",
+      "relation": "is based in",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "target": "57c9fe79-82c1-43f4-856e-609fa443f0c5",
+      "relation": "planned wind farm expansion in",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "5a58979d-8d51-4aba-9b88-a4e384f2a04b",
+      "target": "7d479859-900e-456e-8b53-127d3e029095",
+      "relation": "investigated operations in",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "target": "7d479859-900e-456e-8b53-127d3e029095",
+      "relation": "operates natural gas gathering in",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "c4eceea3-e7bd-45fd-8d95-644ccee53d42",
+      "target": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "relation": "is chief financial officer of",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "f81f103f-bfc9-45d8-9b36-fa4cc738e921",
+      "target": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "relation": "published satellite-based measurements of emissions from",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "a0d32bc2-038e-4f08-91e9-ab142f8bcf07",
+      "target": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "relation": "indicated interest in bond offering from",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    },
+    {
+      "source": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+      "target": "1b95a831-dc54-4eaf-8792-859514123fc8",
+      "relation": "offering collapse rattled",
+      "articles": [
+        "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+  "entities": [
+    {
+      "id": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+      "name": "Northveil Energy Partners",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+          "name": "Northveil Energy Partners"
+        }
+      ]
+    },
+    {
+      "id": "f81b08dc-8ad0-4f61-810f-edadbc592339",
+      "name": "West Texas",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "f81b08dc-8ad0-4f61-810f-edadbc592339",
+          "name": "West Texas"
+        }
+      ]
+    },
+    {
+      "id": "3ca4e85b-1fec-4968-a524-286fd4e464b2",
+      "name": "Culberson County",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "3ca4e85b-1fec-4968-a524-286fd4e464b2",
+          "name": "Culberson County"
+        }
+      ]
+    },
+    {
+      "id": "dd0b486b-a605-4cc1-bbb7-b7bb2f4e6d89",
+      "name": "Warren Gault",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "dd0b486b-a605-4cc1-bbb7-b7bb2f4e6d89",
+          "name": "Warren Gault"
+        }
+      ]
+    },
+    {
+      "id": "b877d370-31aa-4558-9518-14fb1a4e235f",
+      "name": "ERCOT grid",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "b877d370-31aa-4558-9518-14fb1a4e235f",
+          "name": "ERCOT grid"
+        }
+      ]
+    },
+    {
+      "id": "56ef6197-7de0-4888-8636-963083802030",
+      "name": "Sustain Ratings",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "56ef6197-7de0-4888-8636-963083802030",
+          "name": "Sustain Ratings"
+        }
+      ]
+    },
+    {
+      "id": "8a83ad05-6c0f-43d5-8125-a99d31162c38",
+      "name": "European manufacturer",
+      "occurrences": [
+        {
+          "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+          "entity_id": "8a83ad05-6c0f-43d5-8125-a99d31162c38",
+          "name": "European manufacturer"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+      "target": "f81b08dc-8ad0-4f61-810f-edadbc592339",
+      "relation": "planned wind expansion in",
+      "articles": [
+        "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f"
+      ]
+    },
+    {
+      "source": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+      "target": "3ca4e85b-1fec-4968-a524-286fd4e464b2",
+      "relation": "planned 800-megawatt wind project in",
+      "articles": [
+        "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f"
+      ]
+    },
+    {
+      "source": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+      "target": "8a83ad05-6c0f-43d5-8125-a99d31162c38",
+      "relation": "signed turbine supply agreements with",
+      "articles": [
+        "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f"
+      ]
+    },
+    {
+      "source": "dd0b486b-a605-4cc1-bbb7-b7bb2f4e6d89",
+      "target": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+      "relation": "is chief financial officer of",
+      "articles": [
+        "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f"
+      ]
+    },
+    {
+      "source": "f81b08dc-8ad0-4f61-810f-edadbc592339",
+      "target": "b877d370-31aa-4558-9518-14fb1a4e235f",
+      "relation": "would contribute renewable energy to",
+      "articles": [
+        "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f"
+      ]
+    },
+    {
+      "source": "56ef6197-7de0-4888-8636-963083802030",
+      "target": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+      "relation": "issued ESG downgrade to",
+      "articles": [
+        "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f"
+      ]
+    }
+  ]
+}

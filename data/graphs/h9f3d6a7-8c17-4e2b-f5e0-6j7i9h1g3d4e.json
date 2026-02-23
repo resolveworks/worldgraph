@@ -1,0 +1,151 @@
+{
+  "id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+  "entities": [
+    {
+      "id": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+      "name": "Sustain Ratings",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+          "name": "Sustain Ratings"
+        }
+      ]
+    },
+    {
+      "id": "446870ab-3e6a-452b-ab7a-4364b39d4152",
+      "name": "Northveil Energy Partners",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "446870ab-3e6a-452b-ab7a-4364b39d4152",
+          "name": "Northveil Energy Partners"
+        }
+      ]
+    },
+    {
+      "id": "7197e77d-b085-46fb-b4a3-15ca627f55ae",
+      "name": "Warren Gault",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "7197e77d-b085-46fb-b4a3-15ca627f55ae",
+          "name": "Warren Gault"
+        }
+      ]
+    },
+    {
+      "id": "a7579e4d-c904-481c-a1b4-f60bc878ef19",
+      "name": "FTC Commissioner Angela Torres",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "a7579e4d-c904-481c-a1b4-f60bc878ef19",
+          "name": "FTC Commissioner Angela Torres"
+        }
+      ]
+    },
+    {
+      "id": "ec3a7e3b-8598-43fb-991d-21d60498b4fd",
+      "name": "Renata Solis",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "ec3a7e3b-8598-43fb-991d-21d60498b4fd",
+          "name": "Renata Solis"
+        }
+      ]
+    },
+    {
+      "id": "eb4932fd-cd1c-4560-887d-fce9af222747",
+      "name": "ESG ratings",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "eb4932fd-cd1c-4560-887d-fce9af222747",
+          "name": "ESG ratings"
+        }
+      ]
+    },
+    {
+      "id": "061085d6-7b25-40e7-b49d-e3279c1bfd0f",
+      "name": "satellite methane data",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "061085d6-7b25-40e7-b49d-e3279c1bfd0f",
+          "name": "satellite methane data"
+        }
+      ]
+    },
+    {
+      "id": "5ce6e00b-1d68-40ff-acc7-4a7a22f94571",
+      "name": "bond offering",
+      "occurrences": [
+        {
+          "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+          "entity_id": "5ce6e00b-1d68-40ff-acc7-4a7a22f94571",
+          "name": "bond offering"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+      "target": "446870ab-3e6a-452b-ab7a-4364b39d4152",
+      "relation": "downgraded environmental score of",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    },
+    {
+      "source": "7197e77d-b085-46fb-b4a3-15ca627f55ae",
+      "target": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+      "relation": "disputed methodology of",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    },
+    {
+      "source": "a7579e4d-c904-481c-a1b4-f60bc878ef19",
+      "target": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+      "relation": "monitoring reliability of",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    },
+    {
+      "source": "ec3a7e3b-8598-43fb-991d-21d60498b4fd",
+      "target": "eb4932fd-cd1c-4560-887d-fce9af222747",
+      "relation": "advocates for reform of",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    },
+    {
+      "source": "446870ab-3e6a-452b-ab7a-4364b39d4152",
+      "target": "5ce6e00b-1d68-40ff-acc7-4a7a22f94571",
+      "relation": "launched failed",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    },
+    {
+      "source": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+      "target": "061085d6-7b25-40e7-b49d-e3279c1bfd0f",
+      "relation": "relied on",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    },
+    {
+      "source": "446870ab-3e6a-452b-ab7a-4364b39d4152",
+      "target": "5ce6e00b-1d68-40ff-acc7-4a7a22f94571",
+      "relation": "plans to relaunch",
+      "articles": [
+        "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+      ]
+    }
+  ]
+}

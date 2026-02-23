@@ -1,0 +1,162 @@
+{
+  "id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+  "entities": [
+    {
+      "id": "ac2bc5b6-8041-4cbf-8a8c-04d63e2d25bd",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "ac2bc5b6-8041-4cbf-8a8c-04d63e2d25bd",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "7a1fb07f-1ac8-4f83-92ec-687478b43202",
+      "name": "San Francisco",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "7a1fb07f-1ac8-4f83-92ec-687478b43202",
+          "name": "San Francisco"
+        }
+      ]
+    },
+    {
+      "id": "b7103c1c-e37f-444e-b4bb-0d75377cbdac",
+      "name": "James Xu",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "b7103c1c-e37f-444e-b4bb-0d75377cbdac",
+          "name": "James Xu"
+        }
+      ]
+    },
+    {
+      "id": "0a665df7-6b73-496a-81ed-0f477f812bf6",
+      "name": "Lightwave's real-time analytics platform",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "0a665df7-6b73-496a-81ed-0f477f812bf6",
+          "name": "Lightwave's real-time analytics platform"
+        }
+      ]
+    },
+    {
+      "id": "fbbfc33c-f811-47a5-924f-49d723213c75",
+      "name": "Meridian's cloud infrastructure division",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "fbbfc33c-f811-47a5-924f-49d723213c75",
+          "name": "Meridian's cloud infrastructure division"
+        }
+      ]
+    },
+    {
+      "id": "342d4ec7-5bc5-4f54-88e4-fb6ebd882ef3",
+      "name": "Dr. Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "342d4ec7-5bc5-4f54-88e4-fb6ebd882ef3",
+          "name": "Dr. Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "7762fe07-06c7-449d-a579-577013273d35",
+      "name": "Austin",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "7762fe07-06c7-449d-a579-577013273d35",
+          "name": "Austin"
+        }
+      ]
+    },
+    {
+      "id": "595f5995-8372-41b3-9ec0-aca11675cb32",
+      "name": "TechWire Daily",
+      "occurrences": [
+        {
+          "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+          "entity_id": "595f5995-8372-41b3-9ec0-aca11675cb32",
+          "name": "TechWire Daily"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "ac2bc5b6-8041-4cbf-8a8c-04d63e2d25bd",
+      "target": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+      "relation": "will acquire",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    },
+    {
+      "source": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+      "target": "7a1fb07f-1ac8-4f83-92ec-687478b43202",
+      "relation": "is based in",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    },
+    {
+      "source": "ac2bc5b6-8041-4cbf-8a8c-04d63e2d25bd",
+      "target": "7a1fb07f-1ac8-4f83-92ec-687478b43202",
+      "relation": "operates in",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    },
+    {
+      "source": "b7103c1c-e37f-444e-b4bb-0d75377cbdac",
+      "target": "ac2bc5b6-8041-4cbf-8a8c-04d63e2d25bd",
+      "relation": "is CEO of",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    },
+    {
+      "source": "0a665df7-6b73-496a-81ed-0f477f812bf6",
+      "target": "fbbfc33c-f811-47a5-924f-49d723213c75",
+      "relation": "will be integrated into",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    },
+    {
+      "source": "342d4ec7-5bc5-4f54-88e4-fb6ebd882ef3",
+      "target": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+      "relation": "founded",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    },
+    {
+      "source": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+      "target": "7762fe07-06c7-449d-a579-577013273d35",
+      "relation": "has offices in",
+      "articles": [
+        "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+      ]
+    }
+  ]
+}

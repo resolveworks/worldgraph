@@ -1,0 +1,197 @@
+{
+  "id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+  "entities": [
+    {
+      "id": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+      "name": "Port of Galveston",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+          "name": "Port of Galveston"
+        }
+      ]
+    },
+    {
+      "id": "2b66c998-f4f9-434f-a85c-ccff18638085",
+      "name": "Stelmark Freight",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "2b66c998-f4f9-434f-a85c-ccff18638085",
+          "name": "Stelmark Freight"
+        }
+      ]
+    },
+    {
+      "id": "9f648b3d-1a1a-4d6b-9441-5ec8e6718cb0",
+      "name": "International Longshoremen's Association",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "9f648b3d-1a1a-4d6b-9441-5ec8e6718cb0",
+          "name": "International Longshoremen's Association"
+        }
+      ]
+    },
+    {
+      "id": "0438a987-df61-41e5-b731-c2aa382f0900",
+      "name": "Department of Transportation",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "0438a987-df61-41e5-b731-c2aa382f0900",
+          "name": "Department of Transportation"
+        }
+      ]
+    },
+    {
+      "id": "fde2f734-74c5-4930-9e89-e740338eabdd",
+      "name": "Clyde Okafor",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "fde2f734-74c5-4930-9e89-e740338eabdd",
+          "name": "Clyde Okafor"
+        }
+      ]
+    },
+    {
+      "id": "0f9ba390-7e83-43f5-bd12-792e41d01813",
+      "name": "Miriam Solano",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "0f9ba390-7e83-43f5-bd12-792e41d01813",
+          "name": "Miriam Solano"
+        }
+      ]
+    },
+    {
+      "id": "07d1d381-328f-4d1a-b95e-68309cef0cc1",
+      "name": "Ports of the Future program",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "07d1d381-328f-4d1a-b95e-68309cef0cc1",
+          "name": "Ports of the Future program"
+        }
+      ]
+    },
+    {
+      "id": "d34e700d-249c-4938-a203-435b8fbadb61",
+      "name": "ILA's Gulf Coast district",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "d34e700d-249c-4938-a203-435b8fbadb61",
+          "name": "ILA's Gulf Coast district"
+        }
+      ]
+    },
+    {
+      "id": "b974f6be-8bed-4c3a-a4a7-c207573cb785",
+      "name": "Port of Savannah",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "b974f6be-8bed-4c3a-a4a7-c207573cb785",
+          "name": "Port of Savannah"
+        }
+      ]
+    },
+    {
+      "id": "6e1b2a2b-3c8c-4220-88ad-5584bd3e9d2b",
+      "name": "Port of Long Beach",
+      "occurrences": [
+        {
+          "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+          "entity_id": "6e1b2a2b-3c8c-4220-88ad-5584bd3e9d2b",
+          "name": "Port of Long Beach"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "0438a987-df61-41e5-b731-c2aa382f0900",
+      "target": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+      "relation": "awarded $240 million federal grant to",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+      "target": "2b66c998-f4f9-434f-a85c-ccff18638085",
+      "relation": "has contract with",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "9f648b3d-1a1a-4d6b-9441-5ec8e6718cb0",
+      "target": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+      "relation": "opposes contract at",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "2b66c998-f4f9-434f-a85c-ccff18638085",
+      "target": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+      "relation": "would deploy automated systems at",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "fde2f734-74c5-4930-9e89-e740338eabdd",
+      "target": "9f648b3d-1a1a-4d6b-9441-5ec8e6718cb0",
+      "relation": "is regional director of",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "0f9ba390-7e83-43f5-bd12-792e41d01813",
+      "target": "2b66c998-f4f9-434f-a85c-ccff18638085",
+      "relation": "is chief operating officer of",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "0438a987-df61-41e5-b731-c2aa382f0900",
+      "target": "07d1d381-328f-4d1a-b95e-68309cef0cc1",
+      "relation": "administers",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "d34e700d-249c-4938-a203-435b8fbadb61",
+      "target": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+      "relation": "represents dockworkers at",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "2b66c998-f4f9-434f-a85c-ccff18638085",
+      "target": "b974f6be-8bed-4c3a-a4a7-c207573cb785",
+      "relation": "previously deployed systems at",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    },
+    {
+      "source": "2b66c998-f4f9-434f-a85c-ccff18638085",
+      "target": "6e1b2a2b-3c8c-4220-88ad-5584bd3e9d2b",
+      "relation": "previously deployed systems at",
+      "articles": [
+        "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+      ]
+    }
+  ]
+}

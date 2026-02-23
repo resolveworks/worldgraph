@@ -1,0 +1,129 @@
+{
+  "id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+  "entities": [
+    {
+      "id": "09091280-5ca0-4c9a-959b-09adde541f15",
+      "name": "DataWatch EU",
+      "occurrences": [
+        {
+          "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+          "entity_id": "09091280-5ca0-4c9a-959b-09adde541f15",
+          "name": "DataWatch EU"
+        }
+      ]
+    },
+    {
+      "id": "6eea26d0-73e8-4b0b-a9b6-329eccf3e153",
+      "name": "Data Protection Commission",
+      "occurrences": [
+        {
+          "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+          "entity_id": "6eea26d0-73e8-4b0b-a9b6-329eccf3e153",
+          "name": "Data Protection Commission"
+        }
+      ]
+    },
+    {
+      "id": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+          "entity_id": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "872277fb-89f5-44e8-9106-6dd27816cfc2",
+      "name": "Hanseong",
+      "occurrences": [
+        {
+          "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+          "entity_id": "872277fb-89f5-44e8-9106-6dd27816cfc2",
+          "name": "Hanseong"
+        }
+      ]
+    },
+    {
+      "id": "2703ba4c-204b-408f-a53a-6bb2bb1c0637",
+      "name": "European data",
+      "occurrences": [
+        {
+          "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+          "entity_id": "2703ba4c-204b-408f-a53a-6bb2bb1c0637",
+          "name": "European data"
+        }
+      ]
+    },
+    {
+      "id": "2aa84a60-8fc0-466e-b918-a9a072fdaa45",
+      "name": "DPC",
+      "occurrences": [
+        {
+          "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+          "entity_id": "2aa84a60-8fc0-466e-b918-a9a072fdaa45",
+          "name": "DPC"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "09091280-5ca0-4c9a-959b-09adde541f15",
+      "target": "6eea26d0-73e8-4b0b-a9b6-329eccf3e153",
+      "relation": "wrote directly to",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    },
+    {
+      "source": "09091280-5ca0-4c9a-959b-09adde541f15",
+      "target": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+      "relation": "urging inquiry into",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    },
+    {
+      "source": "6eea26d0-73e8-4b0b-a9b6-329eccf3e153",
+      "target": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+      "relation": "conducting inquiry into",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    },
+    {
+      "source": "872277fb-89f5-44e8-9106-6dd27816cfc2",
+      "target": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+      "relation": "licensing deal with",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    },
+    {
+      "source": "872277fb-89f5-44e8-9106-6dd27816cfc2",
+      "target": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+      "relation": "could alter processing of",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    },
+    {
+      "source": "2aa84a60-8fc0-466e-b918-a9a072fdaa45",
+      "target": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+      "relation": "monitoring",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    },
+    {
+      "source": "6eea26d0-73e8-4b0b-a9b6-329eccf3e153",
+      "target": "2703ba4c-204b-408f-a53a-6bb2bb1c0637",
+      "relation": "regulates processing of",
+      "articles": [
+        "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+      ]
+    }
+  ]
+}

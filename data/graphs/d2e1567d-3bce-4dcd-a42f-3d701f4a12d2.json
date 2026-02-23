@@ -1,0 +1,132 @@
+{
+  "id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+  "entities": [
+    {
+      "id": "16678552-e282-49fb-aa89-2fcc78750b6d",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "16678552-e282-49fb-aa89-2fcc78750b6d",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "aacc2862-54d2-4d78-a203-00a72f2542a9",
+      "name": "Sarah Chen",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "aacc2862-54d2-4d78-a203-00a72f2542a9",
+          "name": "Sarah Chen"
+        }
+      ]
+    },
+    {
+      "id": "797e1393-1645-403f-a001-d25a6c33adbf",
+      "name": "David Park",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "797e1393-1645-403f-a001-d25a6c33adbf",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "id": "ce397e68-1f09-4dec-9c40-a7c0f7fd63a5",
+      "name": "Helios Power Group",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "ce397e68-1f09-4dec-9c40-a7c0f7fd63a5",
+          "name": "Helios Power Group"
+        }
+      ]
+    },
+    {
+      "id": "98624227-3144-4b32-854c-8e9189d63931",
+      "name": "CEO",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "98624227-3144-4b32-854c-8e9189d63931",
+          "name": "CEO"
+        }
+      ]
+    },
+    {
+      "id": "35e0c4d1-566f-4483-b043-3a82eebf7187",
+      "name": "COO",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "35e0c4d1-566f-4483-b043-3a82eebf7187",
+          "name": "COO"
+        }
+      ]
+    },
+    {
+      "id": "ed3f659e-2e0c-42cc-844c-1bfe025ef667",
+      "name": "board adviser",
+      "occurrences": [
+        {
+          "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+          "entity_id": "ed3f659e-2e0c-42cc-844c-1bfe025ef667",
+          "name": "board adviser"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "aacc2862-54d2-4d78-a203-00a72f2542a9",
+      "target": "16678552-e282-49fb-aa89-2fcc78750b6d",
+      "relation": "named next CEO of",
+      "articles": [
+        "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+      ]
+    },
+    {
+      "source": "797e1393-1645-403f-a001-d25a6c33adbf",
+      "target": "16678552-e282-49fb-aa89-2fcc78750b6d",
+      "relation": "led as CEO since 2019",
+      "articles": [
+        "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+      ]
+    },
+    {
+      "source": "797e1393-1645-403f-a001-d25a6c33adbf",
+      "target": "16678552-e282-49fb-aa89-2fcc78750b6d",
+      "relation": "announced resignation from",
+      "articles": [
+        "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+      ]
+    },
+    {
+      "source": "aacc2862-54d2-4d78-a203-00a72f2542a9",
+      "target": "ce397e68-1f09-4dec-9c40-a7c0f7fd63a5",
+      "relation": "held position of COO at",
+      "articles": [
+        "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+      ]
+    },
+    {
+      "source": "aacc2862-54d2-4d78-a203-00a72f2542a9",
+      "target": "16678552-e282-49fb-aa89-2fcc78750b6d",
+      "relation": "expected to start role on March 1",
+      "articles": [
+        "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+      ]
+    },
+    {
+      "source": "797e1393-1645-403f-a001-d25a6c33adbf",
+      "target": "16678552-e282-49fb-aa89-2fcc78750b6d",
+      "relation": "will stay on as board adviser",
+      "articles": [
+        "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+      ]
+    }
+  ]
+}

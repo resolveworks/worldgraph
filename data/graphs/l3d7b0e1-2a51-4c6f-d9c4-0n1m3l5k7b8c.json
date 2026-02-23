@@ -1,0 +1,183 @@
+{
+  "id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+  "entities": [
+    {
+      "id": "415dc689-12bc-41b4-a09a-270a4384a946",
+      "name": "Dr. Lena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "415dc689-12bc-41b4-a09a-270a4384a946",
+          "name": "Dr. Lena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+      "name": "Halcyon Genomics",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+          "name": "Halcyon Genomics"
+        }
+      ]
+    },
+    {
+      "id": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+      "name": "Oryza Therapeutics",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+          "name": "Oryza Therapeutics"
+        }
+      ]
+    },
+    {
+      "id": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+      "name": "National Rare Disease Coalition",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+          "name": "National Rare Disease Coalition"
+        }
+      ]
+    },
+    {
+      "id": "6c653207-ca97-43d6-bfa5-ede1cb5b5931",
+      "name": "Dominic Ferrara",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "6c653207-ca97-43d6-bfa5-ede1cb5b5931",
+          "name": "Dominic Ferrara"
+        }
+      ]
+    },
+    {
+      "id": "a3f52bf7-82cb-46bb-9340-4159fb2845af",
+      "name": "FDA",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "a3f52bf7-82cb-46bb-9340-4159fb2845af",
+          "name": "FDA"
+        }
+      ]
+    },
+    {
+      "id": "97c51e86-d471-445b-b25b-ecda9848f3b4",
+      "name": "Washington, D.C.",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "97c51e86-d471-445b-b25b-ecda9848f3b4",
+          "name": "Washington, D.C."
+        }
+      ]
+    },
+    {
+      "id": "83ebb7df-6a9b-4a1d-8cae-aee641c7240c",
+      "name": "CRISPR platform",
+      "occurrences": [
+        {
+          "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+          "entity_id": "83ebb7df-6a9b-4a1d-8cae-aee641c7240c",
+          "name": "CRISPR platform"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "415dc689-12bc-41b4-a09a-270a4384a946",
+      "target": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+      "relation": "joined",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+      "target": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+      "relation": "acquired",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "415dc689-12bc-41b4-a09a-270a4384a946",
+      "target": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+      "relation": "appointed to advisory board of",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "415dc689-12bc-41b4-a09a-270a4384a946",
+      "target": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+      "relation": "founded",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "83ebb7df-6a9b-4a1d-8cae-aee641c7240c",
+      "target": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+      "relation": "developed at",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "6c653207-ca97-43d6-bfa5-ede1cb5b5931",
+      "target": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+      "relation": "is CEO of",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+      "target": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+      "relation": "integrating team from",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+      "target": "a3f52bf7-82cb-46bb-9340-4159fb2845af",
+      "relation": "advises",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+      "target": "a3f52bf7-82cb-46bb-9340-4159fb2845af",
+      "relation": "lobbying for expanded approval pathways with",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+      "target": "97c51e86-d471-445b-b25b-ecda9848f3b4",
+      "relation": "holding annual meeting in",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    },
+    {
+      "source": "415dc689-12bc-41b4-a09a-270a4384a946",
+      "target": "97c51e86-d471-445b-b25b-ecda9848f3b4",
+      "relation": "expected to speak in",
+      "articles": [
+        "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+      ]
+    }
+  ]
+}

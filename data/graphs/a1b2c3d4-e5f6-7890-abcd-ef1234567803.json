@@ -1,0 +1,121 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+  "entities": [
+    {
+      "id": "b4e5ada8-e85e-4371-bfda-8fff601edcfc",
+      "name": "Apex Ventures",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+          "entity_id": "b4e5ada8-e85e-4371-bfda-8fff601edcfc",
+          "name": "Apex Ventures"
+        }
+      ]
+    },
+    {
+      "id": "e11b8b43-47c6-4763-bd8d-cf88ea077210",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+          "entity_id": "e11b8b43-47c6-4763-bd8d-cf88ea077210",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "7d6dcba7-fea7-468b-94d3-35d8f929a097",
+      "name": "Diana Chu",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+          "entity_id": "7d6dcba7-fea7-468b-94d3-35d8f929a097",
+          "name": "Diana Chu"
+        }
+      ]
+    },
+    {
+      "id": "9700c409-0e96-46ff-8686-110f9c05057a",
+      "name": "Venture Desk",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+          "entity_id": "9700c409-0e96-46ff-8686-110f9c05057a",
+          "name": "Venture Desk"
+        }
+      ]
+    },
+    {
+      "id": "6b04d394-f873-408d-9e41-4606c8f7285f",
+      "name": "E. Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+          "entity_id": "6b04d394-f873-408d-9e41-4606c8f7285f",
+          "name": "E. Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "79b8c0f1-3c1b-4c86-91d1-b8f8986b6dd0",
+      "name": "IBM Research",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+          "entity_id": "79b8c0f1-3c1b-4c86-91d1-b8f8986b6dd0",
+          "name": "IBM Research"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "b4e5ada8-e85e-4371-bfda-8fff601edcfc",
+      "target": "e11b8b43-47c6-4763-bd8d-cf88ea077210",
+      "relation": "wrote $400 million check to",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567803"
+      ]
+    },
+    {
+      "source": "7d6dcba7-fea7-468b-94d3-35d8f929a097",
+      "target": "b4e5ada8-e85e-4371-bfda-8fff601edcfc",
+      "relation": "is managing partner of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567803"
+      ]
+    },
+    {
+      "source": "6b04d394-f873-408d-9e41-4606c8f7285f",
+      "target": "e11b8b43-47c6-4763-bd8d-cf88ea077210",
+      "relation": "is new CTO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567803"
+      ]
+    },
+    {
+      "source": "6b04d394-f873-408d-9e41-4606c8f7285f",
+      "target": "79b8c0f1-3c1b-4c86-91d1-b8f8986b6dd0",
+      "relation": "joins from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567803"
+      ]
+    },
+    {
+      "source": "7d6dcba7-fea7-468b-94d3-35d8f929a097",
+      "target": "9700c409-0e96-46ff-8686-110f9c05057a",
+      "relation": "gave interview to",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567803"
+      ]
+    },
+    {
+      "source": "b4e5ada8-e85e-4371-bfda-8fff601edcfc",
+      "target": "e11b8b43-47c6-4763-bd8d-cf88ea077210",
+      "relation": "previously passed on earlier round in 2024",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567803"
+      ]
+    }
+  ]
+}

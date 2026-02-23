@@ -1,0 +1,197 @@
+{
+  "id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+  "entities": [
+    {
+      "id": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+      "name": "Nils Bergstr\u00f6m",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+          "name": "Nils Bergstr\u00f6m"
+        }
+      ]
+    },
+    {
+      "id": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "342434e0-066c-49f6-ab80-529e47e4db1e",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "21d27c9d-52a4-4de4-be9c-f838c08d79c9",
+      "name": "Frankfurt",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "21d27c9d-52a4-4de4-be9c-f838c08d79c9",
+          "name": "Frankfurt"
+        }
+      ]
+    },
+    {
+      "id": "cd31c94f-d24d-471f-8830-a197a110dc42",
+      "name": "Amsterdam",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "cd31c94f-d24d-471f-8830-a197a110dc42",
+          "name": "Amsterdam"
+        }
+      ]
+    },
+    {
+      "id": "42c5bd03-ac5a-4f5a-a419-fc468cee1621",
+      "name": "Stockholm",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "42c5bd03-ac5a-4f5a-a419-fc468cee1621",
+          "name": "Stockholm"
+        }
+      ]
+    },
+    {
+      "id": "732adc13-3789-40e0-9028-b02c8d5db7ad",
+      "name": "Brussels",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "732adc13-3789-40e0-9028-b02c8d5db7ad",
+          "name": "Brussels"
+        }
+      ]
+    },
+    {
+      "id": "efc8b4a1-8560-4693-8632-e76d3bd276dc",
+      "name": "DataWatch EU",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "efc8b4a1-8560-4693-8632-e76d3bd276dc",
+          "name": "DataWatch EU"
+        }
+      ]
+    },
+    {
+      "id": "bdeeee1f-4626-49ba-8588-794f6bbbe5a4",
+      "name": "DPC",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "bdeeee1f-4626-49ba-8588-794f6bbbe5a4",
+          "name": "DPC"
+        }
+      ]
+    },
+    {
+      "id": "741e9db6-1a99-440d-b6b7-899793f9c6e0",
+      "name": "Parliamentary",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "741e9db6-1a99-440d-b6b7-899793f9c6e0",
+          "name": "Parliamentary"
+        }
+      ]
+    },
+    {
+      "id": "012f102b-2fcf-4b8b-8e4a-385d840c45e9",
+      "name": "Financial Times Nordic",
+      "occurrences": [
+        {
+          "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+          "entity_id": "012f102b-2fcf-4b8b-8e4a-385d840c45e9",
+          "name": "Financial Times Nordic"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+      "target": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "relation": "is CEO of",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+      "target": "21d27c9d-52a4-4de4-be9c-f838c08d79c9",
+      "relation": "announced migration to",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+      "target": "cd31c94f-d24d-471f-8830-a197a110dc42",
+      "relation": "announced migration to",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "target": "21d27c9d-52a4-4de4-be9c-f838c08d79c9",
+      "relation": "plans to relocate infrastructure to",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "target": "cd31c94f-d24d-471f-8830-a197a110dc42",
+      "relation": "plans to relocate infrastructure to",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+      "target": "42c5bd03-ac5a-4f5a-a419-fc468cee1621",
+      "relation": "spoke at event in",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "741e9db6-1a99-440d-b6b7-899793f9c6e0",
+      "target": "732adc13-3789-40e0-9028-b02c8d5db7ad",
+      "relation": "held hearing in",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "741e9db6-1a99-440d-b6b7-899793f9c6e0",
+      "target": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "relation": "highlighted in hearing",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "efc8b4a1-8560-4693-8632-e76d3bd276dc",
+      "target": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "relation": "expressed concerns about",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    },
+    {
+      "source": "bdeeee1f-4626-49ba-8588-794f6bbbe5a4",
+      "target": "342434e0-066c-49f6-ab80-529e47e4db1e",
+      "relation": "did not comment on",
+      "articles": [
+        "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+      ]
+    }
+  ]
+}

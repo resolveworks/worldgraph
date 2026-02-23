@@ -1,0 +1,202 @@
+{
+  "id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+  "entities": [
+    {
+      "id": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+      "name": "Ireland's Data Protection Commission",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+          "name": "Ireland's Data Protection Commission"
+        }
+      ]
+    },
+    {
+      "id": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "679f0c0d-f396-4ba4-8ff4-b061b8043db0",
+      "name": "GDPR",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "679f0c0d-f396-4ba4-8ff4-b061b8043db0",
+          "name": "GDPR"
+        }
+      ]
+    },
+    {
+      "id": "7c38e1a9-d385-47cb-94d1-4e1bace77dc6",
+      "name": "EuroPrivacy Wire",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "7c38e1a9-d385-47cb-94d1-4e1bace77dc6",
+          "name": "EuroPrivacy Wire"
+        }
+      ]
+    },
+    {
+      "id": "014a60e7-de28-44fa-b78d-ba73d042a29c",
+      "name": "Nils Bergstr\u00f6m",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "014a60e7-de28-44fa-b78d-ba73d042a29c",
+          "name": "Nils Bergstr\u00f6m"
+        }
+      ]
+    },
+    {
+      "id": "8b9c00a8-c8db-4f60-abde-0e317113cff8",
+      "name": "DataWatch EU",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "8b9c00a8-c8db-4f60-abde-0e317113cff8",
+          "name": "DataWatch EU"
+        }
+      ]
+    },
+    {
+      "id": "4b926e9a-0cfe-4b51-a6e7-f00b57c34f62",
+      "name": "Frankfurt",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "4b926e9a-0cfe-4b51-a6e7-f00b57c34f62",
+          "name": "Frankfurt"
+        }
+      ]
+    },
+    {
+      "id": "9d70bdba-a60c-452a-bcd1-dd17f9181c64",
+      "name": "Amsterdam",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "9d70bdba-a60c-452a-bcd1-dd17f9181c64",
+          "name": "Amsterdam"
+        }
+      ]
+    },
+    {
+      "id": "e0f9d480-bb7b-43b9-9b66-822a44be1f35",
+      "name": "Hanseong Group",
+      "occurrences": [
+        {
+          "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+          "entity_id": "e0f9d480-bb7b-43b9-9b66-822a44be1f35",
+          "name": "Hanseong Group"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "issued preliminary finding against",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "target": "679f0c0d-f396-4ba4-8ff4-b061b8043db0",
+      "relation": "breached rules governing",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "gave four weeks to respond",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "7c38e1a9-d385-47cb-94d1-4e1bace77dc6",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "published reporting about",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "014a60e7-de28-44fa-b78d-ba73d042a29c",
+      "target": "7c38e1a9-d385-47cb-94d1-4e1bace77dc6",
+      "relation": "called reporting inaccurate",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "014a60e7-de28-44fa-b78d-ba73d042a29c",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "is CEO of",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "8b9c00a8-c8db-4f60-abde-0e317113cff8",
+      "target": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+      "relation": "called finding an important step",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "target": "4b926e9a-0cfe-4b51-a6e7-f00b57c34f62",
+      "relation": "said it would relocate data infrastructure to",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "target": "9d70bdba-a60c-452a-bcd1-dd17f9181c64",
+      "relation": "said it would relocate data infrastructure to",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "acknowledged commitment but said does not resolve violation",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "e0f9d480-bb7b-43b9-9b66-822a44be1f35",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "has licensing agreement with",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    },
+    {
+      "source": "e0f9d480-bb7b-43b9-9b66-822a44be1f35",
+      "target": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+      "relation": "is monitoring situation regarding",
+      "articles": [
+        "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+      ]
+    }
+  ]
+}

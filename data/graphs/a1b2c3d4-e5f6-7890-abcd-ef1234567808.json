@@ -1,0 +1,208 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+  "entities": [
+    {
+      "id": "57c8ed80-d685-4123-abc8-649bc205bde4",
+      "name": "Elena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "57c8ed80-d685-4123-abc8-649bc205bde4",
+          "name": "Elena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "68e1f117-7dda-45b2-874f-5f1097a90baa",
+      "name": "Amsterdam",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "68e1f117-7dda-45b2-874f-5f1097a90baa",
+          "name": "Amsterdam"
+        }
+      ]
+    },
+    {
+      "id": "3f7cce8d-def9-4d67-99ce-f123da3d5bd0",
+      "name": "TechForward",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "3f7cce8d-def9-4d67-99ce-f123da3d5bd0",
+          "name": "TechForward"
+        }
+      ]
+    },
+    {
+      "id": "78bf7d06-6eb2-4f89-bafb-4bb6f4dfd674",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "78bf7d06-6eb2-4f89-bafb-4bb6f4dfd674",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "bff3f816-77cf-4078-831e-44689e193671",
+      "name": "EU competition regulators",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "bff3f816-77cf-4078-831e-44689e193671",
+          "name": "EU competition regulators"
+        }
+      ]
+    },
+    {
+      "id": "7d3de5f2-ac84-4eac-98d6-17f644a8c896",
+      "name": "Commission",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "7d3de5f2-ac84-4eac-98d6-17f644a8c896",
+          "name": "Commission"
+        }
+      ]
+    },
+    {
+      "id": "9d0d2356-2e23-408f-bae7-78b9cf5168c9",
+      "name": "Atlas",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "9d0d2356-2e23-408f-bae7-78b9cf5168c9",
+          "name": "Atlas"
+        }
+      ]
+    },
+    {
+      "id": "42da89a9-0e99-4ecb-ae5f-6de8f2f537d7",
+      "name": "Dr. Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "42da89a9-0e99-4ecb-ae5f-6de8f2f537d7",
+          "name": "Dr. Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "12cde9d5-f22d-4bcf-a5fc-ba54224d8bdb",
+      "name": "German quantum startup",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "12cde9d5-f22d-4bcf-a5fc-ba54224d8bdb",
+          "name": "German quantum startup"
+        }
+      ]
+    },
+    {
+      "id": "2f0998bc-cac9-4ec5-ab3d-c2a564ab0dd5",
+      "name": "Dutch chipmaker",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+          "entity_id": "2f0998bc-cac9-4ec5-ab3d-c2a564ab0dd5",
+          "name": "Dutch chipmaker"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "57c8ed80-d685-4123-abc8-649bc205bde4",
+      "target": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+      "relation": "newly appointed CTO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+      "target": "78bf7d06-6eb2-4f89-bafb-4bb6f4dfd674",
+      "relation": "purchased",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "57c8ed80-d685-4123-abc8-649bc205bde4",
+      "target": "3f7cce8d-def9-4d67-99ce-f123da3d5bd0",
+      "relation": "gave keynote at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "3f7cce8d-def9-4d67-99ce-f123da3d5bd0",
+      "target": "68e1f117-7dda-45b2-874f-5f1097a90baa",
+      "relation": "held in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "bff3f816-77cf-4078-831e-44689e193671",
+      "target": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+      "relation": "conducting preliminary review of acquisition by",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+      "target": "9d0d2356-2e23-408f-bae7-78b9cf5168c9",
+      "relation": "developing next generation system called",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "42da89a9-0e99-4ecb-ae5f-6de8f2f537d7",
+      "target": "3f7cce8d-def9-4d67-99ce-f123da3d5bd0",
+      "relation": "attended",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "42da89a9-0e99-4ecb-ae5f-6de8f2f537d7",
+      "target": "57c8ed80-d685-4123-abc8-649bc205bde4",
+      "relation": "spoke briefly with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+      "target": "12cde9d5-f22d-4bcf-a5fc-ba54224d8bdb",
+      "relation": "is a",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    },
+    {
+      "source": "78bf7d06-6eb2-4f89-bafb-4bb6f4dfd674",
+      "target": "2f0998bc-cac9-4ec5-ab3d-c2a564ab0dd5",
+      "relation": "is a",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567808"
+      ]
+    }
+  ]
+}

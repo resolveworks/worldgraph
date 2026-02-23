@@ -1,0 +1,113 @@
+{
+  "id": "f5a893f0-6851-418c-a368-382915967333",
+  "entities": [
+    {
+      "id": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "f5a893f0-6851-418c-a368-382915967333",
+          "entity_id": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "84abe773-bc03-48cd-a9d1-ecbb73045246",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "f5a893f0-6851-418c-a368-382915967333",
+          "entity_id": "84abe773-bc03-48cd-a9d1-ecbb73045246",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "e144ec4d-853e-46d8-8ed4-7e8659bae720",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "f5a893f0-6851-418c-a368-382915967333",
+          "entity_id": "e144ec4d-853e-46d8-8ed4-7e8659bae720",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "e2f7f9ab-4494-429e-aad9-290358f66974",
+      "name": "J. Xu",
+      "occurrences": [
+        {
+          "article_id": "f5a893f0-6851-418c-a368-382915967333",
+          "entity_id": "e2f7f9ab-4494-429e-aad9-290358f66974",
+          "name": "J. Xu"
+        }
+      ]
+    },
+    {
+      "id": "fd6ef0ff-d7ef-4274-9e40-4ef8e022abc3",
+      "name": "Morgan Stanley",
+      "occurrences": [
+        {
+          "article_id": "f5a893f0-6851-418c-a368-382915967333",
+          "entity_id": "fd6ef0ff-d7ef-4274-9e40-4ef8e022abc3",
+          "name": "Morgan Stanley"
+        }
+      ]
+    },
+    {
+      "id": "0bc351b0-7ea1-418d-b05e-f8edd5f12816",
+      "name": "Palo Alto",
+      "occurrences": [
+        {
+          "article_id": "f5a893f0-6851-418c-a368-382915967333",
+          "entity_id": "0bc351b0-7ea1-418d-b05e-f8edd5f12816",
+          "name": "Palo Alto"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+      "target": "84abe773-bc03-48cd-a9d1-ecbb73045246",
+      "relation": "acquired",
+      "articles": [
+        "f5a893f0-6851-418c-a368-382915967333"
+      ]
+    },
+    {
+      "source": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+      "target": "e144ec4d-853e-46d8-8ed4-7e8659bae720",
+      "relation": "partnered with",
+      "articles": [
+        "f5a893f0-6851-418c-a368-382915967333"
+      ]
+    },
+    {
+      "source": "e2f7f9ab-4494-429e-aad9-290358f66974",
+      "target": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+      "relation": "is CEO of",
+      "articles": [
+        "f5a893f0-6851-418c-a368-382915967333"
+      ]
+    },
+    {
+      "source": "fd6ef0ff-d7ef-4274-9e40-4ef8e022abc3",
+      "target": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+      "relation": "upgraded stock rating of",
+      "articles": [
+        "f5a893f0-6851-418c-a368-382915967333"
+      ]
+    },
+    {
+      "source": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+      "target": "0bc351b0-7ea1-418d-b05e-f8edd5f12816",
+      "relation": "is headquartered in",
+      "articles": [
+        "f5a893f0-6851-418c-a368-382915967333"
+      ]
+    }
+  ]
+}

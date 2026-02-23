@@ -1,0 +1,170 @@
+{
+  "id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+  "entities": [
+    {
+      "id": "1cba35bf-fdd7-4a48-8855-96199af4eed3",
+      "name": "Halcyon Genomics",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "1cba35bf-fdd7-4a48-8855-96199af4eed3",
+          "name": "Halcyon Genomics"
+        }
+      ]
+    },
+    {
+      "id": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+      "name": "Oryza Therapeutics",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+          "name": "Oryza Therapeutics"
+        }
+      ]
+    },
+    {
+      "id": "74d60d58-1502-432f-bd8d-d27aaba6e24d",
+      "name": "San Diego",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "74d60d58-1502-432f-bd8d-d27aaba6e24d",
+          "name": "San Diego"
+        }
+      ]
+    },
+    {
+      "id": "6a94ed6e-d52f-49ab-b829-8a5d21864160",
+      "name": "CRISPR",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "6a94ed6e-d52f-49ab-b829-8a5d21864160",
+          "name": "CRISPR"
+        }
+      ]
+    },
+    {
+      "id": "09ff7f04-92fd-45f2-8630-d766d30374cf",
+      "name": "Maple Syrup Urine Disease",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "09ff7f04-92fd-45f2-8630-d766d30374cf",
+          "name": "Maple Syrup Urine Disease"
+        }
+      ]
+    },
+    {
+      "id": "02370fa5-07be-48ba-816e-af8e1c2aeb3c",
+      "name": "United States",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "02370fa5-07be-48ba-816e-af8e1c2aeb3c",
+          "name": "United States"
+        }
+      ]
+    },
+    {
+      "id": "4024ae16-1887-43b8-a885-b1632c0d9782",
+      "name": "Dominic Ferrara",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "4024ae16-1887-43b8-a885-b1632c0d9782",
+          "name": "Dominic Ferrara"
+        }
+      ]
+    },
+    {
+      "id": "b2b7432b-3b80-4152-933b-bbd832ea7782",
+      "name": "Dr. Lena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "b2b7432b-3b80-4152-933b-bbd832ea7782",
+          "name": "Dr. Lena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "22270923-4023-49d4-bfcc-b8bde1d43024",
+      "name": "BioPharma Dispatch",
+      "occurrences": [
+        {
+          "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+          "entity_id": "22270923-4023-49d4-bfcc-b8bde1d43024",
+          "name": "BioPharma Dispatch"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "1cba35bf-fdd7-4a48-8855-96199af4eed3",
+      "target": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+      "relation": "agreed to acquire",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+      "target": "74d60d58-1502-432f-bd8d-d27aaba6e24d",
+      "relation": "is based in",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+      "target": "6a94ed6e-d52f-49ab-b829-8a5d21864160",
+      "relation": "develops treatments using",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+      "target": "09ff7f04-92fd-45f2-8630-d766d30374cf",
+      "relation": "has lead program targeting",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "09ff7f04-92fd-45f2-8630-d766d30374cf",
+      "target": "02370fa5-07be-48ba-816e-af8e1c2aeb3c",
+      "relation": "affects patients in",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "4024ae16-1887-43b8-a885-b1632c0d9782",
+      "target": "1cba35bf-fdd7-4a48-8855-96199af4eed3",
+      "relation": "is chief executive of",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "b2b7432b-3b80-4152-933b-bbd832ea7782",
+      "target": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+      "relation": "founded",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    },
+    {
+      "source": "b2b7432b-3b80-4152-933b-bbd832ea7782",
+      "target": "1cba35bf-fdd7-4a48-8855-96199af4eed3",
+      "relation": "will join as head of rare disease research",
+      "articles": [
+        "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84"
+      ]
+    }
+  ]
+}

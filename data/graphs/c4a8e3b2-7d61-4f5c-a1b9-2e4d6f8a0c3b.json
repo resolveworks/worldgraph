@@ -1,0 +1,151 @@
+{
+  "id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+  "entities": [
+    {
+      "id": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "name": "Halcyon Genomics",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+          "name": "Halcyon Genomics"
+        }
+      ]
+    },
+    {
+      "id": "4972b93f-366c-487b-8f18-08ca41c5b531",
+      "name": "Oryza Therapeutics",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "4972b93f-366c-487b-8f18-08ca41c5b531",
+          "name": "Oryza Therapeutics"
+        }
+      ]
+    },
+    {
+      "id": "b49dd714-914e-4909-91dd-f2d25e49de04",
+      "name": "The Pharma Ledger",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "b49dd714-914e-4909-91dd-f2d25e49de04",
+          "name": "The Pharma Ledger"
+        }
+      ]
+    },
+    {
+      "id": "9a6bc447-052e-41f9-9299-53db4f076d76",
+      "name": "San Francisco",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "9a6bc447-052e-41f9-9299-53db4f076d76",
+          "name": "San Francisco"
+        }
+      ]
+    },
+    {
+      "id": "14e3fc86-e22c-405f-903a-846193fed926",
+      "name": "XBI index",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "14e3fc86-e22c-405f-903a-846193fed926",
+          "name": "XBI index"
+        }
+      ]
+    },
+    {
+      "id": "48fd0de4-48dc-4ecd-b666-1831dc9890fa",
+      "name": "Linden Capital Markets",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "48fd0de4-48dc-4ecd-b666-1831dc9890fa",
+          "name": "Linden Capital Markets"
+        }
+      ]
+    },
+    {
+      "id": "716a00ba-e100-47c2-9a00-54b1f06198d3",
+      "name": "Ferrara",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "716a00ba-e100-47c2-9a00-54b1f06198d3",
+          "name": "Ferrara"
+        }
+      ]
+    },
+    {
+      "id": "f3b1bc3b-56c6-4f85-80f9-329717fbe1a2",
+      "name": "Dr. Vasquez",
+      "occurrences": [
+        {
+          "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+          "entity_id": "f3b1bc3b-56c6-4f85-80f9-329717fbe1a2",
+          "name": "Dr. Vasquez"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "target": "4972b93f-366c-487b-8f18-08ca41c5b531",
+      "relation": "acquired",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    },
+    {
+      "source": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "target": "9a6bc447-052e-41f9-9299-53db4f076d76",
+      "relation": "is located in",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    },
+    {
+      "source": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "target": "14e3fc86-e22c-405f-903a-846193fed926",
+      "relation": "stock underperforms",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    },
+    {
+      "source": "48fd0de4-48dc-4ecd-b666-1831dc9890fa",
+      "target": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "relation": "cut price target on",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    },
+    {
+      "source": "716a00ba-e100-47c2-9a00-54b1f06198d3",
+      "target": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "relation": "is representative of",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    },
+    {
+      "source": "f3b1bc3b-56c6-4f85-80f9-329717fbe1a2",
+      "target": "4972b93f-366c-487b-8f18-08ca41c5b531",
+      "relation": "is founder of",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    },
+    {
+      "source": "f3b1bc3b-56c6-4f85-80f9-329717fbe1a2",
+      "target": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+      "relation": "expected to remain with",
+      "articles": [
+        "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+      ]
+    }
+  ]
+}

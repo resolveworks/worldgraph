@@ -1,0 +1,129 @@
+{
+  "id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+  "entities": [
+    {
+      "id": "e70d18ef-341c-4cae-9081-24d5c99bae46",
+      "name": "Dr. Lena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+          "entity_id": "e70d18ef-341c-4cae-9081-24d5c99bae46",
+          "name": "Dr. Lena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+      "name": "Oryza Therapeutics",
+      "occurrences": [
+        {
+          "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+          "entity_id": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+          "name": "Oryza Therapeutics"
+        }
+      ]
+    },
+    {
+      "id": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+      "name": "Halcyon Genomics",
+      "occurrences": [
+        {
+          "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+          "entity_id": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+          "name": "Halcyon Genomics"
+        }
+      ]
+    },
+    {
+      "id": "69110896-48af-4490-b406-3ecb5ffdf7a2",
+      "name": "UC San Diego",
+      "occurrences": [
+        {
+          "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+          "entity_id": "69110896-48af-4490-b406-3ecb5ffdf7a2",
+          "name": "UC San Diego"
+        }
+      ]
+    },
+    {
+      "id": "44a6b820-c4a4-471c-93b3-7f09c50dc814",
+      "name": "Ferrara",
+      "occurrences": [
+        {
+          "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+          "entity_id": "44a6b820-c4a4-471c-93b3-7f09c50dc814",
+          "name": "Ferrara"
+        }
+      ]
+    },
+    {
+      "id": "3f465024-eaa9-484f-b751-3336329c28c3",
+      "name": "Hart-Scott-Rodino",
+      "occurrences": [
+        {
+          "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+          "entity_id": "3f465024-eaa9-484f-b751-3336329c28c3",
+          "name": "Hart-Scott-Rodino"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "e70d18ef-341c-4cae-9081-24d5c99bae46",
+      "target": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+      "relation": "co-founded",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    },
+    {
+      "source": "e70d18ef-341c-4cae-9081-24d5c99bae46",
+      "target": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+      "relation": "will run rare disease research at",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    },
+    {
+      "source": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+      "target": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+      "relation": "acquiring",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    },
+    {
+      "source": "e70d18ef-341c-4cae-9081-24d5c99bae46",
+      "target": "69110896-48af-4490-b406-3ecb5ffdf7a2",
+      "relation": "worked at",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    },
+    {
+      "source": "44a6b820-c4a4-471c-93b3-7f09c50dc814",
+      "target": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+      "relation": "CEO of",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    },
+    {
+      "source": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+      "target": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+      "relation": "participated as limited partner in Series C",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    },
+    {
+      "source": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+      "target": "3f465024-eaa9-484f-b751-3336329c28c3",
+      "relation": "subject to review by",
+      "articles": [
+        "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+  "entities": [
+    {
+      "id": "1f856eb3-3666-430e-a7b8-ab3c1a3f5c07",
+      "name": "European Parliament",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "1f856eb3-3666-430e-a7b8-ab3c1a3f5c07",
+          "name": "European Parliament"
+        }
+      ]
+    },
+    {
+      "id": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+      "name": "Committee on Civil Liberties",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+          "name": "Committee on Civil Liberties"
+        }
+      ]
+    },
+    {
+      "id": "1d4c41d7-b54b-41a7-95d3-eab6cc3f3ee8",
+      "name": "Florian Hartmann",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "1d4c41d7-b54b-41a7-95d3-eab6cc3f3ee8",
+          "name": "Florian Hartmann"
+        }
+      ]
+    },
+    {
+      "id": "03ea687e-30c5-400a-b589-21fafa099a81",
+      "name": "Germany",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "03ea687e-30c5-400a-b589-21fafa099a81",
+          "name": "Germany"
+        }
+      ]
+    },
+    {
+      "id": "4fa8e9b2-ba8d-44b1-ae6b-4d2b37913831",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "4fa8e9b2-ba8d-44b1-ae6b-4d2b37913831",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "674657bd-eff7-4ef0-ab54-8543c3bdc933",
+      "name": "FTC",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "674657bd-eff7-4ef0-ab54-8543c3bdc933",
+          "name": "FTC"
+        }
+      ]
+    },
+    {
+      "id": "5e73bdfd-9624-4707-bfee-2f536e995078",
+      "name": "Angela Torres",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "5e73bdfd-9624-4707-bfee-2f536e995078",
+          "name": "Angela Torres"
+        }
+      ]
+    },
+    {
+      "id": "1f14cc40-246a-4273-a661-57c406afc530",
+      "name": "DPC",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "1f14cc40-246a-4273-a661-57c406afc530",
+          "name": "DPC"
+        }
+      ]
+    },
+    {
+      "id": "8800ecaf-d47b-4a9d-96f9-778205362ba0",
+      "name": "Maeve Clancy",
+      "occurrences": [
+        {
+          "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+          "entity_id": "8800ecaf-d47b-4a9d-96f9-778205362ba0",
+          "name": "Maeve Clancy"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+      "target": "1f856eb3-3666-430e-a7b8-ab3c1a3f5c07",
+      "relation": "is a committee of",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "1d4c41d7-b54b-41a7-95d3-eab6cc3f3ee8",
+      "target": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+      "relation": "chaired",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "1d4c41d7-b54b-41a7-95d3-eab6cc3f3ee8",
+      "target": "03ea687e-30c5-400a-b589-21fafa099a81",
+      "relation": "is from",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "5e73bdfd-9624-4707-bfee-2f536e995078",
+      "target": "674657bd-eff7-4ef0-ab54-8543c3bdc933",
+      "relation": "is a commissioner of",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "5e73bdfd-9624-4707-bfee-2f536e995078",
+      "target": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+      "relation": "attended as an observer",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "8800ecaf-d47b-4a9d-96f9-778205362ba0",
+      "target": "1f14cc40-246a-4273-a661-57c406afc530",
+      "relation": "is a deputy commissioner of",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "8800ecaf-d47b-4a9d-96f9-778205362ba0",
+      "target": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+      "relation": "testified to",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    },
+    {
+      "source": "4fa8e9b2-ba8d-44b1-ae6b-4d2b37913831",
+      "target": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+      "relation": "was raised as a case example in",
+      "articles": [
+        "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+      ]
+    }
+  ]
+}

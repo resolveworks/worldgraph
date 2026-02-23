@@ -1,0 +1,121 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+  "entities": [
+    {
+      "id": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+          "entity_id": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "663e60c0-fdc7-434f-9b26-992b07d9f6ec",
+      "name": "Andersen",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+          "entity_id": "663e60c0-fdc7-434f-9b26-992b07d9f6ec",
+          "name": "Andersen"
+        }
+      ]
+    },
+    {
+      "id": "f5c46cff-c372-46ce-a12a-b92dfb24eed1",
+      "name": "Apex Ventures",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+          "entity_id": "f5c46cff-c372-46ce-a12a-b92dfb24eed1",
+          "name": "Apex Ventures"
+        }
+      ]
+    },
+    {
+      "id": "724243ec-38a7-4755-ab8d-4f38593f45d0",
+      "name": "Diana Chu",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+          "entity_id": "724243ec-38a7-4755-ab8d-4f38593f45d0",
+          "name": "Diana Chu"
+        }
+      ]
+    },
+    {
+      "id": "a9f5e7ba-951e-458c-9eb6-c29a79d9d40e",
+      "name": "European institutional money",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+          "entity_id": "a9f5e7ba-951e-458c-9eb6-c29a79d9d40e",
+          "name": "European institutional money"
+        }
+      ]
+    },
+    {
+      "id": "24b3322c-754f-4be9-ba55-d14680bbebd4",
+      "name": "Saxony-based semiconductor fab",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+          "entity_id": "24b3322c-754f-4be9-ba55-d14680bbebd4",
+          "name": "Saxony-based semiconductor fab"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "target": "f5c46cff-c372-46ce-a12a-b92dfb24eed1",
+      "relation": "received funding from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567810"
+      ]
+    },
+    {
+      "source": "f5c46cff-c372-46ce-a12a-b92dfb24eed1",
+      "target": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "relation": "led funding round for",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567810"
+      ]
+    },
+    {
+      "source": "724243ec-38a7-4755-ab8d-4f38593f45d0",
+      "target": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "relation": "manages relationship with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567810"
+      ]
+    },
+    {
+      "source": "663e60c0-fdc7-434f-9b26-992b07d9f6ec",
+      "target": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "relation": "leads team at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567810"
+      ]
+    },
+    {
+      "source": "a9f5e7ba-951e-458c-9eb6-c29a79d9d40e",
+      "target": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "relation": "provided funding to",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567810"
+      ]
+    },
+    {
+      "source": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+      "target": "24b3322c-754f-4be9-ba55-d14680bbebd4",
+      "relation": "has manufacturing partnership with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567810"
+      ]
+    }
+  ]
+}

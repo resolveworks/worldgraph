@@ -1,0 +1,178 @@
+{
+  "id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+  "entities": [
+    {
+      "id": "c1f6887c-2fef-413c-a134-6347a851d34a",
+      "name": "Stelmark Freight",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "c1f6887c-2fef-413c-a134-6347a851d34a",
+          "name": "Stelmark Freight"
+        }
+      ]
+    },
+    {
+      "id": "9657b038-3980-4d44-ad38-5f031805cfba",
+      "name": "Port of Galveston",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "9657b038-3980-4d44-ad38-5f031805cfba",
+          "name": "Port of Galveston"
+        }
+      ]
+    },
+    {
+      "id": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+      "name": "ILA",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+          "name": "ILA"
+        }
+      ]
+    },
+    {
+      "id": "97827025-b11e-4862-a34a-56412ce3f888",
+      "name": "Clyde Okafor",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "97827025-b11e-4862-a34a-56412ce3f888",
+          "name": "Clyde Okafor"
+        }
+      ]
+    },
+    {
+      "id": "445e28c9-3c1b-4161-a574-d1558a9f081f",
+      "name": "Miriam Solano",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "445e28c9-3c1b-4161-a574-d1558a9f081f",
+          "name": "Miriam Solano"
+        }
+      ]
+    },
+    {
+      "id": "deea671a-3883-48a7-b548-523bbb806011",
+      "name": "Bernard Tran",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "deea671a-3883-48a7-b548-523bbb806011",
+          "name": "Bernard Tran"
+        }
+      ]
+    },
+    {
+      "id": "e7106e57-19e9-4725-a6e4-2ede7fdc1ac2",
+      "name": "Renata Solis",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "e7106e57-19e9-4725-a6e4-2ede7fdc1ac2",
+          "name": "Renata Solis"
+        }
+      ]
+    },
+    {
+      "id": "614dba31-c756-47e8-b8c6-5abe83c96ac8",
+      "name": "Gulf Coast",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "614dba31-c756-47e8-b8c6-5abe83c96ac8",
+          "name": "Gulf Coast"
+        }
+      ]
+    },
+    {
+      "id": "8cc478da-0550-4fc7-b04f-7b9835580582",
+      "name": "eastern container berths",
+      "occurrences": [
+        {
+          "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+          "entity_id": "8cc478da-0550-4fc7-b04f-7b9835580582",
+          "name": "eastern container berths"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "c1f6887c-2fef-413c-a134-6347a851d34a",
+      "target": "9657b038-3980-4d44-ad38-5f031805cfba",
+      "relation": "has automation contract at",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "c1f6887c-2fef-413c-a134-6347a851d34a",
+      "target": "9657b038-3980-4d44-ad38-5f031805cfba",
+      "relation": "began preliminary engineering work on phase two at",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+      "target": "c1f6887c-2fef-413c-a134-6347a851d34a",
+      "relation": "in dispute with",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "97827025-b11e-4862-a34a-56412ce3f888",
+      "target": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+      "relation": "is Gulf Coast director of",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "445e28c9-3c1b-4161-a574-d1558a9f081f",
+      "target": "c1f6887c-2fef-413c-a134-6347a851d34a",
+      "relation": "is COO of",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "deea671a-3883-48a7-b548-523bbb806011",
+      "target": "9657b038-3980-4d44-ad38-5f031805cfba",
+      "relation": "is chair of port authority for",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "e7106e57-19e9-4725-a6e4-2ede7fdc1ac2",
+      "target": "c1f6887c-2fef-413c-a134-6347a851d34a",
+      "relation": "has supported federal positioning of",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+      "target": "9657b038-3980-4d44-ad38-5f031805cfba",
+      "relation": "has mediation session scheduled at",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    },
+    {
+      "source": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+      "target": "614dba31-c756-47e8-b8c6-5abe83c96ac8",
+      "relation": "coordinates with other locals in",
+      "articles": [
+        "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+      ]
+    }
+  ]
+}

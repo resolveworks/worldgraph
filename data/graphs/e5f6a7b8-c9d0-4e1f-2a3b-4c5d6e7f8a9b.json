@@ -1,0 +1,159 @@
+{
+  "id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+  "entities": [
+    {
+      "id": "37658723-375f-4080-8eab-f6327750dda6",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "37658723-375f-4080-8eab-f6327750dda6",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+      "name": "Hanseong Group",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+          "name": "Hanseong Group"
+        }
+      ]
+    },
+    {
+      "id": "6c6811bc-ddeb-4948-b367-49bbab9888bf",
+      "name": "Nils Bergstr\u00f6m",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "6c6811bc-ddeb-4948-b367-49bbab9888bf",
+          "name": "Nils Bergstr\u00f6m"
+        }
+      ]
+    },
+    {
+      "id": "463cb870-658c-4fe0-a40a-b15e2f7f97f5",
+      "name": "Ji-Yeon Kwon",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "463cb870-658c-4fe0-a40a-b15e2f7f97f5",
+          "name": "Ji-Yeon Kwon"
+        }
+      ]
+    },
+    {
+      "id": "f975a56d-9766-45b6-aa84-8d67cff83d64",
+      "name": "Korea Finance Today",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "f975a56d-9766-45b6-aa84-8d67cff83d64",
+          "name": "Korea Finance Today"
+        }
+      ]
+    },
+    {
+      "id": "df887d0c-a26b-4559-ad1a-597665782c29",
+      "name": "TechBrief Europe",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "df887d0c-a26b-4559-ad1a-597665782c29",
+          "name": "TechBrief Europe"
+        }
+      ]
+    },
+    {
+      "id": "30eb4024-093d-4c7f-93ab-ce11145a2c70",
+      "name": "Ireland",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "30eb4024-093d-4c7f-93ab-ce11145a2c70",
+          "name": "Ireland"
+        }
+      ]
+    },
+    {
+      "id": "51e70ed3-6acb-4712-8bdd-d9f960cf5cf4",
+      "name": "Asia-Pacific",
+      "occurrences": [
+        {
+          "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+          "entity_id": "51e70ed3-6acb-4712-8bdd-d9f960cf5cf4",
+          "name": "Asia-Pacific"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "37658723-375f-4080-8eab-f6327750dda6",
+      "target": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+      "relation": "signed technology licensing agreement with",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+      "target": "37658723-375f-4080-8eab-f6327750dda6",
+      "relation": "will license retail analytics platform from",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "6c6811bc-ddeb-4948-b367-49bbab9888bf",
+      "target": "37658723-375f-4080-8eab-f6327750dda6",
+      "relation": "is CEO of",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "463cb870-658c-4fe0-a40a-b15e2f7f97f5",
+      "target": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+      "relation": "is CFO of",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "463cb870-658c-4fe0-a40a-b15e2f7f97f5",
+      "target": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+      "relation": "architected licensing structure for",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "f975a56d-9766-45b6-aa84-8d67cff83d64",
+      "target": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+      "relation": "published earlier report about",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "df887d0c-a26b-4559-ad1a-597665782c29",
+      "target": "463cb870-658c-4fe0-a40a-b15e2f7f97f5",
+      "relation": "obtained internal memo from",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    },
+    {
+      "source": "37658723-375f-4080-8eab-f6327750dda6",
+      "target": "30eb4024-093d-4c7f-93ab-ce11145a2c70",
+      "relation": "subject of continuing GDPR inquiry in",
+      "articles": [
+        "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+  "entities": [
+    {
+      "id": "6041412c-8591-4559-9246-8877ce87db61",
+      "name": "Federal Trade Commission",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "6041412c-8591-4559-9246-8877ce87db61",
+          "name": "Federal Trade Commission"
+        }
+      ]
+    },
+    {
+      "id": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "473285a1-f95e-4528-a54a-baa7151d5b8c",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "473285a1-f95e-4528-a54a-baa7151d5b8c",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "d6986cef-e640-49fe-83b0-e2a0bbfe3d7f",
+      "name": "Angela Torres",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "d6986cef-e640-49fe-83b0-e2a0bbfe3d7f",
+          "name": "Angela Torres"
+        }
+      ]
+    },
+    {
+      "id": "305ea994-33cd-4c09-be4e-8d911bf9e3cf",
+      "name": "Laura Kim",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "305ea994-33cd-4c09-be4e-8d911bf9e3cf",
+          "name": "Laura Kim"
+        }
+      ]
+    },
+    {
+      "id": "bb06f5a5-3e33-46cc-9233-25c1663535c2",
+      "name": "Dr. Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "bb06f5a5-3e33-46cc-9233-25c1663535c2",
+          "name": "Dr. Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "0b5ac2bd-f508-43e0-ae04-038c848f6958",
+      "name": "real-time data analytics market",
+      "occurrences": [
+        {
+          "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+          "entity_id": "0b5ac2bd-f508-43e0-ae04-038c848f6958",
+          "name": "real-time data analytics market"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "6041412c-8591-4559-9246-8877ce87db61",
+      "target": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+      "relation": "launched antitrust review of",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+      "target": "473285a1-f95e-4528-a54a-baa7151d5b8c",
+      "relation": "proposed acquisition of",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "d6986cef-e640-49fe-83b0-e2a0bbfe3d7f",
+      "target": "6041412c-8591-4559-9246-8877ce87db61",
+      "relation": "is Chair of",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "305ea994-33cd-4c09-be4e-8d911bf9e3cf",
+      "target": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+      "relation": "is spokesperson for",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "bb06f5a5-3e33-46cc-9233-25c1663535c2",
+      "target": "473285a1-f95e-4528-a54a-baa7151d5b8c",
+      "relation": "is founder of",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+      "target": "0b5ac2bd-f508-43e0-ae04-038c848f6958",
+      "relation": "operates in",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "473285a1-f95e-4528-a54a-baa7151d5b8c",
+      "target": "0b5ac2bd-f508-43e0-ae04-038c848f6958",
+      "relation": "operates in",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    },
+    {
+      "source": "6041412c-8591-4559-9246-8877ce87db61",
+      "target": "bb06f5a5-3e33-46cc-9233-25c1663535c2",
+      "relation": "asked to provide testimony from",
+      "articles": [
+        "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04"
+      ]
+    }
+  ]
+}

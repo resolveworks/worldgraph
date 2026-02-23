@@ -1,0 +1,170 @@
+{
+  "id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+  "entities": [
+    {
+      "id": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "f6249cf8-fec6-4a38-b014-2b9a91d0b93e",
+      "name": "Hanseong Group",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "f6249cf8-fec6-4a38-b014-2b9a91d0b93e",
+          "name": "Hanseong Group"
+        }
+      ]
+    },
+    {
+      "id": "d55a67aa-88c5-4bcc-aeb9-22484b4c060f",
+      "name": "Sweden",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "d55a67aa-88c5-4bcc-aeb9-22484b4c060f",
+          "name": "Sweden"
+        }
+      ]
+    },
+    {
+      "id": "dafb9e83-6f12-46f2-93a4-0201d4d792bd",
+      "name": "Ji-Yeon Kwon",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "dafb9e83-6f12-46f2-93a4-0201d4d792bd",
+          "name": "Ji-Yeon Kwon"
+        }
+      ]
+    },
+    {
+      "id": "bad5bbd7-2a09-48a3-af58-7b19dd2a3d4a",
+      "name": "GDPR",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "bad5bbd7-2a09-48a3-af58-7b19dd2a3d4a",
+          "name": "GDPR"
+        }
+      ]
+    },
+    {
+      "id": "f48f0e22-d94f-4626-b82e-a15396441bca",
+      "name": "Ireland",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "f48f0e22-d94f-4626-b82e-a15396441bca",
+          "name": "Ireland"
+        }
+      ]
+    },
+    {
+      "id": "a1249770-7df5-42cf-bf3e-3be22dbcfd1a",
+      "name": "European servers",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "a1249770-7df5-42cf-bf3e-3be22dbcfd1a",
+          "name": "European servers"
+        }
+      ]
+    },
+    {
+      "id": "0f1e8e6a-e0be-4d23-8df0-16788318df03",
+      "name": "Bergstr\u00f6m",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "0f1e8e6a-e0be-4d23-8df0-16788318df03",
+          "name": "Bergstr\u00f6m"
+        }
+      ]
+    },
+    {
+      "id": "a9b7ae0a-08f9-4081-82f9-e64ec01280a5",
+      "name": "Asian Investor Review",
+      "occurrences": [
+        {
+          "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+          "entity_id": "a9b7ae0a-08f9-4081-82f9-e64ec01280a5",
+          "name": "Asian Investor Review"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "f6249cf8-fec6-4a38-b014-2b9a91d0b93e",
+      "target": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "relation": "has licensing arrangement with",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "target": "d55a67aa-88c5-4bcc-aeb9-22484b4c060f",
+      "relation": "is based in",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "dafb9e83-6f12-46f2-93a4-0201d4d792bd",
+      "target": "f6249cf8-fec6-4a38-b014-2b9a91d0b93e",
+      "relation": "is CFO of",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "dafb9e83-6f12-46f2-93a4-0201d4d792bd",
+      "target": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "relation": "led deal with",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "target": "bad5bbd7-2a09-48a3-af58-7b19dd2a3d4a",
+      "relation": "has preliminary violation finding for",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "f48f0e22-d94f-4626-b82e-a15396441bca",
+      "target": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "relation": "conducting inquiry into",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "f6249cf8-fec6-4a38-b014-2b9a91d0b93e",
+      "target": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "relation": "planned to move servers to Europe",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    },
+    {
+      "source": "0f1e8e6a-e0be-4d23-8df0-16788318df03",
+      "target": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+      "relation": "is associated with",
+      "articles": [
+        "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+  "entities": [
+    {
+      "id": "d48aa71d-aacd-4c72-ac4d-74659a19ac61",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "d48aa71d-aacd-4c72-ac4d-74659a19ac61",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "407a7475-427c-441b-8364-2305860f8b29",
+      "name": "LuminCore Technologies",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "407a7475-427c-441b-8364-2305860f8b29",
+          "name": "LuminCore Technologies"
+        }
+      ]
+    },
+    {
+      "id": "acb9fee9-23b8-4c6f-a562-66896cb06d4c",
+      "name": "Eindhoven",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "acb9fee9-23b8-4c6f-a562-66896cb06d4c",
+          "name": "Eindhoven"
+        }
+      ]
+    },
+    {
+      "id": "abba61e9-56ff-40b8-baf6-a1cc4c566fa3",
+      "name": "ASML",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "abba61e9-56ff-40b8-baf6-a1cc4c566fa3",
+          "name": "ASML"
+        }
+      ]
+    },
+    {
+      "id": "a74d5297-a553-483a-bf8f-16c6572c9383",
+      "name": "Dr. Elena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "a74d5297-a553-483a-bf8f-16c6572c9383",
+          "name": "Dr. Elena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "935e7268-44b7-41d1-9da1-75b7e095527b",
+      "name": "IBM Research",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "935e7268-44b7-41d1-9da1-75b7e095527b",
+          "name": "IBM Research"
+        }
+      ]
+    },
+    {
+      "id": "607ffa8a-2cf1-4dd1-a387-a0c6e026928e",
+      "name": "Rolf Andersen",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "607ffa8a-2cf1-4dd1-a387-a0c6e026928e",
+          "name": "Rolf Andersen"
+        }
+      ]
+    },
+    {
+      "id": "be2fe4cb-ffc5-4454-9cb4-d3ada5645fda",
+      "name": "Volta's hardware division",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+          "entity_id": "be2fe4cb-ffc5-4454-9cb4-d3ada5645fda",
+          "name": "Volta's hardware division"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "d48aa71d-aacd-4c72-ac4d-74659a19ac61",
+      "target": "407a7475-427c-441b-8364-2305860f8b29",
+      "relation": "acquires",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    },
+    {
+      "source": "407a7475-427c-441b-8364-2305860f8b29",
+      "target": "acb9fee9-23b8-4c6f-a562-66896cb06d4c",
+      "relation": "is based in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    },
+    {
+      "source": "407a7475-427c-441b-8364-2305860f8b29",
+      "target": "abba61e9-56ff-40b8-baf6-a1cc4c566fa3",
+      "relation": "was founded by former engineers from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    },
+    {
+      "source": "a74d5297-a553-483a-bf8f-16c6572c9383",
+      "target": "be2fe4cb-ffc5-4454-9cb4-d3ada5645fda",
+      "relation": "leads",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    },
+    {
+      "source": "a74d5297-a553-483a-bf8f-16c6572c9383",
+      "target": "935e7268-44b7-41d1-9da1-75b7e095527b",
+      "relation": "moved from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    },
+    {
+      "source": "407a7475-427c-441b-8364-2305860f8b29",
+      "target": "be2fe4cb-ffc5-4454-9cb4-d3ada5645fda",
+      "relation": "will join",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    },
+    {
+      "source": "607ffa8a-2cf1-4dd1-a387-a0c6e026928e",
+      "target": "d48aa71d-aacd-4c72-ac4d-74659a19ac61",
+      "relation": "is CEO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+      ]
+    }
+  ]
+}

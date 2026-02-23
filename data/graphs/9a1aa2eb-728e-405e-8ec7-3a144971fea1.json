@@ -1,0 +1,94 @@
+{
+  "id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+  "entities": [
+    {
+      "id": "27149238-f22b-4e98-b8bc-532a53ef11b5",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+          "entity_id": "27149238-f22b-4e98-b8bc-532a53ef11b5",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "748eb1d5-c4e6-4187-abf0-2f4e303f04c3",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+          "entity_id": "748eb1d5-c4e6-4187-abf0-2f4e303f04c3",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "3e5b3280-b681-4c0c-9e34-9beac91a81e5",
+      "name": "CloudScale",
+      "occurrences": [
+        {
+          "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+          "entity_id": "3e5b3280-b681-4c0c-9e34-9beac91a81e5",
+          "name": "CloudScale"
+        }
+      ]
+    },
+    {
+      "id": "a62895ff-e3cd-403c-930e-557249e92882",
+      "name": "Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+          "entity_id": "a62895ff-e3cd-403c-930e-557249e92882",
+          "name": "Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "2c7831fd-33da-4b9d-b0d1-3453fd1934bf",
+      "name": "Meridian's cloud services unit",
+      "occurrences": [
+        {
+          "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+          "entity_id": "2c7831fd-33da-4b9d-b0d1-3453fd1934bf",
+          "name": "Meridian's cloud services unit"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "27149238-f22b-4e98-b8bc-532a53ef11b5",
+      "target": "748eb1d5-c4e6-4187-abf0-2f4e303f04c3",
+      "relation": "agrees to purchase",
+      "articles": [
+        "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
+      ]
+    },
+    {
+      "source": "27149238-f22b-4e98-b8bc-532a53ef11b5",
+      "target": "3e5b3280-b681-4c0c-9e34-9beac91a81e5",
+      "relation": "purchased",
+      "articles": [
+        "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
+      ]
+    },
+    {
+      "source": "748eb1d5-c4e6-4187-abf0-2f4e303f04c3",
+      "target": "2c7831fd-33da-4b9d-b0d1-3453fd1934bf",
+      "relation": "will become part of",
+      "articles": [
+        "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
+      ]
+    },
+    {
+      "source": "a62895ff-e3cd-403c-930e-557249e92882",
+      "target": "27149238-f22b-4e98-b8bc-532a53ef11b5",
+      "relation": "will join as Senior Vice President of Analytics",
+      "articles": [
+        "9a1aa2eb-728e-405e-8ec7-3a144971fea1"
+      ]
+    }
+  ]
+}

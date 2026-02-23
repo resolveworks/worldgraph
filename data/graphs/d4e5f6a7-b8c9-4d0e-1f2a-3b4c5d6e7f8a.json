@@ -1,0 +1,113 @@
+{
+  "id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+  "entities": [
+    {
+      "id": "07133805-5b31-4660-8aa6-662ed199f293",
+      "name": "Hanseong Group",
+      "occurrences": [
+        {
+          "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "entity_id": "07133805-5b31-4660-8aa6-662ed199f293",
+          "name": "Hanseong Group"
+        }
+      ]
+    },
+    {
+      "id": "453f1516-b70d-496e-bce5-4c9cb4001e5b",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "entity_id": "453f1516-b70d-496e-bce5-4c9cb4001e5b",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "f30ec9e6-085c-443e-bbf6-74957e414f22",
+      "name": "Ji-Yeon Kwon",
+      "occurrences": [
+        {
+          "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "entity_id": "f30ec9e6-085c-443e-bbf6-74957e414f22",
+          "name": "Ji-Yeon Kwon"
+        }
+      ]
+    },
+    {
+      "id": "ea2d0a37-80d2-485a-8f94-7b62a799abb8",
+      "name": "Seoul",
+      "occurrences": [
+        {
+          "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "entity_id": "ea2d0a37-80d2-485a-8f94-7b62a799abb8",
+          "name": "Seoul"
+        }
+      ]
+    },
+    {
+      "id": "9c034248-efb7-4c9f-939e-7a44b0a827af",
+      "name": "Europe",
+      "occurrences": [
+        {
+          "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "entity_id": "9c034248-efb7-4c9f-939e-7a44b0a827af",
+          "name": "Europe"
+        }
+      ]
+    },
+    {
+      "id": "90942c83-d324-41fb-a328-d8629dae198c",
+      "name": "Ireland",
+      "occurrences": [
+        {
+          "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+          "entity_id": "90942c83-d324-41fb-a328-d8629dae198c",
+          "name": "Ireland"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "07133805-5b31-4660-8aa6-662ed199f293",
+      "target": "453f1516-b70d-496e-bce5-4c9cb4001e5b",
+      "relation": "in advanced negotiations to acquire",
+      "articles": [
+        "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a"
+      ]
+    },
+    {
+      "source": "f30ec9e6-085c-443e-bbf6-74957e414f22",
+      "target": "07133805-5b31-4660-8aa6-662ed199f293",
+      "relation": "is chief financial officer of",
+      "articles": [
+        "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a"
+      ]
+    },
+    {
+      "source": "f30ec9e6-085c-443e-bbf6-74957e414f22",
+      "target": "07133805-5b31-4660-8aa6-662ed199f293",
+      "relation": "led negotiations for",
+      "articles": [
+        "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a"
+      ]
+    },
+    {
+      "source": "07133805-5b31-4660-8aa6-662ed199f293",
+      "target": "9c034248-efb7-4c9f-939e-7a44b0a827af",
+      "relation": "operates distribution subsidiaries in",
+      "articles": [
+        "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a"
+      ]
+    },
+    {
+      "source": "453f1516-b70d-496e-bce5-4c9cb4001e5b",
+      "target": "90942c83-d324-41fb-a328-d8629dae198c",
+      "relation": "faces regulatory scrutiny in",
+      "articles": [
+        "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a"
+      ]
+    }
+  ]
+}

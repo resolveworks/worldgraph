@@ -1,0 +1,140 @@
+{
+  "id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+  "entities": [
+    {
+      "id": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "db6185a5-f655-4305-99e3-68b9e71e9cf3",
+      "name": "James Xu",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "db6185a5-f655-4305-99e3-68b9e71e9cf3",
+          "name": "James Xu"
+        }
+      ]
+    },
+    {
+      "id": "c54b25a8-0581-45cb-9df1-4a737405f805",
+      "name": "Marcus Webb",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "c54b25a8-0581-45cb-9df1-4a737405f805",
+          "name": "Marcus Webb"
+        }
+      ]
+    },
+    {
+      "id": "b20101b2-0b5d-43a6-abd6-86fecf7be106",
+      "name": "AI-powered automation systems for industrial logistics",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "b20101b2-0b5d-43a6-abd6-86fecf7be106",
+          "name": "AI-powered automation systems for industrial logistics"
+        }
+      ]
+    },
+    {
+      "id": "51ab9960-497a-478b-951d-1e114dba1ae5",
+      "name": "Meridian's cloud AI platform",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "51ab9960-497a-478b-951d-1e114dba1ae5",
+          "name": "Meridian's cloud AI platform"
+        }
+      ]
+    },
+    {
+      "id": "adf9393d-c547-4ba7-943f-ea1e4ee3bc4a",
+      "name": "Cascade's autonomous robotics hardware",
+      "occurrences": [
+        {
+          "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+          "entity_id": "adf9393d-c547-4ba7-943f-ea1e4ee3bc4a",
+          "name": "Cascade's autonomous robotics hardware"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+      "target": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+      "relation": "announced strategic partnership with",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    },
+    {
+      "source": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+      "target": "51ab9960-497a-478b-951d-1e114dba1ae5",
+      "relation": "owns",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    },
+    {
+      "source": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+      "target": "adf9393d-c547-4ba7-943f-ea1e4ee3bc4a",
+      "relation": "owns",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    },
+    {
+      "source": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+      "target": "b20101b2-0b5d-43a6-abd6-86fecf7be106",
+      "relation": "jointly develop",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    },
+    {
+      "source": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+      "target": "b20101b2-0b5d-43a6-abd6-86fecf7be106",
+      "relation": "jointly develop",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    },
+    {
+      "source": "db6185a5-f655-4305-99e3-68b9e71e9cf3",
+      "target": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+      "relation": "is CEO of",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    },
+    {
+      "source": "c54b25a8-0581-45cb-9df1-4a737405f805",
+      "target": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+      "relation": "is CEO of",
+      "articles": [
+        "de309c6d-c824-478f-afeb-90b8b9cde06a"
+      ]
+    }
+  ]
+}

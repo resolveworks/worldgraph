@@ -1,0 +1,178 @@
+{
+  "id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+  "entities": [
+    {
+      "id": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+      "name": "Port of Galveston",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+          "name": "Port of Galveston"
+        }
+      ]
+    },
+    {
+      "id": "f36befe8-2588-4ab9-82ca-1090360beb10",
+      "name": "International Longshoremen's Association",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "f36befe8-2588-4ab9-82ca-1090360beb10",
+          "name": "International Longshoremen's Association"
+        }
+      ]
+    },
+    {
+      "id": "35529127-1e89-423b-86aa-453f9077ec8e",
+      "name": "Stelmark Freight",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "35529127-1e89-423b-86aa-453f9077ec8e",
+          "name": "Stelmark Freight"
+        }
+      ]
+    },
+    {
+      "id": "272c7151-77a0-48ab-b667-d47c39746178",
+      "name": "Clyde Okafor",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "272c7151-77a0-48ab-b667-d47c39746178",
+          "name": "Clyde Okafor"
+        }
+      ]
+    },
+    {
+      "id": "6cba8b63-3671-42c1-ae6f-dedb3c2af0c5",
+      "name": "Miriam Solano",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "6cba8b63-3671-42c1-ae6f-dedb3c2af0c5",
+          "name": "Miriam Solano"
+        }
+      ]
+    },
+    {
+      "id": "8fe919bc-864a-4482-903b-6c6ee30f5249",
+      "name": "Bernard Tran",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "8fe919bc-864a-4482-903b-6c6ee30f5249",
+          "name": "Bernard Tran"
+        }
+      ]
+    },
+    {
+      "id": "1c636982-e8b9-43ae-9729-03a70925a2bc",
+      "name": "Renata Solis",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "1c636982-e8b9-43ae-9729-03a70925a2bc",
+          "name": "Renata Solis"
+        }
+      ]
+    },
+    {
+      "id": "4c455581-2034-48fe-9dce-aff3bfbcf572",
+      "name": "National Labor Relations Board",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "4c455581-2034-48fe-9dce-aff3bfbcf572",
+          "name": "National Labor Relations Board"
+        }
+      ]
+    },
+    {
+      "id": "13147844-6a8b-49a6-9424-c7ae50b29d3c",
+      "name": "DOT",
+      "occurrences": [
+        {
+          "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+          "entity_id": "13147844-6a8b-49a6-9424-c7ae50b29d3c",
+          "name": "DOT"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "f36befe8-2588-4ab9-82ca-1090360beb10",
+      "target": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+      "relation": "in mediation talks with",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "35529127-1e89-423b-86aa-453f9077ec8e",
+      "target": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+      "relation": "in mediation talks with",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "272c7151-77a0-48ab-b667-d47c39746178",
+      "target": "f36befe8-2588-4ab9-82ca-1090360beb10",
+      "relation": "is Gulf Coast regional director of",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "272c7151-77a0-48ab-b667-d47c39746178",
+      "target": "35529127-1e89-423b-86aa-453f9077ec8e",
+      "relation": "submitted counter-proposal to",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "6cba8b63-3671-42c1-ae6f-dedb3c2af0c5",
+      "target": "35529127-1e89-423b-86aa-453f9077ec8e",
+      "relation": "is chief operating officer of",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "8fe919bc-864a-4482-903b-6c6ee30f5249",
+      "target": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+      "relation": "is chair of",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "1c636982-e8b9-43ae-9729-03a70925a2bc",
+      "target": "35529127-1e89-423b-86aa-453f9077ec8e",
+      "relation": "advocates for",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "f36befe8-2588-4ab9-82ca-1090360beb10",
+      "target": "4c455581-2034-48fe-9dce-aff3bfbcf572",
+      "relation": "filed formal complaint with",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    },
+    {
+      "source": "f36befe8-2588-4ab9-82ca-1090360beb10",
+      "target": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+      "relation": "alleges failed to bargain in good faith",
+      "articles": [
+        "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+      ]
+    }
+  ]
+}

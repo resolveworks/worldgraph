@@ -1,0 +1,159 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+  "entities": [
+    {
+      "id": "3585ab69-33f9-459a-a861-2c111677c56a",
+      "name": "IBM Research",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "3585ab69-33f9-459a-a861-2c111677c56a",
+          "name": "IBM Research"
+        }
+      ]
+    },
+    {
+      "id": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+      "name": "Dr. Elena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+          "name": "Dr. Elena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "f8f57dcd-544f-46d4-90c3-bbba20565942",
+      "name": "IBM's Yorktown Heights lab",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "f8f57dcd-544f-46d4-90c3-bbba20565942",
+          "name": "IBM's Yorktown Heights lab"
+        }
+      ]
+    },
+    {
+      "id": "bc15009f-faf2-475e-95ac-ab5e35a3ce29",
+      "name": "Heron processor architecture",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "bc15009f-faf2-475e-95ac-ab5e35a3ce29",
+          "name": "Heron processor architecture"
+        }
+      ]
+    },
+    {
+      "id": "90d0c74a-bbd3-42c3-adcb-cd26bbd07ecc",
+      "name": "Google",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "90d0c74a-bbd3-42c3-adcb-cd26bbd07ecc",
+          "name": "Google"
+        }
+      ]
+    },
+    {
+      "id": "fa8a9d96-596d-43ea-88b3-8e9b244315b5",
+      "name": "Rolf Andersen",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "fa8a9d96-596d-43ea-88b3-8e9b244315b5",
+          "name": "Rolf Andersen"
+        }
+      ]
+    },
+    {
+      "id": "819faa72-6884-4066-a192-aa49cde20473",
+      "name": "Series C",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+          "entity_id": "819faa72-6884-4066-a192-aa49cde20473",
+          "name": "Series C"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+      "target": "3585ab69-33f9-459a-a861-2c111677c56a",
+      "relation": "resigned from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+      "target": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+      "relation": "took role of Chief Technology Officer at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+      "target": "f8f57dcd-544f-46d4-90c3-bbba20565942",
+      "relation": "spent eleven years at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+      "target": "bc15009f-faf2-475e-95ac-ab5e35a3ce29",
+      "relation": "led team responsible for",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+      "target": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+      "relation": "confirmed hire of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "fa8a9d96-596d-43ea-88b3-8e9b244315b5",
+      "target": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+      "relation": "is CEO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+      "target": "819faa72-6884-4066-a192-aa49cde20473",
+      "relation": "completed",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    },
+    {
+      "source": "90d0c74a-bbd3-42c3-adcb-cd26bbd07ecc",
+      "target": "3585ab69-33f9-459a-a861-2c111677c56a",
+      "relation": "competes with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+      ]
+    }
+  ]
+}

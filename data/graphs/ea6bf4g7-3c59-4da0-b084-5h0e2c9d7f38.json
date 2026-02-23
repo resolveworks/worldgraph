@@ -1,0 +1,121 @@
+{
+  "id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+  "entities": [
+    {
+      "id": "259bf9d6-b529-48b9-8a5b-1a583f60f751",
+      "name": "David Park",
+      "occurrences": [
+        {
+          "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+          "entity_id": "259bf9d6-b529-48b9-8a5b-1a583f60f751",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "id": "fc0e56e0-77c7-440a-acb8-42b9dec6cde0",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+          "entity_id": "fc0e56e0-77c7-440a-acb8-42b9dec6cde0",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+          "entity_id": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "4e26d4aa-dc31-44ac-b49d-31323eda3116",
+      "name": "Helen Choi",
+      "occurrences": [
+        {
+          "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+          "entity_id": "4e26d4aa-dc31-44ac-b49d-31323eda3116",
+          "name": "Helen Choi"
+        }
+      ]
+    },
+    {
+      "id": "8618d0a0-a931-4534-8990-7205eb1528e2",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+          "entity_id": "8618d0a0-a931-4534-8990-7205eb1528e2",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "3115a319-ef91-4f13-aca2-44ad9e886b1b",
+      "name": "Webb",
+      "occurrences": [
+        {
+          "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+          "entity_id": "3115a319-ef91-4f13-aca2-44ad9e886b1b",
+          "name": "Webb"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "259bf9d6-b529-48b9-8a5b-1a583f60f751",
+      "target": "fc0e56e0-77c7-440a-acb8-42b9dec6cde0",
+      "relation": "resigned as CEO of",
+      "articles": [
+        "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+      ]
+    },
+    {
+      "source": "259bf9d6-b529-48b9-8a5b-1a583f60f751",
+      "target": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+      "relation": "appointed to the board of",
+      "articles": [
+        "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+      ]
+    },
+    {
+      "source": "259bf9d6-b529-48b9-8a5b-1a583f60f751",
+      "target": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+      "relation": "will chair sustainability committee at",
+      "articles": [
+        "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+      ]
+    },
+    {
+      "source": "4e26d4aa-dc31-44ac-b49d-31323eda3116",
+      "target": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+      "relation": "retiring from board of",
+      "articles": [
+        "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+      ]
+    },
+    {
+      "source": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+      "target": "8618d0a0-a931-4534-8990-7205eb1528e2",
+      "relation": "in major joint venture with",
+      "articles": [
+        "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+      ]
+    },
+    {
+      "source": "3115a319-ef91-4f13-aca2-44ad9e886b1b",
+      "target": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+      "relation": "founder of",
+      "articles": [
+        "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+      ]
+    }
+  ]
+}

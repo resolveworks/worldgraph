@@ -1,0 +1,151 @@
+{
+  "id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+  "entities": [
+    {
+      "id": "54c286f7-5421-478c-a02c-9dd4ae320e35",
+      "name": "Ji-Yeon Kwon",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "54c286f7-5421-478c-a02c-9dd4ae320e35",
+          "name": "Ji-Yeon Kwon"
+        }
+      ]
+    },
+    {
+      "id": "abef3e6a-8728-4d50-b93c-9917956a0271",
+      "name": "Hanseong Group",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "abef3e6a-8728-4d50-b93c-9917956a0271",
+          "name": "Hanseong Group"
+        }
+      ]
+    },
+    {
+      "id": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+      "name": "European AI Policy Forum",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+          "name": "European AI Policy Forum"
+        }
+      ]
+    },
+    {
+      "id": "437ea9ed-9966-45a4-8c0e-a80bb771e456",
+      "name": "Brussels",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "437ea9ed-9966-45a4-8c0e-a80bb771e456",
+          "name": "Brussels"
+        }
+      ]
+    },
+    {
+      "id": "8cf4a376-6344-420b-ac8e-a8684b1a4357",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "8cf4a376-6344-420b-ac8e-a8684b1a4357",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "d6bda873-42a0-4f60-99cf-254a40542df7",
+      "name": "Centre for European Technology Policy",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "d6bda873-42a0-4f60-99cf-254a40542df7",
+          "name": "Centre for European Technology Policy"
+        }
+      ]
+    },
+    {
+      "id": "59b0829b-9c85-4d34-ad57-b5c19a784e99",
+      "name": "European Commission",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "59b0829b-9c85-4d34-ad57-b5c19a784e99",
+          "name": "European Commission"
+        }
+      ]
+    },
+    {
+      "id": "204159c4-2360-4f94-8c8c-74e6eea36483",
+      "name": "FTC",
+      "occurrences": [
+        {
+          "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+          "entity_id": "204159c4-2360-4f94-8c8c-74e6eea36483",
+          "name": "FTC"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "54c286f7-5421-478c-a02c-9dd4ae320e35",
+      "target": "abef3e6a-8728-4d50-b93c-9917956a0271",
+      "relation": "is chief financial officer of",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    },
+    {
+      "source": "54c286f7-5421-478c-a02c-9dd4ae320e35",
+      "target": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+      "relation": "added to speaker list for",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    },
+    {
+      "source": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+      "target": "437ea9ed-9966-45a4-8c0e-a80bb771e456",
+      "relation": "scheduled for",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    },
+    {
+      "source": "abef3e6a-8728-4d50-b93c-9917956a0271",
+      "target": "8cf4a376-6344-420b-ac8e-a8684b1a4357",
+      "relation": "announced licensing deal with",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    },
+    {
+      "source": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+      "target": "d6bda873-42a0-4f60-99cf-254a40542df7",
+      "relation": "organized by",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    },
+    {
+      "source": "59b0829b-9c85-4d34-ad57-b5c19a784e99",
+      "target": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+      "relation": "sends officials to",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    },
+    {
+      "source": "204159c4-2360-4f94-8c8c-74e6eea36483",
+      "target": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+      "relation": "provided keynote at last year's",
+      "articles": [
+        "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a"
+      ]
+    }
+  ]
+}

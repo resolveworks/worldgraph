@@ -1,0 +1,148 @@
+{
+  "id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+  "entities": [
+    {
+      "id": "ede453bc-38d3-4d37-9183-0370dfbe2c43",
+      "name": "Sarah Chen",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "ede453bc-38d3-4d37-9183-0370dfbe2c43",
+          "name": "Sarah Chen"
+        }
+      ]
+    },
+    {
+      "id": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "fbebfc53-3129-41ee-b796-9bd4e0a78d7d",
+      "name": "grid-scale battery storage program",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "fbebfc53-3129-41ee-b796-9bd4e0a78d7d",
+          "name": "grid-scale battery storage program"
+        }
+      ]
+    },
+    {
+      "id": "0c45791a-7a08-4425-b96b-2c3e28d7d52e",
+      "name": "David Park",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "0c45791a-7a08-4425-b96b-2c3e28d7d52e",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "id": "b09624e0-d095-4f65-87d1-d99e5b76d437",
+      "name": "Nevada",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "b09624e0-d095-4f65-87d1-d99e5b76d437",
+          "name": "Nevada"
+        }
+      ]
+    },
+    {
+      "id": "e653b807-1192-4b49-9837-7e50abf3d897",
+      "name": "Helios Power Group",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "e653b807-1192-4b49-9837-7e50abf3d897",
+          "name": "Helios Power Group"
+        }
+      ]
+    },
+    {
+      "id": "f9cb9b01-1e76-4cb8-a83c-37b7190647ad",
+      "name": "Robert Tanaka",
+      "occurrences": [
+        {
+          "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+          "entity_id": "f9cb9b01-1e76-4cb8-a83c-37b7190647ad",
+          "name": "Robert Tanaka"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "ede453bc-38d3-4d37-9183-0370dfbe2c43",
+      "target": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+      "relation": "named CEO of",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "0c45791a-7a08-4425-b96b-2c3e28d7d52e",
+      "target": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+      "relation": "outgoing CEO of",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "0c45791a-7a08-4425-b96b-2c3e28d7d52e",
+      "target": "fbebfc53-3129-41ee-b796-9bd4e0a78d7d",
+      "relation": "launched",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "fbebfc53-3129-41ee-b796-9bd4e0a78d7d",
+      "target": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+      "relation": "initiative of",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "ede453bc-38d3-4d37-9183-0370dfbe2c43",
+      "target": "e653b807-1192-4b49-9837-7e50abf3d897",
+      "relation": "joining from",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "ede453bc-38d3-4d37-9183-0370dfbe2c43",
+      "target": "e653b807-1192-4b49-9837-7e50abf3d897",
+      "relation": "served as chief operating officer at",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "f9cb9b01-1e76-4cb8-a83c-37b7190647ad",
+      "target": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+      "relation": "board chair of",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    },
+    {
+      "source": "fbebfc53-3129-41ee-b796-9bd4e0a78d7d",
+      "target": "b09624e0-d095-4f65-87d1-d99e5b76d437",
+      "relation": "has flagship facility in",
+      "articles": [
+        "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+  "entities": [
+    {
+      "id": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+      "name": "Miriam Solano",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+          "name": "Miriam Solano"
+        }
+      ]
+    },
+    {
+      "id": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "name": "Stelmark Freight",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+          "name": "Stelmark Freight"
+        }
+      ]
+    },
+    {
+      "id": "d4495df6-65ac-48c8-8ab0-d54813a4013b",
+      "name": "ILA",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "d4495df6-65ac-48c8-8ab0-d54813a4013b",
+          "name": "ILA"
+        }
+      ]
+    },
+    {
+      "id": "f27113ad-28ce-4191-8d5b-9967cc4aedce",
+      "name": "Houston",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "f27113ad-28ce-4191-8d5b-9967cc4aedce",
+          "name": "Houston"
+        }
+      ]
+    },
+    {
+      "id": "715f1f8c-d9e2-49b0-802f-7bd1dd9b1891",
+      "name": "Dutch port consultancy",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "715f1f8c-d9e2-49b0-802f-7bd1dd9b1891",
+          "name": "Dutch port consultancy"
+        }
+      ]
+    },
+    {
+      "id": "7e08e788-8797-4405-b26e-27bf00396d4d",
+      "name": "Savannah",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "7e08e788-8797-4405-b26e-27bf00396d4d",
+          "name": "Savannah"
+        }
+      ]
+    },
+    {
+      "id": "97e73f6d-f248-4832-9080-6f50ad1d6d38",
+      "name": "Galveston",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "97e73f6d-f248-4832-9080-6f50ad1d6d38",
+          "name": "Galveston"
+        }
+      ]
+    },
+    {
+      "id": "196be0e4-a6a2-4b92-ac33-23a22693e7e6",
+      "name": "Texas legislators",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "196be0e4-a6a2-4b92-ac33-23a22693e7e6",
+          "name": "Texas legislators"
+        }
+      ]
+    },
+    {
+      "id": "c4759a7a-12de-4bae-aac2-a52b4d3a5ffa",
+      "name": "Renata Solis",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "c4759a7a-12de-4bae-aac2-a52b4d3a5ffa",
+          "name": "Renata Solis"
+        }
+      ]
+    },
+    {
+      "id": "7cbb3e48-a15a-4806-b96e-f97524e1d6ae",
+      "name": "Department of Transportation",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "7cbb3e48-a15a-4806-b96e-f97524e1d6ae",
+          "name": "Department of Transportation"
+        }
+      ]
+    },
+    {
+      "id": "35b72d45-b1bf-4001-960a-3005deac4f27",
+      "name": "port authority",
+      "occurrences": [
+        {
+          "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+          "entity_id": "35b72d45-b1bf-4001-960a-3005deac4f27",
+          "name": "port authority"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+      "target": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "relation": "oversees operations at",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+      "target": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "relation": "joined in 2022",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+      "target": "d4495df6-65ac-48c8-8ab0-d54813a4013b",
+      "relation": "in standoff with",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "target": "f27113ad-28ce-4191-8d5b-9967cc4aedce",
+      "relation": "has office in",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+      "target": "715f1f8c-d9e2-49b0-802f-7bd1dd9b1891",
+      "relation": "worked at for a decade",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+      "target": "7e08e788-8797-4405-b26e-27bf00396d4d",
+      "relation": "shepherded automated terminal expansion in",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "target": "97e73f6d-f248-4832-9080-6f50ad1d6d38",
+      "relation": "involved in dispute in",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "196be0e4-a6a2-4b92-ac33-23a22693e7e6",
+      "target": "97e73f6d-f248-4832-9080-6f50ad1d6d38",
+      "relation": "championed federal grant for",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "c4759a7a-12de-4bae-aac2-a52b4d3a5ffa",
+      "target": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "relation": "advises on federal relations",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "c4759a7a-12de-4bae-aac2-a52b4d3a5ffa",
+      "target": "7cbb3e48-a15a-4806-b96e-f97524e1d6ae",
+      "relation": "was seen leaving headquarters of",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    },
+    {
+      "source": "35b72d45-b1bf-4001-960a-3005deac4f27",
+      "target": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+      "relation": "will proceed with contract with",
+      "articles": [
+        "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+      ]
+    }
+  ]
+}

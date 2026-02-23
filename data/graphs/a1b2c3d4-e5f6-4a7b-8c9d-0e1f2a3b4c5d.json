@@ -1,0 +1,159 @@
+{
+  "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+  "entities": [
+    {
+      "id": "2e0fc980-baeb-46c7-99c1-dade8a42864e",
+      "name": "Ireland's Data Protection Commission",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "2e0fc980-baeb-46c7-99c1-dade8a42864e",
+          "name": "Ireland's Data Protection Commission"
+        }
+      ]
+    },
+    {
+      "id": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "a5cfa1bb-9f86-4879-a0f7-bde8f9724c5d",
+      "name": "DataWatch EU",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "a5cfa1bb-9f86-4879-a0f7-bde8f9724c5d",
+          "name": "DataWatch EU"
+        }
+      ]
+    },
+    {
+      "id": "42988931-a5b2-4562-a58c-41230d3b822c",
+      "name": "Nils Bergstr\u00f6m",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "42988931-a5b2-4562-a58c-41230d3b822c",
+          "name": "Nils Bergstr\u00f6m"
+        }
+      ]
+    },
+    {
+      "id": "65a14ff1-ea8f-4fe9-8a14-d539686e7cce",
+      "name": "European users",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "65a14ff1-ea8f-4fe9-8a14-d539686e7cce",
+          "name": "European users"
+        }
+      ]
+    },
+    {
+      "id": "17524744-48b6-4395-8976-92cd1f5d605c",
+      "name": "United States",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "17524744-48b6-4395-8976-92cd1f5d605c",
+          "name": "United States"
+        }
+      ]
+    },
+    {
+      "id": "559000fc-1eda-423d-bf12-c0c114f2d23e",
+      "name": "GDPR",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "559000fc-1eda-423d-bf12-c0c114f2d23e",
+          "name": "GDPR"
+        }
+      ]
+    },
+    {
+      "id": "d0cbf147-c075-4ce2-bf99-b86c1d2c2e2b",
+      "name": "U.S. tech firms",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+          "entity_id": "d0cbf147-c075-4ce2-bf99-b86c1d2c2e2b",
+          "name": "U.S. tech firms"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "2e0fc980-baeb-46c7-99c1-dade8a42864e",
+      "target": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "relation": "opened formal inquiry into",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "2e0fc980-baeb-46c7-99c1-dade8a42864e",
+      "target": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "relation": "issued initial questionnaire to",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "a5cfa1bb-9f86-4879-a0f7-bde8f9724c5d",
+      "target": "2e0fc980-baeb-46c7-99c1-dade8a42864e",
+      "relation": "filed complaints with",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "target": "65a14ff1-ea8f-4fe9-8a14-d539686e7cce",
+      "relation": "transferred personal data from",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "target": "17524744-48b6-4395-8976-92cd1f5d605c",
+      "relation": "transferred personal data to servers in",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "42988931-a5b2-4562-a58c-41230d3b822c",
+      "target": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "relation": "is CEO of",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "target": "559000fc-1eda-423d-bf12-c0c114f2d23e",
+      "relation": "claims compliance with",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    },
+    {
+      "source": "a5cfa1bb-9f86-4879-a0f7-bde8f9724c5d",
+      "target": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+      "relation": "claimed standard contractual clauses of are legally deficient",
+      "articles": [
+        "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d"
+      ]
+    }
+  ]
+}

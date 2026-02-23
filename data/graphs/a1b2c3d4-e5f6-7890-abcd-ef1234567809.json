@@ -1,0 +1,162 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+  "entities": [
+    {
+      "id": "6cedc095-da57-43cc-800f-cd5f08cd4932",
+      "name": "TechForward Summit",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "6cedc095-da57-43cc-800f-cd5f08cd4932",
+          "name": "TechForward Summit"
+        }
+      ]
+    },
+    {
+      "id": "badd129f-0b5d-453b-ba5e-732ad1051e81",
+      "name": "Amsterdam",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "badd129f-0b5d-453b-ba5e-732ad1051e81",
+          "name": "Amsterdam"
+        }
+      ]
+    },
+    {
+      "id": "36933cec-980f-4178-9d6d-9c9f6617f625",
+      "name": "Beurs van Berlage",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "36933cec-980f-4178-9d6d-9c9f6617f625",
+          "name": "Beurs van Berlage"
+        }
+      ]
+    },
+    {
+      "id": "c27a0cc5-c3a3-4a42-8bc6-470c283e0525",
+      "name": "Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "c27a0cc5-c3a3-4a42-8bc6-470c283e0525",
+          "name": "Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "851548e8-e59d-42ad-8e46-104d43af453c",
+      "name": "Elena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "851548e8-e59d-42ad-8e46-104d43af453c",
+          "name": "Elena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "87c61731-e9f0-4a27-bed9-e5d783a61b35",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "87c61731-e9f0-4a27-bed9-e5d783a61b35",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "3f694d32-933d-404b-aded-b95463beafb8",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "3f694d32-933d-404b-aded-b95463beafb8",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "f8b00920-120d-4c0b-be4c-5794e3a8928f",
+      "name": "IBM Research",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "f8b00920-120d-4c0b-be4c-5794e3a8928f",
+          "name": "IBM Research"
+        }
+      ]
+    },
+    {
+      "id": "be9a2e2d-88f0-4e9b-b977-7752da390d89",
+      "name": "EU",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+          "entity_id": "be9a2e2d-88f0-4e9b-b977-7752da390d89",
+          "name": "EU"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "6cedc095-da57-43cc-800f-cd5f08cd4932",
+      "target": "badd129f-0b5d-453b-ba5e-732ad1051e81",
+      "relation": "held in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    },
+    {
+      "source": "6cedc095-da57-43cc-800f-cd5f08cd4932",
+      "target": "36933cec-980f-4178-9d6d-9c9f6617f625",
+      "relation": "held at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    },
+    {
+      "source": "c27a0cc5-c3a3-4a42-8bc6-470c283e0525",
+      "target": "6cedc095-da57-43cc-800f-cd5f08cd4932",
+      "relation": "gave presentation at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    },
+    {
+      "source": "c27a0cc5-c3a3-4a42-8bc6-470c283e0525",
+      "target": "851548e8-e59d-42ad-8e46-104d43af453c",
+      "relation": "was among speakers with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    },
+    {
+      "source": "851548e8-e59d-42ad-8e46-104d43af453c",
+      "target": "87c61731-e9f0-4a27-bed9-e5d783a61b35",
+      "relation": "is CTO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    },
+    {
+      "source": "851548e8-e59d-42ad-8e46-104d43af453c",
+      "target": "3f694d32-933d-404b-aded-b95463beafb8",
+      "relation": "discussed deal with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    },
+    {
+      "source": "851548e8-e59d-42ad-8e46-104d43af453c",
+      "target": "f8b00920-120d-4c0b-be4c-5794e3a8928f",
+      "relation": "previously worked at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+      ]
+    }
+  ]
+}

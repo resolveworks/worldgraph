@@ -1,0 +1,94 @@
+{
+  "id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+  "entities": [
+    {
+      "id": "7d35436b-fbbc-4175-96e7-c999c096c7e9",
+      "name": "Sarah Chen",
+      "occurrences": [
+        {
+          "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+          "entity_id": "7d35436b-fbbc-4175-96e7-c999c096c7e9",
+          "name": "Sarah Chen"
+        }
+      ]
+    },
+    {
+      "id": "ad622e46-d5ca-43ea-ae8f-1797e88d17f3",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+          "entity_id": "ad622e46-d5ca-43ea-ae8f-1797e88d17f3",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "0277ffa4-d56e-47fa-89b4-0409d29e1b1a",
+      "name": "David Park",
+      "occurrences": [
+        {
+          "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+          "entity_id": "0277ffa4-d56e-47fa-89b4-0409d29e1b1a",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "id": "d4c49443-31b4-44fb-90a8-21eda78fda8b",
+      "name": "Helios Power Group",
+      "occurrences": [
+        {
+          "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+          "entity_id": "d4c49443-31b4-44fb-90a8-21eda78fda8b",
+          "name": "Helios Power Group"
+        }
+      ]
+    },
+    {
+      "id": "bb755ee2-6e44-4481-83d0-f9fd4ca0ffbe",
+      "name": "Robert Tanaka",
+      "occurrences": [
+        {
+          "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+          "entity_id": "bb755ee2-6e44-4481-83d0-f9fd4ca0ffbe",
+          "name": "Robert Tanaka"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "7d35436b-fbbc-4175-96e7-c999c096c7e9",
+      "target": "ad622e46-d5ca-43ea-ae8f-1797e88d17f3",
+      "relation": "appointed as Chief Executive Officer",
+      "articles": [
+        "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
+      ]
+    },
+    {
+      "source": "7d35436b-fbbc-4175-96e7-c999c096c7e9",
+      "target": "d4c49443-31b4-44fb-90a8-21eda78fda8b",
+      "relation": "previously served as Chief Operating Officer at",
+      "articles": [
+        "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
+      ]
+    },
+    {
+      "source": "0277ffa4-d56e-47fa-89b4-0409d29e1b1a",
+      "target": "ad622e46-d5ca-43ea-ae8f-1797e88d17f3",
+      "relation": "stepping down as Chief Executive Officer from",
+      "articles": [
+        "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
+      ]
+    },
+    {
+      "source": "bb755ee2-6e44-4481-83d0-f9fd4ca0ffbe",
+      "target": "ad622e46-d5ca-43ea-ae8f-1797e88d17f3",
+      "relation": "serves as board chair of",
+      "articles": [
+        "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
+      ]
+    }
+  ]
+}

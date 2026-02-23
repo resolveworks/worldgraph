@@ -1,0 +1,159 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+  "entities": [
+    {
+      "id": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "b65206e7-8e82-44e2-b4a9-fe575d61e7d3",
+      "name": "Apex Ventures",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "b65206e7-8e82-44e2-b4a9-fe575d61e7d3",
+          "name": "Apex Ventures"
+        }
+      ]
+    },
+    {
+      "id": "6d39358f-a4a6-42d7-a58a-9c1824dd3e27",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "6d39358f-a4a6-42d7-a58a-9c1824dd3e27",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "2be1f9f7-f541-42e6-8114-4964d949aead",
+      "name": "EU",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "2be1f9f7-f541-42e6-8114-4964d949aead",
+          "name": "EU"
+        }
+      ]
+    },
+    {
+      "id": "e705a842-e571-479b-88d1-98f3ff2b6ff2",
+      "name": "Rolf Andersen",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "e705a842-e571-479b-88d1-98f3ff2b6ff2",
+          "name": "Rolf Andersen"
+        }
+      ]
+    },
+    {
+      "id": "876f32e2-11e4-4e59-9e9a-da68208e2254",
+      "name": "Dr. Elena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "876f32e2-11e4-4e59-9e9a-da68208e2254",
+          "name": "Dr. Elena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "43555fb2-015e-4159-ad71-579c3f1a3e25",
+      "name": "IBM Research",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "43555fb2-015e-4159-ad71-579c3f1a3e25",
+          "name": "IBM Research"
+        }
+      ]
+    },
+    {
+      "id": "a7072cd8-9e60-41cb-8cdc-d5c5e5b09e02",
+      "name": "Diana Chu",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+          "entity_id": "a7072cd8-9e60-41cb-8cdc-d5c5e5b09e02",
+          "name": "Diana Chu"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "b65206e7-8e82-44e2-b4a9-fe575d61e7d3",
+      "target": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+      "relation": "anchored",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+      "target": "6d39358f-a4a6-42d7-a58a-9c1824dd3e27",
+      "relation": "acquire",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "6d39358f-a4a6-42d7-a58a-9c1824dd3e27",
+      "target": "2be1f9f7-f541-42e6-8114-4964d949aead",
+      "relation": "triggered preliminary competition review with",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "e705a842-e571-479b-88d1-98f3ff2b6ff2",
+      "target": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+      "relation": "is CEO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "876f32e2-11e4-4e59-9e9a-da68208e2254",
+      "target": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+      "relation": "hired by",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "876f32e2-11e4-4e59-9e9a-da68208e2254",
+      "target": "43555fb2-015e-4159-ad71-579c3f1a3e25",
+      "relation": "poached from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "a7072cd8-9e60-41cb-8cdc-d5c5e5b09e02",
+      "target": "b65206e7-8e82-44e2-b4a9-fe575d61e7d3",
+      "relation": "is managing partner of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    },
+    {
+      "source": "b65206e7-8e82-44e2-b4a9-fe575d61e7d3",
+      "target": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+      "relation": "invested in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+      ]
+    }
+  ]
+}

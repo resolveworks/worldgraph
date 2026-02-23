@@ -1,0 +1,137 @@
+{
+  "id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+  "entities": [
+    {
+      "id": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+          "entity_id": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+          "entity_id": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "282f70a3-6857-425d-9e3a-787e2d14e233",
+      "name": "Marcus Webb",
+      "occurrences": [
+        {
+          "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+          "entity_id": "282f70a3-6857-425d-9e3a-787e2d14e233",
+          "name": "Marcus Webb"
+        }
+      ]
+    },
+    {
+      "id": "81259e92-2ed7-44c9-b760-ee6eb051b296",
+      "name": "Lightwave",
+      "occurrences": [
+        {
+          "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+          "entity_id": "81259e92-2ed7-44c9-b760-ee6eb051b296",
+          "name": "Lightwave"
+        }
+      ]
+    },
+    {
+      "id": "482ad5ab-89fa-45b5-b7ac-d582dbed2c20",
+      "name": "Pittsburgh",
+      "occurrences": [
+        {
+          "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+          "entity_id": "482ad5ab-89fa-45b5-b7ac-d582dbed2c20",
+          "name": "Pittsburgh"
+        }
+      ]
+    },
+    {
+      "id": "ed3df479-a318-48ec-a1d3-6c4a46773d39",
+      "name": "Automation World Expo",
+      "occurrences": [
+        {
+          "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+          "entity_id": "ed3df479-a318-48ec-a1d3-6c4a46773d39",
+          "name": "Automation World Expo"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+      "target": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+      "relation": "entered into strategic alliance with",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+      "target": "482ad5ab-89fa-45b5-b7ac-d582dbed2c20",
+      "relation": "establish joint research lab in",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+      "target": "482ad5ab-89fa-45b5-b7ac-d582dbed2c20",
+      "relation": "establish joint research lab in",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "282f70a3-6857-425d-9e3a-787e2d14e233",
+      "target": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+      "relation": "founded",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "282f70a3-6857-425d-9e3a-787e2d14e233",
+      "target": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+      "relation": "serves as CEO of",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+      "target": "81259e92-2ed7-44c9-b760-ee6eb051b296",
+      "relation": "announced acquisition of",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+      "target": "ed3df479-a318-48ec-a1d3-6c4a46773d39",
+      "relation": "plan to unveil prototype at",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    },
+    {
+      "source": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+      "target": "ed3df479-a318-48ec-a1d3-6c4a46773d39",
+      "relation": "plan to unveil prototype at",
+      "articles": [
+        "e160a592-867e-4e0e-9689-8c4a61839c83"
+      ]
+    }
+  ]
+}

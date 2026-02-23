@@ -1,0 +1,140 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+  "entities": [
+    {
+      "id": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "78118620-c1a4-4d49-8f72-699c979e65e0",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "78118620-c1a4-4d49-8f72-699c979e65e0",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "67a235d6-1857-489c-a305-830c77a11010",
+      "name": "European Commission",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "67a235d6-1857-489c-a305-830c77a11010",
+          "name": "European Commission"
+        }
+      ]
+    },
+    {
+      "id": "8eca67c0-6956-4efe-b10c-cad4a2002fbb",
+      "name": "Directorate-General for Competition",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "8eca67c0-6956-4efe-b10c-cad4a2002fbb",
+          "name": "Directorate-General for Competition"
+        }
+      ]
+    },
+    {
+      "id": "dc9bbdf0-22c9-4780-a435-c7408d4964bd",
+      "name": "Berlin startup",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "dc9bbdf0-22c9-4780-a435-c7408d4964bd",
+          "name": "Berlin startup"
+        }
+      ]
+    },
+    {
+      "id": "77db3471-c518-4bfb-bedb-47b384007b51",
+      "name": "Pieter van der Berg",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "77db3471-c518-4bfb-bedb-47b384007b51",
+          "name": "Pieter van der Berg"
+        }
+      ]
+    },
+    {
+      "id": "0461dca7-f679-4943-aa1b-1833b1de016b",
+      "name": "European Union",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+          "entity_id": "0461dca7-f679-4943-aa1b-1833b1de016b",
+          "name": "European Union"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+      "target": "78118620-c1a4-4d49-8f72-699c979e65e0",
+      "relation": "proposed acquisition of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    },
+    {
+      "source": "67a235d6-1857-489c-a305-830c77a11010",
+      "target": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+      "relation": "opened preliminary review of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    },
+    {
+      "source": "67a235d6-1857-489c-a305-830c77a11010",
+      "target": "78118620-c1a4-4d49-8f72-699c979e65e0",
+      "relation": "opened preliminary review of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    },
+    {
+      "source": "8eca67c0-6956-4efe-b10c-cad4a2002fbb",
+      "target": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+      "relation": "examining",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    },
+    {
+      "source": "8eca67c0-6956-4efe-b10c-cad4a2002fbb",
+      "target": "78118620-c1a4-4d49-8f72-699c979e65e0",
+      "relation": "examining",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    },
+    {
+      "source": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+      "target": "78118620-c1a4-4d49-8f72-699c979e65e0",
+      "relation": "announced purchase of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    },
+    {
+      "source": "77db3471-c518-4bfb-bedb-47b384007b51",
+      "target": "78118620-c1a4-4d49-8f72-699c979e65e0",
+      "relation": "co-founder of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567805"
+      ]
+    }
+  ]
+}

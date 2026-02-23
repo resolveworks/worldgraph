@@ -1,0 +1,235 @@
+{
+  "id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+  "entities": [
+    {
+      "id": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "name": "Global AI Summit",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+          "name": "Global AI Summit"
+        }
+      ]
+    },
+    {
+      "id": "d5552e45-1c9f-40bd-a7f1-2683f6a24e7e",
+      "name": "San Francisco",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "d5552e45-1c9f-40bd-a7f1-2683f6a24e7e",
+          "name": "San Francisco"
+        }
+      ]
+    },
+    {
+      "id": "926aff22-1a34-4ca5-94ec-c5786799ef10",
+      "name": "Dr. Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "926aff22-1a34-4ca5-94ec-c5786799ef10",
+          "name": "Dr. Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "81d1ac43-861c-45b5-b283-d839a079ab56",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "81d1ac43-861c-45b5-b283-d839a079ab56",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "e4b03dd2-03a1-4d84-8356-2561e5825a57",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "e4b03dd2-03a1-4d84-8356-2561e5825a57",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "f4f2941e-2dad-40cb-b656-8ca84f3d4cfb",
+      "name": "Marcus Webb",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "f4f2941e-2dad-40cb-b656-8ca84f3d4cfb",
+          "name": "Marcus Webb"
+        }
+      ]
+    },
+    {
+      "id": "fad9ffd0-c886-4437-be85-307ba7d11855",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "fad9ffd0-c886-4437-be85-307ba7d11855",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "fb530fde-6ca4-46db-a6e3-3b2c25613a64",
+      "name": "Sarah Chen",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "fb530fde-6ca4-46db-a6e3-3b2c25613a64",
+          "name": "Sarah Chen"
+        }
+      ]
+    },
+    {
+      "id": "6da812ae-16a7-40cf-91d3-22072dc6b655",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "6da812ae-16a7-40cf-91d3-22072dc6b655",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "f368cc20-56da-487f-8b37-f3c23a42b9e7",
+      "name": "Angela Torres",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "f368cc20-56da-487f-8b37-f3c23a42b9e7",
+          "name": "Angela Torres"
+        }
+      ]
+    },
+    {
+      "id": "547af63b-9ce2-4923-b800-3bbe9cab78c6",
+      "name": "FTC",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "547af63b-9ce2-4923-b800-3bbe9cab78c6",
+          "name": "FTC"
+        }
+      ]
+    },
+    {
+      "id": "6b85e34c-f805-46c5-adcb-b6e59941b6c5",
+      "name": "Raymond Liu",
+      "occurrences": [
+        {
+          "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+          "entity_id": "6b85e34c-f805-46c5-adcb-b6e59941b6c5",
+          "name": "Raymond Liu"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "target": "d5552e45-1c9f-40bd-a7f1-2683f6a24e7e",
+      "relation": "held in",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "926aff22-1a34-4ca5-94ec-c5786799ef10",
+      "target": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "relation": "delivered keynote address at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "926aff22-1a34-4ca5-94ec-c5786799ef10",
+      "target": "81d1ac43-861c-45b5-b283-d839a079ab56",
+      "relation": "founder of",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "926aff22-1a34-4ca5-94ec-c5786799ef10",
+      "target": "e4b03dd2-03a1-4d84-8356-2561e5825a57",
+      "relation": "set to join as SVP of Analytics",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "f4f2941e-2dad-40cb-b656-8ca84f3d4cfb",
+      "target": "fad9ffd0-c886-4437-be85-307ba7d11855",
+      "relation": "works at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "f4f2941e-2dad-40cb-b656-8ca84f3d4cfb",
+      "target": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "relation": "speaker at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "fad9ffd0-c886-4437-be85-307ba7d11855",
+      "target": "e4b03dd2-03a1-4d84-8356-2561e5825a57",
+      "relation": "partnership with",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "fb530fde-6ca4-46db-a6e3-3b2c25613a64",
+      "target": "6da812ae-16a7-40cf-91d3-22072dc6b655",
+      "relation": "newly appointed CEO of",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "fb530fde-6ca4-46db-a6e3-3b2c25613a64",
+      "target": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "relation": "speaker at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "f368cc20-56da-487f-8b37-f3c23a42b9e7",
+      "target": "547af63b-9ce2-4923-b800-3bbe9cab78c6",
+      "relation": "commissioner at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "f368cc20-56da-487f-8b37-f3c23a42b9e7",
+      "target": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "relation": "participated in fireside chat at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    },
+    {
+      "source": "6b85e34c-f805-46c5-adcb-b6e59941b6c5",
+      "target": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+      "relation": "participated in fireside chat at",
+      "articles": [
+        "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+  "entities": [
+    {
+      "id": "f6651fae-a623-430b-9299-afda412dbc6d",
+      "name": "Vantara AI",
+      "occurrences": [
+        {
+          "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "entity_id": "f6651fae-a623-430b-9299-afda412dbc6d",
+          "name": "Vantara AI"
+        }
+      ]
+    },
+    {
+      "id": "94ba19cd-122e-46d5-bb41-0216a054736e",
+      "name": "Ireland's data protection authority",
+      "occurrences": [
+        {
+          "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "entity_id": "94ba19cd-122e-46d5-bb41-0216a054736e",
+          "name": "Ireland's data protection authority"
+        }
+      ]
+    },
+    {
+      "id": "c4a12d33-d652-4ea7-af27-901542727ec3",
+      "name": "DPC",
+      "occurrences": [
+        {
+          "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "entity_id": "c4a12d33-d652-4ea7-af27-901542727ec3",
+          "name": "DPC"
+        }
+      ]
+    },
+    {
+      "id": "26b5d573-2e23-43ac-8901-cff3fc6bb0cf",
+      "name": "DataWatch EU",
+      "occurrences": [
+        {
+          "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "entity_id": "26b5d573-2e23-43ac-8901-cff3fc6bb0cf",
+          "name": "DataWatch EU"
+        }
+      ]
+    },
+    {
+      "id": "57098cdc-4b1f-4d05-b623-fe21fa40bc1a",
+      "name": "EU data transfer rules",
+      "occurrences": [
+        {
+          "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "entity_id": "57098cdc-4b1f-4d05-b623-fe21fa40bc1a",
+          "name": "EU data transfer rules"
+        }
+      ]
+    },
+    {
+      "id": "e44b4147-3a18-4b75-93b5-e3017bb49f87",
+      "name": "Vantara's Stockholm offices",
+      "occurrences": [
+        {
+          "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+          "entity_id": "e44b4147-3a18-4b75-93b5-e3017bb49f87",
+          "name": "Vantara's Stockholm offices"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "c4a12d33-d652-4ea7-af27-901542727ec3",
+      "target": "f6651fae-a623-430b-9299-afda412dbc6d",
+      "relation": "issued inquiry against",
+      "articles": [
+        "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+      ]
+    },
+    {
+      "source": "f6651fae-a623-430b-9299-afda412dbc6d",
+      "target": "57098cdc-4b1f-4d05-b623-fe21fa40bc1a",
+      "relation": "violated",
+      "articles": [
+        "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+      ]
+    },
+    {
+      "source": "26b5d573-2e23-43ac-8901-cff3fc6bb0cf",
+      "target": "c4a12d33-d652-4ea7-af27-901542727ec3",
+      "relation": "filed complaints triggering probe with",
+      "articles": [
+        "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+      ]
+    },
+    {
+      "source": "c4a12d33-d652-4ea7-af27-901542727ec3",
+      "target": "f6651fae-a623-430b-9299-afda412dbc6d",
+      "relation": "preparing to issue formal decision against",
+      "articles": [
+        "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+      ]
+    },
+    {
+      "source": "f6651fae-a623-430b-9299-afda412dbc6d",
+      "target": "94ba19cd-122e-46d5-bb41-0216a054736e",
+      "relation": "under investigation by",
+      "articles": [
+        "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e"
+      ]
+    }
+  ]
+}

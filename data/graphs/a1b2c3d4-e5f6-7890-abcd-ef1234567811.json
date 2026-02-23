@@ -1,0 +1,145 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+  "entities": [
+    {
+      "id": "9ffde3f3-c569-484a-935f-def7b67fafae",
+      "name": "Pieter van der Berg",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+          "entity_id": "9ffde3f3-c569-484a-935f-def7b67fafae",
+          "name": "Pieter van der Berg"
+        }
+      ]
+    },
+    {
+      "id": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+          "entity_id": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "b910bc9a-5907-493a-b102-75b4b14e53e9",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+          "entity_id": "b910bc9a-5907-493a-b102-75b4b14e53e9",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "1b4a2f76-7e7a-4a33-ac4c-a9cb660681cc",
+      "name": "Marta Hoekstra",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+          "entity_id": "1b4a2f76-7e7a-4a33-ac4c-a9cb660681cc",
+          "name": "Marta Hoekstra"
+        }
+      ]
+    },
+    {
+      "id": "a737a4f6-28bb-46bf-82ed-d0fd565dfed0",
+      "name": "European Commission",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+          "entity_id": "a737a4f6-28bb-46bf-82ed-d0fd565dfed0",
+          "name": "European Commission"
+        }
+      ]
+    },
+    {
+      "id": "0c171076-b287-459f-9720-98ed4408fd76",
+      "name": "Eindhoven",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+          "entity_id": "0c171076-b287-459f-9720-98ed4408fd76",
+          "name": "Eindhoven"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "9ffde3f3-c569-484a-935f-def7b67fafae",
+      "target": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "relation": "is co-founder of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "1b4a2f76-7e7a-4a33-ac4c-a9cb660681cc",
+      "target": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "relation": "is co-founder of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "9ffde3f3-c569-484a-935f-def7b67fafae",
+      "target": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "relation": "served as chief executive of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "target": "b910bc9a-5907-493a-b102-75b4b14e53e9",
+      "relation": "is being acquired by",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "9ffde3f3-c569-484a-935f-def7b67fafae",
+      "target": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "relation": "is leaving",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "1b4a2f76-7e7a-4a33-ac4c-a9cb660681cc",
+      "target": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "relation": "is expected to remain and lead photonics team in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "1b4a2f76-7e7a-4a33-ac4c-a9cb660681cc",
+      "target": "b910bc9a-5907-493a-b102-75b4b14e53e9",
+      "relation": "is expected to lead photonics team in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "a737a4f6-28bb-46bf-82ed-d0fd565dfed0",
+      "target": "b910bc9a-5907-493a-b102-75b4b14e53e9",
+      "relation": "initiated preliminary review of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    },
+    {
+      "source": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+      "target": "0c171076-b287-459f-9720-98ed4408fd76",
+      "relation": "is based in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+  "entities": [
+    {
+      "id": "dac56add-0fcb-4b91-b982-beb4b5beb2c6",
+      "name": "Lightwave Analytics",
+      "occurrences": [
+        {
+          "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+          "entity_id": "dac56add-0fcb-4b91-b982-beb4b5beb2c6",
+          "name": "Lightwave Analytics"
+        }
+      ]
+    },
+    {
+      "id": "1aa721fb-9b02-4ebc-89d5-612fd6956905",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+          "entity_id": "1aa721fb-9b02-4ebc-89d5-612fd6956905",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "cec19c43-5520-4ef5-9369-95debd2aa52c",
+      "name": "Dr. P. Sharma",
+      "occurrences": [
+        {
+          "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+          "entity_id": "cec19c43-5520-4ef5-9369-95debd2aa52c",
+          "name": "Dr. P. Sharma"
+        }
+      ]
+    },
+    {
+      "id": "1768f552-b5ae-4b50-ae3f-aa8104d7d2e6",
+      "name": "Databricks",
+      "occurrences": [
+        {
+          "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+          "entity_id": "1768f552-b5ae-4b50-ae3f-aa8104d7d2e6",
+          "name": "Databricks"
+        }
+      ]
+    },
+    {
+      "id": "4d8d1477-0ef4-49b8-8bf9-cdd1f9f151c6",
+      "name": "Snowflake",
+      "occurrences": [
+        {
+          "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+          "entity_id": "4d8d1477-0ef4-49b8-8bf9-cdd1f9f151c6",
+          "name": "Snowflake"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "1aa721fb-9b02-4ebc-89d5-612fd6956905",
+      "target": "dac56add-0fcb-4b91-b982-beb4b5beb2c6",
+      "relation": "acquires",
+      "articles": [
+        "afda7932-54e8-4a98-be6d-8d2f8944448f"
+      ]
+    },
+    {
+      "source": "dac56add-0fcb-4b91-b982-beb4b5beb2c6",
+      "target": "cec19c43-5520-4ef5-9369-95debd2aa52c",
+      "relation": "has CEO and co-founder",
+      "articles": [
+        "afda7932-54e8-4a98-be6d-8d2f8944448f"
+      ]
+    },
+    {
+      "source": "1aa721fb-9b02-4ebc-89d5-612fd6956905",
+      "target": "1768f552-b5ae-4b50-ae3f-aa8104d7d2e6",
+      "relation": "competes with",
+      "articles": [
+        "afda7932-54e8-4a98-be6d-8d2f8944448f"
+      ]
+    },
+    {
+      "source": "1aa721fb-9b02-4ebc-89d5-612fd6956905",
+      "target": "4d8d1477-0ef4-49b8-8bf9-cdd1f9f151c6",
+      "relation": "competes with",
+      "articles": [
+        "afda7932-54e8-4a98-be6d-8d2f8944448f"
+      ]
+    }
+  ]
+}

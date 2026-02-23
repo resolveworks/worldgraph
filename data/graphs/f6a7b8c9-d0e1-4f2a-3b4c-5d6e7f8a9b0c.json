@@ -1,0 +1,132 @@
+{
+  "id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+  "entities": [
+    {
+      "id": "25973a73-a3c8-477c-bca1-401eb6542e53",
+      "name": "Hanseong Group",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "25973a73-a3c8-477c-bca1-401eb6542e53",
+          "name": "Hanseong Group"
+        }
+      ]
+    },
+    {
+      "id": "e8518af5-1f16-4b1b-8a9c-18462646baf7",
+      "name": "Seoul",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "e8518af5-1f16-4b1b-8a9c-18462646baf7",
+          "name": "Seoul"
+        }
+      ]
+    },
+    {
+      "id": "1a6de57d-f8ce-4cbc-a8be-9d203447d813",
+      "name": "Cho family",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "1a6de57d-f8ce-4cbc-a8be-9d203447d813",
+          "name": "Cho family"
+        }
+      ]
+    },
+    {
+      "id": "92f33380-7cd0-4492-b194-dc79b439deaa",
+      "name": "Ji-Yeon Kwon",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "92f33380-7cd0-4492-b194-dc79b439deaa",
+          "name": "Ji-Yeon Kwon"
+        }
+      ]
+    },
+    {
+      "id": "eb061459-1d77-4efb-876d-b86de85580ad",
+      "name": "Vantara",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "eb061459-1d77-4efb-876d-b86de85580ad",
+          "name": "Vantara"
+        }
+      ]
+    },
+    {
+      "id": "8af84a06-6439-411e-8f3c-2602b1911041",
+      "name": "Mirae Asset",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "8af84a06-6439-411e-8f3c-2602b1911041",
+          "name": "Mirae Asset"
+        }
+      ]
+    },
+    {
+      "id": "63c846a7-a97c-4ebb-a6d0-57265c18955e",
+      "name": "Hanseong's board",
+      "occurrences": [
+        {
+          "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+          "entity_id": "63c846a7-a97c-4ebb-a6d0-57265c18955e",
+          "name": "Hanseong's board"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "25973a73-a3c8-477c-bca1-401eb6542e53",
+      "target": "e8518af5-1f16-4b1b-8a9c-18462646baf7",
+      "relation": "operates in",
+      "articles": [
+        "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c"
+      ]
+    },
+    {
+      "source": "1a6de57d-f8ce-4cbc-a8be-9d203447d813",
+      "target": "25973a73-a3c8-477c-bca1-401eb6542e53",
+      "relation": "controls",
+      "articles": [
+        "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c"
+      ]
+    },
+    {
+      "source": "92f33380-7cd0-4492-b194-dc79b439deaa",
+      "target": "25973a73-a3c8-477c-bca1-401eb6542e53",
+      "relation": "serves as CFO of",
+      "articles": [
+        "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c"
+      ]
+    },
+    {
+      "source": "92f33380-7cd0-4492-b194-dc79b439deaa",
+      "target": "eb061459-1d77-4efb-876d-b86de85580ad",
+      "relation": "structured arrangement with",
+      "articles": [
+        "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c"
+      ]
+    },
+    {
+      "source": "25973a73-a3c8-477c-bca1-401eb6542e53",
+      "target": "eb061459-1d77-4efb-876d-b86de85580ad",
+      "relation": "made licensing deal with",
+      "articles": [
+        "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c"
+      ]
+    },
+    {
+      "source": "8af84a06-6439-411e-8f3c-2602b1911041",
+      "target": "25973a73-a3c8-477c-bca1-401eb6542e53",
+      "relation": "analyzed",
+      "articles": [
+        "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c"
+      ]
+    }
+  ]
+}

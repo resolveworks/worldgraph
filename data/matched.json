@@ -1,0 +1,2987 @@
+{
+  "graphs": [
+    {
+      "id": "abe00c10-bf87-48c8-bef6-3ec2d58aed60",
+      "entities": [
+        {
+          "id": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "name": "Meridian Technologies",
+          "occurrences": [
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "ac2bc5b6-8041-4cbf-8a8c-04d63e2d25bd",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "c7961f77-dbe0-4548-a6b1-d2d2edd1786d",
+              "name": "Lightwave Analytics"
+            },
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "7a1fb07f-1ac8-4f83-92ec-687478b43202",
+              "name": "San Francisco"
+            },
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "b7103c1c-e37f-444e-b4bb-0d75377cbdac",
+              "name": "James Xu"
+            },
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "342d4ec7-5bc5-4f54-88e4-fb6ebd882ef3",
+              "name": "Dr. Priya Sharma"
+            },
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "7762fe07-06c7-449d-a579-577013273d35",
+              "name": "Austin"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "3dc2e0b0-1df4-4514-b5f5-2d6a6fcb23b0",
+              "name": "Global AI Summit"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "d5552e45-1c9f-40bd-a7f1-2683f6a24e7e",
+              "name": "San Francisco"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "926aff22-1a34-4ca5-94ec-c5786799ef10",
+              "name": "Dr. Priya Sharma"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "e4b03dd2-03a1-4d84-8356-2561e5825a57",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "f4f2941e-2dad-40cb-b656-8ca84f3d4cfb",
+              "name": "Marcus Webb"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "fad9ffd0-c886-4437-be85-307ba7d11855",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "fb530fde-6ca4-46db-a6e3-3b2c25613a64",
+              "name": "Sarah Chen"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "6da812ae-16a7-40cf-91d3-22072dc6b655",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "f368cc20-56da-487f-8b37-f3c23a42b9e7",
+              "name": "Angela Torres"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "9397650c-1386-4905-b633-196e43e7fc84",
+              "name": "P. Sharma"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "0ea0fa49-909f-4e1c-a9dd-2f8048b924d8",
+              "name": "Global AI Summit"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "32010a41-2c93-44dc-9e14-1ea7ed9b3965",
+              "name": "M. Webb"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "dda010c6-46ec-4d41-950a-51cbddf1a48d",
+              "name": "Cascade-Meridian joint lab"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "87db721c-d1ba-4a74-9b58-fe8ee8ab0dea",
+              "name": "Pittsburgh"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "c9b8c258-a9ea-4eea-ba0e-c9151b1c463f",
+              "name": "S. Chen"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "b0ec8e61-b140-41f9-a788-17df62771f58",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "4207e878-4b41-495d-89bf-f66feaebc3f5",
+              "name": "machine learning"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "0cae0363-fafc-4d4d-9856-3071fcd56b49",
+              "name": "FTC Chair Torres"
+            },
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "2daa0677-0704-4f7b-9ed9-5e9941d5f19c",
+              "name": "San Francisco"
+            },
+            {
+              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+              "entity_id": "9428524e-5490-453b-a711-3028f5ca40be",
+              "name": "David Park"
+            },
+            {
+              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+              "entity_id": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+              "name": "NES"
+            },
+            {
+              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+              "entity_id": "ab7a459a-8cb5-4fcb-a081-82d0892dc190",
+              "name": "Sarah Chen"
+            },
+            {
+              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+              "entity_id": "05995e2f-2f98-4abe-855c-0bf977792757",
+              "name": "R. Tanaka"
+            },
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "ede453bc-38d3-4d37-9183-0370dfbe2c43",
+              "name": "Sarah Chen"
+            },
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "e68a3d3d-4d55-450f-9fd7-af7e253f2394",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "fbebfc53-3129-41ee-b796-9bd4e0a78d7d",
+              "name": "grid-scale battery storage program"
+            },
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "0c45791a-7a08-4425-b96b-2c3e28d7d52e",
+              "name": "David Park"
+            },
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "e653b807-1192-4b49-9837-7e50abf3d897",
+              "name": "Helios Power Group"
+            },
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "f9cb9b01-1e76-4cb8-a83c-37b7190647ad",
+              "name": "Robert Tanaka"
+            },
+            {
+              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+              "entity_id": "27149238-f22b-4e98-b8bc-532a53ef11b5",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+              "entity_id": "748eb1d5-c4e6-4187-abf0-2f4e303f04c3",
+              "name": "Lightwave Analytics"
+            },
+            {
+              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+              "entity_id": "3e5b3280-b681-4c0c-9e34-9beac91a81e5",
+              "name": "CloudScale"
+            },
+            {
+              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+              "entity_id": "a62895ff-e3cd-403c-930e-557249e92882",
+              "name": "Priya Sharma"
+            },
+            {
+              "article_id": "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+              "entity_id": "2c7831fd-33da-4b9d-b0d1-3453fd1934bf",
+              "name": "Meridian's cloud services unit"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "2e0fc980-baeb-46c7-99c1-dade8a42864e",
+              "name": "Ireland's Data Protection Commission"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "b2536d34-f56b-40a3-9f08-ac42fd176fc9",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "a5cfa1bb-9f86-4879-a0f7-bde8f9724c5d",
+              "name": "DataWatch EU"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "42988931-a5b2-4562-a58c-41230d3b822c",
+              "name": "Nils Bergstr\u00f6m"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "65a14ff1-ea8f-4fe9-8a14-d539686e7cce",
+              "name": "European users"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "17524744-48b6-4395-8976-92cd1f5d605c",
+              "name": "United States"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "559000fc-1eda-423d-bf12-c0c114f2d23e",
+              "name": "GDPR"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "963b3d51-0fb2-41cc-95a7-72ff0e66f98c",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "bc3cf608-aa05-4e3f-805b-ca335bf43fcc",
+              "name": "Berlin"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "ebf0d0d2-e62d-4663-b210-482fb2f5ba72",
+              "name": "Apex Ventures"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "21fab4eb-3900-436e-a272-ff9decf728c9",
+              "name": "Sequoia Capital"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "0961844d-edd9-4b6d-82f1-ef9769513563",
+              "name": "sovereign wealth funds"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "bede68b4-8c4c-456c-af42-ddf0ba232b2f",
+              "name": "Rolf Andersen"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "4fd9491b-ff4f-450e-ab32-6d4a6b98fb89",
+              "name": "Dresden facility"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "8c781fd4-9603-4a7e-8546-f4c8e1109f39",
+              "name": "Diana Chu"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+              "entity_id": "b120ec48-6dc0-4b12-b774-30faa5977b60",
+              "name": "pharmaceutical companies"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "3585ab69-33f9-459a-a861-2c111677c56a",
+              "name": "IBM Research"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "3a54549f-e439-4ee1-87d8-ab4bcd279128",
+              "name": "Dr. Elena Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "876ffcf3-1d15-471e-b457-4f23b6b512a3",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "bc15009f-faf2-475e-95ac-ab5e35a3ce29",
+              "name": "Heron processor architecture"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "90d0c74a-bbd3-42c3-adcb-cd26bbd07ecc",
+              "name": "Google"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "fa8a9d96-596d-43ea-88b3-8e9b244315b5",
+              "name": "Rolf Andersen"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "819faa72-6884-4066-a192-aa49cde20473",
+              "name": "Series C"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+              "entity_id": "b4e5ada8-e85e-4371-bfda-8fff601edcfc",
+              "name": "Apex Ventures"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+              "entity_id": "e11b8b43-47c6-4763-bd8d-cf88ea077210",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+              "entity_id": "7d6dcba7-fea7-468b-94d3-35d8f929a097",
+              "name": "Diana Chu"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+              "entity_id": "9700c409-0e96-46ff-8686-110f9c05057a",
+              "name": "Venture Desk"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+              "entity_id": "6b04d394-f873-408d-9e41-4606c8f7285f",
+              "name": "E. Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+              "entity_id": "79b8c0f1-3c1b-4c86-91d1-b8f8986b6dd0",
+              "name": "IBM Research"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "d48aa71d-aacd-4c72-ac4d-74659a19ac61",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "407a7475-427c-441b-8364-2305860f8b29",
+              "name": "LuminCore Technologies"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "acb9fee9-23b8-4c6f-a562-66896cb06d4c",
+              "name": "Eindhoven"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "abba61e9-56ff-40b8-baf6-a1cc4c566fa3",
+              "name": "ASML"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "a74d5297-a553-483a-bf8f-16c6572c9383",
+              "name": "Dr. Elena Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "607ffa8a-2cf1-4dd1-a387-a0c6e026928e",
+              "name": "Rolf Andersen"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "be2fe4cb-ffc5-4454-9cb4-d3ada5645fda",
+              "name": "Volta's hardware division"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "bdfdd748-1031-4f3e-a9c8-1480e695387e",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "78118620-c1a4-4d49-8f72-699c979e65e0",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "67a235d6-1857-489c-a305-830c77a11010",
+              "name": "European Commission"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "8eca67c0-6956-4efe-b10c-cad4a2002fbb",
+              "name": "Directorate-General for Competition"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "77db3471-c518-4bfb-bedb-47b384007b51",
+              "name": "Pieter van der Berg"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+              "entity_id": "d85d672a-0b29-4b18-9c11-f6f87de42414",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+              "entity_id": "2c19eca3-5023-481a-9cc4-7f6407fde31e",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+              "entity_id": "d79c2029-0040-4eb9-87d1-875db9282711",
+              "name": "IBM"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+              "entity_id": "3ae0b71a-cd1f-4eb0-a990-329a96bd6b9f",
+              "name": "Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+              "name": "TechForward Summit"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "04ac570f-92f3-49b0-b360-27f2b64453ed",
+              "name": "Amsterdam"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "7b900e4e-7383-4fc5-bd6a-47f038554b75",
+              "name": "Dr. Elena Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "6c776b6e-d2a6-4123-9905-1b855d7c3057",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "0231c9dd-7008-429f-8fd4-766ae0742d86",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "dca838d5-814f-41af-ab88-3ce1272a5a80",
+              "name": "Dr. Priya Sharma"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "baeaeb3d-a875-4123-b627-a01ba25fec61",
+              "name": "pharmaceutical industries"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "1ed54ef2-0430-4de0-8a8a-60abd383b68f",
+              "name": "semiconductor industries"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "cc297f02-9f3d-4b8c-96b1-053982f5307c",
+              "name": "AI-driven materials discovery"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "57c8ed80-d685-4123-abc8-649bc205bde4",
+              "name": "Elena Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "56a0b1f6-3383-4d98-9c80-117bed369e51",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "68e1f117-7dda-45b2-874f-5f1097a90baa",
+              "name": "Amsterdam"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "3f7cce8d-def9-4d67-99ce-f123da3d5bd0",
+              "name": "TechForward"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "78bf7d06-6eb2-4f89-bafb-4bb6f4dfd674",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "bff3f816-77cf-4078-831e-44689e193671",
+              "name": "EU competition regulators"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "9d0d2356-2e23-408f-bae7-78b9cf5168c9",
+              "name": "Atlas"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "42da89a9-0e99-4ecb-ae5f-6de8f2f537d7",
+              "name": "Dr. Priya Sharma"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "12cde9d5-f22d-4bcf-a5fc-ba54224d8bdb",
+              "name": "German quantum startup"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "2f0998bc-cac9-4ec5-ab3d-c2a564ab0dd5",
+              "name": "Dutch chipmaker"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "6cedc095-da57-43cc-800f-cd5f08cd4932",
+              "name": "TechForward Summit"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "badd129f-0b5d-453b-ba5e-732ad1051e81",
+              "name": "Amsterdam"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "36933cec-980f-4178-9d6d-9c9f6617f625",
+              "name": "Beurs van Berlage"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "c27a0cc5-c3a3-4a42-8bc6-470c283e0525",
+              "name": "Priya Sharma"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "851548e8-e59d-42ad-8e46-104d43af453c",
+              "name": "Elena Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "3f694d32-933d-404b-aded-b95463beafb8",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "f8b00920-120d-4c0b-be4c-5794e3a8928f",
+              "name": "IBM Research"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+              "entity_id": "7d70a50f-cc3e-4ff1-92a8-318b75bf71cf",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+              "entity_id": "663e60c0-fdc7-434f-9b26-992b07d9f6ec",
+              "name": "Andersen"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+              "entity_id": "f5c46cff-c372-46ce-a12a-b92dfb24eed1",
+              "name": "Apex Ventures"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+              "entity_id": "724243ec-38a7-4755-ab8d-4f38593f45d0",
+              "name": "Diana Chu"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+              "entity_id": "a9f5e7ba-951e-458c-9eb6-c29a79d9d40e",
+              "name": "European institutional money"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+              "entity_id": "24b3322c-754f-4be9-ba55-d14680bbebd4",
+              "name": "Saxony-based semiconductor fab"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+              "entity_id": "9ffde3f3-c569-484a-935f-def7b67fafae",
+              "name": "Pieter van der Berg"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+              "entity_id": "770ee036-d36a-4da0-bdd2-c488f4ee846a",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+              "entity_id": "b910bc9a-5907-493a-b102-75b4b14e53e9",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+              "entity_id": "1b4a2f76-7e7a-4a33-ac4c-a9cb660681cc",
+              "name": "Marta Hoekstra"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+              "entity_id": "0c171076-b287-459f-9720-98ed4408fd76",
+              "name": "Eindhoven"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "2a3c20f5-1fd2-4306-bfa3-34b7b509a050",
+              "name": "Volta Systems"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "b65206e7-8e82-44e2-b4a9-fe575d61e7d3",
+              "name": "Apex Ventures"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "6d39358f-a4a6-42d7-a58a-9c1824dd3e27",
+              "name": "LuminCore"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "2be1f9f7-f541-42e6-8114-4964d949aead",
+              "name": "EU"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "e705a842-e571-479b-88d1-98f3ff2b6ff2",
+              "name": "Rolf Andersen"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "876f32e2-11e4-4e59-9e9a-da68208e2254",
+              "name": "Dr. Elena Vasquez"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "a7072cd8-9e60-41cb-8cdc-d5c5e5b09e02",
+              "name": "Diana Chu"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "1cba35bf-fdd7-4a48-8855-96199af4eed3",
+              "name": "Halcyon Genomics"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "69a90007-73d2-4903-90e2-8d4b47c8b1db",
+              "name": "Oryza Therapeutics"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "74d60d58-1502-432f-bd8d-d27aaba6e24d",
+              "name": "San Diego"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "6a94ed6e-d52f-49ab-b829-8a5d21864160",
+              "name": "CRISPR"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "09ff7f04-92fd-45f2-8630-d766d30374cf",
+              "name": "Maple Syrup Urine Disease"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "02370fa5-07be-48ba-816e-af8e1c2aeb3c",
+              "name": "United States"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "4024ae16-1887-43b8-a885-b1632c0d9782",
+              "name": "Dominic Ferrara"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "b2b7432b-3b80-4152-933b-bbd832ea7782",
+              "name": "Dr. Lena Vasquez"
+            },
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "1f856eb3-3666-430e-a7b8-ab3c1a3f5c07",
+              "name": "European Parliament"
+            },
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "0ae1cd2d-ddda-40ea-ad3e-042fee205d9d",
+              "name": "Committee on Civil Liberties"
+            },
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "1d4c41d7-b54b-41a7-95d3-eab6cc3f3ee8",
+              "name": "Florian Hartmann"
+            },
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "4fa8e9b2-ba8d-44b1-ae6b-4d2b37913831",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "5e73bdfd-9624-4707-bfee-2f536e995078",
+              "name": "Angela Torres"
+            },
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "8800ecaf-d47b-4a9d-96f9-778205362ba0",
+              "name": "Maeve Clancy"
+            },
+            {
+              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+              "entity_id": "dac56add-0fcb-4b91-b982-beb4b5beb2c6",
+              "name": "Lightwave Analytics"
+            },
+            {
+              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+              "entity_id": "1aa721fb-9b02-4ebc-89d5-612fd6956905",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+              "entity_id": "cec19c43-5520-4ef5-9369-95debd2aa52c",
+              "name": "Dr. P. Sharma"
+            },
+            {
+              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+              "entity_id": "1768f552-b5ae-4b50-ae3f-aa8104d7d2e6",
+              "name": "Databricks"
+            },
+            {
+              "article_id": "afda7932-54e8-4a98-be6d-8d2f8944448f",
+              "entity_id": "4d8d1477-0ef4-49b8-8bf9-cdd1f9f151c6",
+              "name": "Snowflake"
+            },
+            {
+              "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "entity_id": "f6651fae-a623-430b-9299-afda412dbc6d",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "entity_id": "94ba19cd-122e-46d5-bb41-0216a054736e",
+              "name": "Ireland's data protection authority"
+            },
+            {
+              "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "entity_id": "c4a12d33-d652-4ea7-af27-901542727ec3",
+              "name": "DPC"
+            },
+            {
+              "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "entity_id": "26b5d573-2e23-43ac-8901-cff3fc6bb0cf",
+              "name": "DataWatch EU"
+            },
+            {
+              "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "entity_id": "57098cdc-4b1f-4d05-b623-fe21fa40bc1a",
+              "name": "EU data transfer rules"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "6041412c-8591-4559-9246-8877ce87db61",
+              "name": "Federal Trade Commission"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "68e47fb1-7e72-4298-ba37-69101b51a7cf",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "473285a1-f95e-4528-a54a-baa7151d5b8c",
+              "name": "Lightwave Analytics"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "d6986cef-e640-49fe-83b0-e2a0bbfe3d7f",
+              "name": "Angela Torres"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "305ea994-33cd-4c09-be4e-8d911bf9e3cf",
+              "name": "Laura Kim"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "bb06f5a5-3e33-46cc-9233-25c1663535c2",
+              "name": "Dr. Priya Sharma"
+            },
+            {
+              "article_id": "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+              "entity_id": "0b5ac2bd-f508-43e0-ae04-038c848f6958",
+              "name": "real-time data analytics market"
+            },
+            {
+              "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+              "entity_id": "e70d18ef-341c-4cae-9081-24d5c99bae46",
+              "name": "Dr. Lena Vasquez"
+            },
+            {
+              "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+              "entity_id": "3c6476e6-0a74-4e49-bba2-f8ce08fc55e2",
+              "name": "Oryza Therapeutics"
+            },
+            {
+              "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+              "entity_id": "fb4122fc-59fc-4ec0-baaf-edae0b92ccc2",
+              "name": "Halcyon Genomics"
+            },
+            {
+              "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+              "entity_id": "44a6b820-c4a4-471c-93b3-7f09c50dc814",
+              "name": "Ferrara"
+            },
+            {
+              "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+              "entity_id": "3f465024-eaa9-484f-b751-3336329c28c3",
+              "name": "Hart-Scott-Rodino"
+            },
+            {
+              "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+              "entity_id": "09091280-5ca0-4c9a-959b-09adde541f15",
+              "name": "DataWatch EU"
+            },
+            {
+              "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+              "entity_id": "6eea26d0-73e8-4b0b-a9b6-329eccf3e153",
+              "name": "Data Protection Commission"
+            },
+            {
+              "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+              "entity_id": "674c66cb-3c2c-4484-bb09-1ea725ccc9b6",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+              "entity_id": "872277fb-89f5-44e8-9106-6dd27816cfc2",
+              "name": "Hanseong"
+            },
+            {
+              "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+              "entity_id": "80a04a15-b948-4ce6-85ec-5d56cc55fd11",
+              "name": "Nils Bergstr\u00f6m"
+            },
+            {
+              "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+              "entity_id": "8da61e1b-1a7c-4375-a1a1-2ef1a1de0af6",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+              "entity_id": "57fe9e0e-dbb3-46b8-b36e-a513d68a738c",
+              "name": "Data Protection Commission"
+            },
+            {
+              "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+              "entity_id": "d655d41a-18c4-4031-a38d-7d734cd3ffd7",
+              "name": "Nasdaq Stockholm"
+            },
+            {
+              "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+              "entity_id": "7e6d0779-a4a0-46d1-811f-e9c76ccf8e9f",
+              "name": "EuroPrivacy Wire"
+            },
+            {
+              "article_id": "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+              "entity_id": "947c7ba4-0591-4cd6-8cec-8d89a9d52be4",
+              "name": "South Korean firm"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "c5b2f62f-e10c-46b6-bf20-de5b80810dad",
+              "name": "Halcyon Genomics"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "4972b93f-366c-487b-8f18-08ca41c5b531",
+              "name": "Oryza Therapeutics"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "9a6bc447-052e-41f9-9299-53db4f076d76",
+              "name": "San Francisco"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "48fd0de4-48dc-4ecd-b666-1831dc9890fa",
+              "name": "Linden Capital Markets"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "716a00ba-e100-47c2-9a00-54b1f06198d3",
+              "name": "Ferrara"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "f3b1bc3b-56c6-4f85-80f9-329717fbe1a2",
+              "name": "Dr. Vasquez"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "73bb29f0-e3c2-45d0-a62b-bd7bbdf0a58f",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "cd261607-d65e-4515-ab85-e23da1f4d1de",
+              "name": "Lightwave Analytics"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "6163ef2c-5ca6-417a-aeb6-816912bd6e01",
+              "name": "FTC"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "ecfbc912-cad4-435e-9c67-dd21452cd96d",
+              "name": "Commissioner A. Torres"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "e1222cc8-0fb3-427d-81d9-cf6e4cf7c860",
+              "name": "P. Sharma"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "97d1a986-e58f-4c23-854a-d5c3d701e1a6",
+              "name": "James Xu"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "f2c059a2-d4bc-43cd-b8a6-3e22436fe094",
+              "name": "cloud analytics sector"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "f32ad5d8-0bb2-4eda-9300-b9b1e5b5ac57",
+              "name": "data processing"
+            },
+            {
+              "article_id": "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+              "entity_id": "764075c0-c73b-4dd7-92bd-688828705920",
+              "name": "cloud infrastructure"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "e1ee59d5-9203-42f5-98c7-f28e4977ee69",
+              "name": "Nils Bergstr\u00f6m"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "342434e0-066c-49f6-ab80-529e47e4db1e",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "21d27c9d-52a4-4de4-be9c-f838c08d79c9",
+              "name": "Frankfurt"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "cd31c94f-d24d-471f-8830-a197a110dc42",
+              "name": "Amsterdam"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "efc8b4a1-8560-4693-8632-e76d3bd276dc",
+              "name": "DataWatch EU"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "bdeeee1f-4626-49ba-8588-794f6bbbe5a4",
+              "name": "DPC"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "54c286f7-5421-478c-a02c-9dd4ae320e35",
+              "name": "Ji-Yeon Kwon"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "abef3e6a-8728-4d50-b93c-9917956a0271",
+              "name": "Hanseong Group"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "b53bc9c1-c7e6-4b61-bd51-cbfbd5ed4593",
+              "name": "European AI Policy Forum"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "437ea9ed-9966-45a4-8c0e-a80bb771e456",
+              "name": "Brussels"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "8cf4a376-6344-420b-ac8e-a8684b1a4357",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "d6bda873-42a0-4f60-99cf-254a40542df7",
+              "name": "Centre for European Technology Policy"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "59b0829b-9c85-4d34-ad57-b5c19a784e99",
+              "name": "European Commission"
+            },
+            {
+              "article_id": "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+              "entity_id": "204159c4-2360-4f94-8c8c-74e6eea36483",
+              "name": "FTC"
+            },
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "16678552-e282-49fb-aa89-2fcc78750b6d",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "aacc2862-54d2-4d78-a203-00a72f2542a9",
+              "name": "Sarah Chen"
+            },
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "797e1393-1645-403f-a001-d25a6c33adbf",
+              "name": "David Park"
+            },
+            {
+              "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+              "entity_id": "07133805-5b31-4660-8aa6-662ed199f293",
+              "name": "Hanseong Group"
+            },
+            {
+              "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+              "entity_id": "453f1516-b70d-496e-bce5-4c9cb4001e5b",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+              "entity_id": "f30ec9e6-085c-443e-bbf6-74957e414f22",
+              "name": "Ji-Yeon Kwon"
+            },
+            {
+              "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+              "entity_id": "9c034248-efb7-4c9f-939e-7a44b0a827af",
+              "name": "Europe"
+            },
+            {
+              "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+              "entity_id": "90942c83-d324-41fb-a328-d8629dae198c",
+              "name": "Ireland"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "0ceb4fe4-d709-4d68-8241-63e7602afe6f",
+              "name": "Port of Galveston"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "2b66c998-f4f9-434f-a85c-ccff18638085",
+              "name": "Stelmark Freight"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "9f648b3d-1a1a-4d6b-9441-5ec8e6718cb0",
+              "name": "International Longshoremen's Association"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "0438a987-df61-41e5-b731-c2aa382f0900",
+              "name": "Department of Transportation"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "fde2f734-74c5-4930-9e89-e740338eabdd",
+              "name": "Clyde Okafor"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "0f9ba390-7e83-43f5-bd12-792e41d01813",
+              "name": "Miriam Solano"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "d34e700d-249c-4938-a203-435b8fbadb61",
+              "name": "ILA's Gulf Coast district"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "b974f6be-8bed-4c3a-a4a7-c207573cb785",
+              "name": "Port of Savannah"
+            },
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "6e1b2a2b-3c8c-4220-88ad-5584bd3e9d2b",
+              "name": "Port of Long Beach"
+            },
+            {
+              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+              "entity_id": "4c06df6f-e8a5-422e-9a3a-502e3297d9ca",
+              "name": "David Park"
+            },
+            {
+              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+              "entity_id": "86da5c14-a017-4251-91d5-39716196c89d",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+              "entity_id": "17bd50f4-e1d1-4724-b4be-69b4c62179a2",
+              "name": "Marcus Webb"
+            },
+            {
+              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+              "entity_id": "c6e82322-d079-4904-80c3-f75939cf84a0",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+              "entity_id": "7ab07549-e6f9-48e9-8986-1a9d8a8e761f",
+              "name": "Pittsburgh"
+            },
+            {
+              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+              "entity_id": "7d35436b-fbbc-4175-96e7-c999c096c7e9",
+              "name": "Sarah Chen"
+            },
+            {
+              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+              "entity_id": "ad622e46-d5ca-43ea-ae8f-1797e88d17f3",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+              "entity_id": "0277ffa4-d56e-47fa-89b4-0409d29e1b1a",
+              "name": "David Park"
+            },
+            {
+              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+              "entity_id": "bb755ee2-6e44-4481-83d0-f9fd4ca0ffbe",
+              "name": "Robert Tanaka"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "7e0abbb0-9ef6-46bf-aba1-4f5d12fda71a",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "e09b12c3-2486-44e5-85b3-0a517b5dda5e",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "db6185a5-f655-4305-99e3-68b9e71e9cf3",
+              "name": "James Xu"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "c54b25a8-0581-45cb-9df1-4a737405f805",
+              "name": "Marcus Webb"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "b20101b2-0b5d-43a6-abd6-86fecf7be106",
+              "name": "AI-powered automation systems for industrial logistics"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "51ab9960-497a-478b-951d-1e114dba1ae5",
+              "name": "Meridian's cloud AI platform"
+            },
+            {
+              "article_id": "de309c6d-c824-478f-afeb-90b8b9cde06a",
+              "entity_id": "adf9393d-c547-4ba7-943f-ea1e4ee3bc4a",
+              "name": "Cascade's autonomous robotics hardware"
+            },
+            {
+              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+              "entity_id": "ed70fee5-b496-442f-9a09-979fa1226a6b",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+              "entity_id": "8da81a3b-cd35-4478-83c6-427a1bb18d1a",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+              "entity_id": "282f70a3-6857-425d-9e3a-787e2d14e233",
+              "name": "Marcus Webb"
+            },
+            {
+              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+              "entity_id": "81259e92-2ed7-44c9-b760-ee6eb051b296",
+              "name": "Lightwave"
+            },
+            {
+              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+              "entity_id": "482ad5ab-89fa-45b5-b7ac-d582dbed2c20",
+              "name": "Pittsburgh"
+            },
+            {
+              "article_id": "e160a592-867e-4e0e-9689-8c4a61839c83",
+              "entity_id": "ed3df479-a318-48ec-a1d3-6c4a46773d39",
+              "name": "Automation World Expo"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "e07df7bd-b695-4f5f-8a54-4745284ce6ce",
+              "name": "Ireland's Data Protection Commission"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "0ac4eea3-1df0-4a55-93df-2cf7c26cc7a7",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "679f0c0d-f396-4ba4-8ff4-b061b8043db0",
+              "name": "GDPR"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "014a60e7-de28-44fa-b78d-ba73d042a29c",
+              "name": "Nils Bergstr\u00f6m"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "8b9c00a8-c8db-4f60-abde-0e317113cff8",
+              "name": "DataWatch EU"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "4b926e9a-0cfe-4b51-a6e7-f00b57c34f62",
+              "name": "Frankfurt"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "9d70bdba-a60c-452a-bcd1-dd17f9181c64",
+              "name": "Amsterdam"
+            },
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "e0f9d480-bb7b-43b9-9b66-822a44be1f35",
+              "name": "Hanseong Group"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "37658723-375f-4080-8eab-f6327750dda6",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "69c3b7a6-605b-4a06-82c0-8aff0be1473e",
+              "name": "Hanseong Group"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "6c6811bc-ddeb-4948-b367-49bbab9888bf",
+              "name": "Nils Bergstr\u00f6m"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "463cb870-658c-4fe0-a40a-b15e2f7f97f5",
+              "name": "Ji-Yeon Kwon"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "f975a56d-9766-45b6-aa84-8d67cff83d64",
+              "name": "Korea Finance Today"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "df887d0c-a26b-4559-ad1a-597665782c29",
+              "name": "TechBrief Europe"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "e67f7b91-3ea2-41eb-a3ec-2d2bdc555916",
+              "name": "Port of Galveston"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "f36befe8-2588-4ab9-82ca-1090360beb10",
+              "name": "International Longshoremen's Association"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "35529127-1e89-423b-86aa-453f9077ec8e",
+              "name": "Stelmark Freight"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "272c7151-77a0-48ab-b667-d47c39746178",
+              "name": "Clyde Okafor"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "6cba8b63-3671-42c1-ae6f-dedb3c2af0c5",
+              "name": "Miriam Solano"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "8fe919bc-864a-4482-903b-6c6ee30f5249",
+              "name": "Bernard Tran"
+            },
+            {
+              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+              "entity_id": "259bf9d6-b529-48b9-8a5b-1a583f60f751",
+              "name": "David Park"
+            },
+            {
+              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+              "entity_id": "77a0acc7-9e77-408a-803b-66fe8c7b536e",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+              "entity_id": "8618d0a0-a931-4534-8990-7205eb1528e2",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+              "entity_id": "3115a319-ef91-4f13-aca2-44ad9e886b1b",
+              "name": "Webb"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "4e6c767b-2951-4352-9c0c-f6a9546b6e19",
+              "name": "Vantara AI"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "f6249cf8-fec6-4a38-b014-2b9a91d0b93e",
+              "name": "Hanseong Group"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "d55a67aa-88c5-4bcc-aeb9-22484b4c060f",
+              "name": "Sweden"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "dafb9e83-6f12-46f2-93a4-0201d4d792bd",
+              "name": "Ji-Yeon Kwon"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "bad5bbd7-2a09-48a3-af58-7b19dd2a3d4a",
+              "name": "GDPR"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "f48f0e22-d94f-4626-b82e-a15396441bca",
+              "name": "Ireland"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "0f1e8e6a-e0be-4d23-8df0-16788318df03",
+              "name": "Bergstr\u00f6m"
+            },
+            {
+              "article_id": "f5a893f0-6851-418c-a368-382915967333",
+              "entity_id": "7575c8f6-0ac5-4059-a946-f5dff4047183",
+              "name": "Meridian Technologies"
+            },
+            {
+              "article_id": "f5a893f0-6851-418c-a368-382915967333",
+              "entity_id": "84abe773-bc03-48cd-a9d1-ecbb73045246",
+              "name": "Lightwave Analytics"
+            },
+            {
+              "article_id": "f5a893f0-6851-418c-a368-382915967333",
+              "entity_id": "e144ec4d-853e-46d8-8ed4-7e8659bae720",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "f5a893f0-6851-418c-a368-382915967333",
+              "entity_id": "e2f7f9ab-4494-429e-aad9-290358f66974",
+              "name": "J. Xu"
+            },
+            {
+              "article_id": "f5a893f0-6851-418c-a368-382915967333",
+              "entity_id": "fd6ef0ff-d7ef-4274-9e40-4ef8e022abc3",
+              "name": "Morgan Stanley"
+            },
+            {
+              "article_id": "f5a893f0-6851-418c-a368-382915967333",
+              "entity_id": "0bc351b0-7ea1-418d-b05e-f8edd5f12816",
+              "name": "Palo Alto"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "25973a73-a3c8-477c-bca1-401eb6542e53",
+              "name": "Hanseong Group"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "e8518af5-1f16-4b1b-8a9c-18462646baf7",
+              "name": "Seoul"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "1a6de57d-f8ce-4cbc-a8be-9d203447d813",
+              "name": "Cho family"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "92f33380-7cd0-4492-b194-dc79b439deaa",
+              "name": "Ji-Yeon Kwon"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "eb061459-1d77-4efb-876d-b86de85580ad",
+              "name": "Vantara"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "8af84a06-6439-411e-8f3c-2602b1911041",
+              "name": "Mirae Asset"
+            },
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "59d3d0ac-f51c-4276-99c7-721e21923cbf",
+              "name": "Miriam Solano"
+            },
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "e1c42913-d2e4-4953-8641-b8a14560e2d1",
+              "name": "Stelmark Freight"
+            },
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "f27113ad-28ce-4191-8d5b-9967cc4aedce",
+              "name": "Houston"
+            },
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "97e73f6d-f248-4832-9080-6f50ad1d6d38",
+              "name": "Galveston"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "08d050de-289b-4f44-ae09-185264c90429",
+              "name": "Cascade Robotics"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "10408560-4205-4ac3-b334-79e244e5224c",
+              "name": "Meridian Tech"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "4388c3a1-82fc-4ae7-bcf9-7c884838f73e",
+              "name": "D. Park"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "75c5a420-73d0-4f87-a959-b6b8978fa8f1",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "d4ae9d8d-3434-4188-9582-340e1ce5a46b",
+              "name": "Teresa Nakamura"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "8c6507a5-6e1a-4dd8-9c0d-a7ef12846dc9",
+              "name": "CloudScale"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "6837d5f0-1bb5-4d5b-b298-9efc5c784c68",
+              "name": "Marcus Webb"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "b04b3fde-6d92-480e-835e-ab83b4ee8479",
+              "name": "Northveil Energy Partners"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "5a58979d-8d51-4aba-9b88-a4e384f2a04b",
+              "name": "Sustain Ratings"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "26068a85-4512-4c62-bdc4-84ec433c7c16",
+              "name": "Houston"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "57c9fe79-82c1-43f4-856e-609fa443f0c5",
+              "name": "West Texas"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "7d479859-900e-456e-8b53-127d3e029095",
+              "name": "Permian Basin"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "c4eceea3-e7bd-45fd-8d95-644ccee53d42",
+              "name": "Warren Gault"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "a0d32bc2-038e-4f08-91e9-ab142f8bcf07",
+              "name": "Halcyon Genomics"
+            },
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "1b95a831-dc54-4eaf-8792-859514123fc8",
+              "name": "green bond market"
+            },
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "c7062230-5a75-4603-9fa3-c40d4dc3ba7a",
+              "name": "Sustain Ratings"
+            },
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "446870ab-3e6a-452b-ab7a-4364b39d4152",
+              "name": "Northveil Energy Partners"
+            },
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "7197e77d-b085-46fb-b4a3-15ca627f55ae",
+              "name": "Warren Gault"
+            },
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "a7579e4d-c904-481c-a1b4-f60bc878ef19",
+              "name": "FTC Commissioner Angela Torres"
+            },
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "061085d6-7b25-40e7-b49d-e3279c1bfd0f",
+              "name": "satellite methane data"
+            },
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "5ce6e00b-1d68-40ff-acc7-4a7a22f94571",
+              "name": "bond offering"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "abed05ec-4ca1-4cb9-b77e-c261b9ec25d8",
+              "name": "Northveil Energy Partners"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "f81b08dc-8ad0-4f61-810f-edadbc592339",
+              "name": "West Texas"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "3ca4e85b-1fec-4968-a524-286fd4e464b2",
+              "name": "Culberson County"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "dd0b486b-a605-4cc1-bbb7-b7bb2f4e6d89",
+              "name": "Warren Gault"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "b877d370-31aa-4558-9518-14fb1a4e235f",
+              "name": "ERCOT grid"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "56ef6197-7de0-4888-8636-963083802030",
+              "name": "Sustain Ratings"
+            },
+            {
+              "article_id": "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+              "entity_id": "8a83ad05-6c0f-43d5-8125-a99d31162c38",
+              "name": "European manufacturer"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "fc0fffcd-4299-43cb-9bb6-bda77236fbb6",
+              "name": "Halcyon Genomics"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "3e5ab114-7296-4372-9d96-1adc06f095dd",
+              "name": "Northveil Energy Partners"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "c6ae5123-66f8-426b-8417-ad08245231e5",
+              "name": "Linden Capital Markets"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "8c8e3cca-991f-42fc-8f19-065c8df79513",
+              "name": "Orion Healthcare Equity"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "f1881094-de86-4cbd-8029-51ea00020b9d",
+              "name": "Kevin Fitch"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "2423de1e-42d0-4e92-8d94-df2fb14789d5",
+              "name": "Oryza"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "1c34cb3f-d343-4509-9a7c-3b5442b5df40",
+              "name": "Dominic Ferrara"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "861fa8de-9984-432a-b6a8-e87a384bd5b0",
+              "name": "Dr. Lena Vasquez"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "aed670c7-18f6-4942-9d4c-9fd339644424",
+              "name": "Northveil bond"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "c1f6887c-2fef-413c-a134-6347a851d34a",
+              "name": "Stelmark Freight"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "9657b038-3980-4d44-ad38-5f031805cfba",
+              "name": "Port of Galveston"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "9de0fb5a-01ea-4655-a397-9e14d7c40f06",
+              "name": "ILA"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "97827025-b11e-4862-a34a-56412ce3f888",
+              "name": "Clyde Okafor"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "445e28c9-3c1b-4161-a574-d1558a9f081f",
+              "name": "Miriam Solano"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "deea671a-3883-48a7-b548-523bbb806011",
+              "name": "Bernard Tran"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "e7106e57-19e9-4725-a6e4-2ede7fdc1ac2",
+              "name": "Renata Solis"
+            },
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "415dc689-12bc-41b4-a09a-270a4384a946",
+              "name": "Dr. Lena Vasquez"
+            },
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "467fd754-7d69-4ab7-b084-7dd72fbdde80",
+              "name": "Halcyon Genomics"
+            },
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "595a0494-9b8f-44ab-bfa2-0d3335d7d0bc",
+              "name": "Oryza Therapeutics"
+            },
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "0550a68c-fc65-4828-9aee-1f9d81fb2a22",
+              "name": "National Rare Disease Coalition"
+            },
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "6c653207-ca97-43d6-bfa5-ede1cb5b5931",
+              "name": "Dominic Ferrara"
+            },
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "97c51e86-d471-445b-b25b-ecda9848f3b4",
+              "name": "Washington, D.C."
+            }
+          ]
+        },
+        {
+          "id": "237bda7f-35b2-4c90-b397-7e12deadebd4",
+          "name": "Lightwave's real-time analytics platform",
+          "occurrences": [
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "0a665df7-6b73-496a-81ed-0f477f812bf6",
+              "name": "Lightwave's real-time analytics platform"
+            }
+          ]
+        },
+        {
+          "id": "8b8987d0-4211-43cc-8138-cb5fd4f8596b",
+          "name": "Meridian's cloud infrastructure division",
+          "occurrences": [
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "fbbfc33c-f811-47a5-924f-49d723213c75",
+              "name": "Meridian's cloud infrastructure division"
+            }
+          ]
+        },
+        {
+          "id": "90b6bfa1-177c-45d2-9915-ca7aa3579e64",
+          "name": "TechWire Daily",
+          "occurrences": [
+            {
+              "article_id": "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+              "entity_id": "595f5995-8372-41b3-9ec0-aca11675cb32",
+              "name": "TechWire Daily"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+              "entity_id": "8e125ba2-3613-429d-9ce0-1b1627d9241c",
+              "name": "Semiconductor Week"
+            }
+          ]
+        },
+        {
+          "id": "1949efd9-5afa-47c1-8a92-08ce69d518d5",
+          "name": "Lightwave Analytics",
+          "occurrences": [
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "81d1ac43-861c-45b5-b283-d839a079ab56",
+              "name": "Lightwave Analytics"
+            }
+          ]
+        },
+        {
+          "id": "32026233-5968-4acb-ad93-52fa1331c3ec",
+          "name": "FTC",
+          "occurrences": [
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "547af63b-9ce2-4923-b800-3bbe9cab78c6",
+              "name": "FTC"
+            }
+          ]
+        },
+        {
+          "id": "95622a3e-63a4-4ff0-8d64-1277aeac95c7",
+          "name": "Raymond Liu",
+          "occurrences": [
+            {
+              "article_id": "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+              "entity_id": "6b85e34c-f805-46c5-adcb-b6e59941b6c5",
+              "name": "Raymond Liu"
+            }
+          ]
+        },
+        {
+          "id": "4ad15592-08cd-498c-b561-473e0e2dca77",
+          "name": "Lightwave Analytics",
+          "occurrences": [
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "26cac3aa-9d56-4cd2-959f-709fa64ec903",
+              "name": "Lightwave Analytics"
+            }
+          ]
+        },
+        {
+          "id": "7d4cb520-047c-44a1-9424-b4812466ea03",
+          "name": "Meridian",
+          "occurrences": [
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "69e6995b-123b-4f14-a163-c59db6b2202e",
+              "name": "Meridian"
+            }
+          ]
+        },
+        {
+          "id": "2abc35b1-b65f-46a9-9c6c-5990594ea021",
+          "name": "Cascade Robotics",
+          "occurrences": [
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "ad6bd800-7323-4f61-a10e-2a6ac2c2eed4",
+              "name": "Cascade Robotics"
+            }
+          ]
+        },
+        {
+          "id": "64877739-0156-486b-96f4-29dc9e493313",
+          "name": "Meridian-Lightwave deal",
+          "occurrences": [
+            {
+              "article_id": "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+              "entity_id": "17e1e6ef-c9da-4001-933a-44ac470974ab",
+              "name": "Meridian-Lightwave deal"
+            }
+          ]
+        },
+        {
+          "id": "68eeeaad-9dcb-4639-924d-cbe02de70884",
+          "name": "BioPharma Dispatch",
+          "occurrences": [
+            {
+              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+              "entity_id": "3ddc0ca9-5ece-4d8e-ac91-e58b32e399b6",
+              "name": "Nextera Energy Solutions"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+              "entity_id": "d0cbf147-c075-4ce2-bf99-b86c1d2c2e2b",
+              "name": "U.S. tech firms"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "dc9bbdf0-22c9-4780-a435-c7408d4964bd",
+              "name": "Berlin startup"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+              "entity_id": "0461dca7-f679-4943-aa1b-1833b1de016b",
+              "name": "European Union"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+              "entity_id": "7d3de5f2-ac84-4eac-98d6-17f644a8c896",
+              "name": "Commission"
+            },
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "be9a2e2d-88f0-4e9b-b977-7752da390d89",
+              "name": "EU"
+            },
+            {
+              "article_id": "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+              "entity_id": "22270923-4023-49d4-bfcc-b8bde1d43024",
+              "name": "BioPharma Dispatch"
+            },
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "b49dd714-914e-4909-91dd-f2d25e49de04",
+              "name": "The Pharma Ledger"
+            },
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "012f102b-2fcf-4b8b-8e4a-385d840c45e9",
+              "name": "Financial Times Nordic"
+            },
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "98624227-3144-4b32-854c-8e9189d63931",
+              "name": "CEO"
+            },
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "35e0c4d1-566f-4483-b043-3a82eebf7187",
+              "name": "COO"
+            },
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "ed3f659e-2e0c-42cc-844c-1bfe025ef667",
+              "name": "board adviser"
+            },
+            {
+              "article_id": "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+              "entity_id": "ea2d0a37-80d2-485a-8f94-7b62a799abb8",
+              "name": "Seoul"
+            },
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "51e70ed3-6acb-4712-8bdd-d9f960cf5cf4",
+              "name": "Asia-Pacific"
+            },
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "13147844-6a8b-49a6-9424-c7ae50b29d3c",
+              "name": "DOT"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "a1249770-7df5-42cf-bf3e-3be22dbcfd1a",
+              "name": "European servers"
+            },
+            {
+              "article_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+              "entity_id": "a9b7ae0a-08f9-4081-82f9-e64ec01280a5",
+              "name": "Asian Investor Review"
+            },
+            {
+              "article_id": "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+              "entity_id": "63c846a7-a97c-4ebb-a6d0-57265c18955e",
+              "name": "Hanseong's board"
+            },
+            {
+              "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+              "entity_id": "eb8e6e23-511e-41f2-9c4f-3159a8f14ee0",
+              "name": "Pittsburgh"
+            },
+            {
+              "article_id": "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+              "entity_id": "0395faf9-c2c4-4709-a205-9d9197d71f52",
+              "name": "BioPharma Dispatch"
+            },
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "8cc478da-0550-4fc7-b04f-7b9835580582",
+              "name": "eastern container berths"
+            }
+          ]
+        },
+        {
+          "id": "8a150ebd-963e-4433-8b79-efc0a7c0ad23",
+          "name": "Helios Power",
+          "occurrences": [
+            {
+              "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+              "entity_id": "27cfe7bf-be3b-461a-8d7b-9252c25d6c6c",
+              "name": "Helios Power"
+            }
+          ]
+        },
+        {
+          "id": "df9f6869-2bf8-4946-84ef-280ccf131532",
+          "name": "Nevada",
+          "occurrences": [
+            {
+              "article_id": "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+              "entity_id": "b09624e0-d095-4f65-87d1-d99e5b76d437",
+              "name": "Nevada"
+            }
+          ]
+        },
+        {
+          "id": "4851e6d8-847e-4d19-b75c-cbb8b63c803b",
+          "name": "IBM's Yorktown Heights lab",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+              "entity_id": "f8f57dcd-544f-46d4-90c3-bbba20565942",
+              "name": "IBM's Yorktown Heights lab"
+            }
+          ]
+        },
+        {
+          "id": "c8e59b2c-af82-41bf-8bf6-cdb462ced57a",
+          "name": "IBM Research",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+              "entity_id": "935e7268-44b7-41d1-9da1-75b7e095527b",
+              "name": "IBM Research"
+            }
+          ]
+        },
+        {
+          "id": "357d5ae3-6b7f-4420-9f5b-b37ab4defeec",
+          "name": "European Commission",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+              "entity_id": "92ea063e-97da-409e-b01a-4d5216637a92",
+              "name": "European Commission"
+            }
+          ]
+        },
+        {
+          "id": "8c78365a-4714-4c34-80eb-3b3d09ebeb6a",
+          "name": "EU",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "d8ebb6b2-0c58-43a8-aa01-56983c0872ff",
+              "name": "EU"
+            }
+          ]
+        },
+        {
+          "id": "ab99c538-f34a-4eb4-9013-7d5e32e439b8",
+          "name": "utilities",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "55394769-6736-4a48-b5cc-e4189805c82d",
+              "name": "utilities"
+            }
+          ]
+        },
+        {
+          "id": "69bc2816-69a4-450a-b679-55a6c7cc48f6",
+          "name": "grid operators",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "1684af4a-79e5-41bb-ac6d-9cd0038498ee",
+              "name": "grid operators"
+            }
+          ]
+        },
+        {
+          "id": "3f5c3560-90ed-4196-9dfc-a9108af93621",
+          "name": "hardware modularity",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "d48e311b-5fec-4f44-bdb3-4c7372c01e9f",
+              "name": "hardware modularity"
+            }
+          ]
+        },
+        {
+          "id": "15a1f8b4-993f-4a22-91ce-8866f6196b8e",
+          "name": "the regulation gap in deep tech",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "90bd8baf-347b-4f4c-b797-d915af4e46cf",
+              "name": "the regulation gap in deep tech"
+            }
+          ]
+        },
+        {
+          "id": "d33b5aa3-7ca3-4f21-8f96-072b310ae13a",
+          "name": "when AI meets quantum",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+              "entity_id": "769c25ec-f037-40f2-922a-ca8826ab2665",
+              "name": "when AI meets quantum"
+            }
+          ]
+        },
+        {
+          "id": "406a6e32-695a-4a05-8c06-d4b9bf4d6e60",
+          "name": "Volta Systems",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+              "entity_id": "87c61731-e9f0-4a27-bed9-e5d783a61b35",
+              "name": "Volta Systems"
+            }
+          ]
+        },
+        {
+          "id": "09c3e3a1-b776-4d7e-ae7c-bed051ab9ad7",
+          "name": "European Commission",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+              "entity_id": "a737a4f6-28bb-46bf-82ed-d0fd565dfed0",
+              "name": "European Commission"
+            }
+          ]
+        },
+        {
+          "id": "7e8f7d1a-50f0-45d7-95aa-27372c1cbf36",
+          "name": "IBM Research",
+          "occurrences": [
+            {
+              "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+              "entity_id": "43555fb2-015e-4159-ad71-579c3f1a3e25",
+              "name": "IBM Research"
+            }
+          ]
+        },
+        {
+          "id": "fdfb0a30-11ec-48e2-8f23-fe252c604e00",
+          "name": "Germany",
+          "occurrences": [
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "03ea687e-30c5-400a-b589-21fafa099a81",
+              "name": "Germany"
+            }
+          ]
+        },
+        {
+          "id": "cedc8e25-bf1a-4217-96cb-9306dcb25248",
+          "name": "FTC",
+          "occurrences": [
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "674657bd-eff7-4ef0-ab54-8543c3bdc933",
+              "name": "FTC"
+            }
+          ]
+        },
+        {
+          "id": "48c6e79f-f478-4aa9-8f41-a915f4585924",
+          "name": "DPC",
+          "occurrences": [
+            {
+              "article_id": "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+              "entity_id": "1f14cc40-246a-4273-a661-57c406afc530",
+              "name": "DPC"
+            }
+          ]
+        },
+        {
+          "id": "7dcad626-c3d1-4e58-aa6e-5c7545040614",
+          "name": "Vantara's Stockholm offices",
+          "occurrences": [
+            {
+              "article_id": "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+              "entity_id": "e44b4147-3a18-4b75-93b5-e3017bb49f87",
+              "name": "Vantara's Stockholm offices"
+            }
+          ]
+        },
+        {
+          "id": "1f67f9bb-f825-4f3c-9120-fe9c3cdfbccb",
+          "name": "UC San Diego",
+          "occurrences": [
+            {
+              "article_id": "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+              "entity_id": "69110896-48af-4490-b406-3ecb5ffdf7a2",
+              "name": "UC San Diego"
+            }
+          ]
+        },
+        {
+          "id": "0cc30bc4-315c-4452-9d61-1cb567bb65b4",
+          "name": "European data",
+          "occurrences": [
+            {
+              "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+              "entity_id": "2703ba4c-204b-408f-a53a-6bb2bb1c0637",
+              "name": "European data"
+            }
+          ]
+        },
+        {
+          "id": "1c887e1a-6ea5-433c-862d-ffea03c8c6f6",
+          "name": "DPC",
+          "occurrences": [
+            {
+              "article_id": "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+              "entity_id": "2aa84a60-8fc0-466e-b918-a9a072fdaa45",
+              "name": "DPC"
+            }
+          ]
+        },
+        {
+          "id": "df87383e-6af7-488c-b61a-ac106fd0e73b",
+          "name": "XBI index",
+          "occurrences": [
+            {
+              "article_id": "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+              "entity_id": "14e3fc86-e22c-405f-903a-846193fed926",
+              "name": "XBI index"
+            }
+          ]
+        },
+        {
+          "id": "173fac2f-d4d2-48f9-b0c9-e6b86d525dab",
+          "name": "Stockholm",
+          "occurrences": [
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "42c5bd03-ac5a-4f5a-a419-fc468cee1621",
+              "name": "Stockholm"
+            }
+          ]
+        },
+        {
+          "id": "6ec81f03-7c3b-4b2a-864e-248a9607b425",
+          "name": "Brussels",
+          "occurrences": [
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "732adc13-3789-40e0-9028-b02c8d5db7ad",
+              "name": "Brussels"
+            }
+          ]
+        },
+        {
+          "id": "e2f95516-2cc0-4b3f-b2d7-59124aa60ab7",
+          "name": "Parliamentary",
+          "occurrences": [
+            {
+              "article_id": "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+              "entity_id": "741e9db6-1a99-440d-b6b7-899793f9c6e0",
+              "name": "Parliamentary"
+            }
+          ]
+        },
+        {
+          "id": "06fed2cd-e52f-47b4-9f4f-82ce581c0920",
+          "name": "Helios Power Group",
+          "occurrences": [
+            {
+              "article_id": "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+              "entity_id": "ce397e68-1f09-4dec-9c40-a7c0f7fd63a5",
+              "name": "Helios Power Group"
+            }
+          ]
+        },
+        {
+          "id": "1b9fcb2c-b412-4e42-a1d2-4281ccdc2edd",
+          "name": "Ports of the Future program",
+          "occurrences": [
+            {
+              "article_id": "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+              "entity_id": "07d1d381-328f-4d1a-b95e-68309cef0cc1",
+              "name": "Ports of the Future program"
+            }
+          ]
+        },
+        {
+          "id": "c2f85eb9-6aed-4252-9ed1-7c11cce5af04",
+          "name": "Nextera Energy Solutions",
+          "occurrences": [
+            {
+              "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+              "entity_id": "485e85bd-57c6-4f7a-b6d3-0501f17eec8c",
+              "name": "Nextera Energy Solutions"
+            }
+          ]
+        },
+        {
+          "id": "95c18f50-4d99-4c6a-bd08-452d56f4f2b0",
+          "name": "Helios Power Group",
+          "occurrences": [
+            {
+              "article_id": "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+              "entity_id": "d4c49443-31b4-44fb-90a8-21eda78fda8b",
+              "name": "Helios Power Group"
+            }
+          ]
+        },
+        {
+          "id": "b9ffccc2-677f-4f9d-8ab4-16c69c9a9f53",
+          "name": "EuroPrivacy Wire",
+          "occurrences": [
+            {
+              "article_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+              "entity_id": "7c38e1a9-d385-47cb-94d1-4e1bace77dc6",
+              "name": "EuroPrivacy Wire"
+            }
+          ]
+        },
+        {
+          "id": "5a0a7bd1-7b9a-46a7-8175-c4c7076efce8",
+          "name": "Ireland",
+          "occurrences": [
+            {
+              "article_id": "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+              "entity_id": "30eb4024-093d-4c7f-93ab-ce11145a2c70",
+              "name": "Ireland"
+            }
+          ]
+        },
+        {
+          "id": "aa795904-d69f-44c9-ae6d-9a976e3bb337",
+          "name": "Renata Solis",
+          "occurrences": [
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "1c636982-e8b9-43ae-9729-03a70925a2bc",
+              "name": "Renata Solis"
+            }
+          ]
+        },
+        {
+          "id": "22158d4d-0c24-4548-bb0a-502b0835efb2",
+          "name": "National Labor Relations Board",
+          "occurrences": [
+            {
+              "article_id": "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+              "entity_id": "4c455581-2034-48fe-9dce-aff3bfbcf572",
+              "name": "National Labor Relations Board"
+            }
+          ]
+        },
+        {
+          "id": "0980e881-f6f8-4de4-baae-b209c5eeaa4d",
+          "name": "Nextera Energy Solutions",
+          "occurrences": [
+            {
+              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+              "entity_id": "fc0e56e0-77c7-440a-acb8-42b9dec6cde0",
+              "name": "Nextera Energy Solutions"
+            }
+          ]
+        },
+        {
+          "id": "7405332e-22aa-4db2-864e-5759a71814b5",
+          "name": "Helen Choi",
+          "occurrences": [
+            {
+              "article_id": "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+              "entity_id": "4e26d4aa-dc31-44ac-b49d-31323eda3116",
+              "name": "Helen Choi"
+            }
+          ]
+        },
+        {
+          "id": "9f8e34e9-f24b-4529-9a6d-ea8f9444b9bb",
+          "name": "ILA",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "d4495df6-65ac-48c8-8ab0-d54813a4013b",
+              "name": "ILA"
+            }
+          ]
+        },
+        {
+          "id": "20c75eb8-08de-48e2-ade9-bb6347c45812",
+          "name": "Dutch port consultancy",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "715f1f8c-d9e2-49b0-802f-7bd1dd9b1891",
+              "name": "Dutch port consultancy"
+            }
+          ]
+        },
+        {
+          "id": "848cc3e0-df40-402b-bd70-98163885b7d5",
+          "name": "Savannah",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "7e08e788-8797-4405-b26e-27bf00396d4d",
+              "name": "Savannah"
+            }
+          ]
+        },
+        {
+          "id": "7cfa7880-129d-421f-b689-88dd236ae28c",
+          "name": "Texas legislators",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "196be0e4-a6a2-4b92-ac33-23a22693e7e6",
+              "name": "Texas legislators"
+            }
+          ]
+        },
+        {
+          "id": "143ecf8b-cd59-4d29-9d6e-703da99dd563",
+          "name": "Renata Solis",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "c4759a7a-12de-4bae-aac2-a52b4d3a5ffa",
+              "name": "Renata Solis"
+            }
+          ]
+        },
+        {
+          "id": "87880154-2703-4e1c-afa1-01deb907363d",
+          "name": "Department of Transportation",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "7cbb3e48-a15a-4806-b96e-f97524e1d6ae",
+              "name": "Department of Transportation"
+            }
+          ]
+        },
+        {
+          "id": "700fff5d-db57-44fb-8f37-c9fdf326d9f5",
+          "name": "port authority",
+          "occurrences": [
+            {
+              "article_id": "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+              "entity_id": "35b72d45-b1bf-4001-960a-3005deac4f27",
+              "name": "port authority"
+            }
+          ]
+        },
+        {
+          "id": "1af0c880-0756-4be1-85fa-0c1355738e6c",
+          "name": "environmental research group",
+          "occurrences": [
+            {
+              "article_id": "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+              "entity_id": "f81f103f-bfc9-45d8-9b36-fa4cc738e921",
+              "name": "environmental research group"
+            }
+          ]
+        },
+        {
+          "id": "65937ed7-54d5-4583-b490-7702f3599efe",
+          "name": "Renata Solis",
+          "occurrences": [
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "ec3a7e3b-8598-43fb-991d-21d60498b4fd",
+              "name": "Renata Solis"
+            }
+          ]
+        },
+        {
+          "id": "525495b7-dee4-48bb-b7eb-595268d69455",
+          "name": "ESG ratings",
+          "occurrences": [
+            {
+              "article_id": "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+              "entity_id": "eb4932fd-cd1c-4560-887d-fce9af222747",
+              "name": "ESG ratings"
+            }
+          ]
+        },
+        {
+          "id": "e0f26ae7-ee49-49db-a77f-bbe5d4db5d6a",
+          "name": "Gulf Coast",
+          "occurrences": [
+            {
+              "article_id": "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+              "entity_id": "614dba31-c756-47e8-b8c6-5abe83c96ac8",
+              "name": "Gulf Coast"
+            }
+          ]
+        },
+        {
+          "id": "631ba254-8fb4-452e-a49e-57483cbfef4f",
+          "name": "FDA",
+          "occurrences": [
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "a3f52bf7-82cb-46bb-9340-4159fb2845af",
+              "name": "FDA"
+            }
+          ]
+        },
+        {
+          "id": "2b7adc9b-6772-4d51-b415-3def22cc1740",
+          "name": "CRISPR platform",
+          "occurrences": [
+            {
+              "article_id": "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c",
+              "entity_id": "83ebb7df-6a9b-4a1d-8cae-aee641c7240c",
+              "name": "CRISPR platform"
+            }
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "is CEO of",
+          "articles": [
+            "05326419-cbf0-4fd7-8014-9b82233bdfeb",
+            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50",
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61",
+            "766c3545-affc-4872-9918-edaa7929e5de",
+            "86953832-4d00-4cdc-ad11-5a074fcf2f70",
+            "9a1aa2eb-728e-405e-8ec7-3a144971fea1",
+            "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567801",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567802",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567803",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567804",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567805",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567806",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567808",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567809",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567810",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567811",
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567812",
+            "a3f1c9d2-8b47-4e6a-b2d5-9c0e7f3a1b84",
+            "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d",
+            "afda7932-54e8-4a98-be6d-8d2f8944448f",
+            "b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e",
+            "b3e7a1c2-49d8-4f6a-bc13-7d5e82f19a04",
+            "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e",
+            "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e",
+            "c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f",
+            "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b",
+            "c8f4d2e5-1a37-4b89-9e62-3f8c0a7b5d16",
+            "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f",
+            "d0e1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a",
+            "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2",
+            "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
+            "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a",
+            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+            "dd1dfc1d-3d32-4987-a252-4c0968d920e4",
+            "de309c6d-c824-478f-afeb-90b8b9cde06a",
+            "e160a592-867e-4e0e-9689-8c4a61839c83",
+            "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b",
+            "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b",
+            "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b",
+            "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38",
+            "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
+            "f5a893f0-6851-418c-a368-382915967333",
+            "f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c",
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c",
+            "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+            "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d",
+            "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e",
+            "i0a4e7b8-9d28-4f3c-a6f1-7k8j0i2h4e5f",
+            "j1b5f8c9-0e39-4a4d-b7a2-8l9k1j3i5f6a",
+            "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b",
+            "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+          ]
+        },
+        {
+          "source": "237bda7f-35b2-4c90-b397-7e12deadebd4",
+          "target": "8b8987d0-4211-43cc-8138-cb5fd4f8596b",
+          "relation": "will be integrated into",
+          "articles": [
+            "05326419-cbf0-4fd7-8014-9b82233bdfeb"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "1949efd9-5afa-47c1-8a92-08ce69d518d5",
+          "relation": "founder of",
+          "articles": [
+            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "32026233-5968-4acb-ad93-52fa1331c3ec",
+          "relation": "commissioner at",
+          "articles": [
+            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+          ]
+        },
+        {
+          "source": "95622a3e-63a4-4ff0-8d64-1277aeac95c7",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "participated in fireside chat at",
+          "articles": [
+            "0c8dh6i9-5e7b-4fc2-d2a6-7j2g4e1f9h50"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "4ad15592-08cd-498c-b561-473e0e2dca77",
+          "relation": "is co-founder of",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "7d4cb520-047c-44a1-9424-b4812466ea03",
+          "relation": "is soon-to-be executive of",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "2abc35b1-b65f-46a9-9c6c-5990594ea021",
+          "relation": "is CEO of",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "2abc35b1-b65f-46a9-9c6c-5990594ea021",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "operates",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "7d4cb520-047c-44a1-9424-b4812466ea03",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "operates",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "64877739-0156-486b-96f4-29dc9e493313",
+          "relation": "reviewing",
+          "articles": [
+            "1d9ei7j0-6f8c-40d3-e3b7-8k3h5f2g0i61"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "8a150ebd-963e-4433-8b79-efc0a7c0ad23",
+          "relation": "currently chief operating officer of",
+          "articles": [
+            "766c3545-affc-4872-9918-edaa7929e5de"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "df9f6869-2bf8-4946-84ef-280ccf131532",
+          "relation": "has flagship facility in",
+          "articles": [
+            "86953832-4d00-4cdc-ad11-5a074fcf2f70"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "4851e6d8-847e-4d19-b75c-cbb8b63c803b",
+          "relation": "spent eleven years at",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567802"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "c8e59b2c-af82-41bf-8bf6-cdb462ced57a",
+          "relation": "moved from",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567804"
+          ]
+        },
+        {
+          "source": "357d5ae3-6b7f-4420-9f5b-b37ab4defeec",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "taking preliminary look at deal",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567806"
+          ]
+        },
+        {
+          "source": "ab99c538-f34a-4eb4-9013-7d5e32e439b8",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "featured in energy track of",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+          ]
+        },
+        {
+          "source": "69bc2816-69a4-450a-b679-55a6c7cc48f6",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "featured in energy track of",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "3f5c3560-90ed-4196-9dfc-a9108af93621",
+          "relation": "expected to discuss",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+          ]
+        },
+        {
+          "source": "8c78365a-4714-4c34-80eb-3b3d09ebeb6a",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "scrutinizing deal of",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+          ]
+        },
+        {
+          "source": "15a1f8b4-993f-4a22-91ce-8866f6196b8e",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "panel topic at",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+          ]
+        },
+        {
+          "source": "d33b5aa3-7ca3-4f21-8f96-072b310ae13a",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "panel topic at",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "406a6e32-695a-4a05-8c06-d4b9bf4d6e60",
+          "relation": "is CTO of",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567809"
+          ]
+        },
+        {
+          "source": "09c3e3a1-b776-4d7e-ae7c-bed051ab9ad7",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "initiated preliminary review of",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567811"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "7e8f7d1a-50f0-45d7-95aa-27372c1cbf36",
+          "relation": "poached from",
+          "articles": [
+            "a1b2c3d4-e5f6-7890-abcd-ef1234567812"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "fdfb0a30-11ec-48e2-8f23-fe252c604e00",
+          "relation": "is from",
+          "articles": [
+            "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "cedc8e25-bf1a-4217-96cb-9306dcb25248",
+          "relation": "is a commissioner of",
+          "articles": [
+            "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "48c6e79f-f478-4aa9-8f41-a915f4585924",
+          "relation": "is a deputy commissioner of",
+          "articles": [
+            "a7b8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "1f67f9bb-f825-4f3c-9120-fe9c3cdfbccb",
+          "relation": "worked at",
+          "articles": [
+            "b7e2d4f1-3c58-4a9b-d6e8-0f1a2c3b4d5e"
+          ]
+        },
+        {
+          "source": "1c887e1a-6ea5-433c-862d-ffea03c8c6f6",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "monitoring",
+          "articles": [
+            "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "0cc30bc4-315c-4452-9d61-1cb567bb65b4",
+          "relation": "regulates processing of",
+          "articles": [
+            "b8c9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "df87383e-6af7-488c-b61a-ac106fd0e73b",
+          "relation": "stock underperforms",
+          "articles": [
+            "c4a8e3b2-7d61-4f5c-a1b9-2e4d6f8a0c3b"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "173fac2f-d4d2-48f9-b0c9-e6b86d525dab",
+          "relation": "spoke at event in",
+          "articles": [
+            "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+          ]
+        },
+        {
+          "source": "e2f95516-2cc0-4b3f-b2d7-59124aa60ab7",
+          "target": "6ec81f03-7c3b-4b2a-864e-248a9607b425",
+          "relation": "held hearing in",
+          "articles": [
+            "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+          ]
+        },
+        {
+          "source": "e2f95516-2cc0-4b3f-b2d7-59124aa60ab7",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "highlighted in hearing",
+          "articles": [
+            "c9d0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "06fed2cd-e52f-47b4-9f4f-82ce581c0920",
+          "relation": "held position of COO at",
+          "articles": [
+            "d2e1567d-3bce-4dcd-a42f-3d701f4a12d2"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "1b9fcb2c-b412-4e42-a1d2-4281ccdc2edd",
+          "relation": "administers",
+          "articles": [
+            "d5b9f2a1-4e73-4c8d-b3a6-1f2e5d7c9b0a"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "c2f85eb9-6aed-4252-9ed1-7c11cce5af04",
+          "relation": "was former chief executive of",
+          "articles": [
+            "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "95c18f50-4d99-4c6a-bd08-452d56f4f2b0",
+          "relation": "previously served as Chief Operating Officer at",
+          "articles": [
+            "dd1dfc1d-3d32-4987-a252-4c0968d920e4"
+          ]
+        },
+        {
+          "source": "b9ffccc2-677f-4f9d-8ab4-16c69c9a9f53",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "published reporting about",
+          "articles": [
+            "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "b9ffccc2-677f-4f9d-8ab4-16c69c9a9f53",
+          "relation": "called reporting inaccurate",
+          "articles": [
+            "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "5a0a7bd1-7b9a-46a7-8175-c4c7076efce8",
+          "relation": "subject of continuing GDPR inquiry in",
+          "articles": [
+            "e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b"
+          ]
+        },
+        {
+          "source": "aa795904-d69f-44c9-ae6d-9a976e3bb337",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "advocates for",
+          "articles": [
+            "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "22158d4d-0c24-4548-bb0a-502b0835efb2",
+          "relation": "filed formal complaint with",
+          "articles": [
+            "e6c0a3d4-5f84-4b9e-c2b7-3g4f6e8d0a1b"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "0980e881-f6f8-4de4-baae-b209c5eeaa4d",
+          "relation": "resigned as CEO of",
+          "articles": [
+            "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+          ]
+        },
+        {
+          "source": "7405332e-22aa-4db2-864e-5759a71814b5",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "retiring from board of",
+          "articles": [
+            "ea6bf4g7-3c59-4da0-b084-5h0e2c9d7f38"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "9f8e34e9-f24b-4529-9a6d-ea8f9444b9bb",
+          "relation": "in standoff with",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "20c75eb8-08de-48e2-ade9-bb6347c45812",
+          "relation": "worked at for a decade",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "848cc3e0-df40-402b-bd70-98163885b7d5",
+          "relation": "shepherded automated terminal expansion in",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "7cfa7880-129d-421f-b689-88dd236ae28c",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "championed federal grant for",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "143ecf8b-cd59-4d29-9d6e-703da99dd563",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "advises on federal relations",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "143ecf8b-cd59-4d29-9d6e-703da99dd563",
+          "target": "87880154-2703-4e1c-afa1-01deb907363d",
+          "relation": "was seen leaving headquarters of",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "700fff5d-db57-44fb-8f37-c9fdf326d9f5",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "will proceed with contract with",
+          "articles": [
+            "f7d1b4e5-6a95-4c0f-d3c8-4h5g7f9e1b2c"
+          ]
+        },
+        {
+          "source": "1af0c880-0756-4be1-85fa-0c1355738e6c",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "published satellite-based measurements of emissions from",
+          "articles": [
+            "g8e2c5f6-7b06-4d1a-e4d9-5i6h8g0f2c3d"
+          ]
+        },
+        {
+          "source": "65937ed7-54d5-4583-b490-7702f3599efe",
+          "target": "525495b7-dee4-48bb-b7eb-595268d69455",
+          "relation": "advocates for reform of",
+          "articles": [
+            "h9f3d6a7-8c17-4e2b-f5e0-6j7i9h1g3d4e"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "e0f26ae7-ee49-49db-a77f-bbe5d4db5d6a",
+          "relation": "coordinates with other locals in",
+          "articles": [
+            "k2c6a9d0-1f40-4b5e-c8b3-9m0l2k4j6a7b"
+          ]
+        },
+        {
+          "source": "2b7adc9b-6772-4d51-b415-3def22cc1740",
+          "target": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "relation": "developed at",
+          "articles": [
+            "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+          ]
+        },
+        {
+          "source": "9ea4797e-244e-4b7e-b447-51d337da06cd",
+          "target": "631ba254-8fb4-452e-a49e-57483cbfef4f",
+          "relation": "advises",
+          "articles": [
+            "l3d7b0e1-2a51-4c6f-d9c4-0n1m3l5k7b8c"
+          ]
+        }
+      ]
+    }
+  ]
+}

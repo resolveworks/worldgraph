@@ -1,0 +1,159 @@
+{
+  "id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+  "entities": [
+    {
+      "id": "08d050de-289b-4f44-ae09-185264c90429",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "08d050de-289b-4f44-ae09-185264c90429",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "10408560-4205-4ac3-b334-79e244e5224c",
+      "name": "Meridian Tech",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "10408560-4205-4ac3-b334-79e244e5224c",
+          "name": "Meridian Tech"
+        }
+      ]
+    },
+    {
+      "id": "4388c3a1-82fc-4ae7-bcf9-7c884838f73e",
+      "name": "D. Park",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "4388c3a1-82fc-4ae7-bcf9-7c884838f73e",
+          "name": "D. Park"
+        }
+      ]
+    },
+    {
+      "id": "75c5a420-73d0-4f87-a959-b6b8978fa8f1",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "75c5a420-73d0-4f87-a959-b6b8978fa8f1",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "d4ae9d8d-3434-4188-9582-340e1ce5a46b",
+      "name": "Teresa Nakamura",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "d4ae9d8d-3434-4188-9582-340e1ce5a46b",
+          "name": "Teresa Nakamura"
+        }
+      ]
+    },
+    {
+      "id": "8c6507a5-6e1a-4dd8-9c0d-a7ef12846dc9",
+      "name": "CloudScale",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "8c6507a5-6e1a-4dd8-9c0d-a7ef12846dc9",
+          "name": "CloudScale"
+        }
+      ]
+    },
+    {
+      "id": "6837d5f0-1bb5-4d5b-b298-9efc5c784c68",
+      "name": "Marcus Webb",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "6837d5f0-1bb5-4d5b-b298-9efc5c784c68",
+          "name": "Marcus Webb"
+        }
+      ]
+    },
+    {
+      "id": "eb8e6e23-511e-41f2-9c4f-3159a8f14ee0",
+      "name": "Pittsburgh",
+      "occurrences": [
+        {
+          "article_id": "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49",
+          "entity_id": "eb8e6e23-511e-41f2-9c4f-3159a8f14ee0",
+          "name": "Pittsburgh"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "08d050de-289b-4f44-ae09-185264c90429",
+      "target": "10408560-4205-4ac3-b334-79e244e5224c",
+      "relation": "has $500 million AI automation partnership with",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "4388c3a1-82fc-4ae7-bcf9-7c884838f73e",
+      "target": "75c5a420-73d0-4f87-a959-b6b8978fa8f1",
+      "relation": "was chief executive of",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "08d050de-289b-4f44-ae09-185264c90429",
+      "target": "4388c3a1-82fc-4ae7-bcf9-7c884838f73e",
+      "relation": "added to board",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "d4ae9d8d-3434-4188-9582-340e1ce5a46b",
+      "target": "08d050de-289b-4f44-ae09-185264c90429",
+      "relation": "appointed chief financial officer of",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "d4ae9d8d-3434-4188-9582-340e1ce5a46b",
+      "target": "8c6507a5-6e1a-4dd8-9c0d-a7ef12846dc9",
+      "relation": "previously held CFO role at",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "8c6507a5-6e1a-4dd8-9c0d-a7ef12846dc9",
+      "target": "10408560-4205-4ac3-b334-79e244e5224c",
+      "relation": "acquired by",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "08d050de-289b-4f44-ae09-185264c90429",
+      "target": "10408560-4205-4ac3-b334-79e244e5224c",
+      "relation": "operating joint research lab with in Pittsburgh",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    },
+    {
+      "source": "6837d5f0-1bb5-4d5b-b298-9efc5c784c68",
+      "target": "08d050de-289b-4f44-ae09-185264c90429",
+      "relation": "is representative of",
+      "articles": [
+        "fb7cg5h8-4d6a-4eb1-c195-6i1f3d0e8g49"
+      ]
+    }
+  ]
+}

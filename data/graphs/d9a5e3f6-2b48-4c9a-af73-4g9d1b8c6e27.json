@@ -1,0 +1,113 @@
+{
+  "id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+  "entities": [
+    {
+      "id": "4c06df6f-e8a5-422e-9a3a-502e3297d9ca",
+      "name": "David Park",
+      "occurrences": [
+        {
+          "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+          "entity_id": "4c06df6f-e8a5-422e-9a3a-502e3297d9ca",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "id": "86da5c14-a017-4251-91d5-39716196c89d",
+      "name": "Cascade Robotics",
+      "occurrences": [
+        {
+          "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+          "entity_id": "86da5c14-a017-4251-91d5-39716196c89d",
+          "name": "Cascade Robotics"
+        }
+      ]
+    },
+    {
+      "id": "485e85bd-57c6-4f7a-b6d3-0501f17eec8c",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+          "entity_id": "485e85bd-57c6-4f7a-b6d3-0501f17eec8c",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "17bd50f4-e1d1-4724-b4be-69b4c62179a2",
+      "name": "Marcus Webb",
+      "occurrences": [
+        {
+          "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+          "entity_id": "17bd50f4-e1d1-4724-b4be-69b4c62179a2",
+          "name": "Marcus Webb"
+        }
+      ]
+    },
+    {
+      "id": "c6e82322-d079-4904-80c3-f75939cf84a0",
+      "name": "Meridian Technologies",
+      "occurrences": [
+        {
+          "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+          "entity_id": "c6e82322-d079-4904-80c3-f75939cf84a0",
+          "name": "Meridian Technologies"
+        }
+      ]
+    },
+    {
+      "id": "7ab07549-e6f9-48e9-8986-1a9d8a8e761f",
+      "name": "Pittsburgh",
+      "occurrences": [
+        {
+          "article_id": "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27",
+          "entity_id": "7ab07549-e6f9-48e9-8986-1a9d8a8e761f",
+          "name": "Pittsburgh"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "4c06df6f-e8a5-422e-9a3a-502e3297d9ca",
+      "target": "86da5c14-a017-4251-91d5-39716196c89d",
+      "relation": "joined board of directors",
+      "articles": [
+        "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
+      ]
+    },
+    {
+      "source": "4c06df6f-e8a5-422e-9a3a-502e3297d9ca",
+      "target": "485e85bd-57c6-4f7a-b6d3-0501f17eec8c",
+      "relation": "was former chief executive of",
+      "articles": [
+        "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
+      ]
+    },
+    {
+      "source": "17bd50f4-e1d1-4724-b4be-69b4c62179a2",
+      "target": "86da5c14-a017-4251-91d5-39716196c89d",
+      "relation": "is CEO of",
+      "articles": [
+        "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
+      ]
+    },
+    {
+      "source": "86da5c14-a017-4251-91d5-39716196c89d",
+      "target": "c6e82322-d079-4904-80c3-f75939cf84a0",
+      "relation": "announced partnership with",
+      "articles": [
+        "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
+      ]
+    },
+    {
+      "source": "86da5c14-a017-4251-91d5-39716196c89d",
+      "target": "7ab07549-e6f9-48e9-8986-1a9d8a8e761f",
+      "relation": "is based in",
+      "articles": [
+        "d9a5e3f6-2b48-4c9a-af73-4g9d1b8c6e27"
+      ]
+    }
+  ]
+}

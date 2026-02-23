@@ -1,0 +1,284 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+  "entities": [
+    {
+      "id": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "name": "TechForward Summit",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+          "name": "TechForward Summit"
+        }
+      ]
+    },
+    {
+      "id": "04ac570f-92f3-49b0-b360-27f2b64453ed",
+      "name": "Amsterdam",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "04ac570f-92f3-49b0-b360-27f2b64453ed",
+          "name": "Amsterdam"
+        }
+      ]
+    },
+    {
+      "id": "7b900e4e-7383-4fc5-bd6a-47f038554b75",
+      "name": "Dr. Elena Vasquez",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "7b900e4e-7383-4fc5-bd6a-47f038554b75",
+          "name": "Dr. Elena Vasquez"
+        }
+      ]
+    },
+    {
+      "id": "6c776b6e-d2a6-4123-9905-1b855d7c3057",
+      "name": "Volta Systems",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "6c776b6e-d2a6-4123-9905-1b855d7c3057",
+          "name": "Volta Systems"
+        }
+      ]
+    },
+    {
+      "id": "0231c9dd-7008-429f-8fd4-766ae0742d86",
+      "name": "LuminCore",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "0231c9dd-7008-429f-8fd4-766ae0742d86",
+          "name": "LuminCore"
+        }
+      ]
+    },
+    {
+      "id": "dca838d5-814f-41af-ab88-3ce1272a5a80",
+      "name": "Dr. Priya Sharma",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "dca838d5-814f-41af-ab88-3ce1272a5a80",
+          "name": "Dr. Priya Sharma"
+        }
+      ]
+    },
+    {
+      "id": "d8ebb6b2-0c58-43a8-aa01-56983c0872ff",
+      "name": "EU",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "d8ebb6b2-0c58-43a8-aa01-56983c0872ff",
+          "name": "EU"
+        }
+      ]
+    },
+    {
+      "id": "baeaeb3d-a875-4123-b627-a01ba25fec61",
+      "name": "pharmaceutical industries",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "baeaeb3d-a875-4123-b627-a01ba25fec61",
+          "name": "pharmaceutical industries"
+        }
+      ]
+    },
+    {
+      "id": "1ed54ef2-0430-4de0-8a8a-60abd383b68f",
+      "name": "semiconductor industries",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "1ed54ef2-0430-4de0-8a8a-60abd383b68f",
+          "name": "semiconductor industries"
+        }
+      ]
+    },
+    {
+      "id": "55394769-6736-4a48-b5cc-e4189805c82d",
+      "name": "utilities",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "55394769-6736-4a48-b5cc-e4189805c82d",
+          "name": "utilities"
+        }
+      ]
+    },
+    {
+      "id": "1684af4a-79e5-41bb-ac6d-9cd0038498ee",
+      "name": "grid operators",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "1684af4a-79e5-41bb-ac6d-9cd0038498ee",
+          "name": "grid operators"
+        }
+      ]
+    },
+    {
+      "id": "cc297f02-9f3d-4b8c-96b1-053982f5307c",
+      "name": "AI-driven materials discovery",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "cc297f02-9f3d-4b8c-96b1-053982f5307c",
+          "name": "AI-driven materials discovery"
+        }
+      ]
+    },
+    {
+      "id": "d48e311b-5fec-4f44-bdb3-4c7372c01e9f",
+      "name": "hardware modularity",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "d48e311b-5fec-4f44-bdb3-4c7372c01e9f",
+          "name": "hardware modularity"
+        }
+      ]
+    },
+    {
+      "id": "90bd8baf-347b-4f4c-b797-d915af4e46cf",
+      "name": "the regulation gap in deep tech",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "90bd8baf-347b-4f4c-b797-d915af4e46cf",
+          "name": "the regulation gap in deep tech"
+        }
+      ]
+    },
+    {
+      "id": "769c25ec-f037-40f2-922a-ca8826ab2665",
+      "name": "when AI meets quantum",
+      "occurrences": [
+        {
+          "article_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567807",
+          "entity_id": "769c25ec-f037-40f2-922a-ca8826ab2665",
+          "name": "when AI meets quantum"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "target": "04ac570f-92f3-49b0-b360-27f2b64453ed",
+      "relation": "set to open in",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "7b900e4e-7383-4fc5-bd6a-47f038554b75",
+      "target": "6c776b6e-d2a6-4123-9905-1b855d7c3057",
+      "relation": "installed as CTO of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "7b900e4e-7383-4fc5-bd6a-47f038554b75",
+      "target": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "relation": "speaking at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "6c776b6e-d2a6-4123-9905-1b855d7c3057",
+      "target": "0231c9dd-7008-429f-8fd4-766ae0742d86",
+      "relation": "acquired",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "dca838d5-814f-41af-ab88-3ce1272a5a80",
+      "target": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "relation": "speaking at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "dca838d5-814f-41af-ab88-3ce1272a5a80",
+      "target": "cc297f02-9f3d-4b8c-96b1-053982f5307c",
+      "relation": "works on",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "cc297f02-9f3d-4b8c-96b1-053982f5307c",
+      "target": "baeaeb3d-a875-4123-b627-a01ba25fec61",
+      "relation": "drawn attention from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "cc297f02-9f3d-4b8c-96b1-053982f5307c",
+      "target": "1ed54ef2-0430-4de0-8a8a-60abd383b68f",
+      "relation": "drawn attention from",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "55394769-6736-4a48-b5cc-e4189805c82d",
+      "target": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "relation": "featured in energy track of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "1684af4a-79e5-41bb-ac6d-9cd0038498ee",
+      "target": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "relation": "featured in energy track of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "7b900e4e-7383-4fc5-bd6a-47f038554b75",
+      "target": "d48e311b-5fec-4f44-bdb3-4c7372c01e9f",
+      "relation": "expected to discuss",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "d8ebb6b2-0c58-43a8-aa01-56983c0872ff",
+      "target": "6c776b6e-d2a6-4123-9905-1b855d7c3057",
+      "relation": "scrutinizing deal of",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "90bd8baf-347b-4f4c-b797-d915af4e46cf",
+      "target": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "relation": "panel topic at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    },
+    {
+      "source": "769c25ec-f037-40f2-922a-ca8826ab2665",
+      "target": "26232ffb-bd14-43d2-a661-6657831ae1b1",
+      "relation": "panel topic at",
+      "articles": [
+        "a1b2c3d4-e5f6-7890-abcd-ef1234567807"
+      ]
+    }
+  ]
+}

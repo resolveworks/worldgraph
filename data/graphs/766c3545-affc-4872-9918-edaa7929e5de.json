@@ -1,0 +1,129 @@
+{
+  "id": "766c3545-affc-4872-9918-edaa7929e5de",
+  "entities": [
+    {
+      "id": "9428524e-5490-453b-a711-3028f5ca40be",
+      "name": "David Park",
+      "occurrences": [
+        {
+          "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+          "entity_id": "9428524e-5490-453b-a711-3028f5ca40be",
+          "name": "David Park"
+        }
+      ]
+    },
+    {
+      "id": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+      "name": "NES",
+      "occurrences": [
+        {
+          "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+          "entity_id": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+          "name": "NES"
+        }
+      ]
+    },
+    {
+      "id": "3ddc0ca9-5ece-4d8e-ac91-e58b32e399b6",
+      "name": "Nextera Energy Solutions",
+      "occurrences": [
+        {
+          "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+          "entity_id": "3ddc0ca9-5ece-4d8e-ac91-e58b32e399b6",
+          "name": "Nextera Energy Solutions"
+        }
+      ]
+    },
+    {
+      "id": "ab7a459a-8cb5-4fcb-a081-82d0892dc190",
+      "name": "Sarah Chen",
+      "occurrences": [
+        {
+          "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+          "entity_id": "ab7a459a-8cb5-4fcb-a081-82d0892dc190",
+          "name": "Sarah Chen"
+        }
+      ]
+    },
+    {
+      "id": "27cfe7bf-be3b-461a-8d7b-9252c25d6c6c",
+      "name": "Helios Power",
+      "occurrences": [
+        {
+          "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+          "entity_id": "27cfe7bf-be3b-461a-8d7b-9252c25d6c6c",
+          "name": "Helios Power"
+        }
+      ]
+    },
+    {
+      "id": "05995e2f-2f98-4abe-855c-0bf977792757",
+      "name": "R. Tanaka",
+      "occurrences": [
+        {
+          "article_id": "766c3545-affc-4872-9918-edaa7929e5de",
+          "entity_id": "05995e2f-2f98-4abe-855c-0bf977792757",
+          "name": "R. Tanaka"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "9428524e-5490-453b-a711-3028f5ca40be",
+      "target": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+      "relation": "resigned as CEO of",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    },
+    {
+      "source": "ab7a459a-8cb5-4fcb-a081-82d0892dc190",
+      "target": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+      "relation": "will assume top job at",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    },
+    {
+      "source": "ab7a459a-8cb5-4fcb-a081-82d0892dc190",
+      "target": "27cfe7bf-be3b-461a-8d7b-9252c25d6c6c",
+      "relation": "currently chief operating officer of",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    },
+    {
+      "source": "9428524e-5490-453b-a711-3028f5ca40be",
+      "target": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+      "relation": "led for seven years",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    },
+    {
+      "source": "05995e2f-2f98-4abe-855c-0bf977792757",
+      "target": "64cb7937-c44a-45e9-8395-0b4566ff8d30",
+      "relation": "is board chair of",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    },
+    {
+      "source": "05995e2f-2f98-4abe-855c-0bf977792757",
+      "target": "9428524e-5490-453b-a711-3028f5ca40be",
+      "relation": "praised contributions of",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    },
+    {
+      "source": "05995e2f-2f98-4abe-855c-0bf977792757",
+      "target": "ab7a459a-8cb5-4fcb-a081-82d0892dc190",
+      "relation": "expressed confidence in",
+      "articles": [
+        "766c3545-affc-4872-9918-edaa7929e5de"
+      ]
+    }
+  ]
+}
