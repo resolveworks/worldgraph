@@ -41,6 +41,7 @@ from pathlib import Path
 import click
 import numpy as np
 from fastembed import TextEmbedding
+from sklearn.cluster import AgglomerativeClustering
 
 
 # ---------------------------------------------------------------------------
@@ -194,34 +195,77 @@ def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / norm) if norm > 0 else 0.0
 
 
-def compute_functionality(graphs: list[Graph]) -> dict[str, float]:
+def cluster_relations(
+    relation_embeddings: dict[str, np.ndarray],
+    distance_threshold: float = 0.3,
+) -> dict[str, int]:
+    """Cluster relation phrases by semantic similarity using HAC with complete linkage.
+
+    Embeddings should be the "A {phrase} B" wrapped vectors already computed in
+    prepare_embeddings — not raw phrase embeddings. Complete linkage ensures all
+    members of a cluster are mutually similar, producing compact synonym groups.
+    Singletons (phrases that never merged) get their own cluster id.
+
+    distance_threshold is in cosine distance space (= 1 - cosine_similarity),
+    so 0.3 corresponds to cosine similarity ~0.7.
+    """
+    phrases = list(relation_embeddings)
+    if len(phrases) == 1:
+        return {phrases[0]: 0}
+
+    matrix = np.stack([relation_embeddings[p] for p in phrases])
+    dist_matrix = 1.0 - (matrix @ matrix.T)
+
+    clustering = AgglomerativeClustering(
+        n_clusters=None,
+        distance_threshold=distance_threshold,
+        metric="precomputed",
+        linkage="complete",
+        compute_full_tree=True,
+    )
+    labels = clustering.fit_predict(dist_matrix)
+    return {phrase: int(label) for phrase, label in zip(phrases, labels)}
+
+
+def compute_functionality(
+    graphs: list[Graph],
+    relation_embeddings: dict[str, np.ndarray],
+    distance_threshold: float = 0.3,
+) -> dict[str, float]:
     """Compute functionality weight for each relation phrase.
 
     Functionality ≈ 1 / avg_out_degree_of_relation, where avg_out_degree is
     the average number of distinct targets a source has via that relation.
 
+    Relation phrases are first clustered by semantic similarity so that
+    equivalent phrasings (e.g. "acquired" / "buys") pool their statistics,
+    giving more stable estimates. Each phrase is assigned its cluster's
+    functionality value.
+
     A relation that uniquely determines its target (high functionality) carries
     strong identity evidence. A relation with many targets per source (low
     functionality) carries weak evidence.
     """
-    # relation -> list of (source, target) pairs across all graphs
-    pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    cluster_of = cluster_relations(relation_embeddings, distance_threshold)
+
+    # cluster -> list of (source, target) pairs across all graphs
+    cluster_pairs: dict[int, list[tuple[str, str]]] = defaultdict(list)
     for g in graphs:
         for edge in g.edges:
-            pairs[edge.relation].append((edge.source, edge.target))
+            cid = cluster_of[edge.relation]
+            cluster_pairs[cid].append((edge.source, edge.target))
 
-    functionality: dict[str, float] = {}
-    for relation, rel_pairs in pairs.items():
-        # avg number of distinct targets per source
+    cluster_functionality: dict[int, float] = {}
+    for cid, pairs in cluster_pairs.items():
         targets_per_source: dict[str, set[str]] = defaultdict(set)
-        for src, tgt in rel_pairs:
+        for src, tgt in pairs:
             targets_per_source[src].add(tgt)
         avg_out_degree = sum(len(tgts) for tgts in targets_per_source.values()) / len(
             targets_per_source
         )
-        functionality[relation] = 1.0 / avg_out_degree
+        cluster_functionality[cid] = 1.0 / avg_out_degree
 
-    return functionality
+    return {phrase: cluster_functionality[cid] for phrase, cid in cluster_of.items()}
 
 
 def prepare_embeddings(
@@ -240,7 +284,7 @@ def prepare_embeddings(
     wrapped = [f"A {r} B" for r in all_relations]
     relation_embeddings = {r: v for r, v in zip(all_relations, model.embed(wrapped))}
 
-    functionality = compute_functionality(graphs)
+    functionality = compute_functionality(graphs, relation_embeddings)
 
     return name_embeddings, relation_embeddings, functionality
 
