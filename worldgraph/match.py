@@ -7,9 +7,10 @@ For each pair of graphs (Gi, Gj):
 1. Initialise σ[(ei, ej)] = cosine_similarity(name_emb(ei), name_emb(ej))
    for all entity pairs across the two graphs.
 
-2. Propagate: each iteration, a pair's score is reinforced by its neighbours:
+2. Propagate: each iteration, a pair's score is reinforced by its neighbours
+   (Basic SF formula — accumulates across iterations):
 
-       σ_new[(ei, ej)] = σ_init[(ei, ej)]
+       σ_new[(ei, ej)] = σ[(ei, ej)]
            + Σ  σ[(ei', ej')] * rel_sim(r, r') * w(r, r')
 
    summed over all edges ei -r-> ei' in Gi and ej -r'-> ej' in Gj
@@ -68,9 +69,9 @@ class Graph:
     id: str
     entities: dict[str, Entity]  # id -> Entity
     edges: list[Edge]
-    # Adjacency indices built lazily via index_edges()
-    out_edges: dict[str, list[Edge]] = field(default_factory=dict)
-    in_edges: dict[str, list[Edge]] = field(default_factory=dict)
+    # Populated by index_edges()
+    out_edges: dict[str, list[Edge]] = field(default_factory=lambda: defaultdict(list))
+    in_edges: dict[str, list[Edge]] = field(default_factory=lambda: defaultdict(list))
 
     def index_edges(self) -> None:
         self.out_edges = defaultdict(list)
@@ -578,45 +579,6 @@ def merge_graphs(
 # ---------------------------------------------------------------------------
 
 
-def run_match_merge(
-    graphs: list[Graph],
-    entity_occurrences: dict[str, list[dict]],
-    edge_articles: dict[tuple, list[str]],
-    name_embeddings: dict[str, np.ndarray],
-    relation_embeddings: dict[str, np.ndarray],
-    functionality: dict[str, float],
-    inv_functionality: dict[str, float],
-    threshold: float,
-    max_iter: int = 30,
-    epsilon: float = 1e-4,
-) -> tuple[list[Graph], dict[str, list[dict]], dict[tuple, list[str]]]:
-    """Run propagation over all graph pairs, collect matches, merge.
-
-    Returns (merged_graphs, merged_entity_occurrences, merged_edge_articles).
-    """
-    uf = UnionFind()
-
-    for i in range(len(graphs)):
-        for j in range(i + 1, len(graphs)):
-            sigma = propagate(
-                graphs[i],
-                graphs[j],
-                name_embeddings,
-                relation_embeddings,
-                functionality,
-                inv_functionality,
-                max_iter=max_iter,
-                epsilon=epsilon,
-            )
-            ids_a = list(graphs[i].entities)
-            ids_b = list(graphs[j].entities)
-            matches = select_matches(sigma, ids_a, ids_b, threshold)
-            for eid_a, eid_b in matches:
-                uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
-
-    return merge_graphs(graphs, uf, entity_occurrences, edge_articles)
-
-
 def run_matching(
     input_path: Path,
     output_path: Path,
@@ -643,17 +605,27 @@ def run_matching(
         f"\nPropagating similarities over {n_pairs} graph pairs (threshold={threshold})..."
     )
 
-    merged_graphs, merged_occ, merged_edges = run_match_merge(
-        graphs,
-        entity_occurrences,
-        edge_articles,
-        name_embeddings,
-        relation_embeddings,
-        functionality,
-        inv_functionality,
-        threshold=threshold,
-        max_iter=max_iter,
-        epsilon=epsilon,
+    uf = UnionFind()
+    for i in range(len(graphs)):
+        for j in range(i + 1, len(graphs)):
+            sigma = propagate(
+                graphs[i],
+                graphs[j],
+                name_embeddings,
+                relation_embeddings,
+                functionality,
+                inv_functionality,
+                max_iter=max_iter,
+                epsilon=epsilon,
+            )
+            matches = select_matches(
+                sigma, list(graphs[i].entities), list(graphs[j].entities), threshold
+            )
+            for eid_a, eid_b in matches:
+                uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
+
+    merged_graphs, merged_occ, merged_edges = merge_graphs(
+        graphs, uf, entity_occurrences, edge_articles
     )
 
     save_graphs(merged_graphs, merged_occ, merged_edges, output_path)
