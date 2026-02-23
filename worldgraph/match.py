@@ -231,49 +231,59 @@ def compute_functionality(
     graphs: list[Graph],
     relation_embeddings: dict[str, np.ndarray],
     distance_threshold: float = 0.3,
-) -> dict[str, float]:
-    """Compute functionality weight for each relation phrase.
+) -> tuple[dict[str, float], dict[str, float]]:
+    """Compute functionality and inverse functionality for each relation phrase.
 
-    Functionality ≈ 1 / avg_out_degree_of_relation, where avg_out_degree is
-    the average number of distinct targets a source has via that relation.
+    Functionality ≈ 1 / avg_out_degree: for a given source name, how many
+    distinct target names does it map to via this relation cluster? High means
+    the relation uniquely determines the target — strong forward evidence.
 
-    Relation phrases are first clustered by semantic similarity so that
-    equivalent phrasings (e.g. "acquired" / "buys") pool their statistics,
-    giving more stable estimates. Each phrase is assigned its cluster's
-    functionality value.
+    Inverse functionality ≈ 1 / avg_in_degree: for a given target name, how
+    many distinct source names map to it via this relation cluster? High means
+    the relation uniquely determines the source — strong backward evidence.
 
-    A relation that uniquely determines its target (high functionality) carries
-    strong identity evidence. A relation with many targets per source (low
-    functionality) carries weak evidence.
+    Entity names (not IDs) are used so that the same entity mentioned across
+    multiple graphs pools its statistics. Relation phrases are clustered by
+    semantic similarity before computing degrees, so synonym phrasings share
+    statistics.
+
+    Returns (functionality, inverse_functionality), each a dict from phrase to float.
     """
     cluster_of = cluster_relations(relation_embeddings, distance_threshold)
 
-    # cluster -> list of (source, target) pairs across all graphs
+    # cluster -> list of (source_name, target_name) pairs across all graphs
     cluster_pairs: dict[int, list[tuple[str, str]]] = defaultdict(list)
     for g in graphs:
         for edge in g.edges:
+            src_name = g.entities[edge.source].name
+            tgt_name = g.entities[edge.target].name
             cid = cluster_of[edge.relation]
-            cluster_pairs[cid].append((edge.source, edge.target))
+            cluster_pairs[cid].append((src_name, tgt_name))
 
-    cluster_functionality: dict[int, float] = {}
+    cluster_func: dict[int, float] = {}
+    cluster_inv_func: dict[int, float] = {}
     for cid, pairs in cluster_pairs.items():
         targets_per_source: dict[str, set[str]] = defaultdict(set)
+        sources_per_target: dict[str, set[str]] = defaultdict(set)
         for src, tgt in pairs:
             targets_per_source[src].add(tgt)
-        avg_out_degree = sum(len(tgts) for tgts in targets_per_source.values()) / len(
-            targets_per_source
-        )
-        cluster_functionality[cid] = 1.0 / avg_out_degree
+            sources_per_target[tgt].add(src)
+        avg_out_degree = sum(len(v) for v in targets_per_source.values()) / len(targets_per_source)
+        avg_in_degree = sum(len(v) for v in sources_per_target.values()) / len(sources_per_target)
+        cluster_func[cid] = 1.0 / avg_out_degree
+        cluster_inv_func[cid] = 1.0 / avg_in_degree
 
-    return {phrase: cluster_functionality[cid] for phrase, cid in cluster_of.items()}
+    functionality = {phrase: cluster_func[cid] for phrase, cid in cluster_of.items()}
+    inv_functionality = {phrase: cluster_inv_func[cid] for phrase, cid in cluster_of.items()}
+    return functionality, inv_functionality
 
 
 def prepare_embeddings(
     graphs: list[Graph],
-) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float]]:
+) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float], dict[str, float]]:
     """Embed all entity names and relation phrases; compute functionality weights.
 
-    Returns (name_embeddings, relation_embeddings, functionality).
+    Returns (name_embeddings, relation_embeddings, functionality, inv_functionality).
     """
     all_names = sorted({e.name for g in graphs for e in g.entities.values()})
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
@@ -284,9 +294,9 @@ def prepare_embeddings(
     wrapped = [f"A {r} B" for r in all_relations]
     relation_embeddings = {r: v for r, v in zip(all_relations, model.embed(wrapped))}
 
-    functionality = compute_functionality(graphs, relation_embeddings)
+    functionality, inv_functionality = compute_functionality(graphs, relation_embeddings)
 
-    return name_embeddings, relation_embeddings, functionality
+    return name_embeddings, relation_embeddings, functionality, inv_functionality
 
 
 # ---------------------------------------------------------------------------
@@ -300,6 +310,7 @@ def propagate(
     name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, float],
+    inv_functionality: dict[str, float],
     max_iter: int = 30,
     epsilon: float = 1e-4,
 ) -> dict[tuple[str, str], float]:
@@ -364,8 +375,8 @@ def propagate(
                         if rel_sim == 0.0:
                             continue
                         w = rel_sim * (
-                            functionality.get(edge_a.relation, 1.0)
-                            + functionality.get(edge_b.relation, 1.0)
+                            inv_functionality.get(edge_a.relation, 1.0)
+                            + inv_functionality.get(edge_b.relation, 1.0)
                         ) / 2.0
                         neighbor_sim = sigma.get((edge_a.source, edge_b.source), 0.0)
                         increment[(eid_a, eid_b)] += neighbor_sim * w
@@ -545,6 +556,7 @@ def run_match_merge(
     name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, float],
+    inv_functionality: dict[str, float],
     threshold: float,
     max_iter: int = 30,
     epsilon: float = 1e-4,
@@ -559,7 +571,7 @@ def run_match_merge(
         for j in range(i + 1, len(graphs)):
             sigma = propagate(
                 graphs[i], graphs[j],
-                name_embeddings, relation_embeddings, functionality,
+                name_embeddings, relation_embeddings, functionality, inv_functionality,
                 max_iter=max_iter, epsilon=epsilon,
             )
             ids_a = list(graphs[i].entities)
@@ -586,14 +598,14 @@ def run_matching(
         click.echo(f"  {g.id[:12]}: {len(g.entities)} entities ({n_occ} occurrences), {len(g.edges)} edges")
 
     click.echo("\nEmbedding entity names and relation phrases...")
-    name_embeddings, relation_embeddings, functionality = prepare_embeddings(graphs)
+    name_embeddings, relation_embeddings, functionality, inv_functionality = prepare_embeddings(graphs)
 
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
     click.echo(f"\nPropagating similarities over {n_pairs} graph pairs (threshold={threshold})...")
 
     merged_graphs, merged_occ, merged_edges = run_match_merge(
         graphs, entity_occurrences, edge_articles,
-        name_embeddings, relation_embeddings, functionality,
+        name_embeddings, relation_embeddings, functionality, inv_functionality,
         threshold=threshold, max_iter=max_iter, epsilon=epsilon,
     )
 
