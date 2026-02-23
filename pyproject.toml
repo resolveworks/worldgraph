@@ -17,3 +17,11 @@ worldgraph = "worldgraph.cli:cli"
 
 [tool.setuptools]
 packages = ["worldgraph"]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+]
+
+[tool.ruff]
+target-version = "py312"
