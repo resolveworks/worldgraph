@@ -6,6 +6,8 @@ A proof-of-concept for **cross-source structural matching** for knowledge extrac
 
 The core idea: news redundancy is the signal, not noise. Multiple outlets report the same facts with different wording. By extracting small entity-relation subgraphs per article and matching their structure across sources, we can deduplicate entities and validate facts more reliably than string matching alone.
 
+The target input is a continuous feed of all major news outlets — not a curated sample. The PoC uses synthetic test data for controlled evaluation, but algorithmic decisions should hold up at that scale. A PoC that only works on hand-picked articles proves nothing.
+
 ## Architecture (PoC Pipeline)
 
 The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages.
@@ -97,5 +99,5 @@ Optionally: run single propagation over the full K-partite entity-pair graph (al
 ## Conventions
 
 - Keep the pipeline modular — each stage should be runnable independently
-- Prefer simplicity over robustness; this is an exploration, not production code
+- Implementation shortcuts are fine (no error handling, no production polish) — but the core algorithm must be designed to hold up on real, noisy, large-scale news data
 - All intermediate outputs should be inspectable (write to JSON files between stages)
