@@ -355,8 +355,6 @@ def propagate(
             else:
                 sigma[(eid_a, eid_b)] = 0.0
 
-    sigma_init = dict(sigma)
-
     for _ in range(max_iter):
         increment: dict[tuple[str, str], float] = defaultdict(float)
 
@@ -410,11 +408,11 @@ def propagate(
                         neighbor_sim = sigma.get((edge_a.source, edge_b.source), 0.0)
                         increment[(eid_a, eid_b)] += neighbor_sim * w
 
-        # σ_new = σ_init + increment, then normalise
+        # σ_new = σ_current + increment, then normalise (Basic SF formula)
         sigma_new: dict[tuple[str, str], float] = {}
         max_val = 0.0
         for key in sigma:
-            val = sigma_init[key] + increment.get(key, 0.0)
+            val = sigma[key] + increment.get(key, 0.0)
             sigma_new[key] = val
             max_val = max(max_val, val)
 
