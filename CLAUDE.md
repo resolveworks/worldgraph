@@ -8,16 +8,15 @@ The core idea: news redundancy is the signal, not noise. Multiple outlets report
 
 ## Architecture (PoC Pipeline)
 
-The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages. The extract stage outputs this format directly, and the match stage consumes and produces it, so iteration is just calling match repeatedly.
+The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages. The extract stage outputs this format directly, and the match stage consumes and produces it.
 
 1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs, output directly as graph JSON → `graphs_0.json`
-2. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_N.json` (run repeatedly until convergence). Entities are compared by name embedding similarity; relations are compared by phrase embedding similarity (original phrases preserved, no flattening).
+2. **Structural Matching** — Match entity/edge structures across graphs, merge overlapping graphs → `graphs_1.json`. Uses similarity propagation: start with name embedding similarity scores for all candidate entity pairs, then iteratively propagate scores through the graph (neighbor similarity reinforces pair similarity, weighted by relation specificity) until convergence, then threshold. Relations are compared by phrase embedding similarity (original phrases preserved, no flattening).
 3. **Score** — Score each deduplicated fact by cross-source agreement (number of independent sources reporting it)
 
 ```bash
 worldgraph extract                               # data/articles/ → graphs_0.json
-worldgraph match                                 # graphs_0.json → graphs_1.json
-worldgraph match -i data/graphs_1.json -o data/graphs_2.json  # repeat until stable
+worldgraph match                                 # graphs_0.json → graphs_1.json (converges internally)
 ```
 
 In the graph format, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
@@ -28,7 +27,7 @@ In the graph format, entities with >1 occurrence are matched entities, edges wit
 data/
   articles/               # Input: one {uuid}.json per article
   graphs_0.json           # Output of stage 1 (per-article graphs with original relation phrases)
-  graphs_N.json           # Output of stage 2 iterations (merged graphs, N = iteration number)
+  graphs_1.json           # Output of stage 2 (merged graphs, converged in a single match run)
 worldgraph/
   __init__.py
   cli.py                  # Click CLI entry point (worldgraph command group)
@@ -49,7 +48,15 @@ The articles are designed to exercise the algorithm's key challenges:
 - **Entity name variation**: same entity referred to differently across articles (e.g. "Meridian Technologies" / "Meridian Tech", "Dr. Priya Sharma" / "P. Sharma")
 - **Relation phrasing variation**: same fact expressed with different verbs/phrases (e.g. "acquired" / "buys" / "purchase")
 - **Cross-event entity linking**: entities that appear in multiple event clusters, requiring resolution across clusters
-- **Iterative merging**: transitive chains that only fully resolve after earlier merges establish intermediate links
+- **Iterative merging**: transitive chains that only fully resolve after earlier matches propagate similarity to neighboring entities
+
+## Matching Approach
+
+The matching stage uses **similarity propagation**, following the approach of Melnik et al. ("Similarity Flooding", 2002) and iterative entity alignment methods in the knowledge graph literature.
+
+The core insight: entity resolution is circular — to match two entities you need to know if their neighbors match, but matching neighbors requires knowing if they match. Similarity propagation dissolves this by never making hard early decisions. Instead, soft similarity scores for all candidate entity pairs are propagated through the graph iteratively (neighbor similarity reinforces pair similarity), weighted by **relation specificity** (rare relations carry more signal than common ones like "is located in"). After convergence, a single threshold decides which pairs to merge.
+
+This is preferable to hard early merges because a bad early decision can cascade — incorrect merges combine relationship sets, potentially triggering further incorrect merges.
 
 ## Tech Stack
 
