@@ -56,20 +56,20 @@ def extract(input_path: Path, output_path: Path, model: str):
     help="Output graph JSON file.",
 )
 @click.option(
-    "--name-threshold",
-    default=0.5,
-    type=float,
-    help="Cosine similarity threshold for entity name matching.",
-)
-@click.option(
-    "--rel-threshold",
+    "--threshold",
     default=0.8,
     type=float,
-    help="Cosine similarity floor for relation phrase matching.",
+    help="Relative similarity threshold for entity matching (SelectThreshold).",
 )
-def match(input_path: Path, output_path: Path, name_threshold: float, rel_threshold: float):
-    """Stage 2: Structural matching — merge overlapping graphs."""
-    run_matching(input_path, output_path, name_threshold, rel_threshold)
+@click.option(
+    "--max-iter",
+    default=30,
+    type=int,
+    help="Maximum propagation iterations.",
+)
+def match(input_path: Path, output_path: Path, threshold: float, max_iter: int):
+    """Stage 2: Entity alignment via similarity propagation — merge matched graphs."""
+    run_matching(input_path, output_path, threshold, max_iter=max_iter)
 
 
 @cli.command()
