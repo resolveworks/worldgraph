@@ -10,26 +10,24 @@ The target input is a continuous feed of all major news outlets — not a curate
 
 ## Architecture (PoC Pipeline)
 
-The pipeline uses a unified **graph format** (`{"graphs": [...]}`) that flows between stages.
-
-1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs → `graphs_0.json`
-2. **Match** — Align entities across graphs using similarity propagation → `graphs_1.json`
+1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs → `data/graphs/{article_id}.json`
+2. **Match** — Align entities across graphs using similarity propagation → `data/matched.json`
 3. **Score** — Score each deduplicated fact by cross-source agreement
 
 ```bash
-worldgraph extract                               # data/articles/ → graphs_0.json
-worldgraph match                                 # graphs_0.json → graphs_1.json
+worldgraph extract                               # data/articles/ → data/graphs/
+worldgraph match                                 # data/graphs/  → data/matched.json
 ```
 
-In the graph format, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
+In `matched.json`, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
 
 ## Project Structure
 
 ```
 data/
   articles/               # Input: one {uuid}.json per article
-  graphs_0.json           # Output of stage 1 (per-article graphs with original relation phrases)
-  graphs_1.json           # Output of stage 2 (merged graphs)
+  graphs/                 # Output of stage 1: one {article_id}.json per article
+  matched.json            # Output of stage 2: merged graphs
 worldgraph/
   __init__.py
   cli.py                  # Click CLI entry point (worldgraph command group)
