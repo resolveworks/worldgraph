@@ -42,7 +42,6 @@ from pathlib import Path
 import click
 import numpy as np
 from fastembed import TextEmbedding
-from sklearn.cluster import AgglomerativeClustering
 
 
 # ---------------------------------------------------------------------------
@@ -202,79 +201,56 @@ def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
     return float(np.dot(a, b) / norm) if norm > 0 else 0.0
 
 
-def cluster_relations(
-    relation_embeddings: dict[str, np.ndarray],
-    distance_threshold: float = 0.3,
-) -> dict[str, int]:
-    """Cluster relation phrases by semantic similarity using HAC with complete linkage.
-
-    Embeddings should be the "A {phrase} B" wrapped vectors already computed in
-    prepare_embeddings — not raw phrase embeddings. Complete linkage ensures all
-    members of a cluster are mutually similar, producing compact synonym groups.
-    Singletons (phrases that never merged) get their own cluster id.
-
-    distance_threshold is in cosine distance space (= 1 - cosine_similarity),
-    so 0.3 corresponds to cosine similarity ~0.7.
-    """
-    phrases = list(relation_embeddings)
-    if len(phrases) == 0:
-        return {}
-    if len(phrases) == 1:
-        return {phrases[0]: 0}
-
-    matrix = np.stack([relation_embeddings[p] for p in phrases])
-    dist_matrix = 1.0 - (matrix @ matrix.T)
-
-    clustering = AgglomerativeClustering(
-        n_clusters=None,
-        distance_threshold=distance_threshold,
-        metric="precomputed",
-        linkage="complete",
-        compute_full_tree=True,
-    )
-    labels = clustering.fit_predict(dist_matrix)
-    return {phrase: int(label) for phrase, label in zip(phrases, labels)}
-
-
 def compute_functionality(
     graphs: list[Graph],
     relation_embeddings: dict[str, np.ndarray],
-    distance_threshold: float = 0.3,
+    threshold: float = 0.8,
 ) -> tuple[dict[str, float], dict[str, float]]:
     """Compute functionality and inverse functionality for each relation phrase.
 
     Functionality ≈ 1 / avg_out_degree: for a given source name, how many
-    distinct target names does it map to via this relation cluster? High means
+    distinct target names does it map to via this relation pool? High means
     the relation uniquely determines the target — strong forward evidence.
 
     Inverse functionality ≈ 1 / avg_in_degree: for a given target name, how
-    many distinct source names map to it via this relation cluster? High means
+    many distinct source names map to it via this relation pool? High means
     the relation uniquely determines the source — strong backward evidence.
 
     Entity names (not IDs) are used so that the same entity mentioned across
-    multiple graphs pools its statistics. Relation phrases are clustered by
-    semantic similarity before computing degrees, so synonym phrasings share
-    statistics.
+    multiple graphs pools its statistics. For each relation phrase r, edges
+    whose phrase r' satisfies cosine_sim(r, r') >= threshold are pooled
+    together — the same threshold used in similarity propagation.
 
     Returns (functionality, inverse_functionality), each a dict from phrase to float.
     """
-    cluster_of = cluster_relations(relation_embeddings, distance_threshold)
+    all_relations = list(relation_embeddings)
 
-    # cluster -> list of (source_name, target_name) pairs across all graphs
-    cluster_pairs: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    # Precompute which relations are similar to each relation
+    similar: dict[str, list[str]] = {r: [] for r in all_relations}
+    for i, r in enumerate(all_relations):
+        for j, r2 in enumerate(all_relations):
+            if cosine_sim(relation_embeddings[r], relation_embeddings[r2]) >= threshold:
+                similar[r].append(r2)
+
+    # Collect all (src_name, tgt_name) pairs per relation phrase
+    phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for g in graphs:
         for edge in g.edges:
             src_name = g.entities[edge.source].name
             tgt_name = g.entities[edge.target].name
-            cid = cluster_of[edge.relation]
-            cluster_pairs[cid].append((src_name, tgt_name))
+            phrase_pairs[edge.relation].append((src_name, tgt_name))
 
-    cluster_func: dict[int, float] = {}
-    cluster_inv_func: dict[int, float] = {}
-    for cid, pairs in cluster_pairs.items():
+    functionality: dict[str, float] = {}
+    inv_functionality: dict[str, float] = {}
+    for r in all_relations:
+        pooled = [pair for r2 in similar[r] for pair in phrase_pairs.get(r2, [])]
+        if not pooled:
+            functionality[r] = 1.0
+            inv_functionality[r] = 1.0
+            continue
         targets_per_source: dict[str, set[str]] = defaultdict(set)
         sources_per_target: dict[str, set[str]] = defaultdict(set)
-        for src, tgt in pairs:
+        for src, tgt in pooled:
             targets_per_source[src].add(tgt)
             sources_per_target[tgt].add(src)
         avg_out_degree = sum(len(v) for v in targets_per_source.values()) / len(
@@ -283,18 +259,15 @@ def compute_functionality(
         avg_in_degree = sum(len(v) for v in sources_per_target.values()) / len(
             sources_per_target
         )
-        cluster_func[cid] = 1.0 / avg_out_degree
-        cluster_inv_func[cid] = 1.0 / avg_in_degree
+        functionality[r] = 1.0 / avg_out_degree
+        inv_functionality[r] = 1.0 / avg_in_degree
 
-    functionality = {phrase: cluster_func[cid] for phrase, cid in cluster_of.items()}
-    inv_functionality = {
-        phrase: cluster_inv_func[cid] for phrase, cid in cluster_of.items()
-    }
     return functionality, inv_functionality
 
 
 def prepare_embeddings(
     graphs: list[Graph],
+    threshold: float = 0.8,
 ) -> tuple[
     dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float], dict[str, float]
 ]:
@@ -315,7 +288,7 @@ def prepare_embeddings(
     }
 
     functionality, inv_functionality = compute_functionality(
-        graphs, relation_embeddings
+        graphs, relation_embeddings, threshold
     )
 
     return name_embeddings, relation_embeddings, functionality, inv_functionality
@@ -597,7 +570,7 @@ def run_matching(
 
     click.echo("\nEmbedding entity names and relation phrases...")
     name_embeddings, relation_embeddings, functionality, inv_functionality = (
-        prepare_embeddings(graphs)
+        prepare_embeddings(graphs, threshold)
     )
 
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
