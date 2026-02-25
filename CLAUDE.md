@@ -96,7 +96,9 @@ Optionally: run single propagation over the full K-partite entity-pair graph (al
 
 ## Testing Strategy
 
-One assumption per test, on the smallest input where it's observable. No mocking — real embeddings throughout (session-scoped fixture, embedded once). A failure at a higher layer should always be explainable by a failure at a lower layer.
+One assumption per test, on the smallest input where it's observable. No mocking — real embeddings throughout. A failure at a higher layer should always be explainable by a failure at a lower layer.
+
+A session-scoped fixture embeds all phrases needed across the test suite once and exposes a shared pool. Individual tests draw from this pool — no test embeds its own phrases.
 
 - **Layer 1 — Unit**: individual primitives (`cosine_sim`, `compute_functionality`, `select_matches`, `UnionFind`)
 - **Layer 2 — Propagation**: structural and functionality effects on similarity scores, convergence guarantees
