@@ -94,6 +94,14 @@ Optionally: run single propagation over the full K-partite entity-pair graph (al
 - Sentence embeddings (fastembed) for name and relation phrase similarity
 - No ML training — fully unsupervised, classical graph methods
 
+## Testing Strategy
+
+One assumption per test, on the smallest input where it's observable. No mocking — real embeddings throughout (session-scoped fixture, embedded once). A failure at a higher layer should always be explainable by a failure at a lower layer.
+
+- **Layer 1 — Unit**: individual primitives (`cosine_sim`, `compute_functionality`, `select_matches`, `UnionFind`)
+- **Layer 2 — Propagation**: structural and functionality effects on similarity scores, convergence guarantees
+- **Layer 3 — Integration**: correct merges, no spurious matches, correct canonical names and confirmed edges
+
 ## Conventions
 
 - Keep the pipeline modular — each stage should be runnable independently
