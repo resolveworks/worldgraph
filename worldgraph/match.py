@@ -4,7 +4,7 @@ Algorithm overview
 ------------------
 For each pair of graphs (Gi, Gj):
 
-1. Initialise σ[(ei, ej)] = cosine_similarity(name_emb(ei), name_emb(ej))
+1. Initialise σ[(ei, ej)] = dot(name_emb(ei), name_emb(ej))
    for all entity pairs across the two graphs.
 
 2. Propagate: each iteration, a pair's score is reinforced by its neighbours
@@ -196,11 +196,6 @@ def embed(texts: list[str], model: TextEmbedding) -> dict[str, np.ndarray]:
     return {t: np.array(v) for t, v in zip(texts, vecs)}
 
 
-def cosine_sim(a: np.ndarray, b: np.ndarray) -> float:
-    norm = np.linalg.norm(a) * np.linalg.norm(b)
-    return float(np.dot(a, b) / norm) if norm > 0 else 0.0
-
-
 def compute_functionality(
     graphs: list[Graph],
     relation_embeddings: dict[str, np.ndarray],
@@ -218,7 +213,7 @@ def compute_functionality(
 
     Entity names (not IDs) are used so that the same entity mentioned across
     multiple graphs pools its statistics. For each relation phrase r, edges
-    whose phrase r' satisfies cosine_sim(r, r') >= threshold are pooled
+    whose phrase r' satisfies dot(r, r') >= threshold are pooled
     together — the same threshold used in similarity propagation.
 
     Returns (functionality, inverse_functionality), each a dict from phrase to float.
@@ -229,7 +224,10 @@ def compute_functionality(
     similar: dict[str, list[str]] = {r: [] for r in all_relations}
     for i, r in enumerate(all_relations):
         for j, r2 in enumerate(all_relations):
-            if cosine_sim(relation_embeddings[r], relation_embeddings[r2]) >= threshold:
+            if (
+                float(np.dot(relation_embeddings[r], relation_embeddings[r2]))
+                >= threshold
+            ):
                 similar[r].append(r2)
 
     # Collect all (src_name, tgt_name) pairs per relation phrase
@@ -325,7 +323,7 @@ def propagate(
             name_b = graph_b.entities[eid_b].name
             emb_b = name_embeddings.get(name_b)
             if emb_a is not None and emb_b is not None:
-                sigma[(eid_a, eid_b)] = max(0.0, cosine_sim(emb_a, emb_b))
+                sigma[(eid_a, eid_b)] = float(np.dot(emb_a, emb_b))
             else:
                 sigma[(eid_a, eid_b)] = 0.0
 
@@ -345,7 +343,7 @@ def propagate(
                         emb_r2 = relation_embeddings.get(edge_b.relation)
                         if emb_r2 is None:
                             continue
-                        rel_sim = max(0.0, cosine_sim(emb_r, emb_r2))
+                        rel_sim = float(np.dot(emb_r, emb_r2))
                         if rel_sim == 0.0:
                             continue
                         w = (
@@ -368,7 +366,7 @@ def propagate(
                         emb_r2 = relation_embeddings.get(edge_b.relation)
                         if emb_r2 is None:
                             continue
-                        rel_sim = max(0.0, cosine_sim(emb_r, emb_r2))
+                        rel_sim = float(np.dot(emb_r, emb_r2))
                         if rel_sim == 0.0:
                             continue
                         w = (
