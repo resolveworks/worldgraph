@@ -1,35 +1,31 @@
-"""Stage 2: Entity alignment via PARIS-style similarity propagation.
+"""Stage 2: Entity alignment via similarity propagation.
 
 Algorithm overview
 ------------------
 For each pair of graphs (Gi, Gj):
 
-1. Initialise σ[(ei, ej)] = dot(name_emb(ei), name_emb(ej))
-   for all entity pairs across the two graphs.
+1. Compute name_sim[(ei, ej)] = dot(name_emb(ei), name_emb(ej))
+   for all entity pairs.  This is fixed throughout propagation.
 
-2. Propagate: each iteration, a pair's score is reinforced by its neighbours
-   (Basic SF formula — accumulates across iterations):
+2. Propagate structural evidence: each iteration, for each entity pair,
+   examine all edge pairs (ei -r-> ei', ej -r'-> ej') where rel_sim(r, r')
+   >= threshold and the neighbor pair's confidence (name_sim + structural)
+   >= threshold.  The structural score is updated via max:
 
-       σ_new[(ei, ej)] = σ[(ei, ej)]
-           + Σ  σ[(ei', ej')] * rel_sim(r, r') * w(r, r')
+       structural[(ei, ej)] = max over qualifying edge pairs of
+           neighbor_confidence * rel_sim(r, r') * functionality(r, r')
 
-   summed over all edges ei -r-> ei' in Gi and ej -r'-> ej' in Gj
-   (and their reverses). rel_sim is cosine similarity of relation phrase
-   embeddings. w(r, r') is the functionality weight — how specific/rare the
-   relation is, approximated as the inverse average out-degree of that relation
-   across the corpus.
+   Scores are absolute (no normalization), bounded, and monotonically
+   non-decreasing — convergence is guaranteed (FLORA / Knaster-Tarski).
 
-3. Normalise scores by the maximum after each iteration. Stop when the
-   Euclidean norm of the change vector falls below epsilon.
+3. Select matches: keep pairs where both name_sim and structural exceed
+   their respective absolute thresholds.
 
-4. Apply SelectThreshold: for each entity ei, compute relative similarities
-   (its score with each ej as a fraction of its best score). Keep pairs
-   where both directions exceed the threshold.
+4. Merge matched entity pairs transitively via union-find, pool provenance.
 
-5. Merge matched entity pairs transitively via union-find, pool provenance.
-
-Reference: Suchanek, Abiteboul, Senellart. "PARIS: Probabilistic Alignment of
-Relations, Instances, and Schema." PVLDB 2011.
+References:
+- Suchanek, Abiteboul, Senellart. "PARIS." PVLDB 2011.
+- Peng, Bonald, Suchanek. "FLORA." 2025.
 """
 
 import json
