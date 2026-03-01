@@ -33,7 +33,6 @@ Relations, Instances, and Schema." PVLDB 2011.
 """
 
 import json
-import math
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -306,16 +305,27 @@ def propagate(
     inv_functionality: dict[str, float],
     max_iter: int = 30,
     epsilon: float = 1e-4,
-) -> dict[tuple[str, str], float]:
-    """Run PARIS-style similarity propagation between two graphs.
+    rel_sim_threshold: float = 0.8,
+    neighbor_sim_threshold: float = 0.8,
+) -> tuple[dict[tuple[str, str], float], dict[tuple[str, str], float]]:
+    """Run similarity propagation between two graphs.
 
-    Returns a dict mapping (entity_id_a, entity_id_b) -> converged similarity.
+    Name similarity is computed once from embeddings and held fixed.
+    Structural similarity starts at 0 and accumulates via max: each
+    iteration, an entity pair's structural score is the max over all
+    edge pairs of (neighbor_confidence * rel_sim * functionality).
+
+    A neighbor pair is "confident enough" to propagate through when
+    name_sim + structural >= neighbor_sim_threshold.
+
+    Returns (name_sim, structural) — two dicts mapping
+    (entity_id_a, entity_id_b) -> float.
     """
     ids_a = list(graph_a.entities)
     ids_b = list(graph_b.entities)
 
-    # Initialise from name embedding similarity
-    sigma: dict[tuple[str, str], float] = {}
+    # Name similarity: computed once, never changes
+    name_sim: dict[tuple[str, str], float] = {}
     for eid_a in ids_a:
         name_a = graph_a.entities[eid_a].name
         emb_a = name_embeddings.get(name_a)
@@ -323,17 +333,20 @@ def propagate(
             name_b = graph_b.entities[eid_b].name
             emb_b = name_embeddings.get(name_b)
             if emb_a is not None and emb_b is not None:
-                sigma[(eid_a, eid_b)] = float(np.dot(emb_a, emb_b))
+                name_sim[(eid_a, eid_b)] = float(np.dot(emb_a, emb_b))
             else:
-                sigma[(eid_a, eid_b)] = 0.0
+                name_sim[(eid_a, eid_b)] = 0.0
+
+    # Structural similarity: starts at 0, grows via max
+    structural: dict[tuple[str, str], float] = {key: 0.0 for key in name_sim}
 
     for _ in range(max_iter):
-        increment: dict[tuple[str, str], float] = defaultdict(float)
+        changed = False
 
-        # For every pair of edges (one from each graph) connected by similar relations,
-        # propagate the similarity of their endpoints back to the source pair.
         for eid_a in ids_a:
             for eid_b in ids_b:
+                best = structural[(eid_a, eid_b)]
+
                 # Outgoing edges: ei -r-> ei'  and  ej -r'-> ej'
                 for edge_a in graph_a.out_edges.get(eid_a, []):
                     emb_r = relation_embeddings.get(edge_a.relation)
@@ -344,18 +357,18 @@ def propagate(
                         if emb_r2 is None:
                             continue
                         rel_sim = float(np.dot(emb_r, emb_r2))
-                        if rel_sim == 0.0:
+                        if rel_sim < rel_sim_threshold:
                             continue
-                        w = (
-                            rel_sim
-                            * (
-                                functionality.get(edge_a.relation, 1.0)
-                                + functionality.get(edge_b.relation, 1.0)
-                            )
-                            / 2.0
-                        )
-                        neighbor_sim = sigma.get((edge_a.target, edge_b.target), 0.0)
-                        increment[(eid_a, eid_b)] += neighbor_sim * w
+                        nbr_key = (edge_a.target, edge_b.target)
+                        neighbor_confidence = name_sim[nbr_key] + structural[nbr_key]
+                        if neighbor_confidence < neighbor_sim_threshold:
+                            continue
+                        func_w = (
+                            functionality.get(edge_a.relation, 1.0)
+                            + functionality.get(edge_b.relation, 1.0)
+                        ) / 2.0
+                        evidence = neighbor_confidence * rel_sim * func_w
+                        best = max(best, evidence)
 
                 # Incoming edges: ei' -r-> ei  and  ej' -r'-> ej
                 for edge_a in graph_a.in_edges.get(eid_a, []):
@@ -367,77 +380,46 @@ def propagate(
                         if emb_r2 is None:
                             continue
                         rel_sim = float(np.dot(emb_r, emb_r2))
-                        if rel_sim == 0.0:
+                        if rel_sim < rel_sim_threshold:
                             continue
-                        w = (
-                            rel_sim
-                            * (
-                                inv_functionality.get(edge_a.relation, 1.0)
-                                + inv_functionality.get(edge_b.relation, 1.0)
-                            )
-                            / 2.0
-                        )
-                        neighbor_sim = sigma.get((edge_a.source, edge_b.source), 0.0)
-                        increment[(eid_a, eid_b)] += neighbor_sim * w
+                        nbr_key = (edge_a.source, edge_b.source)
+                        neighbor_confidence = name_sim[nbr_key] + structural[nbr_key]
+                        if neighbor_confidence < neighbor_sim_threshold:
+                            continue
+                        func_w = (
+                            inv_functionality.get(edge_a.relation, 1.0)
+                            + inv_functionality.get(edge_b.relation, 1.0)
+                        ) / 2.0
+                        evidence = neighbor_confidence * rel_sim * func_w
+                        best = max(best, evidence)
 
-        # σ_new = σ_current + increment, then normalise (Basic SF formula)
-        sigma_new: dict[tuple[str, str], float] = {}
-        max_val = 0.0
-        for key in sigma:
-            val = sigma[key] + increment.get(key, 0.0)
-            sigma_new[key] = val
-            max_val = max(max_val, val)
+                if best > structural[(eid_a, eid_b)] + epsilon:
+                    structural[(eid_a, eid_b)] = best
+                    changed = True
 
-        if max_val > 0:
-            for key in sigma_new:
-                sigma_new[key] /= max_val
-
-        # Convergence check: Euclidean norm of change vector
-        residual = math.sqrt(sum((sigma_new[k] - sigma[k]) ** 2 for k in sigma))
-        sigma = sigma_new
-        if residual < epsilon:
+        if not changed:
             break
 
-    return sigma
+    return name_sim, structural
 
 
 def select_matches(
-    sigma: dict[tuple[str, str], float],
+    name_sim: dict[tuple[str, str], float],
+    structural: dict[tuple[str, str], float],
     ids_a: list[str],
     ids_b: list[str],
-    threshold: float,
+    name_threshold: float,
+    structural_threshold: float,
 ) -> list[tuple[str, str]]:
-    """Apply SelectThreshold to the converged similarity matrix.
-
-    For each entity in A, compute relative similarities: normalise its scores
-    against all B-entities by its best score. Keep pairs where both
-    A-relative and B-relative similarity exceed the threshold.
-    """
-    # Relative similarity from A's perspective
-    rel_a: dict[tuple[str, str], float] = {}
-    for eid_a in ids_a:
-        best = max((sigma.get((eid_a, eid_b), 0.0) for eid_b in ids_b), default=0.0)
-        if best > 0:
-            for eid_b in ids_b:
-                rel_a[(eid_a, eid_b)] = sigma.get((eid_a, eid_b), 0.0) / best
-
-    # Relative similarity from B's perspective
-    rel_b: dict[tuple[str, str], float] = {}
-    for eid_b in ids_b:
-        best = max((sigma.get((eid_a, eid_b), 0.0) for eid_a in ids_a), default=0.0)
-        if best > 0:
-            for eid_a in ids_a:
-                rel_b[(eid_a, eid_b)] = sigma.get((eid_a, eid_b), 0.0) / best
-
+    """Select entity matches using absolute thresholds on both scores."""
     matches = []
     for eid_a in ids_a:
         for eid_b in ids_b:
             if (
-                rel_a.get((eid_a, eid_b), 0.0) >= threshold
-                and rel_b.get((eid_a, eid_b), 0.0) >= threshold
+                name_sim.get((eid_a, eid_b), 0.0) >= name_threshold
+                and structural.get((eid_a, eid_b), 0.0) >= structural_threshold
             ):
                 matches.append((eid_a, eid_b))
-
     return matches
 
 
@@ -579,7 +561,7 @@ def run_matching(
     uf = UnionFind()
     for i in range(len(graphs)):
         for j in range(i + 1, len(graphs)):
-            sigma = propagate(
+            name_sim, structural = propagate(
                 graphs[i],
                 graphs[j],
                 name_embeddings,
@@ -588,9 +570,16 @@ def run_matching(
                 inv_functionality,
                 max_iter=max_iter,
                 epsilon=epsilon,
+                rel_sim_threshold=threshold,
+                neighbor_sim_threshold=threshold,
             )
             matches = select_matches(
-                sigma, list(graphs[i].entities), list(graphs[j].entities), threshold
+                name_sim,
+                structural,
+                list(graphs[i].entities),
+                list(graphs[j].entities),
+                name_threshold=threshold,
+                structural_threshold=threshold,
             )
             for eid_a, eid_b in matches:
                 uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
