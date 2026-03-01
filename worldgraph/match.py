@@ -13,7 +13,7 @@ For each pair of graphs (Gi, Gj):
    >= threshold.  The structural score is updated via max:
 
        structural[(ei, ej)] = max over qualifying edge pairs of
-           neighbor_confidence * rel_sim(r, r') * functionality(r, r')
+           neighbor_confidence * functionality(r, r')
 
    Scores are absolute (no normalization), bounded, and monotonically
    non-decreasing — convergence is guaranteed (FLORA / Knaster-Tarski).
@@ -363,7 +363,7 @@ def propagate(
                             functionality.get(edge_a.relation, 1.0)
                             + functionality.get(edge_b.relation, 1.0)
                         ) / 2.0
-                        evidence = neighbor_confidence * rel_sim * func_w
+                        evidence = neighbor_confidence * func_w
                         best = max(best, evidence)
 
                 # Incoming edges: ei' -r-> ei  and  ej' -r'-> ej
@@ -386,7 +386,7 @@ def propagate(
                             inv_functionality.get(edge_a.relation, 1.0)
                             + inv_functionality.get(edge_b.relation, 1.0)
                         ) / 2.0
-                        evidence = neighbor_confidence * rel_sim * func_w
+                        evidence = neighbor_confidence * func_w
                         best = max(best, evidence)
 
                 if best > structural[(eid_a, eid_b)] + epsilon:
