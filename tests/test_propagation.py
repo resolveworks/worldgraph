@@ -63,14 +63,13 @@ def run_propagation(
 ):
     """Convenience wrapper: embed relations, compute functionality, propagate."""
     rel_embs = {r: embed_phrase(r) for r in relations}
-    func, inv_func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
+    func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
     name_sim, structural = propagate(
         graph_a,
         graph_b,
         name_embeddings,
         rel_embs,
         func,
-        inv_func,
     )
     return name_sim, structural
 
@@ -335,10 +334,10 @@ def test_functional_relation_produces_stronger_evidence(embed_phrase):
         "acquired": embed_phrase("acquired"),
         "invested in": embed_phrase("invested in"),
     }
-    func, inv_func = compute_functionality([g1, g2], rel_embs)
+    func = compute_functionality([g1, g2], rel_embs)
 
     # Verify the premise: 'acquired' is more functional than 'invested in'
-    assert func["acquired"] > func["invested in"]
+    assert func["acquired"].forward > func["invested in"].forward
 
     # Now run propagation with only 'acquired' edges vs only 'invested in' edges
     g1_acq = make_graph("g1a", [("Apple", "Beats", "acquired")])
@@ -346,8 +345,8 @@ def test_functional_relation_produces_stronger_evidence(embed_phrase):
     g1_inv = make_graph("g1i", [("Apple", "Beats", "invested in")])
     g2_inv = make_graph("g2i", [("Apple", "Beats", "invested in")])
 
-    _, structural_acq = propagate(g1_acq, g2_acq, name_embs, rel_embs, func, inv_func)
-    _, structural_inv = propagate(g1_inv, g2_inv, name_embs, rel_embs, func, inv_func)
+    _, structural_acq = propagate(g1_acq, g2_acq, name_embs, rel_embs, func)
+    _, structural_inv = propagate(g1_inv, g2_inv, name_embs, rel_embs, func)
 
     # The functional relation should produce stronger evidence
     score_acq = structural_acq[("g1a:Apple", "g2a:Apple")]
@@ -402,10 +401,10 @@ def test_multi_hop_propagation_across_iterations(embed_phrase):
 
     relations = ["acquired", "purchased", "founded by"]
     rel_embs = {r: embed_phrase(r) for r in relations}
-    func, inv_func = compute_functionality([g1, g2], rel_embs)
+    func = compute_functionality([g1, g2], rel_embs)
 
     # Single iteration: Apple-Apple should NOT have evidence yet
-    _, structural_1 = propagate(g1, g2, name_embs, rel_embs, func, inv_func, max_iter=1)
+    _, structural_1 = propagate(g1, g2, name_embs, rel_embs, func, max_iter=1)
     # Beats-Beats should have evidence (neighbor JC-JC has name_sim=1)
     assert structural_1[("g1:Beats", "g2:Beats")] > 0
 
@@ -414,7 +413,7 @@ def test_multi_hop_propagation_across_iterations(embed_phrase):
     # With max_iter=1, Apple may or may not have evidence depending on
     # whether Beats already accumulated enough. Let's check full convergence:
     _, structural_full = propagate(
-        g1, g2, name_embs, rel_embs, func, inv_func, max_iter=30
+        g1, g2, name_embs, rel_embs, func, max_iter=30
     )
 
     # After convergence, all three pairs should have evidence

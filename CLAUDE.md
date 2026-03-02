@@ -58,7 +58,7 @@ The matching stage implements **similarity propagation** (inspired by PARIS/FLOR
 
 **Similarity Flooding** (Melnik et al., 2002): entity similarity propagates through graph structure iteratively. To know if two entities match you need to know if their neighbors match — propagation dissolves this circularity by never making hard early decisions.
 
-**PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with *functionality weighting* — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones.
+**PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with *functionality weighting* — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones. See [docs/functionality.md](docs/functionality.md) for a detailed explanation.
 
 **FLORA** (Peng, Bonald, Suchanek, 2025): PARIS successor using fuzzy logic (t-norms/t-conorms) instead of probability, with proven convergence and explicit dangling-entity handling.
 

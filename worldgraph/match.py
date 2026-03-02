@@ -32,11 +32,17 @@ import json
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass
+from typing import NamedTuple
 from pathlib import Path
 
 import click
 import numpy as np
 from fastembed import TextEmbedding
+
+
+class Functionality(NamedTuple):
+    forward: float
+    inverse: float
 
 
 # ---------------------------------------------------------------------------
@@ -184,7 +190,7 @@ def compute_functionality(
     graphs: list[Graph],
     relation_embeddings: dict[str, np.ndarray],
     threshold: float = 0.8,
-) -> tuple[dict[str, float], dict[str, float]]:
+) -> dict[str, Functionality]:
     """Compute functionality and inverse functionality for each relation phrase.
 
     Functionality ≈ 1 / avg_out_degree: for a given source name, how many
@@ -200,7 +206,7 @@ def compute_functionality(
     whose phrase r' satisfies dot(r, r') >= threshold are pooled
     together — the same threshold used in similarity propagation.
 
-    Returns (functionality, inverse_functionality), each a dict from phrase to float.
+    Returns dict from phrase to Functionality(forward, inverse).
     """
     all_relations = list(relation_embeddings)
 
@@ -222,13 +228,11 @@ def compute_functionality(
             tgt_name = g.entities[edge.target].name
             phrase_pairs[edge.relation].append((src_name, tgt_name))
 
-    functionality: dict[str, float] = {}
-    inv_functionality: dict[str, float] = {}
+    result: dict[str, Functionality] = {}
     for r in all_relations:
         pooled = [pair for r2 in similar[r] for pair in phrase_pairs.get(r2, [])]
         if not pooled:
-            functionality[r] = 1.0
-            inv_functionality[r] = 1.0
+            result[r] = Functionality(1.0, 1.0)
             continue
         targets_per_source: dict[str, set[str]] = defaultdict(set)
         sources_per_target: dict[str, set[str]] = defaultdict(set)
@@ -241,21 +245,18 @@ def compute_functionality(
         avg_in_degree = sum(len(v) for v in sources_per_target.values()) / len(
             sources_per_target
         )
-        functionality[r] = 1.0 / avg_out_degree
-        inv_functionality[r] = 1.0 / avg_in_degree
+        result[r] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
 
-    return functionality, inv_functionality
+    return result
 
 
 def prepare_embeddings(
     graphs: list[Graph],
     threshold: float = 0.8,
-) -> tuple[
-    dict[str, np.ndarray], dict[str, np.ndarray], dict[str, float], dict[str, float]
-]:
+) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, Functionality]]:
     """Embed all entity names and relation phrases; compute functionality weights.
 
-    Returns (name_embeddings, relation_embeddings, functionality, inv_functionality).
+    Returns (name_embeddings, relation_embeddings, functionality).
     """
     all_names = sorted({e.name for g in graphs for e in g.entities.values()})
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
@@ -269,11 +270,9 @@ def prepare_embeddings(
         r: relation_embeddings[w] for r, w in zip(all_relations, wrapped)
     }
 
-    functionality, inv_functionality = compute_functionality(
-        graphs, relation_embeddings, threshold
-    )
+    functionality = compute_functionality(graphs, relation_embeddings, threshold)
 
-    return name_embeddings, relation_embeddings, functionality, inv_functionality
+    return name_embeddings, relation_embeddings, functionality
 
 
 # ---------------------------------------------------------------------------
@@ -283,25 +282,22 @@ def prepare_embeddings(
 
 def _build_adjacency(
     graph: Graph,
-    functionality: dict[str, float],
-    inv_functionality: dict[str, float],
+    functionality: dict[str, Functionality],
 ) -> dict[str, list[tuple[str, str, float]]]:
     """Build per-entity adjacency list with direction-appropriate functionality.
 
     For each edge src --r--> tgt:
-      - src gets neighbor (tgt, r, fun(r))      — forward direction
-      - tgt gets neighbor (src, r, fun_inv(r))   — backward direction
+      - src gets neighbor (tgt, r, fun(r).forward)
+      - tgt gets neighbor (src, r, fun(r).inverse)
 
     Returns {entity_id: [(neighbor_id, relation, func_weight), ...]}.
     """
+    default = Functionality(1.0, 1.0)
     adj: dict[str, list[tuple[str, str, float]]] = defaultdict(list)
     for edge in graph.edges:
-        adj[edge.source].append(
-            (edge.target, edge.relation, functionality.get(edge.relation, 1.0))
-        )
-        adj[edge.target].append(
-            (edge.source, edge.relation, inv_functionality.get(edge.relation, 1.0))
-        )
+        func = functionality.get(edge.relation, default)
+        adj[edge.source].append((edge.target, edge.relation, func.forward))
+        adj[edge.target].append((edge.source, edge.relation, func.inverse))
     return adj
 
 
@@ -310,8 +306,7 @@ def propagate(
     graph_b: Graph,
     name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
-    functionality: dict[str, float],
-    inv_functionality: dict[str, float],
+    functionality: dict[str, Functionality],
     max_iter: int = 30,
     epsilon: float = 1e-4,
     rel_sim_threshold: float = 0.8,
@@ -333,8 +328,8 @@ def propagate(
     ids_a = list(graph_a.entities)
     ids_b = list(graph_b.entities)
 
-    adj_a = _build_adjacency(graph_a, functionality, inv_functionality)
-    adj_b = _build_adjacency(graph_b, functionality, inv_functionality)
+    adj_a = _build_adjacency(graph_a, functionality)
+    adj_b = _build_adjacency(graph_b, functionality)
 
     # Name similarity: computed once, never changes
     name_sim: dict[tuple[str, str], float] = {}
@@ -533,8 +528,8 @@ def run_matching(
         )
 
     click.echo("\nEmbedding entity names and relation phrases...")
-    name_embeddings, relation_embeddings, functionality, inv_functionality = (
-        prepare_embeddings(graphs, threshold)
+    name_embeddings, relation_embeddings, functionality = prepare_embeddings(
+        graphs, threshold
     )
 
     n_pairs = len(graphs) * (len(graphs) - 1) // 2
@@ -551,7 +546,6 @@ def run_matching(
                 name_embeddings,
                 relation_embeddings,
                 functionality,
-                inv_functionality,
                 max_iter=max_iter,
                 epsilon=epsilon,
                 rel_sim_threshold=threshold,

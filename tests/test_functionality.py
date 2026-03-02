@@ -44,8 +44,8 @@ def test_one_to_one_functionality_is_1(embed_phrase):
             ("Google", "YouTube", "acquired"),
         ],
     )
-    func, _ = compute_functionality([g], {"acquired": embed_phrase("acquired")})
-    assert func["acquired"] == pytest.approx(1.0)
+    func = compute_functionality([g], {"acquired": embed_phrase("acquired")})
+    assert func["acquired"].forward == pytest.approx(1.0)
 
 
 def test_fan_out_lowers_functionality(embed_phrase):
@@ -57,8 +57,8 @@ def test_fan_out_lowers_functionality(embed_phrase):
             ("Apple", "Shazam", "acquired"),
         ],
     )
-    func, _ = compute_functionality([g], {"acquired": embed_phrase("acquired")})
-    assert func["acquired"] == pytest.approx(0.5)
+    func = compute_functionality([g], {"acquired": embed_phrase("acquired")})
+    assert func["acquired"].forward == pytest.approx(0.5)
 
 
 def test_one_to_one_inv_functionality_is_1(embed_phrase):
@@ -70,8 +70,8 @@ def test_one_to_one_inv_functionality_is_1(embed_phrase):
             ("Google", "YouTube", "acquired"),
         ],
     )
-    _, inv_func = compute_functionality([g], {"acquired": embed_phrase("acquired")})
-    assert inv_func["acquired"] == pytest.approx(1.0)
+    func = compute_functionality([g], {"acquired": embed_phrase("acquired")})
+    assert func["acquired"].inverse == pytest.approx(1.0)
 
 
 def test_fan_in_lowers_inv_functionality(embed_phrase):
@@ -83,8 +83,8 @@ def test_fan_in_lowers_inv_functionality(embed_phrase):
             ("Google", "Beats", "acquired"),
         ],
     )
-    _, inv_func = compute_functionality([g], {"acquired": embed_phrase("acquired")})
-    assert inv_func["acquired"] == pytest.approx(0.5)
+    func = compute_functionality([g], {"acquired": embed_phrase("acquired")})
+    assert func["acquired"].inverse == pytest.approx(0.5)
 
 
 def test_similar_phrases_pool_edges(embed_phrase):
@@ -97,8 +97,8 @@ def test_similar_phrases_pool_edges(embed_phrase):
     )
     g2 = make_graph("g2", [("Apple", "Shazam", "bought")])
     rel_embs = {"acquired": embed_phrase("acquired"), "bought": embed_phrase("bought")}
-    func, _ = compute_functionality([g1, g2], rel_embs)
-    assert func["acquired"] < 1.0
+    func = compute_functionality([g1, g2], rel_embs)
+    assert func["acquired"].forward < 1.0
 
 
 def test_dissimilar_phrases_do_not_pool(embed_phrase):
@@ -116,8 +116,8 @@ def test_dissimilar_phrases_do_not_pool(embed_phrase):
         "acquired": embed_phrase("acquired"),
         "located in": embed_phrase("located in"),
     }
-    func, _ = compute_functionality([g1, g2], rel_embs)
-    assert func["acquired"] == pytest.approx(1.0)
+    func = compute_functionality([g1, g2], rel_embs)
+    assert func["acquired"].forward == pytest.approx(1.0)
 
 
 def test_same_entity_name_across_graphs_pools(embed_phrase):
@@ -125,6 +125,6 @@ def test_same_entity_name_across_graphs_pools(embed_phrase):
     from that name across graphs raise out-degree."""
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Apple", "Shazam", "acquired")])
-    func, _ = compute_functionality([g1, g2], {"acquired": embed_phrase("acquired")})
+    func = compute_functionality([g1, g2], {"acquired": embed_phrase("acquired")})
     # Apple→{Beats, Shazam}: avg_out_degree = 2 → functionality = 0.5
-    assert func["acquired"] == pytest.approx(0.5)
+    assert func["acquired"].forward == pytest.approx(0.5)
