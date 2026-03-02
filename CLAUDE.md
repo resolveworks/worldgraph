@@ -72,16 +72,6 @@ Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free
 
 3. **Dangling entities by default**: most entities won't match anything across most graph pairs. Threshold-based finalization naturally leaves them unmerged — no special handling needed.
 
-### Algorithm sketch
-
-For each pair of graphs (Gi, Gj):
-1. **Name similarity** (fixed): `name_sim[(ei, ej)] = dot(name_emb(ei), name_emb(ej))` for all entity pairs. Computed once, never updated.
-2. **Structural propagation**: structural scores start at 0. Each iteration, for each entity pair (ei, ej), examine all edge pairs (ei→ei' via r, ej→ej' via r') where `rel_sim(r, r') >= threshold` and the neighbor pair's confidence `name_sim + structural >= threshold`. Update via max: `structural[(ei, ej)] = max(neighbor_confidence * rel_sim * functionality)`. Scores are monotonically non-decreasing — convergence guaranteed (FLORA / Knaster-Tarski fixpoint).
-3. **Select matches**: keep pairs where both `name_sim >= threshold` and `structural >= threshold`.
-4. **Merge** matched pairs transitively via union-find.
-
-Optionally: run single propagation over the full K-partite entity-pair graph (all N graphs simultaneously) to get transitive matches without O(N²) pairwise passes.
-
 ### What we don't do (yet)
 
 - PARIS-style joint relation alignment loop (relation similarities updated from entity similarities, alternately) — we pre-compute relation similarity from embeddings and hold it fixed

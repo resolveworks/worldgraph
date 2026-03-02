@@ -51,9 +51,7 @@ This is PARIS's *functionality* concept: a relation's weight is proportional to 
 
 ### Free-text relations
 
-Standard methods (SF, PARIS, FLORA) assume relations come from a controlled vocabulary. We have free-text extraction, so every relation phrase is potentially unique. We handle this by pre-computing pairwise sentence-embedding similarity for all relation phrases and using it to weight propagation paths continuously, rather than gating on exact label match.
-
-This means the propagation graph is fully connected (every entity pair can potentially influence every other via weighted paths), but paths through semantically distant relations contribute negligibly.
+Standard methods (SF, PARIS, FLORA) assume relations come from a controlled vocabulary. We have free-text extraction, so every relation phrase is potentially unique. We handle this by pre-computing pairwise sentence-embedding similarity for all relation phrases and gating propagation paths on a cosine threshold — "acquired" and "purchased" pass (~0.85), "acquired" and "located in" don't. This replaces the exact-label-match gate in standard SF with a fuzzy one, but it's still a binary gate, not a continuous weight.
 
 ### N-graph alignment
 
