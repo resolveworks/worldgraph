@@ -1,29 +1,7 @@
-"""Stage 2: Entity alignment via similarity propagation.
+"""Stage 2: Entity alignment via PARIS-style similarity propagation.
 
-Algorithm overview
-------------------
-For each pair of graphs (Gi, Gj):
-
-1. Seed confidence[(ei, ej)] with name similarity (cosine of name embeddings).
-
-2. Propagate structural evidence via noisy-OR (PARIS-style):
-   each iteration, for each entity pair (ei, ej), accumulate evidence
-   from all edge pairs whose relation phrases pass the relation gate
-   (cosine similarity >= threshold ⟹ "same relation"):
-
-       evidence = 1 - Π(1 - func_weight * confidence[(nbr_a, nbr_b)])
-       confidence[(ei, ej)] = max(confidence[(ei, ej)], evidence)
-
-   Confidence is monotonically non-decreasing — convergence is guaranteed
-   (FLORA / Knaster-Tarski fixpoint).
-
-3. Select matches: keep pairs where confidence exceeds a threshold.
-
-4. Merge matched entity pairs transitively via union-find, pool provenance.
-
-References:
-- Suchanek, Abiteboul, Senellart. "PARIS." PVLDB 2011.
-- Peng, Bonald, Suchanek. "FLORA." 2025.
+Seed confidence from name embeddings, propagate structural evidence
+via noisy-OR, threshold, merge via union-find.
 """
 
 import json
@@ -316,19 +294,6 @@ def propagate(
     confidence_gate: float = 0.8,
 ) -> dict[tuple[str, str], float]:
     """Run similarity propagation between two graphs.
-
-    Confidence is seeded with name similarity (cosine of name embeddings).
-    Each iteration, evidence from neighbor pairs accumulates via noisy-OR:
-
-        evidence = 1 - Π(1 - func_weight * confidence[neighbor])
-        confidence[pair] = max(confidence[pair], evidence)
-
-    The product runs over all edge pairs where the relation phrases pass
-    the relation gate (cosine >= rel_gate ⟹ "same relation"; below ⟹
-    different relation, no propagation).
-
-    Confidence is monotonically non-decreasing — convergence guaranteed
-    (FLORA / Knaster-Tarski).
 
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     """
