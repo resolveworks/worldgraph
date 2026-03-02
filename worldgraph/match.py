@@ -6,15 +6,21 @@ via noisy-OR, threshold, merge via union-find.
 
 import json
 import math
+import os
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import NamedTuple
 from pathlib import Path
+from typing import NamedTuple
 
 import click
 import numpy as np
+from dotenv import load_dotenv
 from fastembed import TextEmbedding
+
+load_dotenv()
+
+load_dotenv()
 
 
 class Functionality(NamedTuple):
@@ -238,7 +244,7 @@ def prepare_embeddings(
     all_names = sorted({e.name for g in graphs for e in g.entities.values()})
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
 
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
     name_embeddings = embed(all_names, model)
     # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
     wrapped = [f"A {r} B" for r in all_relations]

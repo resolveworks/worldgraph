@@ -48,12 +48,6 @@ def make_graph(graph_id: str, edges: list[tuple[str, str, str]]) -> Graph:
     return g
 
 
-def embed_names(entities: list[str], model) -> dict[str, np.ndarray]:
-    """Embed entity names using the session model."""
-    vecs = list(model.embed(entities))
-    return {name: np.array(v) for name, v in zip(entities, vecs)}
-
-
 def compute_seeds(
     graph_a: Graph,
     graph_b: Graph,
@@ -77,7 +71,7 @@ def compute_seeds(
 def run_propagation(
     graph_a: Graph,
     graph_b: Graph,
-    embed_phrase,
+    embed_relation,
     name_embeddings: dict[str, np.ndarray],
     relations: list[str],
     threshold: float = 0.8,
@@ -87,7 +81,7 @@ def run_propagation(
 
     Returns (confidence, seeds) where seeds is the name-similarity baseline.
     """
-    rel_embs = {r: embed_phrase(r) for r in relations}
+    rel_embs = {r: embed_relation(r) for r in relations}
     func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
     confidence = propagate(
         graph_a,
@@ -106,19 +100,16 @@ def run_propagation(
 # ---------------------------------------------------------------------------
 
 
-def test_matching_names_and_relations_produce_matches(embed_phrase):
+def test_matching_names_and_relations_produce_matches(embed, embed_relation):
     """Two graphs with the same entity names and identical relations should
     produce high-confidence matches for the correct entity pairs."""
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Apple", "Beats", "acquired")])
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    name_embs = embed_names(["Apple", "Beats"], model)
+    name_embs = embed(["Apple", "Beats"])
 
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, ["acquired"]
+        g1, g2, embed_relation, name_embs, ["acquired"]
     )
 
     # Correct pairs should have high confidence
@@ -130,19 +121,16 @@ def test_matching_names_and_relations_produce_matches(embed_phrase):
     assert confidence[("g1:Beats", "g2:Apple")] < 0.5
 
 
-def test_synonym_relations_propagate(embed_phrase):
+def test_synonym_relations_propagate(embed, embed_relation):
     """Synonym relation phrases ('acquired' / 'purchased') should pass the
     relation gate and produce correct matches."""
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Apple", "Beats", "purchased")])
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    name_embs = embed_names(["Apple", "Beats"], model)
+    name_embs = embed(["Apple", "Beats"])
 
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, ["acquired", "purchased"]
+        g1, g2, embed_relation, name_embs, ["acquired", "purchased"]
     )
 
     assert confidence[("g1:Apple", "g2:Apple")] > 0.9
@@ -154,7 +142,7 @@ def test_synonym_relations_propagate(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_dissimilar_relations_do_not_propagate(embed_phrase):
+def test_dissimilar_relations_do_not_propagate(embed, embed_relation):
     """Unrelated relation phrases ('acquired' vs 'located in') should not
     pass the relation gate — no matches between unrelated graphs.
 
@@ -164,14 +152,10 @@ def test_dissimilar_relations_do_not_propagate(embed_phrase):
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Tokyo", "Japan", "located in")])
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Apple", "Beats", "Tokyo", "Japan"]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(["Apple", "Beats", "Tokyo", "Japan"])
 
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, ["acquired", "located in"]
+        g1, g2, embed_relation, name_embs, ["acquired", "located in"]
     )
 
     # No matches
@@ -181,7 +165,7 @@ def test_dissimilar_relations_do_not_propagate(embed_phrase):
     assert matches == [], f"Spurious matches found: {matches}"
 
 
-def test_weak_neighbors_do_not_propagate(embed_phrase):
+def test_weak_neighbors_do_not_propagate(embed, embed_relation):
     """Even with identical relation phrases, propagation should not boost
     confidence when neighbor name similarity is below the confidence gate.
 
@@ -191,14 +175,10 @@ def test_weak_neighbors_do_not_propagate(embed_phrase):
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Google", "YouTube", "acquired")])
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Apple", "Beats", "Google", "YouTube"]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(["Apple", "Beats", "Google", "YouTube"])
 
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, ["acquired"]
+        g1, g2, embed_relation, name_embs, ["acquired"]
     )
 
     # Confidence should not exceed the name-similarity seed for any pair
@@ -208,7 +188,7 @@ def test_weak_neighbors_do_not_propagate(embed_phrase):
         )
 
 
-def test_many_weak_paths_do_not_accumulate(embed_phrase):
+def test_many_weak_paths_do_not_accumulate(embed, embed_relation):
     """Many unrelated edges should not produce matches.
 
     g1: Org --acquired--> Target, Org --funded--> Project, Org --hired--> Person
@@ -231,24 +211,13 @@ def test_many_weak_paths_do_not_accumulate(embed_phrase):
         ],
     )
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = [
-        "Org",
-        "Target",
-        "Project",
-        "Person",
-        "City",
-        "Country",
-        "River",
-        "Event",
-    ]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(
+        ["Org", "Target", "Project", "Person", "City", "Country", "River", "Event"],
+    )
 
     relations = ["acquired", "funded", "hired", "located in", "borders", "hosts"]
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, relations
+        g1, g2, embed_relation, name_embs, relations
     )
 
     matches = select_matches(
@@ -262,7 +231,7 @@ def test_many_weak_paths_do_not_accumulate(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_incoming_edges_propagate(embed_phrase):
+def test_incoming_edges_propagate(embed, embed_relation):
     """Structural evidence should propagate through incoming edges, not just
     outgoing.
 
@@ -276,14 +245,12 @@ def test_incoming_edges_propagate(embed_phrase):
     g1 = make_graph("g1", [("Meridian Technologies", "DataVault", "acquired")])
     g2 = make_graph("g2", [("Meridian Tech", "DataVault", "purchased")])
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Meridian Technologies", "Meridian Tech", "DataVault"]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(
+        ["Meridian Technologies", "Meridian Tech", "DataVault"]
+    )
 
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, ["acquired", "purchased"]
+        g1, g2, embed_relation, name_embs, ["acquired", "purchased"]
     )
 
     # Meridian pair should be boosted above its name-similarity seed
@@ -298,7 +265,7 @@ def test_incoming_edges_propagate(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_functional_relation_produces_stronger_evidence(embed_phrase):
+def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
     """A 1:1 (functional) relation should produce stronger confidence boost
     than a many-to-one relation, all else being equal.
 
@@ -309,20 +276,18 @@ def test_functional_relation_produces_stronger_evidence(embed_phrase):
     'acquired' is 1:1 → inverse functionality ≈ 1.0.
     'invested in' has fan-in (many sources → same target) → inverse func < 1.0.
     """
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = [
-        "Meridian Technologies",
-        "Meridian Tech",
-        "DataVault",
-        "Apple",
-        "Google",
-        "Microsoft",
-        "Beats",
-        "YouTube",
-    ]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(
+        [
+            "Meridian Technologies",
+            "Meridian Tech",
+            "DataVault",
+            "Apple",
+            "Google",
+            "Microsoft",
+            "Beats",
+            "YouTube",
+        ],
+    )
 
     # Build functionality: 'acquired' is 1:1, 'invested in' has fan-in
     func_graphs = [
@@ -343,8 +308,8 @@ def test_functional_relation_produces_stronger_evidence(embed_phrase):
         ),
     ]
     rel_embs = {
-        "acquired": embed_phrase("acquired"),
-        "invested in": embed_phrase("invested in"),
+        "acquired": embed_relation("acquired"),
+        "invested in": embed_relation("invested in"),
     }
     func = compute_functionality(func_graphs, rel_embs)
     assert func["acquired"].inverse > func["invested in"].inverse, (
@@ -382,7 +347,7 @@ def test_functional_relation_produces_stronger_evidence(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_multi_hop_propagation_across_iterations(embed_phrase):
+def test_multi_hop_propagation_across_iterations(embed, embed_relation):
     """Evidence propagates through a chain: a high-confidence anchor at
     the end boosts intermediate nodes, which in turn boost further nodes.
 
@@ -410,20 +375,12 @@ def test_multi_hop_propagation_across_iterations(embed_phrase):
         ],
     )
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = [
-        "Meridian Technologies",
-        "Meridian Tech",
-        "Alpha Corp",
-        "Beta Inc",
-        "James Chen",
-    ]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(
+        ["Meridian Technologies", "Meridian Tech", "Alpha Corp", "Beta Inc", "James Chen"],
+    )
 
     relations = ["acquired", "purchased", "founded by"]
-    rel_embs = {r: embed_phrase(r) for r in relations}
+    rel_embs = {r: embed_relation(r) for r in relations}
     func = compute_functionality([g1, g2], rel_embs)
 
     seeds = compute_seeds(g1, g2, name_embs)
@@ -452,7 +409,7 @@ def test_multi_hop_propagation_across_iterations(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_name_variation_with_structural_reinforcement(embed_phrase):
+def test_name_variation_with_structural_reinforcement(embed, embed_relation):
     """The core use case: similar-but-not-identical entity names get matched
     when structural evidence reinforces them.
 
@@ -462,15 +419,13 @@ def test_name_variation_with_structural_reinforcement(embed_phrase):
     g1 = make_graph("g1", [("Meridian Technologies", "DataVault Inc", "acquired")])
     g2 = make_graph("g2", [("Meridian Tech", "DataVault Inc", "purchased")])
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Meridian Technologies", "Meridian Tech", "DataVault Inc"]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(
+        ["Meridian Technologies", "Meridian Tech", "DataVault Inc"]
+    )
 
     relations = ["acquired", "purchased"]
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, relations
+        g1, g2, embed_relation, name_embs, relations
     )
 
     # The varied-name pair should be boosted above its seed
@@ -496,7 +451,7 @@ def test_name_variation_with_structural_reinforcement(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_dangling_entities_get_no_boost(embed_phrase):
+def test_dangling_entities_get_no_boost(embed, embed_relation):
     """Entities with no matching structure should not be boosted beyond
     their name-similarity seed, even when other entities match.
 
@@ -521,15 +476,11 @@ def test_dangling_entities_get_no_boost(embed_phrase):
         ],
     )
 
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Apple", "Beats", "SolarGrid", "WindPower"]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(["Apple", "Beats", "SolarGrid", "WindPower"])
 
     relations = ["acquired", "purchased", "hired"]
     confidence, seeds = run_propagation(
-        g1, g2, embed_phrase, name_embs, relations
+        g1, g2, embed_relation, name_embs, relations
     )
 
     # select_matches should not include dangling entities
@@ -546,7 +497,7 @@ def test_dangling_entities_get_no_boost(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
+def test_bidirectional_edges_accumulate_via_noisy_or(embed, embed_relation):
     """Entity pairs connected by edges in both directions should accumulate
     evidence via noisy-OR, producing higher confidence than a single edge.
 
@@ -560,11 +511,9 @@ def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
         g1: Meridian Technologies --acquired--> DataVault,  DataVault --subsidiary of--> Meridian Technologies
         g2: Meridian Tech         --acquired--> DataVault,  DataVault --subsidiary of--> Meridian Tech
     """
-    from fastembed import TextEmbedding
-
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Meridian Technologies", "Meridian Tech", "DataVault"]
-    name_embs = embed_names(all_names, model)
+    name_embs = embed(
+        ["Meridian Technologies", "Meridian Tech", "DataVault"]
+    )
 
     # Unidirectional
     g1_uni = make_graph("g1u", [("Meridian Technologies", "DataVault", "acquired")])
@@ -572,7 +521,7 @@ def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
 
     relations_uni = ["acquired"]
     confidence_uni, _ = run_propagation(
-        g1_uni, g2_uni, embed_phrase, name_embs, relations_uni
+        g1_uni, g2_uni, embed_relation, name_embs, relations_uni
     )
 
     # Bidirectional
@@ -593,7 +542,7 @@ def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
 
     relations_bi = ["acquired", "subsidiary of"]
     confidence_bi, _ = run_propagation(
-        g1_bi, g2_bi, embed_phrase, name_embs, relations_bi
+        g1_bi, g2_bi, embed_relation, name_embs, relations_bi
     )
 
     # Bidirectional should produce at least as much confidence
@@ -610,7 +559,7 @@ def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_shared_anchor_does_not_override_name_dissimilarity(embed_phrase):
+def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relation):
     """A shared high-confidence anchor should not cause entities with
     different names to match.
 
@@ -644,13 +593,11 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed_phrase):
         ])
     ]
 
-    from fastembed import TextEmbedding
+    name_embs = embed(
+        ["Dr. Priya Sharma", "Dr. Elena Vasquez", "NovaTech Labs"]
+    )
 
-    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Dr. Priya Sharma", "Dr. Elena Vasquez", "NovaTech Labs"]
-    name_embs = embed_names(all_names, model)
-
-    rel_embs = {"founded": embed_phrase("founded")}
+    rel_embs = {"founded": embed_relation("founded")}
     func = compute_functionality([g1, g2] + bg_graphs, rel_embs)
 
     # Premise: name similarity alone is below threshold
@@ -673,4 +620,56 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed_phrase):
     assert ("Dr. Priya Sharma", "Dr. Elena Vasquez") not in matched_names, (
         "Structural evidence from shared anchor overrode name dissimilarity: "
         "Dr. Priya Sharma matched Dr. Elena Vasquez"
+    )
+
+
+def test_similar_names_disjoint_neighborhoods_no_match(embed, embed_relation):
+    """Near-identical names with zero structural overlap should not match.
+
+    g1: "Dr. Elena Vasquez" --"is CEO of"--> "Volta Systems"
+    g2: "Dr. Lena Vasquez"  --"is CEO of"--> "Halcyon Genomics"
+
+    The names embed almost identically, but the neighbors share no
+    similarity. Without structural corroboration, name similarity alone
+    should not be sufficient.
+
+    Replicates the Elena/Lena Vasquez false merge from real data: a
+    quantum computing researcher merged with a biotech founder.
+    """
+    g1 = make_graph("g1", [("Dr. Elena Vasquez", "Volta Systems", "is CEO of")])
+    g2 = make_graph("g2", [("Dr. Lena Vasquez", "Halcyon Genomics", "is CEO of")])
+
+    name_embs = embed(
+        ["Dr. Elena Vasquez", "Dr. Lena Vasquez", "Volta Systems", "Halcyon Genomics"],
+    )
+
+    # Premise: names are similar enough to trigger a match on their own
+    name_sim = float(
+        np.dot(name_embs["Dr. Elena Vasquez"], name_embs["Dr. Lena Vasquez"])
+    )
+    assert name_sim >= 0.8, (
+        f"Premise failed: Elena/Lena name_sim ({name_sim:.3f}) below threshold — "
+        f"the false merge must happen via a different path"
+    )
+
+    # Premise: neighbor names have no similarity
+    nbr_sim = float(
+        np.dot(name_embs["Volta Systems"], name_embs["Halcyon Genomics"])
+    )
+    assert nbr_sim < 0.5, (
+        f"Premise failed: neighbor name_sim ({nbr_sim:.3f}) too high"
+    )
+
+    confidence, seeds = run_propagation(
+        g1, g2, embed_relation, name_embs, ["is CEO of"]
+    )
+
+    matches = select_matches(
+        confidence, list(g1.entities), list(g2.entities), threshold=0.8
+    )
+    matched_names = {(g1.entities[a].name, g2.entities[b].name) for a, b in matches}
+
+    assert ("Dr. Elena Vasquez", "Dr. Lena Vasquez") not in matched_names, (
+        f"Similar names with disjoint neighborhoods were incorrectly matched "
+        f"(name_sim={name_sim:.3f}, no structural support)"
     )
