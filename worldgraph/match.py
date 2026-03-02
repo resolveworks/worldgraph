@@ -31,7 +31,7 @@ References:
 import json
 import uuid
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import click
@@ -63,16 +63,6 @@ class Graph:
     id: str
     entities: dict[str, Entity]  # id -> Entity
     edges: list[Edge]
-    # Populated by index_edges()
-    out_edges: dict[str, list[Edge]] = field(default_factory=lambda: defaultdict(list))
-    in_edges: dict[str, list[Edge]] = field(default_factory=lambda: defaultdict(list))
-
-    def index_edges(self) -> None:
-        self.out_edges = defaultdict(list)
-        self.in_edges = defaultdict(list)
-        for edge in self.edges:
-            self.out_edges[edge.source].append(edge)
-            self.in_edges[edge.target].append(edge)
 
 
 class UnionFind:
@@ -141,7 +131,6 @@ def load_graphs(
             ]
 
         graph = Graph(id=graph_id, entities=entities, edges=edges)
-        graph.index_edges()
         graphs.append(graph)
 
     return graphs, entity_occurrences, edge_articles
@@ -292,6 +281,30 @@ def prepare_embeddings(
 # ---------------------------------------------------------------------------
 
 
+def _build_adjacency(
+    graph: Graph,
+    functionality: dict[str, float],
+    inv_functionality: dict[str, float],
+) -> dict[str, list[tuple[str, str, float]]]:
+    """Build per-entity adjacency list with direction-appropriate functionality.
+
+    For each edge src --r--> tgt:
+      - src gets neighbor (tgt, r, fun(r))      — forward direction
+      - tgt gets neighbor (src, r, fun_inv(r))   — backward direction
+
+    Returns {entity_id: [(neighbor_id, relation, func_weight), ...]}.
+    """
+    adj: dict[str, list[tuple[str, str, float]]] = defaultdict(list)
+    for edge in graph.edges:
+        adj[edge.source].append(
+            (edge.target, edge.relation, functionality.get(edge.relation, 1.0))
+        )
+        adj[edge.target].append(
+            (edge.source, edge.relation, inv_functionality.get(edge.relation, 1.0))
+        )
+    return adj
+
+
 def propagate(
     graph_a: Graph,
     graph_b: Graph,
@@ -320,6 +333,9 @@ def propagate(
     ids_a = list(graph_a.entities)
     ids_b = list(graph_b.entities)
 
+    adj_a = _build_adjacency(graph_a, functionality, inv_functionality)
+    adj_b = _build_adjacency(graph_b, functionality, inv_functionality)
+
     # Name similarity: computed once, never changes
     name_sim: dict[tuple[str, str], float] = {}
     for eid_a in ids_a:
@@ -343,49 +359,22 @@ def propagate(
             for eid_b in ids_b:
                 best = structural[(eid_a, eid_b)]
 
-                # Outgoing edges: ei -r-> ei'  and  ej -r'-> ej'
-                for edge_a in graph_a.out_edges.get(eid_a, []):
-                    emb_r = relation_embeddings.get(edge_a.relation)
+                for nbr_a, rel_a, func_a in adj_a.get(eid_a, []):
+                    emb_r = relation_embeddings.get(rel_a)
                     if emb_r is None:
                         continue
-                    for edge_b in graph_b.out_edges.get(eid_b, []):
-                        emb_r2 = relation_embeddings.get(edge_b.relation)
+                    for nbr_b, rel_b, func_b in adj_b.get(eid_b, []):
+                        emb_r2 = relation_embeddings.get(rel_b)
                         if emb_r2 is None:
                             continue
                         rel_sim = float(np.dot(emb_r, emb_r2))
                         if rel_sim < rel_sim_threshold:
                             continue
-                        nbr_key = (edge_a.target, edge_b.target)
+                        nbr_key = (nbr_a, nbr_b)
                         neighbor_confidence = name_sim[nbr_key] + structural[nbr_key]
                         if neighbor_confidence < neighbor_sim_threshold:
                             continue
-                        func_w = (
-                            functionality.get(edge_a.relation, 1.0)
-                            + functionality.get(edge_b.relation, 1.0)
-                        ) / 2.0
-                        evidence = neighbor_confidence * func_w
-                        best = max(best, evidence)
-
-                # Incoming edges: ei' -r-> ei  and  ej' -r'-> ej
-                for edge_a in graph_a.in_edges.get(eid_a, []):
-                    emb_r = relation_embeddings.get(edge_a.relation)
-                    if emb_r is None:
-                        continue
-                    for edge_b in graph_b.in_edges.get(eid_b, []):
-                        emb_r2 = relation_embeddings.get(edge_b.relation)
-                        if emb_r2 is None:
-                            continue
-                        rel_sim = float(np.dot(emb_r, emb_r2))
-                        if rel_sim < rel_sim_threshold:
-                            continue
-                        nbr_key = (edge_a.source, edge_b.source)
-                        neighbor_confidence = name_sim[nbr_key] + structural[nbr_key]
-                        if neighbor_confidence < neighbor_sim_threshold:
-                            continue
-                        func_w = (
-                            inv_functionality.get(edge_a.relation, 1.0)
-                            + inv_functionality.get(edge_b.relation, 1.0)
-                        ) / 2.0
+                        func_w = (func_a + func_b) / 2.0
                         evidence = neighbor_confidence * func_w
                         best = max(best, evidence)
 
@@ -517,7 +506,6 @@ def merge_graphs(
             new_edge_art[(merged_id, src, tgt, best_relation)] = sorted(set(articles))
 
         merged = Graph(id=merged_id, entities=merged_entities, edges=merged_edges)
-        merged.index_edges()
         new_graphs.append(merged)
 
     return new_graphs, new_entity_occ, new_edge_art

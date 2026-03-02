@@ -44,7 +44,6 @@ def make_graph(graph_id: str, edges: list[tuple[str, str, str]]) -> Graph:
             entities[tgt_id] = Entity(id=tgt_id, name=tgt_name, graph_id=graph_id)
         edge_objs.append(Edge(source=src_id, target=tgt_id, relation=relation))
     g = Graph(id=graph_id, entities=entities, edges=edge_objs)
-    g.index_edges()
     return g
 
 
