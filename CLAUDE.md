@@ -56,7 +56,7 @@ The matching stage implements **similarity propagation** (inspired by PARIS/FLOR
 
 ### Key concepts from the literature
 
-**Similarity Flooding** (Melnik et al., 2002): entity similarity propagates through graph structure iteratively. To know if two entities match you need to know if their neighbors match — propagation dissolves this circularity by never making hard early decisions.
+**Similarity Flooding** (Melnik et al., 2002): entity similarity propagates through graph structure iteratively. To know if two entities match you need to know if their neighbors match — propagation dissolves this circularity by never making hard early decisions. See [docs/similarity_flooding.md](docs/similarity_flooding.md) for a detailed explanation of the algorithm and its evolution.
 
 **PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with *functionality weighting* — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones. See [docs/functionality.md](docs/functionality.md) for a detailed explanation.
 
