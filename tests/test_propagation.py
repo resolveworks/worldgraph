@@ -603,3 +603,74 @@ def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
         f"Bidirectional ({confidence_bi[mt_bi]}) should be >= "
         f"unidirectional ({confidence_uni[mt_uni]})"
     )
+
+
+# ---------------------------------------------------------------------------
+# Structural override of name dissimilarity
+# ---------------------------------------------------------------------------
+
+
+def test_shared_anchor_does_not_override_name_dissimilarity(embed_phrase):
+    """A shared high-confidence anchor should not cause entities with
+    different names to match.
+
+    g1: "Dr. Priya Sharma"  --"founded"--> "NovaTech Labs"
+    g2: "Dr. Elena Vasquez" --"founded"--> "NovaTech Labs"
+
+    NovaTech Labs matches itself (identical names, confidence = 1.0).
+    "founded" passes the relation gate. Structural evidence flows from
+    the NovaTech anchor to the (Sharma, Vasquez) pair. Via noisy-OR,
+    this overrides their name dissimilarity.
+
+    Background graphs establish "founded" as a functional relation
+    (mostly 1:1), matching the real pipeline where functionality is
+    computed from all 53 graphs. Without the background, inverse
+    functionality drops to 0.5 (two founders for NovaTech) and
+    happens to prevent the match — but that's an artifact of the
+    minimal setup, not of the algorithm being correct.
+
+    Replicates the Dr. Sharma / Dr. Vasquez spurious merge.
+    """
+    g1 = make_graph("g1", [("Dr. Priya Sharma", "NovaTech Labs", "founded")])
+    g2 = make_graph("g2", [("Dr. Elena Vasquez", "NovaTech Labs", "founded")])
+
+    # Background: establish "founded" as a functional (1:1) relation
+    bg_graphs = [
+        make_graph(f"bg{i}", [(person, org, "founded")])
+        for i, (person, org) in enumerate([
+            ("Marcus Webb", "Alpha Corp"),
+            ("Sarah Chen", "Beta Inc"),
+            ("James Xu", "Gamma LLC"),
+        ])
+    ]
+
+    from fastembed import TextEmbedding
+
+    model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    all_names = ["Dr. Priya Sharma", "Dr. Elena Vasquez", "NovaTech Labs"]
+    name_embs = embed_names(all_names, model)
+
+    rel_embs = {"founded": embed_phrase("founded")}
+    func = compute_functionality([g1, g2] + bg_graphs, rel_embs)
+
+    # Premise: name similarity alone is below threshold
+    sv_name_sim = float(np.dot(name_embs["Dr. Priya Sharma"], name_embs["Dr. Elena Vasquez"]))
+    assert sv_name_sim < 0.8, (
+        f"Premise failed: Sharma/Vasquez name_sim ({sv_name_sim}) >= 0.8"
+    )
+
+    confidence = propagate(g1, g2, name_embs, rel_embs, func)
+
+    matches = select_matches(
+        confidence, list(g1.entities), list(g2.entities), threshold=0.8
+    )
+    matched_names = {(g1.entities[a].name, g2.entities[b].name) for a, b in matches}
+
+    # NovaTech Labs should match (identical names)
+    assert ("NovaTech Labs", "NovaTech Labs") in matched_names
+
+    # Sharma and Vasquez should NOT match (different people)
+    assert ("Dr. Priya Sharma", "Dr. Elena Vasquez") not in matched_names, (
+        "Structural evidence from shared anchor overrode name dissimilarity: "
+        "Dr. Priya Sharma matched Dr. Elena Vasquez"
+    )
