@@ -4,22 +4,20 @@ Algorithm overview
 ------------------
 For each pair of graphs (Gi, Gj):
 
-1. Compute name_sim[(ei, ej)] = dot(name_emb(ei), name_emb(ej))
-   for all entity pairs.  This is fixed throughout propagation.
+1. Seed confidence[(ei, ej)] with name similarity (cosine of name embeddings).
 
-2. Propagate structural evidence: each iteration, for each entity pair,
-   examine all edge pairs (ei -r-> ei', ej -r'-> ej') where rel_sim(r, r')
-   >= threshold and the neighbor pair's confidence (name_sim + structural)
-   >= threshold.  The structural score is updated via max:
+2. Propagate structural evidence via noisy-OR (PARIS-style):
+   each iteration, for each entity pair (ei, ej), accumulate evidence
+   from all edge pairs whose relation phrases pass the relation gate
+   (cosine similarity >= threshold ⟹ "same relation"):
 
-       structural[(ei, ej)] = max over qualifying edge pairs of
-           neighbor_confidence * functionality(r, r')
+       evidence = 1 - Π(1 - func_weight * confidence[(nbr_a, nbr_b)])
+       confidence[(ei, ej)] = max(confidence[(ei, ej)], evidence)
 
-   Scores are absolute (no normalization), bounded, and monotonically
-   non-decreasing — convergence is guaranteed (FLORA / Knaster-Tarski).
+   Confidence is monotonically non-decreasing — convergence is guaranteed
+   (FLORA / Knaster-Tarski fixpoint).
 
-3. Select matches: keep pairs where both name_sim and structural exceed
-   their respective absolute thresholds.
+3. Select matches: keep pairs where confidence exceeds a threshold.
 
 4. Merge matched entity pairs transitively via union-find, pool provenance.
 
@@ -286,9 +284,14 @@ def _build_adjacency(
 ) -> dict[str, list[tuple[str, str, float]]]:
     """Build per-entity adjacency list with direction-appropriate functionality.
 
-    For each edge src --r--> tgt:
-      - src gets neighbor (tgt, r, fun(r).forward)
-      - tgt gets neighbor (src, r, fun(r).inverse)
+    PARIS semantics: the functionality weight measures "if my neighbor matches,
+    how strong is the evidence that I match?"
+
+    For edge src --r--> tgt:
+      - src uses inverse functionality: "given the target, how unique is the
+        source?"  If fun⁻¹(r) ≈ 1, a target match strongly implies a source match.
+      - tgt uses forward functionality: "given the source, how unique is the
+        target?"  If fun(r) ≈ 1, a source match strongly implies a target match.
 
     Returns {entity_id: [(neighbor_id, relation, func_weight), ...]}.
     """
@@ -296,8 +299,8 @@ def _build_adjacency(
     adj: dict[str, list[tuple[str, str, float]]] = defaultdict(list)
     for edge in graph.edges:
         func = functionality.get(edge.relation, default)
-        adj[edge.source].append((edge.target, edge.relation, func.forward))
-        adj[edge.target].append((edge.source, edge.relation, func.inverse))
+        adj[edge.source].append((edge.target, edge.relation, func.inverse))
+        adj[edge.target].append((edge.source, edge.relation, func.forward))
     return adj
 
 
@@ -309,21 +312,25 @@ def propagate(
     functionality: dict[str, Functionality],
     max_iter: int = 30,
     epsilon: float = 1e-4,
-    rel_sim_threshold: float = 0.8,
-    neighbor_sim_threshold: float = 0.8,
-) -> tuple[dict[tuple[str, str], float], dict[tuple[str, str], float]]:
+    rel_gate: float = 0.8,
+    confidence_gate: float = 0.8,
+) -> dict[tuple[str, str], float]:
     """Run similarity propagation between two graphs.
 
-    Name similarity is computed once from embeddings and held fixed.
-    Structural similarity starts at 0 and accumulates via max: each
-    iteration, an entity pair's structural score is the max over all
-    edge pairs of (neighbor_confidence * rel_sim * functionality).
+    Confidence is seeded with name similarity (cosine of name embeddings).
+    Each iteration, evidence from neighbor pairs accumulates via noisy-OR:
 
-    A neighbor pair is "confident enough" to propagate through when
-    name_sim + structural >= neighbor_sim_threshold.
+        evidence = 1 - Π(1 - func_weight * confidence[neighbor])
+        confidence[pair] = max(confidence[pair], evidence)
 
-    Returns (name_sim, structural) — two dicts mapping
-    (entity_id_a, entity_id_b) -> float.
+    The product runs over all edge pairs where the relation phrases pass
+    the relation gate (cosine >= rel_gate ⟹ "same relation"; below ⟹
+    different relation, no propagation).
+
+    Confidence is monotonically non-decreasing — convergence guaranteed
+    (FLORA / Knaster-Tarski).
+
+    Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     """
     ids_a = list(graph_a.entities)
     ids_b = list(graph_b.entities)
@@ -331,7 +338,22 @@ def propagate(
     adj_a = _build_adjacency(graph_a, functionality)
     adj_b = _build_adjacency(graph_b, functionality)
 
-    # Name similarity: computed once, never changes
+    # Precompute which relation pairs pass the gate
+    rel_passes_gate: set[tuple[str, str]] = set()
+    rels_a = {edge.relation for edge in graph_a.edges}
+    rels_b = {edge.relation for edge in graph_b.edges}
+    for ra in rels_a:
+        emb_a = relation_embeddings.get(ra)
+        if emb_a is None:
+            continue
+        for rb in rels_b:
+            emb_b = relation_embeddings.get(rb)
+            if emb_b is None:
+                continue
+            if float(np.dot(emb_a, emb_b)) >= rel_gate:
+                rel_passes_gate.add((ra, rb))
+
+    # Seed: name similarity, computed once and held fixed.
     name_sim: dict[tuple[str, str], float] = {}
     for eid_a in ids_a:
         name_a = graph_a.entities[eid_a].name
@@ -340,67 +362,64 @@ def propagate(
             name_b = graph_b.entities[eid_b].name
             emb_b = name_embeddings.get(name_b)
             if emb_a is not None and emb_b is not None:
-                name_sim[(eid_a, eid_b)] = float(np.dot(emb_a, emb_b))
+                name_sim[(eid_a, eid_b)] = max(0.0, float(np.dot(emb_a, emb_b)))
             else:
                 name_sim[(eid_a, eid_b)] = 0.0
 
-    # Structural similarity: starts at 0, grows via max
-    structural: dict[tuple[str, str], float] = {key: 0.0 for key in name_sim}
+    confidence: dict[tuple[str, str], float] = dict(name_sim)
 
     for _ in range(max_iter):
         changed = False
 
         for eid_a in ids_a:
             for eid_b in ids_b:
-                best = structural[(eid_a, eid_b)]
+                # Noisy-OR over all qualifying edge pairs: structural evidence
+                complement_product = 1.0
 
                 for nbr_a, rel_a, func_a in adj_a.get(eid_a, []):
-                    emb_r = relation_embeddings.get(rel_a)
-                    if emb_r is None:
-                        continue
                     for nbr_b, rel_b, func_b in adj_b.get(eid_b, []):
-                        emb_r2 = relation_embeddings.get(rel_b)
-                        if emb_r2 is None:
+                        if (rel_a, rel_b) not in rel_passes_gate:
                             continue
-                        rel_sim = float(np.dot(emb_r, emb_r2))
-                        if rel_sim < rel_sim_threshold:
+                        nbr_conf = confidence[(nbr_a, nbr_b)]
+                        if nbr_conf < confidence_gate:
                             continue
-                        nbr_key = (nbr_a, nbr_b)
-                        neighbor_confidence = name_sim[nbr_key] + structural[nbr_key]
-                        if neighbor_confidence < neighbor_sim_threshold:
-                            continue
-                        func_w = (func_a + func_b) / 2.0
-                        evidence = neighbor_confidence * func_w
-                        best = max(best, evidence)
+                        func_w = min(func_a, func_b)
+                        path_strength = func_w * nbr_conf
+                        complement_product *= 1.0 - path_strength
 
-                if best > structural[(eid_a, eid_b)] + epsilon:
-                    structural[(eid_a, eid_b)] = best
+                structural = 1.0 - complement_product
+
+                # Combine the fixed name seed with structural evidence
+                # via noisy-OR — independent evidence sources compound.
+                # Recompute each iteration (don't accumulate) to avoid
+                # double-counting the same evidence paths.
+                seed = name_sim[(eid_a, eid_b)]
+                combined = 1.0 - (1.0 - seed) * (1.0 - structural)
+
+                old = confidence[(eid_a, eid_b)]
+                if combined > old + epsilon:
+                    confidence[(eid_a, eid_b)] = combined
                     changed = True
 
         if not changed:
             break
 
-    return name_sim, structural
+    return confidence
 
 
 def select_matches(
-    name_sim: dict[tuple[str, str], float],
-    structural: dict[tuple[str, str], float],
+    confidence: dict[tuple[str, str], float],
     ids_a: list[str],
     ids_b: list[str],
-    name_threshold: float,
-    structural_threshold: float,
+    threshold: float,
 ) -> list[tuple[str, str]]:
-    """Select entity matches using absolute thresholds on both scores."""
-    matches = []
-    for eid_a in ids_a:
-        for eid_b in ids_b:
-            if (
-                name_sim.get((eid_a, eid_b), 0.0) >= name_threshold
-                and structural.get((eid_a, eid_b), 0.0) >= structural_threshold
-            ):
-                matches.append((eid_a, eid_b))
-    return matches
+    """Select entity matches: pairs where confidence >= threshold."""
+    return [
+        (a, b)
+        for a in ids_a
+        for b in ids_b
+        if confidence.get((a, b), 0.0) >= threshold
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -540,7 +559,7 @@ def run_matching(
     uf = UnionFind()
     for i in range(len(graphs)):
         for j in range(i + 1, len(graphs)):
-            name_sim, structural = propagate(
+            confidence = propagate(
                 graphs[i],
                 graphs[j],
                 name_embeddings,
@@ -548,16 +567,14 @@ def run_matching(
                 functionality,
                 max_iter=max_iter,
                 epsilon=epsilon,
-                rel_sim_threshold=threshold,
-                neighbor_sim_threshold=threshold,
+                rel_gate=threshold,
+                confidence_gate=threshold,
             )
             matches = select_matches(
-                name_sim,
-                structural,
+                confidence,
                 list(graphs[i].entities),
                 list(graphs[j].entities),
-                name_threshold=threshold,
-                structural_threshold=threshold,
+                threshold=threshold,
             )
             for eid_a, eid_b in matches:
                 uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
