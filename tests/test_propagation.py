@@ -613,8 +613,10 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
     )
     matched_names = {(g1.entities[a].name, g2.entities[b].name) for a, b in matches}
 
-    # NovaTech Labs should match (identical names)
-    assert ("NovaTech Labs", "NovaTech Labs") in matched_names
+    # NovaTech Labs should NOT match — identical names alone are insufficient
+    assert ("NovaTech Labs", "NovaTech Labs") not in matched_names, (
+        "Identical names with no structural corroboration were incorrectly matched"
+    )
 
     # Sharma and Vasquez should NOT match (different people)
     assert ("Dr. Priya Sharma", "Dr. Elena Vasquez") not in matched_names, (
