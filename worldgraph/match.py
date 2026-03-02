@@ -5,6 +5,7 @@ via noisy-OR, threshold, merge via union-find.
 """
 
 import json
+import math
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass
@@ -292,8 +293,15 @@ def propagate(
     epsilon: float = 1e-4,
     rel_gate: float = 0.8,
     confidence_gate: float = 0.8,
+    evidence_lambda: float = 0.5,
 ) -> dict[tuple[str, str], float]:
     """Run similarity propagation between two graphs.
+
+    Structural evidence is computed via noisy-OR over qualifying edge pairs,
+    then discounted by a SimRank++ evidence factor ``1 - exp(-λn)`` where *n*
+    is the number of qualifying paths.  This prevents a single strong anchor
+    from saturating structural evidence to ~1.0 and overriding name
+    dissimilarity.
 
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     """
@@ -340,6 +348,7 @@ def propagate(
             for eid_b in ids_b:
                 # Noisy-OR over all qualifying edge pairs: structural evidence
                 complement_product = 1.0
+                n_paths = 0
 
                 for nbr_a, rel_a, func_a in adj_a.get(eid_a, []):
                     for nbr_b, rel_b, func_b in adj_b.get(eid_b, []):
@@ -351,8 +360,12 @@ def propagate(
                         func_w = min(func_a, func_b)
                         path_strength = func_w * nbr_conf
                         complement_product *= 1.0 - path_strength
+                        n_paths += 1
 
                 structural = 1.0 - complement_product
+                if n_paths > 0:
+                    evidence = 1.0 - math.exp(-evidence_lambda * n_paths)
+                    structural *= evidence
 
                 # Combine the fixed name seed with structural evidence
                 # via noisy-OR — independent evidence sources compound.
