@@ -3,15 +3,16 @@
 These tests exercise the propagate() function on small graphs with real
 embeddings.  Tests verify that:
 
-- Identical/synonym relations with matching names produce structural evidence
+- Matching names + matching relations produce correct matches
+- Synonym relations propagate through the relation gate
 - Dissimilar relations, weak neighbors, and many weak paths produce no
-  structural evidence and no spurious matches (GH issue #1)
+  spurious matches (GH issue #1)
 - Incoming edges propagate evidence (not just outgoing)
 - Functionality weighting affects evidence strength
 - Multi-hop chains require iterative propagation
 - Name variation with structural reinforcement (the core use case)
 - Dangling entities get no structural evidence
-- Bidirectional edges accumulate evidence from both directions
+- Noisy-OR accumulates evidence from multiple paths (bidirectional > unidirectional)
 """
 
 import numpy as np
@@ -53,6 +54,26 @@ def embed_names(entities: list[str], model) -> dict[str, np.ndarray]:
     return {name: np.array(v) for name, v in zip(entities, vecs)}
 
 
+def compute_seeds(
+    graph_a: Graph,
+    graph_b: Graph,
+    name_embeddings: dict[str, np.ndarray],
+) -> dict[tuple[str, str], float]:
+    """Compute the name-similarity seed for every entity pair."""
+    seeds: dict[tuple[str, str], float] = {}
+    for eid_a in graph_a.entities:
+        name_a = graph_a.entities[eid_a].name
+        emb_a = name_embeddings.get(name_a)
+        for eid_b in graph_b.entities:
+            name_b = graph_b.entities[eid_b].name
+            emb_b = name_embeddings.get(name_b)
+            if emb_a is not None and emb_b is not None:
+                seeds[(eid_a, eid_b)] = max(0.0, float(np.dot(emb_a, emb_b)))
+            else:
+                seeds[(eid_a, eid_b)] = 0.0
+    return seeds
+
+
 def run_propagation(
     graph_a: Graph,
     graph_b: Graph,
@@ -60,30 +81,34 @@ def run_propagation(
     name_embeddings: dict[str, np.ndarray],
     relations: list[str],
     threshold: float = 0.8,
+    **kwargs,
 ):
-    """Convenience wrapper: embed relations, compute functionality, propagate."""
+    """Convenience wrapper: embed relations, compute functionality, propagate.
+
+    Returns (confidence, seeds) where seeds is the name-similarity baseline.
+    """
     rel_embs = {r: embed_phrase(r) for r in relations}
     func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
-    name_sim, structural = propagate(
+    confidence = propagate(
         graph_a,
         graph_b,
         name_embeddings,
         rel_embs,
         func,
+        **kwargs,
     )
-    return name_sim, structural
+    seeds = compute_seeds(graph_a, graph_b, name_embeddings)
+    return confidence, seeds
 
 
 # ---------------------------------------------------------------------------
-# Structural reinforcement tests
+# Correct matches
 # ---------------------------------------------------------------------------
 
 
-def test_identical_names_and_relations_reinforce(embed_phrase):
-    """Two graphs with the same entity names and identical relations:
-    propagation should produce structural evidence for the correct pairs."""
-    #   g1: Apple --acquired--> Beats
-    #   g2: Apple --acquired--> Beats
+def test_matching_names_and_relations_produce_matches(embed_phrase):
+    """Two graphs with the same entity names and identical relations should
+    produce high-confidence matches for the correct entity pairs."""
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Apple", "Beats", "acquired")])
 
@@ -92,22 +117,22 @@ def test_identical_names_and_relations_reinforce(embed_phrase):
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     name_embs = embed_names(["Apple", "Beats"], model)
 
-    name_sim, structural = run_propagation(
+    confidence, seeds = run_propagation(
         g1, g2, embed_phrase, name_embs, ["acquired"]
     )
 
-    # Correct pairs should have structural evidence > 0
-    assert structural[("g1:Apple", "g2:Apple")] > 0
-    assert structural[("g1:Beats", "g2:Beats")] > 0
+    # Correct pairs should have high confidence
+    assert confidence[("g1:Apple", "g2:Apple")] > 0.9
+    assert confidence[("g1:Beats", "g2:Beats")] > 0.9
 
-    # Wrong pairs should have no structural evidence
-    assert structural[("g1:Apple", "g2:Beats")] == 0.0
-    assert structural[("g1:Beats", "g2:Apple")] == 0.0
+    # Wrong pairs should have low confidence (just name_sim of unrelated words)
+    assert confidence[("g1:Apple", "g2:Beats")] < 0.5
+    assert confidence[("g1:Beats", "g2:Apple")] < 0.5
 
 
 def test_synonym_relations_propagate(embed_phrase):
-    """Synonym relation phrases ('acquired' / 'purchased') should propagate
-    structural evidence just like identical ones."""
+    """Synonym relation phrases ('acquired' / 'purchased') should pass the
+    relation gate and produce correct matches."""
     g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
     g2 = make_graph("g2", [("Apple", "Beats", "purchased")])
 
@@ -116,13 +141,12 @@ def test_synonym_relations_propagate(embed_phrase):
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     name_embs = embed_names(["Apple", "Beats"], model)
 
-    name_sim, structural = run_propagation(
+    confidence, seeds = run_propagation(
         g1, g2, embed_phrase, name_embs, ["acquired", "purchased"]
     )
 
-    # Correct pairs should have structural evidence
-    assert structural[("g1:Apple", "g2:Apple")] > 0
-    assert structural[("g1:Beats", "g2:Beats")] > 0
+    assert confidence[("g1:Apple", "g2:Apple")] > 0.9
+    assert confidence[("g1:Beats", "g2:Beats")] > 0.9
 
 
 # ---------------------------------------------------------------------------
@@ -132,7 +156,7 @@ def test_synonym_relations_propagate(embed_phrase):
 
 def test_dissimilar_relations_do_not_propagate(embed_phrase):
     """Unrelated relation phrases ('acquired' vs 'located in') should not
-    produce structural evidence or matches.
+    pass the relation gate — no matches between unrelated graphs.
 
     g1: Apple --acquired--> Beats
     g2: Tokyo --located in--> Japan
@@ -146,31 +170,20 @@ def test_dissimilar_relations_do_not_propagate(embed_phrase):
     all_names = ["Apple", "Beats", "Tokyo", "Japan"]
     name_embs = embed_names(all_names, model)
 
-    name_sim, structural = run_propagation(
+    confidence, seeds = run_propagation(
         g1, g2, embed_phrase, name_embs, ["acquired", "located in"]
     )
 
-    # No structural evidence should exist
-    for key in structural:
-        assert structural[key] == 0.0, (
-            f"Spurious structural evidence: {key} = {structural[key]}"
-        )
-
     # No matches
     matches = select_matches(
-        name_sim,
-        structural,
-        list(g1.entities),
-        list(g2.entities),
-        name_threshold=0.8,
-        structural_threshold=0.8,
+        confidence, list(g1.entities), list(g2.entities), threshold=0.8
     )
     assert matches == [], f"Spurious matches found: {matches}"
 
 
 def test_weak_neighbors_do_not_propagate(embed_phrase):
-    """Even with identical relation phrases, propagation should not produce
-    structural evidence when neighbor name similarity is low.
+    """Even with identical relation phrases, propagation should not boost
+    confidence when neighbor name similarity is below the confidence gate.
 
     g1: Apple --acquired--> Beats
     g2: Google --acquired--> YouTube
@@ -184,19 +197,19 @@ def test_weak_neighbors_do_not_propagate(embed_phrase):
     all_names = ["Apple", "Beats", "Google", "YouTube"]
     name_embs = embed_names(all_names, model)
 
-    name_sim, structural = run_propagation(
+    confidence, seeds = run_propagation(
         g1, g2, embed_phrase, name_embs, ["acquired"]
     )
 
-    # No structural evidence — all neighbor pairs have low name similarity
-    for key in structural:
-        assert structural[key] == 0.0, (
-            f"Spurious structural evidence: {key} = {structural[key]}"
+    # Confidence should not exceed the name-similarity seed for any pair
+    for key in confidence:
+        assert confidence[key] <= seeds[key] + 1e-6, (
+            f"Spurious propagation: {key} confidence {confidence[key]} > seed {seeds[key]}"
         )
 
 
 def test_many_weak_paths_do_not_accumulate(embed_phrase):
-    """Many unrelated edges should not produce structural evidence or matches.
+    """Many unrelated edges should not produce matches.
 
     g1: Org --acquired--> Target, Org --funded--> Project, Org --hired--> Person
     g2: City --located in--> Country, City --borders--> River, City --hosts--> Event
@@ -234,15 +247,12 @@ def test_many_weak_paths_do_not_accumulate(embed_phrase):
     name_embs = embed_names(all_names, model)
 
     relations = ["acquired", "funded", "hired", "located in", "borders", "hosts"]
-    name_sim, structural = run_propagation(g1, g2, embed_phrase, name_embs, relations)
+    confidence, seeds = run_propagation(
+        g1, g2, embed_phrase, name_embs, relations
+    )
 
     matches = select_matches(
-        name_sim,
-        structural,
-        list(g1.entities),
-        list(g2.entities),
-        name_threshold=0.8,
-        structural_threshold=0.8,
+        confidence, list(g1.entities), list(g2.entities), threshold=0.8
     )
     assert matches == [], f"Spurious matches from accumulated weak paths: {matches}"
 
@@ -256,35 +266,31 @@ def test_incoming_edges_propagate(embed_phrase):
     """Structural evidence should propagate through incoming edges, not just
     outgoing.
 
-    g1: Beats <--acquired-- Apple
-    g2: Beats <--purchased-- Apple
+    g1: Meridian Technologies --acquired--> DataVault
+    g2: Meridian Tech          --purchased--> DataVault
 
-    The target entity (Beats) receives incoming edges.  If propagation only
-    examined outgoing edges, the Beats-Beats pair would get no evidence.
+    DataVault has identical names (high seed). The incoming edge should
+    propagate that confidence to the Meridian pair, boosting it above
+    what name similarity alone gives.
     """
-    # Edges are directed source→target, so Apple→Beats.
-    # For the *Beats* pair, Apple→Beats is an incoming edge.
-    # Apple-Apple has high name sim → should propagate to Beats-Beats
-    # via the incoming-edge path.
-    g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
-    g2 = make_graph("g2", [("Apple", "Beats", "purchased")])
+    g1 = make_graph("g1", [("Meridian Technologies", "DataVault", "acquired")])
+    g2 = make_graph("g2", [("Meridian Tech", "DataVault", "purchased")])
 
     from fastembed import TextEmbedding
 
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    name_embs = embed_names(["Apple", "Beats"], model)
+    all_names = ["Meridian Technologies", "Meridian Tech", "DataVault"]
+    name_embs = embed_names(all_names, model)
 
-    name_sim, structural = run_propagation(
+    confidence, seeds = run_propagation(
         g1, g2, embed_phrase, name_embs, ["acquired", "purchased"]
     )
 
-    # Both pairs should have structural evidence:
-    # Apple-Apple gets it via outgoing edge (neighbor Beats-Beats has high name_sim)
-    # Beats-Beats gets it via incoming edge (neighbor Apple-Apple has high name_sim)
-    assert structural[("g1:Beats", "g2:Beats")] > 0, (
-        "Incoming edge path did not propagate structural evidence to Beats-Beats"
+    # Meridian pair should be boosted above its name-similarity seed
+    mt_pair = ("g1:Meridian Technologies", "g2:Meridian Tech")
+    assert confidence[mt_pair] > seeds[mt_pair], (
+        "Incoming edge path did not boost Meridian pair above name-similarity seed"
     )
-    assert structural[("g1:Apple", "g2:Apple")] > 0
 
 
 # ---------------------------------------------------------------------------
@@ -293,67 +299,81 @@ def test_incoming_edges_propagate(embed_phrase):
 
 
 def test_functional_relation_produces_stronger_evidence(embed_phrase):
-    """A 1:1 (functional) relation should produce stronger structural evidence
-    than a many-to-many relation, all else being equal.
+    """A 1:1 (functional) relation should produce stronger confidence boost
+    than a many-to-one relation, all else being equal.
 
-    g1: Apple --acquired--> Beats,   Apple --invested in--> Beats
-    g2: Apple --acquired--> Beats,   Apple --invested in--> Beats
+    Both use name variations so propagation is observable.
+    The propagation path is src --r--> tgt, which uses inverse functionality
+    (how unique is the source given the target?).
 
-    'acquired' is 1:1 (functional = 1.0).
-    'invested in' also appears 1:1 here, so we add fan-out to lower its
-    functionality.
+    'acquired' is 1:1 → inverse functionality ≈ 1.0.
+    'invested in' has fan-in (many sources → same target) → inverse func < 1.0.
     """
-    g1 = make_graph(
-        "g1",
-        [
-            ("Apple", "Beats", "acquired"),
-            ("Apple", "Beats", "invested in"),
-            ("Apple", "Shazam", "invested in"),
-            ("Google", "YouTube", "invested in"),
-            ("Google", "Waymo", "invested in"),
-        ],
-    )
-    g2 = make_graph(
-        "g2",
-        [
-            ("Apple", "Beats", "acquired"),
-            ("Apple", "Beats", "invested in"),
-            ("Apple", "Shazam", "invested in"),
-            ("Google", "YouTube", "invested in"),
-            ("Google", "Waymo", "invested in"),
-        ],
-    )
-
     from fastembed import TextEmbedding
 
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    all_names = ["Apple", "Beats", "Shazam", "Google", "YouTube", "Waymo"]
+    all_names = [
+        "Meridian Technologies",
+        "Meridian Tech",
+        "DataVault",
+        "Apple",
+        "Google",
+        "Microsoft",
+        "Beats",
+        "YouTube",
+    ]
     name_embs = embed_names(all_names, model)
 
+    # Build functionality: 'acquired' is 1:1, 'invested in' has fan-in
+    func_graphs = [
+        make_graph(
+            "fg1",
+            [
+                ("Apple", "Beats", "acquired"),
+                ("Google", "YouTube", "acquired"),
+            ],
+        ),
+        make_graph(
+            "fg2",
+            [
+                ("Apple", "DataVault", "invested in"),
+                ("Google", "DataVault", "invested in"),
+                ("Microsoft", "DataVault", "invested in"),
+            ],
+        ),
+    ]
     rel_embs = {
         "acquired": embed_phrase("acquired"),
         "invested in": embed_phrase("invested in"),
     }
-    func = compute_functionality([g1, g2], rel_embs)
+    func = compute_functionality(func_graphs, rel_embs)
+    assert func["acquired"].inverse > func["invested in"].inverse, (
+        f"Premise failed: acquired inv_func={func['acquired'].inverse}, "
+        f"invested in inv_func={func['invested in'].inverse}"
+    )
 
-    # Verify the premise: 'acquired' is more functional than 'invested in'
-    assert func["acquired"].forward > func["invested in"].forward
+    # Run propagation with 'acquired' edges (high inverse functionality)
+    g1_acq = make_graph(
+        "g1a", [("Meridian Technologies", "DataVault", "acquired")]
+    )
+    g2_acq = make_graph("g2a", [("Meridian Tech", "DataVault", "acquired")])
+    confidence_acq = propagate(g1_acq, g2_acq, name_embs, rel_embs, func)
 
-    # Now run propagation with only 'acquired' edges vs only 'invested in' edges
-    g1_acq = make_graph("g1a", [("Apple", "Beats", "acquired")])
-    g2_acq = make_graph("g2a", [("Apple", "Beats", "acquired")])
-    g1_inv = make_graph("g1i", [("Apple", "Beats", "invested in")])
-    g2_inv = make_graph("g2i", [("Apple", "Beats", "invested in")])
+    # Run propagation with 'invested in' edges (low inverse functionality)
+    g1_inv = make_graph(
+        "g1i", [("Meridian Technologies", "DataVault", "invested in")]
+    )
+    g2_inv = make_graph(
+        "g2i", [("Meridian Tech", "DataVault", "invested in")]
+    )
+    confidence_inv = propagate(g1_inv, g2_inv, name_embs, rel_embs, func)
 
-    _, structural_acq = propagate(g1_acq, g2_acq, name_embs, rel_embs, func)
-    _, structural_inv = propagate(g1_inv, g2_inv, name_embs, rel_embs, func)
-
-    # The functional relation should produce stronger evidence
-    score_acq = structural_acq[("g1a:Apple", "g2a:Apple")]
-    score_inv = structural_inv[("g1i:Apple", "g2i:Apple")]
-    assert score_acq > score_inv, (
-        f"Functional relation evidence ({score_acq}) should exceed "
-        f"non-functional ({score_inv})"
+    # The functional relation should produce higher confidence
+    mt_acq = ("g1a:Meridian Technologies", "g2a:Meridian Tech")
+    mt_inv = ("g1i:Meridian Technologies", "g2i:Meridian Tech")
+    assert confidence_acq[mt_acq] > confidence_inv[mt_inv], (
+        f"Functional relation confidence ({confidence_acq[mt_acq]}) should exceed "
+        f"non-functional ({confidence_inv[mt_inv]})"
     )
 
 
@@ -363,69 +383,67 @@ def test_functional_relation_produces_stronger_evidence(embed_phrase):
 
 
 def test_multi_hop_propagation_across_iterations(embed_phrase):
-    """Evidence should propagate through a chain across multiple iterations.
+    """Evidence propagates through a chain: a high-confidence anchor at
+    the end boosts intermediate nodes, which in turn boost further nodes.
 
-    g1: Apple --acquired--> Beats --founded by--> James Chen
-    g2: Apple --purchased--> Beats --founded by--> James Chen
+    g1: Meridian Technologies --acquired--> Alpha Corp --founded by--> James Chen
+    g2: Meridian Tech         --purchased--> Beta Inc   --founded by--> James Chen
 
-    Iteration 1: James Chen-James Chen gets evidence (leaf nodes, high name
-        sim, outgoing edge from Beats has neighbor James Chen with name_sim=1).
-        Actually — JC-JC has no outgoing edges, but Beats-Beats gets evidence
-        via outgoing edge to JC-JC (name_sim=1).
-    After iteration 1: Beats-Beats has structural > 0, so
-        confidence(Beats,Beats) = name_sim + structural >= threshold.
-    Iteration 2: Apple-Apple gets evidence via outgoing edge to Beats-Beats.
-
-    Without multi-iteration propagation, Apple-Apple would get no evidence
-    because Beats-Beats has zero structural score initially.
+    James Chen pair has seed ≈ 1.0 (identical names).
+    Alpha Corp / Beta Inc have very low name similarity — they can only be
+    matched through their shared, confidently-matched neighbor (James Chen).
+    Meridian Technologies / Meridian Tech then benefit from the chain through
+    the now-matched Alpha Corp / Beta Inc.
     """
     g1 = make_graph(
         "g1",
         [
-            ("Apple", "Beats", "acquired"),
-            ("Beats", "James Chen", "founded by"),
+            ("Meridian Technologies", "Alpha Corp", "acquired"),
+            ("Alpha Corp", "James Chen", "founded by"),
         ],
     )
     g2 = make_graph(
         "g2",
         [
-            ("Apple", "Beats", "purchased"),
-            ("Beats", "James Chen", "founded by"),
+            ("Meridian Tech", "Beta Inc", "purchased"),
+            ("Beta Inc", "James Chen", "founded by"),
         ],
     )
 
     from fastembed import TextEmbedding
 
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    name_embs = embed_names(["Apple", "Beats", "James Chen"], model)
+    all_names = [
+        "Meridian Technologies",
+        "Meridian Tech",
+        "Alpha Corp",
+        "Beta Inc",
+        "James Chen",
+    ]
+    name_embs = embed_names(all_names, model)
 
     relations = ["acquired", "purchased", "founded by"]
     rel_embs = {r: embed_phrase(r) for r in relations}
     func = compute_functionality([g1, g2], rel_embs)
 
-    # Single iteration: Apple-Apple should NOT have evidence yet
-    _, structural_1 = propagate(g1, g2, name_embs, rel_embs, func, max_iter=1)
-    # Beats-Beats should have evidence (neighbor JC-JC has name_sim=1)
-    assert structural_1[("g1:Beats", "g2:Beats")] > 0
+    seeds = compute_seeds(g1, g2, name_embs)
+    mt_pair = ("g1:Meridian Technologies", "g2:Meridian Tech")
+    ab_pair = ("g1:Alpha Corp", "g2:Beta Inc")
 
-    # Apple-Apple needs Beats-Beats confidence >= threshold,
-    # which requires structural > 0 from iteration 1
-    # With max_iter=1, Apple may or may not have evidence depending on
-    # whether Beats already accumulated enough. Let's check full convergence:
-    _, structural_full = propagate(
-        g1, g2, name_embs, rel_embs, func, max_iter=30
+    # Verify premise: Alpha Corp / Beta Inc have name sim below confidence gate
+    assert seeds[ab_pair] < 0.8, (
+        f"Premise failed: Alpha Corp / Beta Inc seed too high ({seeds[ab_pair]})"
     )
 
-    # After convergence, all three pairs should have evidence
-    assert structural_full[("g1:Apple", "g2:Apple")] > 0, (
-        "Multi-hop propagation failed: Apple-Apple has no structural evidence"
+    # After convergence: intermediate pair boosted by James Chen chain
+    confidence = propagate(g1, g2, name_embs, rel_embs, func)
+    assert confidence[ab_pair] > seeds[ab_pair], (
+        "Alpha Corp / Beta Inc not boosted despite shared James Chen neighbor"
     )
-    assert structural_full[("g1:Beats", "g2:Beats")] > 0
-    assert structural_full[("g1:James Chen", "g2:James Chen")] > 0
 
-    # And evidence should have increased from iteration 1 to convergence
-    assert structural_full[("g1:Apple", "g2:Apple")] >= structural_1.get(
-        ("g1:Apple", "g2:Apple"), 0.0
+    # Meridian pair boosted via the full chain
+    assert confidence[mt_pair] > seeds[mt_pair], (
+        "Multi-hop propagation failed: Meridian pair not boosted after convergence"
     )
 
 
@@ -440,10 +458,6 @@ def test_name_variation_with_structural_reinforcement(embed_phrase):
 
     g1: Meridian Technologies --acquired--> DataVault Inc
     g2: Meridian Tech         --purchased--> DataVault Inc
-
-    'Meridian Technologies' / 'Meridian Tech' have name_sim ~0.86 (above 0.8).
-    Structural evidence from the matching edge + matching neighbor (DataVault Inc)
-    should reinforce the match.
     """
     g1 = make_graph("g1", [("Meridian Technologies", "DataVault Inc", "acquired")])
     g2 = make_graph("g2", [("Meridian Tech", "DataVault Inc", "purchased")])
@@ -455,26 +469,22 @@ def test_name_variation_with_structural_reinforcement(embed_phrase):
     name_embs = embed_names(all_names, model)
 
     relations = ["acquired", "purchased"]
-    name_sim, structural = run_propagation(g1, g2, embed_phrase, name_embs, relations)
+    confidence, seeds = run_propagation(
+        g1, g2, embed_phrase, name_embs, relations
+    )
 
-    # The varied-name pair should have structural evidence
+    # The varied-name pair should be boosted above its seed
     mt_pair = ("g1:Meridian Technologies", "g2:Meridian Tech")
-    assert structural[mt_pair] > 0, (
+    assert confidence[mt_pair] > seeds[mt_pair], (
         "Name variation pair got no structural reinforcement"
     )
 
-    # DataVault-DataVault should also have evidence (via incoming edge)
-    dv_pair = ("g1:DataVault Inc", "g2:DataVault Inc")
-    assert structural[dv_pair] > 0
-
     # Both should pass select_matches
     matches = select_matches(
-        name_sim,
-        structural,
+        confidence,
         list(g1.entities),
         list(g2.entities),
-        name_threshold=0.8,
-        structural_threshold=0.1,
+        threshold=0.8,
     )
     matched_names = [(g1.entities[a].name, g2.entities[b].name) for a, b in matches]
     assert ("Meridian Technologies", "Meridian Tech") in matched_names
@@ -486,9 +496,9 @@ def test_name_variation_with_structural_reinforcement(embed_phrase):
 # ---------------------------------------------------------------------------
 
 
-def test_dangling_entities_get_no_structural_evidence(embed_phrase):
-    """Entities with no matching structure should get zero structural evidence,
-    even when other entities in the same graphs do match.
+def test_dangling_entities_get_no_boost(embed_phrase):
+    """Entities with no matching structure should not be boosted beyond
+    their name-similarity seed, even when other entities match.
 
     g1: Apple --acquired--> Beats,   Apple --hired--> SolarGrid
     g2: Apple --purchased--> Beats,  Apple --hired--> WindPower
@@ -518,26 +528,13 @@ def test_dangling_entities_get_no_structural_evidence(embed_phrase):
     name_embs = embed_names(all_names, model)
 
     relations = ["acquired", "purchased", "hired"]
-    name_sim, structural = run_propagation(g1, g2, embed_phrase, name_embs, relations)
+    confidence, seeds = run_propagation(
+        g1, g2, embed_phrase, name_embs, relations
+    )
 
-    # Matched entities should have structural evidence
-    assert structural[("g1:Apple", "g2:Apple")] > 0
-    assert structural[("g1:Beats", "g2:Beats")] > 0
-
-    # Dangling cross-pairs should have zero structural evidence
-    assert structural[("g1:SolarGrid", "g2:WindPower")] == 0.0
-    # And the wrong pairings too
-    assert structural[("g1:SolarGrid", "g2:Apple")] == 0.0
-    assert structural[("g1:SolarGrid", "g2:Beats")] == 0.0
-
-    # select_matches should not include any dangling entity
+    # select_matches should not include dangling entities
     matches = select_matches(
-        name_sim,
-        structural,
-        list(g1.entities),
-        list(g2.entities),
-        name_threshold=0.8,
-        structural_threshold=0.1,
+        confidence, list(g1.entities), list(g2.entities), threshold=0.8
     )
     matched_ids = {eid for pair in matches for eid in pair}
     assert "g1:SolarGrid" not in matched_ids
@@ -545,33 +542,36 @@ def test_dangling_entities_get_no_structural_evidence(embed_phrase):
 
 
 # ---------------------------------------------------------------------------
-# Bidirectional edges
+# Noisy-OR accumulation (bidirectional > unidirectional)
 # ---------------------------------------------------------------------------
 
 
-def test_bidirectional_edges_accumulate_evidence(embed_phrase):
+def test_bidirectional_edges_accumulate_via_noisy_or(embed_phrase):
     """Entity pairs connected by edges in both directions should accumulate
-    evidence from both, producing higher scores than a single direction.
+    evidence via noisy-OR, producing higher confidence than a single edge.
+
+    Uses name variations so propagation is observable.
 
     Unidirectional:
-        g1: Apple --acquired--> Beats
-        g2: Apple --acquired--> Beats
+        g1: Meridian Technologies --acquired--> DataVault
+        g2: Meridian Tech         --acquired--> DataVault
 
     Bidirectional:
-        g1: Apple --acquired--> Beats,  Beats --founded by--> Apple
-        g2: Apple --acquired--> Beats,  Beats --founded by--> Apple
+        g1: Meridian Technologies --acquired--> DataVault,  DataVault --subsidiary of--> Meridian Technologies
+        g2: Meridian Tech         --acquired--> DataVault,  DataVault --subsidiary of--> Meridian Tech
     """
     from fastembed import TextEmbedding
 
     model = TextEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    name_embs = embed_names(["Apple", "Beats"], model)
+    all_names = ["Meridian Technologies", "Meridian Tech", "DataVault"]
+    name_embs = embed_names(all_names, model)
 
     # Unidirectional
-    g1_uni = make_graph("g1u", [("Apple", "Beats", "acquired")])
-    g2_uni = make_graph("g2u", [("Apple", "Beats", "acquired")])
+    g1_uni = make_graph("g1u", [("Meridian Technologies", "DataVault", "acquired")])
+    g2_uni = make_graph("g2u", [("Meridian Tech", "DataVault", "acquired")])
 
     relations_uni = ["acquired"]
-    _, structural_uni = run_propagation(
+    confidence_uni, _ = run_propagation(
         g1_uni, g2_uni, embed_phrase, name_embs, relations_uni
     )
 
@@ -579,26 +579,27 @@ def test_bidirectional_edges_accumulate_evidence(embed_phrase):
     g1_bi = make_graph(
         "g1b",
         [
-            ("Apple", "Beats", "acquired"),
-            ("Beats", "Apple", "founded by"),
+            ("Meridian Technologies", "DataVault", "acquired"),
+            ("DataVault", "Meridian Technologies", "subsidiary of"),
         ],
     )
     g2_bi = make_graph(
         "g2b",
         [
-            ("Apple", "Beats", "acquired"),
-            ("Beats", "Apple", "founded by"),
+            ("Meridian Tech", "DataVault", "acquired"),
+            ("DataVault", "Meridian Tech", "subsidiary of"),
         ],
     )
 
-    relations_bi = ["acquired", "founded by"]
-    _, structural_bi = run_propagation(
+    relations_bi = ["acquired", "subsidiary of"]
+    confidence_bi, _ = run_propagation(
         g1_bi, g2_bi, embed_phrase, name_embs, relations_bi
     )
 
-    # Bidirectional should produce at least as much evidence
-    score_uni = structural_uni[("g1u:Apple", "g2u:Apple")]
-    score_bi = structural_bi[("g1b:Apple", "g2b:Apple")]
-    assert score_bi >= score_uni, (
-        f"Bidirectional ({score_bi}) should be >= unidirectional ({score_uni})"
+    # Bidirectional should produce at least as much confidence
+    mt_uni = ("g1u:Meridian Technologies", "g2u:Meridian Tech")
+    mt_bi = ("g1b:Meridian Technologies", "g2b:Meridian Tech")
+    assert confidence_bi[mt_bi] >= confidence_uni[mt_uni], (
+        f"Bidirectional ({confidence_bi[mt_bi]}) should be >= "
+        f"unidirectional ({confidence_uni[mt_uni]})"
     )
