@@ -2,32 +2,7 @@
 
 import pytest
 
-from worldgraph.match import Entity, Edge, Graph, compute_functionality
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-
-def make_graph(graph_id: str, edges: list[tuple[str, str, str]]) -> Graph:
-    """Build a Graph from (src_name, tgt_name, relation) triples.
-
-    Entity IDs are derived from names so the same name always yields the same ID
-    within a graph (duplicate names are de-duped into one entity).
-    """
-    entities: dict[str, Entity] = {}
-    edge_objs: list[Edge] = []
-    for src_name, tgt_name, relation in edges:
-        src_id = f"{graph_id}:{src_name}"
-        tgt_id = f"{graph_id}:{tgt_name}"
-        if src_id not in entities:
-            entities[src_id] = Entity(id=src_id, name=src_name, graph_id=graph_id)
-        if tgt_id not in entities:
-            entities[tgt_id] = Entity(id=tgt_id, name=tgt_name, graph_id=graph_id)
-        edge_objs.append(Edge(source=src_id, target=tgt_id, relation=relation))
-    g = Graph(id=graph_id, entities=entities, edges=edge_objs)
-    return g
+from worldgraph.match import Graph, compute_functionality
 
 
 # ---------------------------------------------------------------------------
@@ -37,66 +12,95 @@ def make_graph(graph_id: str, edges: list[tuple[str, str, str]]) -> Graph:
 
 def test_one_to_one_functionality_is_1(embed_relation):
     """A relation that maps each source to exactly one target has functionality 1.0."""
-    g = make_graph(
-        "g1",
-        [
-            ("Apple", "Beats", "acquired"),
-            ("Google", "YouTube", "acquired"),
-        ],
-    )
-    func = compute_functionality([g], {"acquired": embed_relation("acquired")})
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple")
+    beats = g.add_entity("Beats")
+    google = g.add_entity("Google")
+    youtube = g.add_entity("YouTube")
+    g.add_edge(apple, beats, "acquired")
+    g.add_edge(google, youtube, "acquired")
+
+    rel_embs = {
+        "acquired": embed_relation("acquired"),
+        "is named": embed_relation("is named"),
+    }
+    func = compute_functionality([g], rel_embs)
     assert func["acquired"].forward == pytest.approx(1.0)
 
 
 def test_fan_out_lowers_functionality(embed_relation):
     """One source mapping to two distinct targets halves functionality."""
-    g = make_graph(
-        "g1",
-        [
-            ("Apple", "Beats", "acquired"),
-            ("Apple", "Shazam", "acquired"),
-        ],
-    )
-    func = compute_functionality([g], {"acquired": embed_relation("acquired")})
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple")
+    beats = g.add_entity("Beats")
+    shazam = g.add_entity("Shazam")
+    g.add_edge(apple, beats, "acquired")
+    g.add_edge(apple, shazam, "acquired")
+
+    rel_embs = {
+        "acquired": embed_relation("acquired"),
+        "is named": embed_relation("is named"),
+    }
+    func = compute_functionality([g], rel_embs)
     assert func["acquired"].forward == pytest.approx(0.5)
 
 
 def test_one_to_one_inv_functionality_is_1(embed_relation):
     """A relation that maps each target from exactly one source has inv_functionality 1.0."""
-    g = make_graph(
-        "g1",
-        [
-            ("Apple", "Beats", "acquired"),
-            ("Google", "YouTube", "acquired"),
-        ],
-    )
-    func = compute_functionality([g], {"acquired": embed_relation("acquired")})
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple")
+    beats = g.add_entity("Beats")
+    google = g.add_entity("Google")
+    youtube = g.add_entity("YouTube")
+    g.add_edge(apple, beats, "acquired")
+    g.add_edge(google, youtube, "acquired")
+
+    rel_embs = {
+        "acquired": embed_relation("acquired"),
+        "is named": embed_relation("is named"),
+    }
+    func = compute_functionality([g], rel_embs)
     assert func["acquired"].inverse == pytest.approx(1.0)
 
 
 def test_fan_in_lowers_inv_functionality(embed_relation):
     """Two sources mapping to the same target halves inv_functionality."""
-    g = make_graph(
-        "g1",
-        [
-            ("Apple", "Beats", "acquired"),
-            ("Google", "Beats", "acquired"),
-        ],
-    )
-    func = compute_functionality([g], {"acquired": embed_relation("acquired")})
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple")
+    google = g.add_entity("Google")
+    beats = g.add_entity("Beats")
+    g.add_edge(apple, beats, "acquired")
+    g.add_edge(google, beats, "acquired")
+
+    rel_embs = {
+        "acquired": embed_relation("acquired"),
+        "is named": embed_relation("is named"),
+    }
+    func = compute_functionality([g], rel_embs)
     assert func["acquired"].inverse == pytest.approx(0.5)
 
 
 def test_similar_phrases_pool_edges(embed_relation):
     """'acquired' and 'bought' are similar (cosine ~0.82), so their edges pool —
     raising out-degree and lowering functionality."""
-    # "acquired" alone: Apple→Beats, Google→YouTube → functionality 1.0
-    # pooled with "bought": Apple also→Shazam → avg out-degree > 1 → func < 1.0
-    g1 = make_graph(
-        "g1", [("Apple", "Beats", "acquired"), ("Google", "YouTube", "acquired")]
-    )
-    g2 = make_graph("g2", [("Apple", "Shazam", "bought")])
-    rel_embs = {"acquired": embed_relation("acquired"), "bought": embed_relation("bought")}
+    g1 = Graph(id="g1")
+    apple1 = g1.add_entity("Apple")
+    beats = g1.add_entity("Beats")
+    google = g1.add_entity("Google")
+    youtube = g1.add_entity("YouTube")
+    g1.add_edge(apple1, beats, "acquired")
+    g1.add_edge(google, youtube, "acquired")
+
+    g2 = Graph(id="g2")
+    apple2 = g2.add_entity("Apple")
+    shazam = g2.add_entity("Shazam")
+    g2.add_edge(apple2, shazam, "bought")
+
+    rel_embs = {
+        "acquired": embed_relation("acquired"),
+        "bought": embed_relation("bought"),
+        "is named": embed_relation("is named"),
+    }
     func = compute_functionality([g1, g2], rel_embs)
     assert func["acquired"].forward < 1.0
 
@@ -104,17 +108,22 @@ def test_similar_phrases_pool_edges(embed_relation):
 def test_dissimilar_phrases_do_not_pool(embed_relation):
     """'acquired' and 'located in' are dissimilar, so their edges don't pool.
     'acquired' sees only its own one-to-one edges → functionality stays 1.0."""
-    g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
-    g2 = make_graph(
-        "g2",
-        [
-            ("Apple", "California", "located in"),
-            ("Apple", "US", "located in"),
-        ],
-    )
+    g1 = Graph(id="g1")
+    apple1 = g1.add_entity("Apple")
+    beats = g1.add_entity("Beats")
+    g1.add_edge(apple1, beats, "acquired")
+
+    g2 = Graph(id="g2")
+    apple2 = g2.add_entity("Apple")
+    california = g2.add_entity("California")
+    us = g2.add_entity("US")
+    g2.add_edge(apple2, california, "located in")
+    g2.add_edge(apple2, us, "located in")
+
     rel_embs = {
         "acquired": embed_relation("acquired"),
         "located in": embed_relation("located in"),
+        "is named": embed_relation("is named"),
     }
     func = compute_functionality([g1, g2], rel_embs)
     assert func["acquired"].forward == pytest.approx(1.0)
@@ -123,8 +132,20 @@ def test_dissimilar_phrases_do_not_pool(embed_relation):
 def test_same_entity_name_across_graphs_pools(embed_relation):
     """The same source name in two graphs counts as one source, so two targets
     from that name across graphs raise out-degree."""
-    g1 = make_graph("g1", [("Apple", "Beats", "acquired")])
-    g2 = make_graph("g2", [("Apple", "Shazam", "acquired")])
-    func = compute_functionality([g1, g2], {"acquired": embed_relation("acquired")})
+    g1 = Graph(id="g1")
+    apple1 = g1.add_entity("Apple")
+    beats = g1.add_entity("Beats")
+    g1.add_edge(apple1, beats, "acquired")
+
+    g2 = Graph(id="g2")
+    apple2 = g2.add_entity("Apple")
+    shazam = g2.add_entity("Shazam")
+    g2.add_edge(apple2, shazam, "acquired")
+
+    rel_embs = {
+        "acquired": embed_relation("acquired"),
+        "is named": embed_relation("is named"),
+    }
+    func = compute_functionality([g1, g2], rel_embs)
     # Apple→{Beats, Shazam}: avg_out_degree = 2 → functionality = 0.5
     assert func["acquired"].forward == pytest.approx(0.5)

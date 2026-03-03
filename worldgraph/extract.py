@@ -87,13 +87,14 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
         # Replace LLM-generated entity IDs with UUIDs
         id_map = {e["id"]: str(uuid.uuid4()) for e in data["entities"]}
 
-        entities = []
+        nodes = []
+        edges = []
         for entity in data["entities"]:
             new_id = id_map[entity["id"]]
-            entities.append(
+            # Entity node (no "label" key)
+            nodes.append(
                 {
                     "id": new_id,
-                    "name": entity["name"],
                     "occurrences": [
                         {
                             "article_id": article_id,
@@ -103,8 +104,19 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
                     ],
                 }
             )
+            # Literal node for the entity name
+            label_id = str(uuid.uuid4())
+            nodes.append({"id": label_id, "label": entity["name"]})
+            # "is named" edge from entity to its literal
+            edges.append(
+                {
+                    "source": new_id,
+                    "target": label_id,
+                    "relation": "is named",
+                    "articles": [article_id],
+                }
+            )
 
-        edges = []
         for rel in data["relations"]:
             if rel["source"] not in id_map or rel["target"] not in id_map:
                 bad = [k for k in ("source", "target") if rel[k] not in id_map]
@@ -124,7 +136,7 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
                 }
             )
 
-        graph = {"id": article_id, "entities": entities, "edges": edges}
+        graph = {"id": article_id, "nodes": nodes, "edges": edges}
         with open(out_path, "w") as f:
             json.dump(graph, f, indent=2)
 

@@ -1,7 +1,9 @@
 """Stage 2: Entity alignment via PARIS-style similarity propagation.
 
-Seed confidence from name embeddings, propagate structural evidence
-via exponential sum, threshold, merge via union-find.
+Entity names are represented as literal nodes connected by "is named"
+edges, so name similarity flows through the same graph structure as
+everything else.  Propagate structural evidence via exponential sum,
+threshold, merge via union-find.
 """
 
 import json
@@ -9,7 +11,7 @@ import math
 import os
 import uuid
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import NamedTuple
 
@@ -34,24 +36,41 @@ class Functionality(NamedTuple):
 
 
 @dataclass
-class Entity:
+class Node:
     id: str
-    name: str
     graph_id: str
 
 
 @dataclass
+class LiteralNode(Node):
+    label: str = ""
+
+
+@dataclass
 class Edge:
-    source: str  # entity id
-    target: str  # entity id
+    source: str  # node id
+    target: str  # node id
     relation: str
 
 
 @dataclass
 class Graph:
     id: str
-    entities: dict[str, Entity]  # id -> Entity
-    edges: list[Edge]
+    nodes: dict[str, Node] = field(default_factory=dict)
+    edges: list[Edge] = field(default_factory=list)
+
+    def add_entity(self, name: str) -> Node:
+        """Add an entity node with an "is named" literal edge."""
+        entity = Node(id=str(uuid.uuid4()), graph_id=self.id)
+        lit = LiteralNode(id=str(uuid.uuid4()), graph_id=self.id, label=name)
+        self.nodes[entity.id] = entity
+        self.nodes[lit.id] = lit
+        self.edges.append(Edge(source=entity.id, target=lit.id, relation="is named"))
+        return entity
+
+    def add_edge(self, source: Node, target: Node, relation: str) -> None:
+        """Add a relation edge between two existing nodes."""
+        self.edges.append(Edge(source=source.id, target=target.id, relation=relation))
 
 
 class UnionFind:
@@ -102,12 +121,15 @@ def load_graphs(
             g = json.load(f)
 
         graph_id = g["id"]
-        entities: dict[str, Entity] = {}
+        nodes: dict[str, Node] = {}
 
-        for e in g["entities"]:
-            eid = e["id"]
-            entities[eid] = Entity(id=eid, name=e["name"], graph_id=graph_id)
-            entity_occurrences[eid] = e["occurrences"]
+        for n in g["nodes"]:
+            nid = n["id"]
+            if "label" in n:
+                nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
+            else:
+                nodes[nid] = Node(id=nid, graph_id=graph_id)
+                entity_occurrences[nid] = n["occurrences"]
 
         edges: list[Edge] = []
         for ed in g["edges"]:
@@ -119,7 +141,7 @@ def load_graphs(
                 "articles"
             ]
 
-        graph = Graph(id=graph_id, entities=entities, edges=edges)
+        graph = Graph(id=graph_id, nodes=nodes, edges=edges)
         graphs.append(graph)
 
     return graphs, entity_occurrences, edge_articles
@@ -134,10 +156,12 @@ def save_graphs(
     """Write graphs + provenance to graph JSON format."""
     output_graphs = []
     for g in graphs:
-        entities = [
-            {"id": e.id, "name": e.name, "occurrences": entity_occurrences[e.id]}
-            for e in g.entities.values()
-        ]
+        nodes_out = []
+        for n in g.nodes.values():
+            if isinstance(n, LiteralNode):
+                nodes_out.append({"id": n.id, "label": n.label})
+            else:
+                nodes_out.append({"id": n.id, "occurrences": entity_occurrences[n.id]})
         edges = [
             {
                 "source": edge.source,
@@ -149,7 +173,7 @@ def save_graphs(
             }
             for edge in g.edges
         ]
-        output_graphs.append({"id": g.id, "entities": entities, "edges": edges})
+        output_graphs.append({"id": g.id, "nodes": nodes_out, "edges": edges})
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
@@ -203,13 +227,23 @@ def compute_functionality(
             ):
                 similar[r].append(r2)
 
+    # Build entity-to-names mapping: for each entity, find its "is named" labels
+    def _entity_names(g: Graph, eid: str) -> list[str]:
+        names = []
+        for edge in g.edges:
+            if edge.relation == "is named" and edge.source == eid:
+                tgt = g.nodes.get(edge.target)
+                if isinstance(tgt, LiteralNode):
+                    names.append(tgt.label)
+        return names if names else [eid]
+
     # Collect all (src_name, tgt_name) pairs per relation phrase
     phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for g in graphs:
         for edge in g.edges:
-            src_name = g.entities[edge.source].name
-            tgt_name = g.entities[edge.target].name
-            phrase_pairs[edge.relation].append((src_name, tgt_name))
+            for src_name in _entity_names(g, edge.source):
+                for tgt_name in _entity_names(g, edge.target):
+                    phrase_pairs[edge.relation].append((src_name, tgt_name))
 
     result: dict[str, Functionality] = {}
     for r in all_relations:
@@ -237,15 +271,18 @@ def prepare_embeddings(
     graphs: list[Graph],
     threshold: float = 0.8,
 ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, Functionality]]:
-    """Embed all entity names and relation phrases; compute functionality weights.
+    """Embed all literal node labels and relation phrases; compute functionality weights.
 
-    Returns (name_embeddings, relation_embeddings, functionality).
+    Returns (literal_embeddings, relation_embeddings, functionality).
     """
-    all_names = sorted({e.name for g in graphs for e in g.entities.values()})
+    all_literals = sorted({
+        n.label for g in graphs for n in g.nodes.values()
+        if isinstance(n, LiteralNode)
+    })
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
 
     model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
-    name_embeddings = embed(all_names, model)
+    literal_embeddings = embed(all_literals, model)
     # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
     wrapped = [f"A {r} B" for r in all_relations]
     relation_embeddings = embed(wrapped, model)
@@ -255,7 +292,7 @@ def prepare_embeddings(
 
     functionality = compute_functionality(graphs, relation_embeddings, threshold)
 
-    return name_embeddings, relation_embeddings, functionality
+    return literal_embeddings, relation_embeddings, functionality
 
 
 # ---------------------------------------------------------------------------
@@ -292,7 +329,7 @@ def _build_adjacency(
 def propagate(
     graph_a: Graph,
     graph_b: Graph,
-    name_embeddings: dict[str, np.ndarray],
+    literal_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, Functionality],
     max_iter: int = 30,
@@ -303,22 +340,16 @@ def propagate(
 ) -> dict[tuple[str, str], float]:
     """Run similarity propagation between two graphs.
 
-    Structural evidence is computed via exponential sum over qualifying
-    edge pairs: ``1 - exp(-λ × Σ strengths)``.  Each path contributes
-    its strength (functionality × neighbor confidence) additively, with
-    diminishing returns from the exponential.  This inherently rewards
-    breadth — a single strong path is heavily discounted, while multiple
-    paths accumulate proportionally.
+    Entity names are literal nodes connected by "is named" edges, so
+    name similarity flows through the same exponential-sum aggregation
+    as any other structural evidence.  Literal-literal confidence is
+    fixed (embedding cosine sim); entity-entity confidence is updated
+    iteratively.
 
-    The confidence gate filters neighbor pairs whose confidence is too
-    low to contribute meaningful structural evidence.  Without it,
-    incorrect pairs with moderate name similarity can feed back through
-    structure iteratively, spiraling above their seed.
-
-    Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
+    Returns confidence: (node_id_a, node_id_b) -> float in [0, 1].
     """
-    ids_a = list(graph_a.entities)
-    ids_b = list(graph_b.entities)
+    all_ids_a = list(graph_a.nodes)
+    all_ids_b = list(graph_b.nodes)
 
     adj_a = _build_adjacency(graph_a, functionality)
     adj_b = _build_adjacency(graph_b, functionality)
@@ -338,31 +369,46 @@ def propagate(
             if float(np.dot(emb_a, emb_b)) >= rel_gate:
                 rel_passes_gate.add((ra, rb))
 
-    # Seed: name similarity, computed once and held fixed.
-    name_sim: dict[tuple[str, str], float] = {}
-    for eid_a in ids_a:
-        name_a = graph_a.entities[eid_a].name
-        emb_a = name_embeddings.get(name_a)
-        for eid_b in ids_b:
-            name_b = graph_b.entities[eid_b].name
-            emb_b = name_embeddings.get(name_b)
-            if emb_a is not None and emb_b is not None:
-                name_sim[(eid_a, eid_b)] = max(0.0, float(np.dot(emb_a, emb_b)))
-            else:
-                name_sim[(eid_a, eid_b)] = 0.0
+    # Initialize confidence for all node pairs
+    confidence: dict[tuple[str, str], float] = {}
+    literal_pairs: set[tuple[str, str]] = set()
 
-    confidence: dict[tuple[str, str], float] = dict(name_sim)
+    for id_a in all_ids_a:
+        node_a = graph_a.nodes[id_a]
+        for id_b in all_ids_b:
+            node_b = graph_b.nodes[id_b]
+            is_lit_a = isinstance(node_a, LiteralNode)
+            is_lit_b = isinstance(node_b, LiteralNode)
+            if is_lit_a and is_lit_b:
+                # Literal-literal: fixed embedding cosine sim
+                emb_a = literal_embeddings.get(node_a.label)
+                emb_b = literal_embeddings.get(node_b.label)
+                if emb_a is not None and emb_b is not None:
+                    confidence[(id_a, id_b)] = max(0.0, float(np.dot(emb_a, emb_b)))
+                else:
+                    confidence[(id_a, id_b)] = 0.0
+                literal_pairs.add((id_a, id_b))
+            elif is_lit_a != is_lit_b:
+                # Cross-type: always 0
+                confidence[(id_a, id_b)] = 0.0
+                literal_pairs.add((id_a, id_b))  # never updated
+            else:
+                # Entity-entity: starts at 0, updated by propagation
+                confidence[(id_a, id_b)] = 0.0
 
     for _ in range(max_iter):
         changed = False
 
-        for eid_a in ids_a:
-            for eid_b in ids_b:
+        for id_a in all_ids_a:
+            for id_b in all_ids_b:
+                if (id_a, id_b) in literal_pairs:
+                    continue
+
                 # Exponential sum over all qualifying edge pairs
                 strength_sum = 0.0
 
-                for nbr_a, rel_a, func_a in adj_a.get(eid_a, []):
-                    for nbr_b, rel_b, func_b in adj_b.get(eid_b, []):
+                for nbr_a, rel_a, func_a in adj_a.get(id_a, []):
+                    for nbr_b, rel_b, func_b in adj_b.get(id_b, []):
                         if (rel_a, rel_b) not in rel_passes_gate:
                             continue
                         nbr_conf = confidence[(nbr_a, nbr_b)]
@@ -371,22 +417,15 @@ def propagate(
                         func_w = min(func_a, func_b)
                         strength_sum += func_w * nbr_conf
 
-                structural = (
+                combined = (
                     1.0 - math.exp(-exp_lambda * strength_sum)
                     if strength_sum > 0
                     else 0.0
                 )
 
-                # Combine the fixed name seed with structural evidence
-                # via noisy-OR — independent evidence sources compound.
-                # Recompute each iteration (don't accumulate) to avoid
-                # double-counting the same evidence paths.
-                seed = name_sim[(eid_a, eid_b)]
-                combined = 1.0 - (1.0 - seed) * (1.0 - structural)
-
-                old = confidence[(eid_a, eid_b)]
+                old = confidence[(id_a, id_b)]
                 if combined > old + epsilon:
-                    confidence[(eid_a, eid_b)] = combined
+                    confidence[(id_a, id_b)] = combined
                     changed = True
 
         if not changed:
@@ -424,16 +463,18 @@ def merge_graphs(
     """Merge graphs whose entities have been linked by the union-find.
 
     Graphs with no matched entities are passed through unchanged.
+    Merged entities keep all name variants as separate literal nodes;
+    duplicate labels from different source graphs are deduplicated.
     Returns (new_graphs, new_entity_occurrences, new_edge_articles).
     """
     # Group graphs into merge components via shared entity roots
     graph_uf = UnionFind()
     for g in graphs:
-        for e in g.entities.values():
-            root = uf.find((g.id, e.id))
-            # If this entity was merged with something from another graph,
-            # union those graphs together
-            if root != (g.id, e.id):
+        for n in g.nodes.values():
+            if isinstance(n, LiteralNode):
+                continue
+            root = uf.find((g.id, n.id))
+            if root != (g.id, n.id):
                 root_graph_id = root[0]
                 if root_graph_id != g.id:
                     graph_uf.union(g.id, root_graph_id)
@@ -450,8 +491,9 @@ def merge_graphs(
         if len(component_graphs) == 1:
             g = component_graphs[0]
             new_graphs.append(g)
-            for e in g.entities.values():
-                new_entity_occ[e.id] = entity_occurrences[e.id]
+            for n in g.nodes.values():
+                if not isinstance(n, LiteralNode):
+                    new_entity_occ[n.id] = entity_occurrences[n.id]
             for edge in g.edges:
                 key = (g.id, edge.source, edge.target, edge.relation)
                 new_edge_art[key] = edge_articles[key]
@@ -459,30 +501,41 @@ def merge_graphs(
 
         merged_id = str(uuid.uuid4())
 
-        # Group entities by their union-find root
+        # Group entity nodes by their union-find root
         entity_groups: dict[tuple, list[tuple[str, str]]] = defaultdict(list)
         for g in component_graphs:
-            for e in g.entities.values():
-                entity_groups[uf.find((g.id, e.id))].append((g.id, e.id))
+            for n in g.nodes.values():
+                if isinstance(n, LiteralNode):
+                    continue
+                entity_groups[uf.find((g.id, n.id))].append((g.id, n.id))
 
-        # Create merged entities: pool occurrences, pick most common name
+        # Create merged entities: pool occurrences
         old_to_new: dict[tuple[str, str], str] = {}
-        merged_entities: dict[str, Entity] = {}
+        merged_nodes: dict[str, Node] = {}
 
         for _uf_root, members in entity_groups.items():
             new_eid = str(uuid.uuid4())
             pooled_occ: list[dict] = []
-            name_counts: dict[str, int] = defaultdict(int)
             for graph_id, entity_id in members:
                 for occ in entity_occurrences[entity_id]:
                     pooled_occ.append(occ)
-                    name_counts[occ["name"]] += 1
                 old_to_new[(graph_id, entity_id)] = new_eid
-            canonical_name = max(name_counts, key=name_counts.get)
-            merged_entities[new_eid] = Entity(
-                id=new_eid, name=canonical_name, graph_id=merged_id
-            )
+            merged_nodes[new_eid] = Node(id=new_eid, graph_id=merged_id)
             new_entity_occ[new_eid] = pooled_occ
+
+        # Collect literal nodes: deduplicate by label across source graphs
+        # and map old literal IDs to new ones
+        label_to_new_id: dict[str, str] = {}
+        for g in component_graphs:
+            for n in g.nodes.values():
+                if isinstance(n, LiteralNode):
+                    if n.label not in label_to_new_id:
+                        new_lid = str(uuid.uuid4())
+                        label_to_new_id[n.label] = new_lid
+                        merged_nodes[new_lid] = LiteralNode(
+                            id=new_lid, graph_id=merged_id, label=n.label
+                        )
+                    old_to_new[(g.id, n.id)] = label_to_new_id[n.label]
 
         # Remap edges, pool article provenance, pick most common relation phrase
         edge_pool: dict[tuple[str, str], list[str]] = defaultdict(list)
@@ -507,7 +560,7 @@ def merge_graphs(
             merged_edges.append(Edge(source=src, target=tgt, relation=best_relation))
             new_edge_art[(merged_id, src, tgt, best_relation)] = sorted(set(articles))
 
-        merged = Graph(id=merged_id, entities=merged_entities, edges=merged_edges)
+        merged = Graph(id=merged_id, nodes=merged_nodes, edges=merged_edges)
         new_graphs.append(merged)
 
     return new_graphs, new_entity_occ, new_edge_art
@@ -516,6 +569,16 @@ def merge_graphs(
 # ---------------------------------------------------------------------------
 # Top-level matching pipeline
 # ---------------------------------------------------------------------------
+
+
+def _entity_label(graph: Graph, entity_id: str) -> str:
+    """Get the display name for an entity by traversing its 'is named' edges."""
+    for edge in graph.edges:
+        if edge.relation == "is named" and edge.source == entity_id:
+            tgt = graph.nodes.get(edge.target)
+            if isinstance(tgt, LiteralNode):
+                return tgt.label
+    return entity_id[:12]
 
 
 def run_matching(
@@ -529,13 +592,14 @@ def run_matching(
     graphs, entity_occurrences, edge_articles = load_graphs(graphs_dir)
     click.echo(f"Loaded {len(graphs)} graphs from {graphs_dir}/")
     for g in graphs:
-        n_occ = sum(len(entity_occurrences[e.id]) for e in g.entities.values())
+        entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
+        n_occ = sum(len(entity_occurrences[n.id]) for n in entities)
         click.echo(
-            f"  {g.id[:12]}: {len(g.entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
+            f"  {g.id[:12]}: {len(entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
         )
 
-    click.echo("\nEmbedding entity names and relation phrases...")
-    name_embeddings, relation_embeddings, functionality = prepare_embeddings(
+    click.echo("\nEmbedding literal labels and relation phrases...")
+    literal_embeddings, relation_embeddings, functionality = prepare_embeddings(
         graphs, threshold
     )
 
@@ -550,17 +614,26 @@ def run_matching(
             confidence = propagate(
                 graphs[i],
                 graphs[j],
-                name_embeddings,
+                literal_embeddings,
                 relation_embeddings,
                 functionality,
                 max_iter=max_iter,
                 epsilon=epsilon,
                 rel_gate=threshold,
             )
+            # Only match entity nodes, not literals
+            entity_ids_i = [
+                nid for nid, n in graphs[i].nodes.items()
+                if not isinstance(n, LiteralNode)
+            ]
+            entity_ids_j = [
+                nid for nid, n in graphs[j].nodes.items()
+                if not isinstance(n, LiteralNode)
+            ]
             matches = select_matches(
                 confidence,
-                list(graphs[i].entities),
-                list(graphs[j].entities),
+                entity_ids_i,
+                entity_ids_j,
                 threshold=threshold,
             )
             for eid_a, eid_b in matches:
@@ -573,31 +646,34 @@ def run_matching(
     save_graphs(merged_graphs, merged_occ, merged_edges, output_path)
 
     matched_entities = [
-        (e, merged_occ[e.id])
+        (n, merged_occ[n.id])
         for g in merged_graphs
-        for e in g.entities.values()
-        if len(merged_occ[e.id]) > 1
+        for n in g.nodes.values()
+        if not isinstance(n, LiteralNode) and len(merged_occ[n.id]) > 1
     ]
     confirmed_edges = [
         (g, edge, merged_edges[(g.id, edge.source, edge.target, edge.relation)])
         for g in merged_graphs
         for edge in g.edges
-        if len(merged_edges[(g.id, edge.source, edge.target, edge.relation)]) > 1
+        if len(merged_edges.get((g.id, edge.source, edge.target, edge.relation), [])) > 1
     ]
 
     click.echo(f"\n{len(merged_graphs)} graphs after merging (was {len(graphs)})")
 
     if matched_entities:
         click.echo(f"\n{len(matched_entities)} matched entities:")
-        for e, occs in matched_entities:
+        for n, occs in matched_entities:
             names = sorted(set(o["name"] for o in occs))
-            click.echo(f"  {e.name} — {len(occs)} occurrences: {', '.join(names)}")
+            label = _entity_label(
+                next(g for g in merged_graphs if n.id in g.nodes), n.id
+            )
+            click.echo(f"  {label} — {len(occs)} occurrences: {', '.join(names)}")
 
     if confirmed_edges:
         click.echo(f"\n{len(confirmed_edges)} confirmed edges:")
         for g, edge, arts in confirmed_edges:
-            src = g.entities[edge.source].name
-            tgt = g.entities[edge.target].name
+            src = _entity_label(g, edge.source)
+            tgt = _entity_label(g, edge.target)
             click.echo(f"  {src} —[{edge.relation}]→ {tgt} ({len(arts)} sources)")
 
     click.echo(f"\nWrote {output_path}")
