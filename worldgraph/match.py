@@ -571,16 +571,6 @@ def merge_graphs(
 # ---------------------------------------------------------------------------
 
 
-def _entity_label(graph: Graph, entity_id: str) -> str:
-    """Get the display name for an entity by traversing its 'is named' edges."""
-    for edge in graph.edges:
-        if edge.relation == "is named" and edge.source == entity_id:
-            tgt = graph.nodes.get(edge.target)
-            if isinstance(tgt, LiteralNode):
-                return tgt.label
-    return entity_id[:12]
-
-
 def run_matching(
     graphs_dir: Path,
     output_path: Path,
@@ -595,7 +585,7 @@ def run_matching(
         entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
         n_occ = sum(len(entity_occurrences[n.id]) for n in entities)
         click.echo(
-            f"  {g.id[:12]}: {len(entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
+            f"  {g.id}: {len(entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
         )
 
     click.echo("\nEmbedding literal labels and relation phrases...")
@@ -660,20 +650,20 @@ def run_matching(
 
     click.echo(f"\n{len(merged_graphs)} graphs after merging (was {len(graphs)})")
 
+    def _names(node_id: str, graph: Graph) -> str:
+        if node_id in merged_occ:
+            return " / ".join(sorted(set(o["name"] for o in merged_occ[node_id])))
+        node = graph.nodes.get(node_id)
+        return node.label if isinstance(node, LiteralNode) else node_id
+
     if matched_entities:
         click.echo(f"\n{len(matched_entities)} matched entities:")
         for n, occs in matched_entities:
-            names = sorted(set(o["name"] for o in occs))
-            label = _entity_label(
-                next(g for g in merged_graphs if n.id in g.nodes), n.id
-            )
-            click.echo(f"  {label} — {len(occs)} occurrences: {', '.join(names)}")
+            click.echo(f"  {_names(n.id, None)} — {len(occs)} occurrences")
 
     if confirmed_edges:
         click.echo(f"\n{len(confirmed_edges)} confirmed edges:")
         for g, edge, arts in confirmed_edges:
-            src = _entity_label(g, edge.source)
-            tgt = _entity_label(g, edge.target)
-            click.echo(f"  {src} —[{edge.relation}]→ {tgt} ({len(arts)} sources)")
+            click.echo(f"  {_names(edge.source, g)} —[{edge.relation}]→ {_names(edge.target, g)} ({len(arts)} sources)")
 
     click.echo(f"\nWrote {output_path}")
