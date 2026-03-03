@@ -269,6 +269,7 @@ def compute_functionality(
 
 def prepare_embeddings(
     graphs: list[Graph],
+    model: TextEmbedding,
     threshold: float = 0.8,
 ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, Functionality]]:
     """Embed all literal node labels and relation phrases; compute functionality weights.
@@ -280,8 +281,6 @@ def prepare_embeddings(
         if isinstance(n, LiteralNode)
     })
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
-
-    model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
     literal_embeddings = embed(all_literals, model)
     # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
     wrapped = [f"A {r} B" for r in all_relations]
@@ -449,6 +448,51 @@ def select_matches(
     ]
 
 
+def match_round(
+    graphs: list[Graph],
+    literal_embeddings: dict[str, np.ndarray],
+    relation_embeddings: dict[str, np.ndarray],
+    functionality: dict[str, Functionality],
+    threshold: float = 0.8,
+    max_iter: int = 30,
+    epsilon: float = 1e-4,
+) -> UnionFind:
+    """One pass of pairwise propagation across all graphs.
+
+    Returns a UnionFind with matched entity pairs keyed as (graph_id, entity_id).
+    """
+    uf = UnionFind()
+    for i in range(len(graphs)):
+        for j in range(i + 1, len(graphs)):
+            confidence = propagate(
+                graphs[i],
+                graphs[j],
+                literal_embeddings,
+                relation_embeddings,
+                functionality,
+                max_iter=max_iter,
+                epsilon=epsilon,
+                rel_gate=threshold,
+            )
+            entity_ids_i = [
+                nid for nid, n in graphs[i].nodes.items()
+                if not isinstance(n, LiteralNode)
+            ]
+            entity_ids_j = [
+                nid for nid, n in graphs[j].nodes.items()
+                if not isinstance(n, LiteralNode)
+            ]
+            matches = select_matches(
+                confidence,
+                entity_ids_i,
+                entity_ids_j,
+                threshold=threshold,
+            )
+            for eid_a, eid_b in matches:
+                uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
+    return uf
+
+
 # ---------------------------------------------------------------------------
 # Graph merging
 # ---------------------------------------------------------------------------
@@ -566,6 +610,49 @@ def merge_graphs(
     return new_graphs, new_entity_occ, new_edge_art
 
 
+def match_all(
+    graphs: list[Graph],
+    entity_occurrences: dict[str, list[dict]],
+    edge_articles: dict[tuple, list[str]],
+    threshold: float = 0.8,
+    max_iter: int = 30,
+    epsilon: float = 1e-4,
+) -> tuple[list[Graph], dict[str, list[dict]], dict[tuple, list[str]]]:
+    """Iterative match-merge loop until no new merges occur.
+
+    Each round: embed, propagate, merge. Repeat because merged graphs have
+    richer structure that may trigger new matches.
+
+    Returns final (graphs, entity_occurrences, edge_articles).
+    """
+    model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
+    round_num = 0
+
+    while True:
+        round_num += 1
+        n_before = len(graphs)
+
+        click.echo(f"\n--- Round {round_num} ({n_before} graphs) ---")
+
+        literal_embeddings, relation_embeddings, functionality = prepare_embeddings(
+            graphs, model, threshold
+        )
+        uf = match_round(
+            graphs, literal_embeddings, relation_embeddings, functionality,
+            threshold=threshold, max_iter=max_iter, epsilon=epsilon,
+        )
+        graphs, entity_occurrences, edge_articles = merge_graphs(
+            graphs, uf, entity_occurrences, edge_articles
+        )
+
+        click.echo(f"  {n_before} → {len(graphs)} graphs")
+
+        if len(graphs) == n_before:
+            break
+
+    return graphs, entity_occurrences, edge_articles
+
+
 # ---------------------------------------------------------------------------
 # Top-level matching pipeline
 # ---------------------------------------------------------------------------
@@ -578,9 +665,10 @@ def run_matching(
     max_iter: int = 30,
     epsilon: float = 1e-4,
 ) -> None:
-    """Load graphs, run similarity propagation, merge, save."""
+    """Load graphs, run iterative match-merge, save."""
     graphs, entity_occurrences, edge_articles = load_graphs(graphs_dir)
-    click.echo(f"Loaded {len(graphs)} graphs from {graphs_dir}/")
+    n_initial = len(graphs)
+    click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
     for g in graphs:
         entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
         n_occ = sum(len(entity_occurrences[n.id]) for n in entities)
@@ -588,71 +676,31 @@ def run_matching(
             f"  {g.id}: {len(entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
         )
 
-    click.echo("\nEmbedding literal labels and relation phrases...")
-    literal_embeddings, relation_embeddings, functionality = prepare_embeddings(
-        graphs, threshold
+    graphs, entity_occurrences, edge_articles = match_all(
+        graphs, entity_occurrences, edge_articles,
+        threshold=threshold, max_iter=max_iter, epsilon=epsilon,
     )
 
-    n_pairs = len(graphs) * (len(graphs) - 1) // 2
-    click.echo(
-        f"\nPropagating similarities over {n_pairs} graph pairs (threshold={threshold})..."
-    )
-
-    uf = UnionFind()
-    for i in range(len(graphs)):
-        for j in range(i + 1, len(graphs)):
-            confidence = propagate(
-                graphs[i],
-                graphs[j],
-                literal_embeddings,
-                relation_embeddings,
-                functionality,
-                max_iter=max_iter,
-                epsilon=epsilon,
-                rel_gate=threshold,
-            )
-            # Only match entity nodes, not literals
-            entity_ids_i = [
-                nid for nid, n in graphs[i].nodes.items()
-                if not isinstance(n, LiteralNode)
-            ]
-            entity_ids_j = [
-                nid for nid, n in graphs[j].nodes.items()
-                if not isinstance(n, LiteralNode)
-            ]
-            matches = select_matches(
-                confidence,
-                entity_ids_i,
-                entity_ids_j,
-                threshold=threshold,
-            )
-            for eid_a, eid_b in matches:
-                uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
-
-    merged_graphs, merged_occ, merged_edges = merge_graphs(
-        graphs, uf, entity_occurrences, edge_articles
-    )
-
-    save_graphs(merged_graphs, merged_occ, merged_edges, output_path)
+    save_graphs(graphs, entity_occurrences, edge_articles, output_path)
 
     matched_entities = [
-        (n, merged_occ[n.id])
-        for g in merged_graphs
+        (n, entity_occurrences[n.id])
+        for g in graphs
         for n in g.nodes.values()
-        if not isinstance(n, LiteralNode) and len(merged_occ[n.id]) > 1
+        if not isinstance(n, LiteralNode) and len(entity_occurrences[n.id]) > 1
     ]
     confirmed_edges = [
-        (g, edge, merged_edges[(g.id, edge.source, edge.target, edge.relation)])
-        for g in merged_graphs
+        (g, edge, edge_articles[(g.id, edge.source, edge.target, edge.relation)])
+        for g in graphs
         for edge in g.edges
-        if len(merged_edges.get((g.id, edge.source, edge.target, edge.relation), [])) > 1
+        if len(edge_articles.get((g.id, edge.source, edge.target, edge.relation), [])) > 1
     ]
 
-    click.echo(f"\n{len(merged_graphs)} graphs after merging (was {len(graphs)})")
+    click.echo(f"\n{len(graphs)} graphs after merging (was {n_initial})")
 
     def _names(node_id: str, graph: Graph) -> str:
-        if node_id in merged_occ:
-            return " / ".join(sorted(set(o["name"] for o in merged_occ[node_id])))
+        if node_id in entity_occurrences:
+            return " / ".join(sorted(set(o["name"] for o in entity_occurrences[node_id])))
         node = graph.nodes.get(node_id)
         return node.label if isinstance(node, LiteralNode) else node_id
 
