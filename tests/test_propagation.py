@@ -366,17 +366,23 @@ def test_name_variation_with_structural_reinforcement(embed, embed_relation):
     g1 = Graph(id="g1")
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
+    ceo1 = g1.add_entity("Elena Vasquez")
     g1.add_edge(meridian1, dv1, "acquired")
+    g1.add_edge(meridian1, ceo1, "hired")
 
     g2 = Graph(id="g2")
     meridian2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault Inc")
+    ceo2 = g2.add_entity("Elena Vasquez")
     g2.add_edge(meridian2, dv2, "purchased")
+    g2.add_edge(meridian2, ceo2, "employed")
 
-    lit_embs = embed(["Meridian Technologies", "Meridian Tech", "DataVault Inc"])
+    lit_embs = embed(
+        ["Meridian Technologies", "Meridian Tech", "DataVault Inc", "Elena Vasquez"]
+    )
 
     confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired", "purchased"]
+        g1, g2, embed_relation, lit_embs, ["acquired", "purchased", "hired", "employed"]
     )
 
     # Both should pass select_matches
