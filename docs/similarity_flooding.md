@@ -85,7 +85,7 @@ This is a **noisy-OR**: each evidence path independently has some chance of "suc
 
 This is fundamentally different from taking a single max. If entity pair (a, b) has 5 neighbor matches each contributing 0.3, the noisy-OR gives `1 - (1-0.3)^5 = 0.83`, while a max gives just 0.3.
 
-A weakness of noisy-OR in practice is that a single high-confidence path can saturate the score, making one shared anchor indistinguishable from many. We address this with an [evidence factor](evidence_factor.md) that discounts structural scores supported by few paths.
+A weakness of noisy-OR in practice is that a single high-confidence path can saturate the score, making one shared anchor indistinguishable from many. We address this by using exponential sum aggregation instead (`1 - exp(-λ × Σ strengths)`), which inherently rewards breadth — multiple paths accumulate proportionally rather than saturating early.
 
 ### Negative evidence
 
