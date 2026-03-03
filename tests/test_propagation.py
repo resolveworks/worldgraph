@@ -12,7 +12,7 @@ embeddings.  Tests verify that:
 - Multi-hop chains require iterative propagation
 - Name variation with structural reinforcement (the core use case)
 - Dangling entities get no structural evidence
-- Noisy-OR accumulates evidence from multiple paths (bidirectional > unidirectional)
+- Exponential sum accumulates evidence from multiple paths (bidirectional > unidirectional)
 """
 
 import numpy as np
@@ -165,9 +165,11 @@ def test_dissimilar_relations_do_not_propagate(embed, embed_relation):
     assert matches == [], f"Spurious matches found: {matches}"
 
 
-def test_weak_neighbors_do_not_propagate(embed, embed_relation):
-    """Even with identical relation phrases, propagation should not boost
-    confidence when neighbor name similarity is below the confidence gate.
+def test_weak_neighbors_do_not_produce_matches(embed, embed_relation):
+    """Even with identical relation phrases, weak neighbor similarity
+    should not produce matches.  The exponential sum gives weak paths
+    diminishing returns — they contribute small amounts but never enough
+    to cross the match threshold.
 
     g1: Apple --acquired--> Beats
     g2: Google --acquired--> YouTube
@@ -181,11 +183,10 @@ def test_weak_neighbors_do_not_propagate(embed, embed_relation):
         g1, g2, embed_relation, name_embs, ["acquired"]
     )
 
-    # Confidence should not exceed the name-similarity seed for any pair
-    for key in confidence:
-        assert confidence[key] <= seeds[key] + 1e-6, (
-            f"Spurious propagation: {key} confidence {confidence[key]} > seed {seeds[key]}"
-        )
+    matches = select_matches(
+        confidence, list(g1.entities), list(g2.entities), threshold=0.8
+    )
+    assert matches == [], f"Spurious matches from weak neighbors: {matches}"
 
 
 def test_many_weak_paths_do_not_accumulate(embed, embed_relation):

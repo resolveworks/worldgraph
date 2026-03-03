@@ -72,7 +72,7 @@ Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free
 
 3. **Dangling entities by default**: most entities won't match anything across most graph pairs. Threshold-based finalization naturally leaves them unmerged — no special handling needed.
 
-4. **Evidence factor** (SimRank++): the noisy-OR structural score is multiplied by `1 - exp(-λn)` where `n` is the count of qualifying paths. This prevents a single strong anchor from saturating structural evidence and overriding name dissimilarity. See [docs/evidence_factor.md](docs/evidence_factor.md) for details.
+4. **Exponential sum aggregation**: structural evidence is `1 - exp(-λ × Σ strengths)` where each path contributes `functionality × neighbor_confidence`. This inherently rewards breadth — a single strong path is heavily discounted, multiple paths accumulate proportionally.
 
 ### What we don't do (yet)
 

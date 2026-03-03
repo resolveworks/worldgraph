@@ -1,7 +1,7 @@
 """Stage 2: Entity alignment via PARIS-style similarity propagation.
 
 Seed confidence from name embeddings, propagate structural evidence
-via noisy-OR, threshold, merge via union-find.
+via exponential sum, threshold, merge via union-find.
 """
 
 import json
@@ -298,16 +298,22 @@ def propagate(
     max_iter: int = 30,
     epsilon: float = 1e-4,
     rel_gate: float = 0.8,
-    confidence_gate: float = 0.8,
-    evidence_lambda: float = 0.5,
+    confidence_gate: float = 0.5,
+    exp_lambda: float = 1.0,
 ) -> dict[tuple[str, str], float]:
     """Run similarity propagation between two graphs.
 
-    Structural evidence is computed via noisy-OR over qualifying edge pairs,
-    then discounted by a SimRank++ evidence factor ``1 - exp(-λn)`` where *n*
-    is the number of qualifying paths.  This prevents a single strong anchor
-    from saturating structural evidence to ~1.0 and overriding name
-    dissimilarity.
+    Structural evidence is computed via exponential sum over qualifying
+    edge pairs: ``1 - exp(-λ × Σ strengths)``.  Each path contributes
+    its strength (functionality × neighbor confidence) additively, with
+    diminishing returns from the exponential.  This inherently rewards
+    breadth — a single strong path is heavily discounted, while multiple
+    paths accumulate proportionally.
+
+    The confidence gate filters neighbor pairs whose confidence is too
+    low to contribute meaningful structural evidence.  Without it,
+    incorrect pairs with moderate name similarity can feed back through
+    structure iteratively, spiraling above their seed.
 
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     """
@@ -352,9 +358,8 @@ def propagate(
 
         for eid_a in ids_a:
             for eid_b in ids_b:
-                # Noisy-OR over all qualifying edge pairs: structural evidence
-                complement_product = 1.0
-                n_paths = 0
+                # Exponential sum over all qualifying edge pairs
+                strength_sum = 0.0
 
                 for nbr_a, rel_a, func_a in adj_a.get(eid_a, []):
                     for nbr_b, rel_b, func_b in adj_b.get(eid_b, []):
@@ -364,14 +369,13 @@ def propagate(
                         if nbr_conf < confidence_gate:
                             continue
                         func_w = min(func_a, func_b)
-                        path_strength = func_w * nbr_conf
-                        complement_product *= 1.0 - path_strength
-                        n_paths += 1
+                        strength_sum += func_w * nbr_conf
 
-                structural = 1.0 - complement_product
-                if n_paths > 0:
-                    evidence = 1.0 - math.exp(-evidence_lambda * n_paths)
-                    structural *= evidence
+                structural = (
+                    1.0 - math.exp(-exp_lambda * strength_sum)
+                    if strength_sum > 0
+                    else 0.0
+                )
 
                 # Combine the fixed name seed with structural evidence
                 # via noisy-OR — independent evidence sources compound.
@@ -552,7 +556,6 @@ def run_matching(
                 max_iter=max_iter,
                 epsilon=epsilon,
                 rel_gate=threshold,
-                confidence_gate=threshold,
             )
             matches = select_matches(
                 confidence,
