@@ -23,8 +23,9 @@ Another article covering the same event produces a structurally similar subgraph
 
 Entity pairs across graphs are compared using **PARIS-style similarity propagation** (Suchanek et al., 2011), adapted for free-text relation phrases:
 
-- Initialize similarity scores from name embeddings
-- Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones)
+- Entity names are modeled as **literal nodes** connected to their entity via `"is named"` edges. Entity-entity confidence starts at zero — name similarity enters as structural evidence through propagation, not as initialization. This means name evidence and relational evidence are treated uniformly.
+- Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones). Neighbor evidence below a confidence gate (0.5) is ignored to prevent weak similarities from accumulating into false positives.
+- Evidence from multiple paths is aggregated with an exponential sum: `1 - exp(-λ × Σ strengths)`. This naturally rewards breadth — a single strong path is heavily discounted (~0.63), while multiple paths accumulate proportionally.
 - Repeat until scores converge, then threshold to decide which pairs to merge
 
 Relations are compared via sentence embedding similarity — "acquired", "bought", "completed the purchase of" all cluster together without requiring a predefined schema. The standard Similarity Flooding algorithm (Melnik et al., 2002) requires identical edge labels to propagate similarity; we replace that binary gate with continuous relation-phrase similarity.
@@ -55,7 +56,7 @@ Standard methods (SF, PARIS, FLORA) assume relations come from a controlled voca
 
 ### N-graph alignment
 
-Each article produces one graph. We run pairwise propagation across all graph pairs and merge transitively. This is O(N²) in the number of articles, which is fine for a PoC. A production system could follow IsoRankN (Liao et al., 2009) and cluster over the full K-partite entity-pair similarity graph instead.
+Each article produces one graph. All article graphs are merged into a single unified graph, and propagation runs once over all cross-graph entity pairs simultaneously. Final matches are merged transitively via union-find.
 
 ## Open Problems
 
