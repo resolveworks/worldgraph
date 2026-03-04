@@ -1,6 +1,6 @@
 # Hubness and Literal Similarity
 
-Hubness is a geometric property of high-dimensional spaces that inflates similarity scores between unrelated entities. This document explains the problem, the prior art for correcting it, and our solution: Mutual Proximity with local neighborhood statistics, which produces calibrated [0, 1] confidence scores for entity name matching.
+Hubness is a geometric property of high-dimensional spaces that inflates similarity scores between unrelated entities. This document explains the problem, the prior art for correcting it, and our solution: Mutual Proximity with type-based reference groups, which produces calibrated [0, 1] confidence scores for entity name matching.
 
 ## The hubness problem
 
@@ -39,7 +39,7 @@ This penalizes hubs (high mean_knn → all their scores decrease) and boosts ant
 
 But CSLS was designed for nearest-neighbor retrieval, not for producing calibrated scores. Its output is unbounded (roughly [-1, +2]) and concentrates in a narrow band that doesn't align with any meaningful threshold. In our pipeline, literal similarity feeds into propagation as a confidence score in [0, 1], compared against a confidence gate. CSLS values can't fill that role without an arbitrary rescaling that reintroduces the model-dependence we're trying to eliminate.
 
-## Our solution: Mutual Proximity with local neighborhoods
+## Our solution: Mutual Proximity with type-based reference groups
 
 Mutual Proximity (Schnitzer et al., 2012) takes a different approach to hubness reduction: instead of subtracting hub scores, it transforms similarities into **probabilities**. The question changes from "how similar are x and y?" to "how unusually similar are x and y, given what we know about each of their neighborhoods?"
 
@@ -67,25 +67,35 @@ MP(x, y) = Φ((cos(x, y) - μ_x) / σ_x) × Φ((cos(x, y) - μ_y) / σ_y)
 
 where Φ is the standard normal CDF. This reduces computation to O(n) per entity (compute mean and std of its similarities) plus O(1) per pair lookup.
 
-### Local vs. global statistics
+### Choosing the reference population
 
-Schnitzer et al. compute μ and σ over all pairwise similarities (global statistics). This works when the population is homogeneous, but in our case entity types form distinct clusters. The global mean similarity (~0.56) is too low a reference point — same-type pairs at 0.84 look exceptional against the global distribution even when they shouldn't.
+The original MP (Schnitzer et al.) computes μ and σ over all pairwise similarities (global statistics). This works when the population is homogeneous, but in our case entity types form distinct clusters. The global mean similarity (~0.56) is too low a reference point — same-type pairs at 0.84 look exceptional against the global distribution even when they shouldn't.
 
-CSLS avoids this by using the K nearest neighbors as the reference distribution. We apply the same idea to Mutual Proximity: compute μ_x and σ_x from x's K nearest neighbors only, not the full population.
+CSLS solves this with K nearest neighbors as the reference distribution (K=10). This works as a geometric proxy for "same type" — a person name's 10 nearest neighbors are mostly other person names. But it's a noisy proxy: boundary entities get mixed neighborhoods, and K is an arbitrary parameter to tune.
+
+We have something better: **explicit entity types**. The extraction stage assigns each entity one of a fixed set of types (`person`, `organization`, `location`, `event`, `concept`). This gives us the exact grouping that KNN approximates, without the parameter or the noise.
 
 ```
-μ_x = mean of {cos(x, y) : y ∈ KNN_K(x)}
-σ_x = std  of {cos(x, y) : y ∈ KNN_K(x)}
+μ_x = mean of {cos(x, y) : type(y) = type(x), y ≠ x}
+σ_x = std  of {cos(x, y) : type(y) = type(x), y ≠ x}
 ```
 
-This makes the reference distribution *local*: a person name is compared against other person names (its nearest neighbors), not against the global entity population. The result is that same-type similarity (high cosine, but normal for the local neighborhood) gets a low MP score, while genuine matches (cosine significantly above the local baseline) get a high MP score.
+A person name's reference distribution is all other person names. An organization name's reference distribution is all other organization names. The question MP answers becomes: "is this pair more similar than typical pairs of the same entity type?"
+
+This eliminates K entirely. The reference population is defined by the graph structure (the `entity_type` field), not by an arbitrary neighborhood size. At scale — processing all major news outlets — each type group contains thousands of entities, giving excellent Gaussian estimates. For small batches where a type group has fewer than ~30 entities, falling back to global statistics is a safe default (Schnitzer et al. found S=30 sufficient for stable approximation).
+
+### Interaction with the type filter
+
+The type-based reference groups work in concert with the hard type filter already in `propagate()`. The type filter skips cross-type entity pairs entirely — a person is never compared against an organization. MP then calibrates the within-type comparisons, discounting the baseline similarity that all persons share and exposing the entity-level signal.
+
+Together, these two mechanisms use entity types at both stages: the type filter reduces the search space, and MP calibrates the similarity scores within it.
 
 ### Results on our entity data
 
-Using K=10 with 219 entity literals:
+Using KNN (K=10) as a proxy for type groups, with 219 entity literals:
 
-| Pair | Cosine | MP (K=10) | Same entity? |
-|------|--------|-----------|--------------|
+| Pair | Cosine | MP | Same entity? |
+|------|--------|----|--------------|
 | FTC / Federal Trade Commission | 0.83 | **0.96** | Yes |
 | EU / European Union | 0.94 | **0.92** | Yes |
 | Meridian Technologies / Meridian Tech | 0.98 | **0.97** | Yes |
@@ -103,9 +113,9 @@ The trade-off: some genuine matches with weak embedding signal fall below thresh
 
 **Calibrated [0, 1] output.** The product of two CDF values is naturally bounded in [0, 1] with a probabilistic interpretation. No rescaling or clamping needed.
 
-**Model-agnostic.** When the embedding model changes, μ and σ shift accordingly. A model that inflates all similarities inflates the local baseline equally, so MP scores remain stable.
+**Model-agnostic.** When the embedding model changes, μ and σ shift accordingly. A model that inflates all similarities inflates the type baseline equally, so MP scores remain stable.
 
-**Single parameter.** K controls the locality of the reference distribution. K=10 works well; the results are stable across K=5 to K=50 (following CSLS findings). Smaller K gives more aggressive hub correction; larger K approaches global statistics.
+**Parameter-free.** With type-based reference groups, there is no K to tune. The reference population is defined by the entity type taxonomy, which is fixed at extraction time.
 
 ## References
 
