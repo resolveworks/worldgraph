@@ -55,7 +55,7 @@ The matching stage implements **similarity propagation** (inspired by PARIS/FLOR
 
 Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free-text phrases. Adaptations:
 
-1. **Relation similarity via sentence embeddings**: instead of requiring identical edge labels to allow propagation, gate propagation paths by cosine similarity of relation phrase embeddings. Only paths where rel_sim >= threshold propagate; "acquired" and "buys" pass (~0.85), "acquired" and "located in" don't.
+1. **Relation similarity via sentence embeddings**: instead of requiring identical edge labels to allow propagation, gate propagation paths by cosine similarity of relation phrase embeddings. Only paths where rel_sim >= threshold propagate; "acquired" and "buys" pass (~0.85), "acquired" and "located in" don't. Entity name similarity uses Soft TF-IDF + Jaro-Winkler instead of embeddings — see [docs/name_similarity.md](docs/name_similarity.md).
 
 2. **Functionality from phrase frequency**: a relation phrase appearing as the unique connection between two specific entities is maximally specific. Approximate PARIS functionality as inverse average degree of the relation in the graph.
 
