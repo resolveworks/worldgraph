@@ -20,9 +20,9 @@ import numpy as np
 from worldgraph.match import (
     Graph,
     LiteralNode,
+    build_unified_graph,
     compute_functionality,
     propagate,
-    select_matches,
 )
 
 
@@ -36,6 +36,17 @@ def _entity_ids(graph: Graph) -> list[str]:
     return [nid for nid, n in graph.nodes.items() if not isinstance(n, LiteralNode)]
 
 
+def _select_matches(confidence, threshold=0.8):
+    """Select entity matches: pairs where confidence >= threshold."""
+    seen = set()
+    matches = []
+    for (a, b), v in confidence.items():
+        if v >= threshold and (b, a) not in seen:
+            matches.append((a, b))
+            seen.add((a, b))
+    return matches
+
+
 def run_propagation(
     graph_a: Graph,
     graph_b: Graph,
@@ -45,13 +56,13 @@ def run_propagation(
     threshold: float = 0.8,
     **kwargs,
 ):
-    """Convenience wrapper: embed relations, compute functionality, propagate."""
+    """Convenience wrapper: embed relations, build unified graph, propagate."""
+    unified = build_unified_graph([graph_a, graph_b])
     rel_embs = {r: embed_relation(r) for r in relations}
     rel_embs["is named"] = embed_relation("is named")
     func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
     return propagate(
-        graph_a,
-        graph_b,
+        unified,
         literal_embeddings,
         rel_embs,
         func,
@@ -135,9 +146,7 @@ def test_dissimilar_relations_do_not_propagate(embed, embed_relation):
         g1, g2, embed_relation, lit_embs, ["acquired", "located in"]
     )
 
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches found: {matches}"
 
 
@@ -160,9 +169,7 @@ def test_weak_neighbors_do_not_produce_matches(embed, embed_relation):
         g1, g2, embed_relation, lit_embs, ["acquired"]
     )
 
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from weak neighbors: {matches}"
 
 
@@ -193,9 +200,7 @@ def test_many_weak_paths_do_not_accumulate(embed, embed_relation):
     relations = ["acquired", "funded", "hired", "located in", "borders", "hosts"]
     confidence = run_propagation(g1, g2, embed_relation, lit_embs, relations)
 
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from accumulated weak paths: {matches}"
 
 
@@ -284,7 +289,9 @@ def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
     dv2a = g2a.add_entity("DataVault")
     g2a.add_edge(m2a, dv2a, "acquired")
 
-    confidence_acq = propagate(g1a, g2a, lit_embs, rel_embs, func)
+    confidence_acq = propagate(
+        build_unified_graph([g1a, g2a]), lit_embs, rel_embs, func
+    )
 
     # Propagation with 'invested in' (low inverse functionality)
     g1i = Graph(id="g1i")
@@ -297,7 +304,9 @@ def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
     dv2i = g2i.add_entity("DataVault")
     g2i.add_edge(m2i, dv2i, "invested in")
 
-    confidence_inv = propagate(g1i, g2i, lit_embs, rel_embs, func)
+    confidence_inv = propagate(
+        build_unified_graph([g1i, g2i]), lit_embs, rel_embs, func
+    )
 
     assert confidence_acq[(m1a.id, m2a.id)] > confidence_inv[(m1i.id, m2i.id)], (
         f"Functional relation confidence ({confidence_acq[(m1a.id, m2a.id)]}) should exceed "
@@ -342,7 +351,7 @@ def test_multi_hop_propagation_across_iterations(embed, embed_relation):
     rel_embs["is named"] = embed_relation("is named")
     func = compute_functionality([g1, g2], rel_embs)
 
-    confidence = propagate(g1, g2, lit_embs, rel_embs, func)
+    confidence = propagate(build_unified_graph([g1, g2]), lit_embs, rel_embs, func)
 
     # Alpha Corp / Beta Inc boosted by James Chen chain
     assert confidence[(alpha.id, beta.id)] > 0, (
@@ -385,13 +394,11 @@ def test_name_variation_with_structural_reinforcement(embed, embed_relation):
         g1, g2, embed_relation, lit_embs, ["acquired", "purchased", "hired", "employed"]
     )
 
-    # Both should pass select_matches
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    # Both should pass threshold
+    matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = {(a, b) for a, b in matches}
-    assert (meridian1.id, meridian2.id) in matched_pairs
-    assert (dv1.id, dv2.id) in matched_pairs
+    assert (meridian1.id, meridian2.id) in matched_pairs or (meridian2.id, meridian1.id) in matched_pairs
+    assert (dv1.id, dv2.id) in matched_pairs or (dv2.id, dv1.id) in matched_pairs
 
 
 # ---------------------------------------------------------------------------
@@ -422,9 +429,7 @@ def test_dangling_entities_get_no_boost(embed, embed_relation):
         g1, g2, embed_relation, lit_embs, ["acquired", "purchased", "hired"]
     )
 
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    matches = _select_matches(confidence, threshold=0.8)
     matched_ids = {eid for pair in matches for eid in pair}
     assert solar.id not in matched_ids
     assert wind.id not in matched_ids
@@ -527,17 +532,16 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
     ))
     assert sv_name_sim < 0.8
 
-    confidence = propagate(g1, g2, lit_embs, rel_embs, func)
+    confidence = propagate(build_unified_graph([g1, g2]), lit_embs, rel_embs, func)
 
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    matches = _select_matches(confidence, threshold=0.8)
 
     # Neither NovaTech nor Sharma/Vasquez should match
-    assert (nova1.id, nova2.id) not in matches, (
+    matched_pairs = {(a, b) for a, b in matches}
+    assert (nova1.id, nova2.id) not in matched_pairs and (nova2.id, nova1.id) not in matched_pairs, (
         "Identical names with no structural corroboration were incorrectly matched"
     )
-    assert (sharma.id, vasquez.id) not in matches, (
+    assert (sharma.id, vasquez.id) not in matched_pairs and (vasquez.id, sharma.id) not in matched_pairs, (
         "Structural evidence from shared anchor overrode name dissimilarity"
     )
 
@@ -579,12 +583,10 @@ def test_similar_names_disjoint_neighborhoods_no_match(embed, embed_relation):
         g1, g2, embed_relation, lit_embs, ["is CEO of"]
     )
 
-    matches = select_matches(
-        confidence, _entity_ids(g1), _entity_ids(g2), threshold=0.8
-    )
+    matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = {(a, b) for a, b in matches}
 
-    assert (elena.id, lena.id) not in matched_pairs, (
+    assert (elena.id, lena.id) not in matched_pairs and (lena.id, elena.id) not in matched_pairs, (
         f"Similar names with disjoint neighborhoods were incorrectly matched "
         f"(name_sim={name_sim:.3f}, no structural support)"
     )

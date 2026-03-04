@@ -22,8 +22,6 @@ from fastembed import TextEmbedding
 
 load_dotenv()
 
-load_dotenv()
-
 
 class Functionality(NamedTuple):
     forward: float
@@ -147,37 +145,43 @@ def load_graphs(
     return graphs, entity_occurrences, edge_articles
 
 
-def save_graphs(
-    graphs: list[Graph],
+def save_output(
+    graph: Graph,
     entity_occurrences: dict[str, list[dict]],
     edge_articles: dict[tuple, list[str]],
+    matches: list[list[str]],
     path: Path,
 ) -> None:
-    """Write graphs + provenance to graph JSON format."""
-    output_graphs = []
-    for g in graphs:
-        nodes_out = []
-        for n in g.nodes.values():
-            if isinstance(n, LiteralNode):
-                nodes_out.append({"id": n.id, "label": n.label})
-            else:
-                nodes_out.append({"id": n.id, "occurrences": entity_occurrences[n.id]})
-        edges = [
-            {
-                "source": edge.source,
-                "target": edge.target,
-                "relation": edge.relation,
-                "articles": edge_articles[
-                    (g.id, edge.source, edge.target, edge.relation)
-                ],
-            }
-            for edge in g.edges
-        ]
-        output_graphs.append({"id": g.id, "nodes": nodes_out, "edges": edges})
+    """Write unified graph + match groups to JSON."""
+    nodes_out = []
+    for n in graph.nodes.values():
+        if isinstance(n, LiteralNode):
+            nodes_out.append({"id": n.id, "label": n.label})
+        else:
+            nodes_out.append({"id": n.id, "occurrences": entity_occurrences[n.id]})
+
+    edges_out = []
+    for edge in graph.edges:
+        graph_id = graph.nodes[edge.source].graph_id
+        articles = edge_articles.get(
+            (graph_id, edge.source, edge.target, edge.relation), []
+        )
+        edges_out.append({
+            "source": edge.source,
+            "target": edge.target,
+            "relation": edge.relation,
+            "articles": articles,
+        })
+
+    output = {
+        "nodes": nodes_out,
+        "edges": edges_out,
+        "matches": matches,
+    }
 
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
-        json.dump({"graphs": output_graphs}, f, indent=2)
+        json.dump(output, f, indent=2)
 
 
 # ---------------------------------------------------------------------------
@@ -325,9 +329,17 @@ def _build_adjacency(
     return adj
 
 
+def build_unified_graph(graphs: list[Graph]) -> Graph:
+    """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs."""
+    unified = Graph(id="unified")
+    for g in graphs:
+        unified.nodes.update(g.nodes)
+        unified.edges.extend(g.edges)
+    return unified
+
+
 def propagate(
-    graph_a: Graph,
-    graph_b: Graph,
+    graph: Graph,
     literal_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, Functionality],
@@ -337,320 +349,94 @@ def propagate(
     confidence_gate: float = 0.5,
     exp_lambda: float = 1.0,
 ) -> dict[tuple[str, str], float]:
-    """Run similarity propagation between two graphs.
+    """Run similarity propagation on a single unified graph.
 
-    Entity names are literal nodes connected by "is named" edges, so
-    name similarity flows through the same exponential-sum aggregation
-    as any other structural evidence.  Literal-literal confidence is
-    fixed (embedding cosine sim); entity-entity confidence is updated
-    iteratively.
+    Compares entity pairs from different source graphs (based on
+    node.graph_id).  Literal-literal confidence is computed on demand
+    from embeddings.  Entity-entity confidence is updated iteratively.
 
-    Returns confidence: (node_id_a, node_id_b) -> float in [0, 1].
+    Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
+    Both orderings (a,b) and (b,a) are stored for convenient lookup.
     """
-    all_ids_a = list(graph_a.nodes)
-    all_ids_b = list(graph_b.nodes)
-
-    adj_a = _build_adjacency(graph_a, functionality)
-    adj_b = _build_adjacency(graph_b, functionality)
+    adj = _build_adjacency(graph, functionality)
 
     # Precompute which relation pairs pass the gate
+    all_rels = {edge.relation for edge in graph.edges}
     rel_passes_gate: set[tuple[str, str]] = set()
-    rels_a = {edge.relation for edge in graph_a.edges}
-    rels_b = {edge.relation for edge in graph_b.edges}
-    for ra in rels_a:
+    for ra in all_rels:
         emb_a = relation_embeddings.get(ra)
         if emb_a is None:
             continue
-        for rb in rels_b:
+        for rb in all_rels:
             emb_b = relation_embeddings.get(rb)
             if emb_b is None:
                 continue
             if float(np.dot(emb_a, emb_b)) >= rel_gate:
                 rel_passes_gate.add((ra, rb))
 
-    # Initialize confidence for all node pairs
-    confidence: dict[tuple[str, str], float] = {}
-    literal_pairs: set[tuple[str, str]] = set()
+    # Identify entity nodes (non-literal)
+    entity_ids = [
+        nid for nid, n in graph.nodes.items()
+        if not isinstance(n, LiteralNode)
+    ]
 
-    for id_a in all_ids_a:
-        node_a = graph_a.nodes[id_a]
-        for id_b in all_ids_b:
-            node_b = graph_b.nodes[id_b]
-            is_lit_a = isinstance(node_a, LiteralNode)
-            is_lit_b = isinstance(node_b, LiteralNode)
-            if is_lit_a and is_lit_b:
-                # Literal-literal: fixed embedding cosine sim
-                emb_a = literal_embeddings.get(node_a.label)
-                emb_b = literal_embeddings.get(node_b.label)
-                if emb_a is not None and emb_b is not None:
-                    confidence[(id_a, id_b)] = max(0.0, float(np.dot(emb_a, emb_b)))
-                else:
-                    confidence[(id_a, id_b)] = 0.0
-                literal_pairs.add((id_a, id_b))
-            elif is_lit_a != is_lit_b:
-                # Cross-type: always 0
-                confidence[(id_a, id_b)] = 0.0
-                literal_pairs.add((id_a, id_b))  # never updated
-            else:
-                # Entity-entity: starts at 0, updated by propagation
-                confidence[(id_a, id_b)] = 0.0
+    # Sparse confidence dict: only cross-graph entity-entity pairs.
+    # Both orderings stored for convenient neighbor lookup.
+    confidence: dict[tuple[str, str], float] = {}
+    pairs: list[tuple[str, str]] = []
+    for i, id_a in enumerate(entity_ids):
+        for id_b in entity_ids[i + 1:]:
+            if graph.nodes[id_a].graph_id == graph.nodes[id_b].graph_id:
+                continue
+            confidence[(id_a, id_b)] = 0.0
+            confidence[(id_b, id_a)] = 0.0
+            pairs.append((id_a, id_b))
+
+    def _get_confidence(a: str, b: str) -> float:
+        """Look up confidence for any node pair, computing literal sim on demand."""
+        if (a, b) in confidence:
+            return confidence[(a, b)]
+        node_a = graph.nodes[a]
+        node_b = graph.nodes[b]
+        if isinstance(node_a, LiteralNode) and isinstance(node_b, LiteralNode):
+            emb_a = literal_embeddings.get(node_a.label)
+            emb_b = literal_embeddings.get(node_b.label)
+            if emb_a is not None and emb_b is not None:
+                return max(0.0, float(np.dot(emb_a, emb_b)))
+        return 0.0
 
     for _ in range(max_iter):
         changed = False
 
-        for id_a in all_ids_a:
-            for id_b in all_ids_b:
-                if (id_a, id_b) in literal_pairs:
-                    continue
+        for id_a, id_b in pairs:
+            strength_sum = 0.0
 
-                # Exponential sum over all qualifying edge pairs
-                strength_sum = 0.0
+            for nbr_a, rel_a, func_a in adj.get(id_a, []):
+                for nbr_b, rel_b, func_b in adj.get(id_b, []):
+                    if (rel_a, rel_b) not in rel_passes_gate:
+                        continue
+                    nbr_conf = _get_confidence(nbr_a, nbr_b)
+                    if nbr_conf < confidence_gate:
+                        continue
+                    func_w = min(func_a, func_b)
+                    strength_sum += func_w * nbr_conf
 
-                for nbr_a, rel_a, func_a in adj_a.get(id_a, []):
-                    for nbr_b, rel_b, func_b in adj_b.get(id_b, []):
-                        if (rel_a, rel_b) not in rel_passes_gate:
-                            continue
-                        nbr_conf = confidence[(nbr_a, nbr_b)]
-                        if nbr_conf < confidence_gate:
-                            continue
-                        func_w = min(func_a, func_b)
-                        strength_sum += func_w * nbr_conf
+            combined = (
+                1.0 - math.exp(-exp_lambda * strength_sum)
+                if strength_sum > 0
+                else 0.0
+            )
 
-                combined = (
-                    1.0 - math.exp(-exp_lambda * strength_sum)
-                    if strength_sum > 0
-                    else 0.0
-                )
-
-                old = confidence[(id_a, id_b)]
-                if combined > old + epsilon:
-                    confidence[(id_a, id_b)] = combined
-                    changed = True
+            old = confidence[(id_a, id_b)]
+            if combined > old + epsilon:
+                confidence[(id_a, id_b)] = combined
+                confidence[(id_b, id_a)] = combined
+                changed = True
 
         if not changed:
             break
 
     return confidence
-
-
-def select_matches(
-    confidence: dict[tuple[str, str], float],
-    ids_a: list[str],
-    ids_b: list[str],
-    threshold: float,
-) -> list[tuple[str, str]]:
-    """Select entity matches: pairs where confidence >= threshold."""
-    return [
-        (a, b)
-        for a in ids_a
-        for b in ids_b
-        if confidence.get((a, b), 0.0) >= threshold
-    ]
-
-
-def match_round(
-    graphs: list[Graph],
-    literal_embeddings: dict[str, np.ndarray],
-    relation_embeddings: dict[str, np.ndarray],
-    functionality: dict[str, Functionality],
-    threshold: float = 0.8,
-    max_iter: int = 30,
-    epsilon: float = 1e-4,
-) -> UnionFind:
-    """One pass of pairwise propagation across all graphs.
-
-    Returns a UnionFind with matched entity pairs keyed as (graph_id, entity_id).
-    """
-    uf = UnionFind()
-    for i in range(len(graphs)):
-        for j in range(i + 1, len(graphs)):
-            confidence = propagate(
-                graphs[i],
-                graphs[j],
-                literal_embeddings,
-                relation_embeddings,
-                functionality,
-                max_iter=max_iter,
-                epsilon=epsilon,
-                rel_gate=threshold,
-            )
-            entity_ids_i = [
-                nid for nid, n in graphs[i].nodes.items()
-                if not isinstance(n, LiteralNode)
-            ]
-            entity_ids_j = [
-                nid for nid, n in graphs[j].nodes.items()
-                if not isinstance(n, LiteralNode)
-            ]
-            matches = select_matches(
-                confidence,
-                entity_ids_i,
-                entity_ids_j,
-                threshold=threshold,
-            )
-            for eid_a, eid_b in matches:
-                uf.union((graphs[i].id, eid_a), (graphs[j].id, eid_b))
-    return uf
-
-
-# ---------------------------------------------------------------------------
-# Graph merging
-# ---------------------------------------------------------------------------
-
-
-def merge_graphs(
-    graphs: list[Graph],
-    uf: UnionFind,
-    entity_occurrences: dict[str, list[dict]],
-    edge_articles: dict[tuple, list[str]],
-) -> tuple[list[Graph], dict[str, list[dict]], dict[tuple, list[str]]]:
-    """Merge graphs whose entities have been linked by the union-find.
-
-    Graphs with no matched entities are passed through unchanged.
-    Merged entities keep all name variants as separate literal nodes;
-    duplicate labels from different source graphs are deduplicated.
-    Returns (new_graphs, new_entity_occurrences, new_edge_articles).
-    """
-    # Group graphs into merge components via shared entity roots
-    graph_uf = UnionFind()
-    for g in graphs:
-        for n in g.nodes.values():
-            if isinstance(n, LiteralNode):
-                continue
-            root = uf.find((g.id, n.id))
-            if root != (g.id, n.id):
-                root_graph_id = root[0]
-                if root_graph_id != g.id:
-                    graph_uf.union(g.id, root_graph_id)
-
-    components: dict[str, list[Graph]] = defaultdict(list)
-    for g in graphs:
-        components[graph_uf.find(g.id)].append(g)
-
-    new_graphs: list[Graph] = []
-    new_entity_occ: dict[str, list[dict]] = {}
-    new_edge_art: dict[tuple, list[str]] = {}
-
-    for _root, component_graphs in components.items():
-        if len(component_graphs) == 1:
-            g = component_graphs[0]
-            new_graphs.append(g)
-            for n in g.nodes.values():
-                if not isinstance(n, LiteralNode):
-                    new_entity_occ[n.id] = entity_occurrences[n.id]
-            for edge in g.edges:
-                key = (g.id, edge.source, edge.target, edge.relation)
-                new_edge_art[key] = edge_articles[key]
-            continue
-
-        merged_id = str(uuid.uuid4())
-
-        # Group entity nodes by their union-find root
-        entity_groups: dict[tuple, list[tuple[str, str]]] = defaultdict(list)
-        for g in component_graphs:
-            for n in g.nodes.values():
-                if isinstance(n, LiteralNode):
-                    continue
-                entity_groups[uf.find((g.id, n.id))].append((g.id, n.id))
-
-        # Create merged entities: pool occurrences
-        old_to_new: dict[tuple[str, str], str] = {}
-        merged_nodes: dict[str, Node] = {}
-
-        for _uf_root, members in entity_groups.items():
-            new_eid = str(uuid.uuid4())
-            pooled_occ: list[dict] = []
-            for graph_id, entity_id in members:
-                for occ in entity_occurrences[entity_id]:
-                    pooled_occ.append(occ)
-                old_to_new[(graph_id, entity_id)] = new_eid
-            merged_nodes[new_eid] = Node(id=new_eid, graph_id=merged_id)
-            new_entity_occ[new_eid] = pooled_occ
-
-        # Collect literal nodes: deduplicate by label across source graphs
-        # and map old literal IDs to new ones
-        label_to_new_id: dict[str, str] = {}
-        for g in component_graphs:
-            for n in g.nodes.values():
-                if isinstance(n, LiteralNode):
-                    if n.label not in label_to_new_id:
-                        new_lid = str(uuid.uuid4())
-                        label_to_new_id[n.label] = new_lid
-                        merged_nodes[new_lid] = LiteralNode(
-                            id=new_lid, graph_id=merged_id, label=n.label
-                        )
-                    old_to_new[(g.id, n.id)] = label_to_new_id[n.label]
-
-        # Remap edges, pool article provenance, pick most common relation phrase
-        edge_pool: dict[tuple[str, str], list[str]] = defaultdict(list)
-        edge_phrases: dict[tuple[str, str], list[str]] = defaultdict(list)
-        for g in component_graphs:
-            for edge in g.edges:
-                new_src = old_to_new.get((g.id, edge.source))
-                new_tgt = old_to_new.get((g.id, edge.target))
-                if new_src is None or new_tgt is None:
-                    continue
-                pool_key = (new_src, new_tgt)
-                old_key = (g.id, edge.source, edge.target, edge.relation)
-                edge_pool[pool_key].extend(edge_articles.get(old_key, []))
-                edge_phrases[pool_key].append(edge.relation)
-
-        merged_edges: list[Edge] = []
-        for (src, tgt), articles in edge_pool.items():
-            phrase_counts: dict[str, int] = defaultdict(int)
-            for p in edge_phrases[(src, tgt)]:
-                phrase_counts[p] += 1
-            best_relation = max(phrase_counts, key=phrase_counts.get)
-            merged_edges.append(Edge(source=src, target=tgt, relation=best_relation))
-            new_edge_art[(merged_id, src, tgt, best_relation)] = sorted(set(articles))
-
-        merged = Graph(id=merged_id, nodes=merged_nodes, edges=merged_edges)
-        new_graphs.append(merged)
-
-    return new_graphs, new_entity_occ, new_edge_art
-
-
-def match_all(
-    graphs: list[Graph],
-    entity_occurrences: dict[str, list[dict]],
-    edge_articles: dict[tuple, list[str]],
-    threshold: float = 0.8,
-    max_iter: int = 30,
-    epsilon: float = 1e-4,
-) -> tuple[list[Graph], dict[str, list[dict]], dict[tuple, list[str]]]:
-    """Iterative match-merge loop until no new merges occur.
-
-    Each round: embed, propagate, merge. Repeat because merged graphs have
-    richer structure that may trigger new matches.
-
-    Returns final (graphs, entity_occurrences, edge_articles).
-    """
-    model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
-    round_num = 0
-
-    while True:
-        round_num += 1
-        n_before = len(graphs)
-
-        click.echo(f"\n--- Round {round_num} ({n_before} graphs) ---")
-
-        literal_embeddings, relation_embeddings, functionality = prepare_embeddings(
-            graphs, model, threshold
-        )
-        uf = match_round(
-            graphs, literal_embeddings, relation_embeddings, functionality,
-            threshold=threshold, max_iter=max_iter, epsilon=epsilon,
-        )
-        graphs, entity_occurrences, edge_articles = merge_graphs(
-            graphs, uf, entity_occurrences, edge_articles
-        )
-
-        click.echo(f"  {n_before} → {len(graphs)} graphs")
-
-        if len(graphs) == n_before:
-            break
-
-    return graphs, entity_occurrences, edge_articles
 
 
 # ---------------------------------------------------------------------------
@@ -665,7 +451,7 @@ def run_matching(
     max_iter: int = 30,
     epsilon: float = 1e-4,
 ) -> None:
-    """Load graphs, run iterative match-merge, save."""
+    """Load graphs, build unified graph, run single-pass matching, save."""
     graphs, entity_occurrences, edge_articles = load_graphs(graphs_dir)
     n_initial = len(graphs)
     click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
@@ -676,42 +462,49 @@ def run_matching(
             f"  {g.id}: {len(entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
         )
 
-    graphs, entity_occurrences, edge_articles = match_all(
-        graphs, entity_occurrences, edge_articles,
-        threshold=threshold, max_iter=max_iter, epsilon=epsilon,
+    unified = build_unified_graph(graphs)
+
+    model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
+    literal_embeddings, relation_embeddings, functionality = prepare_embeddings(
+        graphs, model, threshold
     )
 
-    save_graphs(graphs, entity_occurrences, edge_articles, output_path)
+    confidence = propagate(
+        unified, literal_embeddings, relation_embeddings, functionality,
+        max_iter=max_iter, epsilon=epsilon, rel_gate=threshold,
+    )
 
-    matched_entities = [
-        (n, entity_occurrences[n.id])
-        for g in graphs
-        for n in g.nodes.values()
-        if not isinstance(n, LiteralNode) and len(entity_occurrences[n.id]) > 1
+    # Select matches and build union-find
+    uf = UnionFind()
+    for (id_a, id_b), score in confidence.items():
+        if score >= threshold:
+            uf.union(id_a, id_b)
+
+    # Group matched entities
+    entity_ids = [
+        nid for nid, n in unified.nodes.items()
+        if not isinstance(n, LiteralNode)
     ]
-    confirmed_edges = [
-        (g, edge, edge_articles[(g.id, edge.source, edge.target, edge.relation)])
-        for g in graphs
-        for edge in g.edges
-        if len(edge_articles.get((g.id, edge.source, edge.target, edge.relation), [])) > 1
-    ]
+    groups: dict[str, list[str]] = defaultdict(list)
+    for eid in entity_ids:
+        groups[uf.find(eid)].append(eid)
+    match_groups = [members for members in groups.values() if len(members) > 1]
 
-    click.echo(f"\n{len(graphs)} graphs after merging (was {n_initial})")
+    save_output(unified, entity_occurrences, edge_articles, match_groups, output_path)
 
-    def _names(node_id: str, graph: Graph) -> str:
-        if node_id in entity_occurrences:
-            return " / ".join(sorted(set(o["name"] for o in entity_occurrences[node_id])))
-        node = graph.nodes.get(node_id)
-        return node.label if isinstance(node, LiteralNode) else node_id
+    # Display results
+    def _names(eid: str) -> str:
+        if eid in entity_occurrences:
+            return " / ".join(sorted(set(o["name"] for o in entity_occurrences[eid])))
+        node = unified.nodes.get(eid)
+        return node.label if isinstance(node, LiteralNode) else eid
 
-    if matched_entities:
-        click.echo(f"\n{len(matched_entities)} matched entities:")
-        for n, occs in matched_entities:
-            click.echo(f"  {_names(n.id, None)} — {len(occs)} occurrences")
-
-    if confirmed_edges:
-        click.echo(f"\n{len(confirmed_edges)} confirmed edges:")
-        for g, edge, arts in confirmed_edges:
-            click.echo(f"  {_names(edge.source, g)} —[{edge.relation}]→ {_names(edge.target, g)} ({len(arts)} sources)")
+    click.echo(f"\n{len(match_groups)} match groups:")
+    for members in match_groups:
+        names = []
+        for eid in members:
+            for occ in entity_occurrences.get(eid, []):
+                names.append(occ["name"])
+        click.echo(f"  {' / '.join(sorted(set(names)))}")
 
     click.echo(f"\nWrote {output_path}")
