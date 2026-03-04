@@ -15,8 +15,7 @@ from typing import NamedTuple
 import click
 import numpy as np
 from dotenv import load_dotenv
-from fastembed import TextEmbedding
-
+from worldgraph.embed import Embedder
 from worldgraph.graph import Graph, LiteralNode, entity_names, load_graphs, save_graph
 
 load_dotenv()
@@ -54,14 +53,6 @@ class UnionFind:
 # ---------------------------------------------------------------------------
 # Embeddings and relation functionality
 # ---------------------------------------------------------------------------
-
-
-def embed(texts: list[str], model: TextEmbedding) -> dict[str, np.ndarray]:
-    """Embed a list of texts, return text -> unit vector."""
-    if not texts:
-        return {}
-    vecs = list(model.embed(texts))
-    return {t: np.array(v) for t, v in zip(texts, vecs)}
 
 
 def compute_functionality(
@@ -126,37 +117,6 @@ def compute_functionality(
         result[r] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
 
     return result
-
-
-def prepare_embeddings(
-    graphs: list[Graph],
-    model: TextEmbedding,
-    threshold: float = 0.8,
-) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray], dict[str, Functionality]]:
-    """Embed all literal node labels and relation phrases; compute functionality weights.
-
-    Returns (literal_embeddings, relation_embeddings, functionality).
-    """
-    all_literals = sorted(
-        {
-            n.label
-            for g in graphs
-            for n in g.nodes.values()
-            if isinstance(n, LiteralNode)
-        }
-    )
-    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
-    literal_embeddings = embed(all_literals, model)
-    # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
-    wrapped = [f"A {r} B" for r in all_relations]
-    relation_embeddings = embed(wrapped, model)
-    relation_embeddings = {
-        r: relation_embeddings[w] for r, w in zip(all_relations, wrapped)
-    }
-
-    functionality = compute_functionality(graphs, relation_embeddings, threshold)
-
-    return literal_embeddings, relation_embeddings, functionality
 
 
 # ---------------------------------------------------------------------------
@@ -319,10 +279,21 @@ def run_matching(
 
     unified = build_unified_graph(graphs)
 
-    model = TextEmbedding(model_name=os.environ["EMBEDDING_MODEL"])
-    literal_embeddings, relation_embeddings, functionality = prepare_embeddings(
-        graphs, model, threshold
+    embedder = Embedder(os.environ["EMBEDDING_MODEL"])
+
+    all_literals = sorted(
+        {
+            n.label
+            for g in graphs
+            for n in g.nodes.values()
+            if isinstance(n, LiteralNode)
+        }
     )
+    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
+
+    literal_embeddings = embedder.embed(all_literals)
+    relation_embeddings = {r: embedder.embed_relation(r) for r in all_relations}
+    functionality = compute_functionality(graphs, relation_embeddings, threshold)
 
     confidence = propagate(
         unified,
