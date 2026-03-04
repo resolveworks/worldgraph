@@ -15,6 +15,7 @@ from typing import NamedTuple
 import click
 import numpy as np
 from dotenv import load_dotenv
+from worldgraph.constants import RELATION_TEMPLATE
 from worldgraph.embed import Embedder
 from worldgraph.graph import Graph, LiteralNode, entity_names, load_graphs, save_graph
 
@@ -292,7 +293,7 @@ def run_matching(
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
 
     literal_embeddings = embedder.embed(all_literals)
-    relation_embeddings = {r: embedder.embed_relation(r) for r in all_relations}
+    relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
     functionality = compute_functionality(graphs, relation_embeddings, threshold)
 
     confidence = propagate(

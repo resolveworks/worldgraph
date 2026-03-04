@@ -79,7 +79,7 @@ Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free
 
 One assumption per test, on the smallest input where it's observable. No mocking — real embeddings throughout. A failure at a higher layer should always be explainable by a failure at a lower layer.
 
-Session-scoped fixtures in `conftest.py`: `embed(text)` embeds any string on demand with caching; `embed_relation(phrase)` wraps with syntactic context (`"A {phrase} B"`) before embedding.
+Session-scoped fixture in `conftest.py`: `embedder` provides a session-scoped `Embedder` instance. Use `embedder.embed(keys, template=RELATION_TEMPLATE)` for relation embeddings.
 
 - **Layer 1 — Unit**: individual primitives (`compute_functionality`, `UnionFind`)
 - **Layer 2 — Propagation**: structural and functionality effects on similarity scores, convergence guarantees

@@ -17,7 +17,8 @@ embeddings.  Tests verify that:
 
 import numpy as np
 
-from worldgraph.constants import NAME_EDGE
+from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE
+from worldgraph.embed import Embedder
 from worldgraph.graph import Graph, LiteralNode
 from worldgraph.match import (
     build_unified_graph,
@@ -50,7 +51,7 @@ def _select_matches(confidence, threshold=0.8):
 def run_propagation(
     graph_a: Graph,
     graph_b: Graph,
-    embed_relation,
+    embedder: Embedder,
     literal_embeddings: dict[str, np.ndarray],
     relations: list[str],
     threshold: float = 0.8,
@@ -58,8 +59,7 @@ def run_propagation(
 ):
     """Convenience wrapper: embed relations, build unified graph, propagate."""
     unified = build_unified_graph([graph_a, graph_b])
-    rel_embs = {r: embed_relation(r) for r in relations}
-    rel_embs[NAME_EDGE] = embed_relation(NAME_EDGE)
+    rel_embs = embedder.embed([*relations, NAME_EDGE], template=RELATION_TEMPLATE)
     func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
     return propagate(
         unified,
@@ -75,7 +75,7 @@ def run_propagation(
 # ---------------------------------------------------------------------------
 
 
-def test_matching_names_and_relations_produce_matches(embed, embed_relation):
+def test_matching_names_and_relations_produce_matches(embedder):
     """Two graphs with the same entity names and identical relations should
     produce high-confidence matches for the correct entity pairs."""
     g1 = Graph(id="g1")
@@ -88,9 +88,9 @@ def test_matching_names_and_relations_produce_matches(embed, embed_relation):
     beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "acquired")
 
-    lit_embs = embed(["Apple", "Beats"])
+    lit_embs = embedder.embed(["Apple", "Beats"])
 
-    confidence = run_propagation(g1, g2, embed_relation, lit_embs, ["acquired"])
+    confidence = run_propagation(g1, g2, embedder, lit_embs, ["acquired"])
 
     assert confidence[(apple1.id, apple2.id)] > 0.8
     assert confidence[(beats1.id, beats2.id)] > 0.8
@@ -99,7 +99,7 @@ def test_matching_names_and_relations_produce_matches(embed, embed_relation):
     assert confidence[(beats1.id, apple2.id)] < 0.5
 
 
-def test_synonym_relations_propagate(embed, embed_relation):
+def test_synonym_relations_propagate(embedder):
     """Synonym relation phrases ('acquired' / 'purchased') should pass the
     relation gate and produce correct matches."""
     g1 = Graph(id="g1")
@@ -112,11 +112,9 @@ def test_synonym_relations_propagate(embed, embed_relation):
     beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "purchased")
 
-    lit_embs = embed(["Apple", "Beats"])
+    lit_embs = embedder.embed(["Apple", "Beats"])
 
-    confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired", "purchased"]
-    )
+    confidence = run_propagation(g1, g2, embedder, lit_embs, ["acquired", "purchased"])
 
     assert confidence[(apple1.id, apple2.id)] > 0.8
     assert confidence[(beats1.id, beats2.id)] > 0.8
@@ -127,7 +125,7 @@ def test_synonym_relations_propagate(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_dissimilar_relations_do_not_propagate(embed, embed_relation):
+def test_dissimilar_relations_do_not_propagate(embedder):
     """Unrelated relation phrases ('acquired' vs 'located in') should not
     pass the relation gate — no matches between unrelated graphs."""
     g1 = Graph(id="g1")
@@ -140,17 +138,15 @@ def test_dissimilar_relations_do_not_propagate(embed, embed_relation):
     japan = g2.add_entity("Japan")
     g2.add_edge(tokyo, japan, "located in")
 
-    lit_embs = embed(["Apple", "Beats", "Tokyo", "Japan"])
+    lit_embs = embedder.embed(["Apple", "Beats", "Tokyo", "Japan"])
 
-    confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired", "located in"]
-    )
+    confidence = run_propagation(g1, g2, embedder, lit_embs, ["acquired", "located in"])
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches found: {matches}"
 
 
-def test_weak_neighbors_do_not_produce_matches(embed, embed_relation):
+def test_weak_neighbors_do_not_produce_matches(embedder):
     """Even with identical relation phrases, weak neighbor similarity
     should not produce matches."""
     g1 = Graph(id="g1")
@@ -163,15 +159,15 @@ def test_weak_neighbors_do_not_produce_matches(embed, embed_relation):
     youtube = g2.add_entity("YouTube")
     g2.add_edge(google, youtube, "acquired")
 
-    lit_embs = embed(["Apple", "Beats", "Google", "YouTube"])
+    lit_embs = embedder.embed(["Apple", "Beats", "Google", "YouTube"])
 
-    confidence = run_propagation(g1, g2, embed_relation, lit_embs, ["acquired"])
+    confidence = run_propagation(g1, g2, embedder, lit_embs, ["acquired"])
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from weak neighbors: {matches}"
 
 
-def test_many_weak_paths_do_not_accumulate(embed, embed_relation):
+def test_many_weak_paths_do_not_accumulate(embedder):
     """Many unrelated edges should not produce matches."""
     g1 = Graph(id="g1")
     org = g1.add_entity("Org")
@@ -191,12 +187,12 @@ def test_many_weak_paths_do_not_accumulate(embed, embed_relation):
     g2.add_edge(city, river, "borders")
     g2.add_edge(city, event, "hosts")
 
-    lit_embs = embed(
+    lit_embs = embedder.embed(
         ["Org", "Target", "Project", "Person", "City", "Country", "River", "Event"],
     )
 
     relations = ["acquired", "funded", "hired", "located in", "borders", "hosts"]
-    confidence = run_propagation(g1, g2, embed_relation, lit_embs, relations)
+    confidence = run_propagation(g1, g2, embedder, lit_embs, relations)
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from accumulated weak paths: {matches}"
@@ -207,7 +203,7 @@ def test_many_weak_paths_do_not_accumulate(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_incoming_edges_propagate(embed, embed_relation):
+def test_incoming_edges_propagate(embedder):
     """Structural evidence should propagate through incoming edges, not just
     outgoing.
 
@@ -223,11 +219,9 @@ def test_incoming_edges_propagate(embed, embed_relation):
     dv2 = g2.add_entity("DataVault")
     g2.add_edge(meridian2, dv2, "purchased")
 
-    lit_embs = embed(["Meridian Technologies", "Meridian Tech", "DataVault"])
+    lit_embs = embedder.embed(["Meridian Technologies", "Meridian Tech", "DataVault"])
 
-    confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired", "purchased"]
-    )
+    confidence = run_propagation(g1, g2, embedder, lit_embs, ["acquired", "purchased"])
 
     # With only name similarity and no structure, entity-entity confidence
     # would be 0 (entities start at 0). Any positive value means structural
@@ -242,10 +236,10 @@ def test_incoming_edges_propagate(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
+def test_functional_relation_produces_stronger_evidence(embedder):
     """A 1:1 (functional) relation should produce stronger confidence boost
     than a many-to-one relation, all else being equal."""
-    lit_embs = embed(
+    lit_embs = embedder.embed(
         [
             "Meridian Technologies",
             "Meridian Tech",
@@ -276,11 +270,9 @@ def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
     fg2.add_edge(fg2_google, fg2_dv, "invested in")
     fg2.add_edge(fg2_ms, fg2_dv, "invested in")
 
-    rel_embs = {
-        "acquired": embed_relation("acquired"),
-        "invested in": embed_relation("invested in"),
-        NAME_EDGE: embed_relation(NAME_EDGE),
-    }
+    rel_embs = embedder.embed(
+        ["acquired", "invested in", NAME_EDGE], template=RELATION_TEMPLATE
+    )
     func = compute_functionality([fg1, fg2], rel_embs)
     assert func["acquired"].inverse > func["invested in"].inverse
 
@@ -325,7 +317,7 @@ def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_multi_hop_propagation_across_iterations(embed, embed_relation):
+def test_multi_hop_propagation_across_iterations(embedder):
     """Evidence propagates through a chain: a high-confidence anchor at
     the end boosts intermediate nodes, which in turn boost further nodes.
 
@@ -347,7 +339,7 @@ def test_multi_hop_propagation_across_iterations(embed, embed_relation):
     g2.add_edge(meridian2, beta, "purchased")
     g2.add_edge(beta, james2, "founded by")
 
-    lit_embs = embed(
+    lit_embs = embedder.embed(
         [
             "Meridian Technologies",
             "Meridian Tech",
@@ -358,8 +350,7 @@ def test_multi_hop_propagation_across_iterations(embed, embed_relation):
     )
 
     relations = ["acquired", "purchased", "founded by"]
-    rel_embs = {r: embed_relation(r) for r in relations}
-    rel_embs[NAME_EDGE] = embed_relation(NAME_EDGE)
+    rel_embs = embedder.embed([*relations, NAME_EDGE], template=RELATION_TEMPLATE)
     func = compute_functionality([g1, g2], rel_embs)
 
     confidence = propagate(build_unified_graph([g1, g2]), lit_embs, rel_embs, func)
@@ -380,7 +371,7 @@ def test_multi_hop_propagation_across_iterations(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_name_variation_with_structural_reinforcement(embed, embed_relation):
+def test_name_variation_with_structural_reinforcement(embedder):
     """The core use case: similar-but-not-identical entity names get matched
     when structural evidence reinforces them."""
     g1 = Graph(id="g1")
@@ -397,12 +388,12 @@ def test_name_variation_with_structural_reinforcement(embed, embed_relation):
     g2.add_edge(meridian2, dv2, "purchased")
     g2.add_edge(meridian2, ceo2, "employed")
 
-    lit_embs = embed(
+    lit_embs = embedder.embed(
         ["Meridian Technologies", "Meridian Tech", "DataVault Inc", "Elena Vasquez"]
     )
 
     confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired", "purchased", "hired", "employed"]
+        g1, g2, embedder, lit_embs, ["acquired", "purchased", "hired", "employed"]
     )
 
     # Both should pass threshold
@@ -420,7 +411,7 @@ def test_name_variation_with_structural_reinforcement(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_dangling_entities_get_no_boost(embed, embed_relation):
+def test_dangling_entities_get_no_boost(embedder):
     """Entities with no matching structure should not be boosted beyond
     their name-similarity seed, even when other entities match."""
     g1 = Graph(id="g1")
@@ -437,10 +428,10 @@ def test_dangling_entities_get_no_boost(embed, embed_relation):
     g2.add_edge(apple2, beats2, "purchased")
     g2.add_edge(apple2, wind, "hired")
 
-    lit_embs = embed(["Apple", "Beats", "SolarGrid", "WindPower"])
+    lit_embs = embedder.embed(["Apple", "Beats", "SolarGrid", "WindPower"])
 
     confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired", "purchased", "hired"]
+        g1, g2, embedder, lit_embs, ["acquired", "purchased", "hired"]
     )
 
     matches = _select_matches(confidence, threshold=0.8)
@@ -454,10 +445,10 @@ def test_dangling_entities_get_no_boost(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_bidirectional_edges_accumulate(embed, embed_relation):
+def test_bidirectional_edges_accumulate(embedder):
     """Entity pairs connected by edges in both directions should accumulate
     evidence, producing higher confidence than a single edge."""
-    lit_embs = embed(["Meridian Technologies", "Meridian Tech", "DataVault"])
+    lit_embs = embedder.embed(["Meridian Technologies", "Meridian Tech", "DataVault"])
 
     # Unidirectional
     g1u = Graph(id="g1u")
@@ -470,7 +461,7 @@ def test_bidirectional_edges_accumulate(embed, embed_relation):
     dv2u = g2u.add_entity("DataVault")
     g2u.add_edge(m2u, dv2u, "acquired")
 
-    confidence_uni = run_propagation(g1u, g2u, embed_relation, lit_embs, ["acquired"])
+    confidence_uni = run_propagation(g1u, g2u, embedder, lit_embs, ["acquired"])
 
     # Bidirectional
     g1b = Graph(id="g1b")
@@ -486,7 +477,7 @@ def test_bidirectional_edges_accumulate(embed, embed_relation):
     g2b.add_edge(dv2b, m2b, "subsidiary of")
 
     confidence_bi = run_propagation(
-        g1b, g2b, embed_relation, lit_embs, ["acquired", "subsidiary of"]
+        g1b, g2b, embedder, lit_embs, ["acquired", "subsidiary of"]
     )
 
     assert confidence_bi[(m1b.id, m2b.id)] >= confidence_uni[(m1u.id, m2u.id)], (
@@ -500,7 +491,7 @@ def test_bidirectional_edges_accumulate(embed, embed_relation):
 # ---------------------------------------------------------------------------
 
 
-def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relation):
+def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     """A shared high-confidence anchor should not cause entities with
     different names to match.
 
@@ -532,12 +523,11 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
         bg.add_edge(p, o, "founded")
         bg_graphs.append(bg)
 
-    lit_embs = embed(["Dr. Priya Sharma", "Dr. Elena Vasquez", "NovaTech Labs"])
+    lit_embs = embedder.embed(
+        ["Dr. Priya Sharma", "Dr. Elena Vasquez", "NovaTech Labs"]
+    )
 
-    rel_embs = {
-        "founded": embed_relation("founded"),
-        NAME_EDGE: embed_relation(NAME_EDGE),
-    }
+    rel_embs = embedder.embed(["founded", NAME_EDGE], template=RELATION_TEMPLATE)
     func = compute_functionality([g1, g2] + bg_graphs, rel_embs)
 
     # Premise: name similarity alone is below threshold
@@ -566,7 +556,7 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
     )
 
 
-def test_similar_names_disjoint_neighborhoods_no_match(embed, embed_relation):
+def test_similar_names_disjoint_neighborhoods_no_match(embedder):
     """Near-identical names with zero structural overlap should not match.
 
     Replicates the Elena/Lena Vasquez false merge from real data."""
@@ -580,7 +570,7 @@ def test_similar_names_disjoint_neighborhoods_no_match(embed, embed_relation):
     halcyon = g2.add_entity("Halcyon Genomics")
     g2.add_edge(lena, halcyon, "is CEO of")
 
-    lit_embs = embed(
+    lit_embs = embedder.embed(
         [
             "Dr. Elena Vasquez",
             "Dr. Lena Vasquez",
@@ -601,7 +591,7 @@ def test_similar_names_disjoint_neighborhoods_no_match(embed, embed_relation):
     nbr_sim = float(np.dot(lit_embs["Volta Systems"], lit_embs["Halcyon Genomics"]))
     assert nbr_sim < 0.5
 
-    confidence = run_propagation(g1, g2, embed_relation, lit_embs, ["is CEO of"])
+    confidence = run_propagation(g1, g2, embedder, lit_embs, ["is CEO of"])
 
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = {(a, b) for a, b in matches}
