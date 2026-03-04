@@ -72,7 +72,7 @@ Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free
 
 - Python 3.12, managed with **uv** (`uv run`, `uv add`, etc.)
 - LLM (Claude API) for entity/relation extraction
-- Sentence embeddings (fastembed) for name and relation phrase similarity
+- Sentence embeddings for relation phrase similarity; Soft TF-IDF + Jaro-Winkler for entity name matching
 - No ML training — fully unsupervised, classical graph methods
 
 ## Testing Strategy

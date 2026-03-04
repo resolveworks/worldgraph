@@ -25,6 +25,7 @@ from worldgraph.graph import (
     load_graphs,
     save_graph,
 )
+from worldgraph.names import build_idf, soft_tfidf
 
 load_dotenv()
 
@@ -169,7 +170,7 @@ def build_unified_graph(graphs: list[Graph]) -> Graph:
 
 def propagate(
     graph: Graph,
-    name_embeddings: dict[str, np.ndarray],
+    idf: dict[str, float],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, Functionality],
     max_iter: int = 30,
@@ -182,7 +183,7 @@ def propagate(
 
     Compares entity pairs from different source graphs (based on
     node.graph_id).  Name-name confidence is computed on demand
-    from embeddings.  Entity-entity confidence is updated iteratively.
+    via Soft TF-IDF.  Entity-entity confidence is updated iteratively.
 
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     Both orderings (a,b) and (b,a) are stored for convenient lookup.
@@ -229,10 +230,7 @@ def propagate(
         node_a = graph.nodes[a]
         node_b = graph.nodes[b]
         if isinstance(node_a, LiteralNode) and isinstance(node_b, LiteralNode):
-            emb_a = name_embeddings.get(node_a.label)
-            emb_b = name_embeddings.get(node_b.label)
-            if emb_a is not None and emb_b is not None:
-                return max(0.0, float(np.dot(emb_a, emb_b)))
+            return max(0.0, soft_tfidf(node_a.label, node_b.label, idf))
         return 0.0
 
     for _ in range(max_iter):
@@ -301,13 +299,13 @@ def run_matching(
     )
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
 
-    name_embeddings = embedder.embed(all_names)
+    idf = build_idf(all_names)
     relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
     functionality = compute_functionality(graphs, relation_embeddings, threshold)
 
     confidence = propagate(
         unified,
-        name_embeddings,
+        idf,
         relation_embeddings,
         functionality,
         max_iter=max_iter,
