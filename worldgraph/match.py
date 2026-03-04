@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 from worldgraph.constants import RELATION_TEMPLATE
 from worldgraph.embed import Embedder
 from worldgraph.graph import (
-    EntityNode,
     Graph,
     LiteralNode,
     entity_names,
@@ -204,20 +203,18 @@ def propagate(
             if float(np.dot(emb_a, emb_b)) >= rel_gate:
                 rel_passes_gate.add((ra, rb))
 
-    # Identify entity nodes
-    entity_ids = [nid for nid, n in graph.nodes.items() if isinstance(n, EntityNode)]
+    # Identify entity nodes (non-literal nodes)
+    entity_ids = [
+        nid for nid, n in graph.nodes.items() if not isinstance(n, LiteralNode)
+    ]
 
     # Sparse confidence dict: only cross-graph entity-entity pairs.
     # Both orderings stored for convenient neighbor lookup.
-    # Hard type filter: skip cross-type pairs.
     confidence: dict[tuple[str, str], float] = {}
     pairs: list[tuple[str, str]] = []
     for i, id_a in enumerate(entity_ids):
-        type_a = graph.nodes[id_a].entity_type
         for id_b in entity_ids[i + 1 :]:
             if graph.nodes[id_a].graph_id == graph.nodes[id_b].graph_id:
-                continue
-            if type_a != graph.nodes[id_b].entity_type:
                 continue
             confidence[(id_a, id_b)] = 0.0
             confidence[(id_b, id_a)] = 0.0
@@ -282,7 +279,7 @@ def run_matching(
     n_initial = len(graphs)
     click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
     for g in graphs:
-        entities = [n for n in g.nodes.values() if isinstance(n, EntityNode)]
+        entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
         click.echo(f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges")
 
     unified = build_unified_graph(graphs)
@@ -320,7 +317,9 @@ def run_matching(
             uf.union(id_a, id_b)
 
     # Group matched entities
-    entity_ids = [nid for nid, n in unified.nodes.items() if isinstance(n, EntityNode)]
+    entity_ids = [
+        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
+    ]
     groups: dict[str, list[str]] = defaultdict(list)
     for eid in entity_ids:
         groups[uf.find(eid)].append(eid)

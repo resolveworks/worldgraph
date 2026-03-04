@@ -13,12 +13,11 @@ embeddings.  Tests verify that:
 - Name variation with structural reinforcement (the core use case)
 - Dangling entities get no structural evidence
 - Exponential sum accumulates evidence from multiple paths (bidirectional > unidirectional)
-- Type filter prevents cross-type matching
 """
 
-from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE, EntityType
+from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE
 from worldgraph.embed import Embedder
-from worldgraph.graph import EntityNode, Graph
+from worldgraph.graph import Graph, LiteralNode
 from worldgraph.match import (
     build_unified_graph,
     compute_functionality,
@@ -34,7 +33,7 @@ from worldgraph.names import build_idf
 
 def _entity_ids(graph: Graph) -> list[str]:
     """Return only entity node IDs from a graph."""
-    return [nid for nid, n in graph.nodes.items() if isinstance(n, EntityNode)]
+    return [nid for nid, n in graph.nodes.items() if not isinstance(n, LiteralNode)]
 
 
 def _select_matches(confidence, threshold=0.8):
@@ -80,13 +79,13 @@ def test_matching_names_and_relations_produce_matches(embedder):
     """Two graphs with the same entity names and identical relations should
     produce high-confidence matches for the correct entity pairs."""
     g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats1 = g1.add_entity("Beats", EntityType.ORGANIZATION)
+    apple1 = g1.add_entity("Apple")
+    beats1 = g1.add_entity("Beats")
     g1.add_edge(apple1, beats1, "acquired")
 
     g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
-    beats2 = g2.add_entity("Beats", EntityType.ORGANIZATION)
+    apple2 = g2.add_entity("Apple")
+    beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "acquired")
 
     labels = ["Apple", "Beats"]
@@ -104,13 +103,13 @@ def test_synonym_relations_propagate(embedder):
     """Synonym relation phrases ('acquired' / 'purchased') should pass the
     relation gate and produce correct matches."""
     g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats1 = g1.add_entity("Beats", EntityType.ORGANIZATION)
+    apple1 = g1.add_entity("Apple")
+    beats1 = g1.add_entity("Beats")
     g1.add_edge(apple1, beats1, "acquired")
 
     g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
-    beats2 = g2.add_entity("Beats", EntityType.ORGANIZATION)
+    apple2 = g2.add_entity("Apple")
+    beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "purchased")
 
     labels = ["Apple", "Beats"]
@@ -130,13 +129,13 @@ def test_dissimilar_relations_do_not_propagate(embedder):
     """Unrelated relation phrases ('acquired' vs 'located in') should not
     pass the relation gate — no matches between unrelated graphs."""
     g1 = Graph(id="g1")
-    apple = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats = g1.add_entity("Beats", EntityType.ORGANIZATION)
+    apple = g1.add_entity("Apple")
+    beats = g1.add_entity("Beats")
     g1.add_edge(apple, beats, "acquired")
 
     g2 = Graph(id="g2")
-    tokyo = g2.add_entity("Tokyo", EntityType.LOCATION)
-    japan = g2.add_entity("Japan", EntityType.LOCATION)
+    tokyo = g2.add_entity("Tokyo")
+    japan = g2.add_entity("Japan")
     g2.add_edge(tokyo, japan, "located in")
 
     labels = ["Apple", "Beats", "Tokyo", "Japan"]
@@ -151,13 +150,13 @@ def test_weak_neighbors_do_not_produce_matches(embedder):
     """Even with identical relation phrases, weak neighbor similarity
     should not produce matches."""
     g1 = Graph(id="g1")
-    apple = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats = g1.add_entity("Beats", EntityType.ORGANIZATION)
+    apple = g1.add_entity("Apple")
+    beats = g1.add_entity("Beats")
     g1.add_edge(apple, beats, "acquired")
 
     g2 = Graph(id="g2")
-    google = g2.add_entity("Google", EntityType.ORGANIZATION)
-    youtube = g2.add_entity("YouTube", EntityType.ORGANIZATION)
+    google = g2.add_entity("Google")
+    youtube = g2.add_entity("YouTube")
     g2.add_edge(google, youtube, "acquired")
 
     labels = ["Apple", "Beats", "Google", "YouTube"]
@@ -171,19 +170,19 @@ def test_weak_neighbors_do_not_produce_matches(embedder):
 def test_many_weak_paths_do_not_accumulate(embedder):
     """Many unrelated edges should not produce matches."""
     g1 = Graph(id="g1")
-    org = g1.add_entity("Org", EntityType.ORGANIZATION)
-    target = g1.add_entity("Target", EntityType.ORGANIZATION)
-    project = g1.add_entity("Project", EntityType.CONCEPT)
-    person = g1.add_entity("Person", EntityType.PERSON)
+    org = g1.add_entity("Org")
+    target = g1.add_entity("Target")
+    project = g1.add_entity("Project")
+    person = g1.add_entity("Person")
     g1.add_edge(org, target, "acquired")
     g1.add_edge(org, project, "funded")
     g1.add_edge(org, person, "hired")
 
     g2 = Graph(id="g2")
-    city = g2.add_entity("City", EntityType.LOCATION)
-    country = g2.add_entity("Country", EntityType.LOCATION)
-    river = g2.add_entity("River", EntityType.LOCATION)
-    event = g2.add_entity("Event", EntityType.EVENT)
+    city = g2.add_entity("City")
+    country = g2.add_entity("Country")
+    river = g2.add_entity("River")
+    event = g2.add_entity("Event")
     g2.add_edge(city, country, "located in")
     g2.add_edge(city, river, "borders")
     g2.add_edge(city, event, "hosts")
@@ -209,13 +208,13 @@ def test_incoming_edges_propagate(embedder):
     DataVault has identical names (high name sim). The incoming edge should
     propagate that confidence to the Meridian pair via exponential sum."""
     g1 = Graph(id="g1")
-    meridian1 = g1.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    dv1 = g1.add_entity("DataVault", EntityType.ORGANIZATION)
+    meridian1 = g1.add_entity("Meridian Technologies")
+    dv1 = g1.add_entity("DataVault")
     g1.add_edge(meridian1, dv1, "acquired")
 
     g2 = Graph(id="g2")
-    meridian2 = g2.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    dv2 = g2.add_entity("DataVault", EntityType.ORGANIZATION)
+    meridian2 = g2.add_entity("Meridian Tech")
+    dv2 = g2.add_entity("DataVault")
     g2.add_edge(meridian2, dv2, "purchased")
 
     labels = ["Meridian Technologies", "Meridian Tech", "DataVault"]
@@ -252,18 +251,18 @@ def test_functional_relation_produces_stronger_evidence(embedder):
 
     # Background graphs for functionality: 'acquired' is 1:1, 'invested in' has fan-in
     fg1 = Graph(id="fg1")
-    fg1_apple = fg1.add_entity("Apple", EntityType.ORGANIZATION)
-    fg1_beats = fg1.add_entity("Beats", EntityType.ORGANIZATION)
-    fg1_google = fg1.add_entity("Google", EntityType.ORGANIZATION)
-    fg1_yt = fg1.add_entity("YouTube", EntityType.ORGANIZATION)
+    fg1_apple = fg1.add_entity("Apple")
+    fg1_beats = fg1.add_entity("Beats")
+    fg1_google = fg1.add_entity("Google")
+    fg1_yt = fg1.add_entity("YouTube")
     fg1.add_edge(fg1_apple, fg1_beats, "acquired")
     fg1.add_edge(fg1_google, fg1_yt, "acquired")
 
     fg2 = Graph(id="fg2")
-    fg2_apple = fg2.add_entity("Apple", EntityType.ORGANIZATION)
-    fg2_google = fg2.add_entity("Google", EntityType.ORGANIZATION)
-    fg2_ms = fg2.add_entity("Microsoft", EntityType.ORGANIZATION)
-    fg2_dv = fg2.add_entity("DataVault", EntityType.ORGANIZATION)
+    fg2_apple = fg2.add_entity("Apple")
+    fg2_google = fg2.add_entity("Google")
+    fg2_ms = fg2.add_entity("Microsoft")
+    fg2_dv = fg2.add_entity("DataVault")
     fg2.add_edge(fg2_apple, fg2_dv, "invested in")
     fg2.add_edge(fg2_google, fg2_dv, "invested in")
     fg2.add_edge(fg2_ms, fg2_dv, "invested in")
@@ -276,26 +275,26 @@ def test_functional_relation_produces_stronger_evidence(embedder):
 
     # Propagation with 'acquired' (high inverse functionality)
     g1a = Graph(id="g1a")
-    m1a = g1a.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    dv1a = g1a.add_entity("DataVault", EntityType.ORGANIZATION)
+    m1a = g1a.add_entity("Meridian Technologies")
+    dv1a = g1a.add_entity("DataVault")
     g1a.add_edge(m1a, dv1a, "acquired")
 
     g2a = Graph(id="g2a")
-    m2a = g2a.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    dv2a = g2a.add_entity("DataVault", EntityType.ORGANIZATION)
+    m2a = g2a.add_entity("Meridian Tech")
+    dv2a = g2a.add_entity("DataVault")
     g2a.add_edge(m2a, dv2a, "acquired")
 
     confidence_acq = propagate(build_unified_graph([g1a, g2a]), idf, rel_embs, func)
 
     # Propagation with 'invested in' (low inverse functionality)
     g1i = Graph(id="g1i")
-    m1i = g1i.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    dv1i = g1i.add_entity("DataVault", EntityType.ORGANIZATION)
+    m1i = g1i.add_entity("Meridian Technologies")
+    dv1i = g1i.add_entity("DataVault")
     g1i.add_edge(m1i, dv1i, "invested in")
 
     g2i = Graph(id="g2i")
-    m2i = g2i.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    dv2i = g2i.add_entity("DataVault", EntityType.ORGANIZATION)
+    m2i = g2i.add_entity("Meridian Tech")
+    dv2i = g2i.add_entity("DataVault")
     g2i.add_edge(m2i, dv2i, "invested in")
 
     confidence_inv = propagate(build_unified_graph([g1i, g2i]), idf, rel_embs, func)
@@ -320,16 +319,16 @@ def test_multi_hop_propagation_across_iterations(embedder):
     matched through their shared, confidently-matched neighbor (James Chen).
     """
     g1 = Graph(id="g1")
-    meridian1 = g1.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    alpha = g1.add_entity("Alpha Corp", EntityType.ORGANIZATION)
-    james1 = g1.add_entity("James Chen", EntityType.PERSON)
+    meridian1 = g1.add_entity("Meridian Technologies")
+    alpha = g1.add_entity("Alpha Corp")
+    james1 = g1.add_entity("James Chen")
     g1.add_edge(meridian1, alpha, "acquired")
     g1.add_edge(alpha, james1, "founded by")
 
     g2 = Graph(id="g2")
-    meridian2 = g2.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    beta = g2.add_entity("Beta Inc", EntityType.ORGANIZATION)
-    james2 = g2.add_entity("James Chen", EntityType.PERSON)
+    meridian2 = g2.add_entity("Meridian Tech")
+    beta = g2.add_entity("Beta Inc")
+    james2 = g2.add_entity("James Chen")
     g2.add_edge(meridian2, beta, "purchased")
     g2.add_edge(beta, james2, "founded by")
 
@@ -368,16 +367,16 @@ def test_name_variation_with_structural_reinforcement(embedder):
     """The core use case: similar-but-not-identical entity names get matched
     when structural evidence reinforces them."""
     g1 = Graph(id="g1")
-    meridian1 = g1.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    dv1 = g1.add_entity("DataVault Inc", EntityType.ORGANIZATION)
-    ceo1 = g1.add_entity("Elena Vasquez", EntityType.PERSON)
+    meridian1 = g1.add_entity("Meridian Technologies")
+    dv1 = g1.add_entity("DataVault Inc")
+    ceo1 = g1.add_entity("Elena Vasquez")
     g1.add_edge(meridian1, dv1, "acquired")
     g1.add_edge(meridian1, ceo1, "hired")
 
     g2 = Graph(id="g2")
-    meridian2 = g2.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    dv2 = g2.add_entity("DataVault Inc", EntityType.ORGANIZATION)
-    ceo2 = g2.add_entity("Elena Vasquez", EntityType.PERSON)
+    meridian2 = g2.add_entity("Meridian Tech")
+    dv2 = g2.add_entity("DataVault Inc")
+    ceo2 = g2.add_entity("Elena Vasquez")
     g2.add_edge(meridian2, dv2, "purchased")
     g2.add_edge(meridian2, ceo2, "employed")
 
@@ -411,16 +410,16 @@ def test_dangling_entities_get_no_boost(embedder):
     """Entities with no matching structure should not be boosted beyond
     their name-similarity seed, even when other entities match."""
     g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats1 = g1.add_entity("Beats", EntityType.ORGANIZATION)
-    solar = g1.add_entity("SolarGrid", EntityType.ORGANIZATION)
+    apple1 = g1.add_entity("Apple")
+    beats1 = g1.add_entity("Beats")
+    solar = g1.add_entity("SolarGrid")
     g1.add_edge(apple1, beats1, "acquired")
     g1.add_edge(apple1, solar, "hired")
 
     g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
-    beats2 = g2.add_entity("Beats", EntityType.ORGANIZATION)
-    wind = g2.add_entity("WindPower", EntityType.ORGANIZATION)
+    apple2 = g2.add_entity("Apple")
+    beats2 = g2.add_entity("Beats")
+    wind = g2.add_entity("WindPower")
     g2.add_edge(apple2, beats2, "purchased")
     g2.add_edge(apple2, wind, "hired")
 
@@ -448,27 +447,27 @@ def test_bidirectional_edges_accumulate(embedder):
 
     # Unidirectional
     g1u = Graph(id="g1u")
-    m1u = g1u.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    dv1u = g1u.add_entity("DataVault", EntityType.ORGANIZATION)
+    m1u = g1u.add_entity("Meridian Technologies")
+    dv1u = g1u.add_entity("DataVault")
     g1u.add_edge(m1u, dv1u, "acquired")
 
     g2u = Graph(id="g2u")
-    m2u = g2u.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    dv2u = g2u.add_entity("DataVault", EntityType.ORGANIZATION)
+    m2u = g2u.add_entity("Meridian Tech")
+    dv2u = g2u.add_entity("DataVault")
     g2u.add_edge(m2u, dv2u, "acquired")
 
     confidence_uni = run_propagation(g1u, g2u, embedder, labels, ["acquired"])
 
     # Bidirectional
     g1b = Graph(id="g1b")
-    m1b = g1b.add_entity("Meridian Technologies", EntityType.ORGANIZATION)
-    dv1b = g1b.add_entity("DataVault", EntityType.ORGANIZATION)
+    m1b = g1b.add_entity("Meridian Technologies")
+    dv1b = g1b.add_entity("DataVault")
     g1b.add_edge(m1b, dv1b, "acquired")
     g1b.add_edge(dv1b, m1b, "subsidiary of")
 
     g2b = Graph(id="g2b")
-    m2b = g2b.add_entity("Meridian Tech", EntityType.ORGANIZATION)
-    dv2b = g2b.add_entity("DataVault", EntityType.ORGANIZATION)
+    m2b = g2b.add_entity("Meridian Tech")
+    dv2b = g2b.add_entity("DataVault")
     g2b.add_edge(m2b, dv2b, "acquired")
     g2b.add_edge(dv2b, m2b, "subsidiary of")
 
@@ -495,13 +494,13 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     passes the relation gate. But under exponential sum, a single
     structural path is insufficient to cross the threshold."""
     g1 = Graph(id="g1")
-    sharma = g1.add_entity("Dr. Priya Sharma", EntityType.PERSON)
-    nova1 = g1.add_entity("NovaTech Labs", EntityType.ORGANIZATION)
+    sharma = g1.add_entity("Dr. Priya Sharma")
+    nova1 = g1.add_entity("NovaTech Labs")
     g1.add_edge(sharma, nova1, "founded")
 
     g2 = Graph(id="g2")
-    vasquez = g2.add_entity("Dr. Elena Vasquez", EntityType.PERSON)
-    nova2 = g2.add_entity("NovaTech Labs", EntityType.ORGANIZATION)
+    vasquez = g2.add_entity("Dr. Elena Vasquez")
+    nova2 = g2.add_entity("NovaTech Labs")
     g2.add_edge(vasquez, nova2, "founded")
 
     # Background: establish "founded" as a functional (1:1) relation
@@ -514,8 +513,8 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
         ]
     ):
         bg = Graph(id=f"bg{i}")
-        p = bg.add_entity(person, EntityType.PERSON)
-        o = bg.add_entity(org, EntityType.ORGANIZATION)
+        p = bg.add_entity(person)
+        o = bg.add_entity(org)
         bg.add_edge(p, o, "founded")
         bg_graphs.append(bg)
 
@@ -556,13 +555,13 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
 
     Replicates the Elena/Lena Vasquez false merge from real data."""
     g1 = Graph(id="g1")
-    elena = g1.add_entity("Dr. Elena Vasquez", EntityType.PERSON)
-    volta = g1.add_entity("Volta Systems", EntityType.ORGANIZATION)
+    elena = g1.add_entity("Dr. Elena Vasquez")
+    volta = g1.add_entity("Volta Systems")
     g1.add_edge(elena, volta, "is CEO of")
 
     g2 = Graph(id="g2")
-    lena = g2.add_entity("Dr. Lena Vasquez", EntityType.PERSON)
-    halcyon = g2.add_entity("Halcyon Genomics", EntityType.ORGANIZATION)
+    lena = g2.add_entity("Dr. Lena Vasquez")
+    halcyon = g2.add_entity("Halcyon Genomics")
     g2.add_edge(lena, halcyon, "is CEO of")
 
     labels = [
@@ -594,51 +593,3 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
         f"Similar names with disjoint neighborhoods were incorrectly matched "
         f"(name_sim={name_sim:.3f}, no structural support)"
     )
-
-
-# ---------------------------------------------------------------------------
-# Type filter
-# ---------------------------------------------------------------------------
-
-
-def test_type_filter_prevents_cross_type_matching(embedder):
-    """Two entities with identical names and structure but different types
-    should not be paired as candidates."""
-    g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats1 = g1.add_entity("Beats", EntityType.ORGANIZATION)
-    g1.add_edge(apple1, beats1, "acquired")
-
-    g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple", EntityType.PERSON)
-    beats2 = g2.add_entity("Beats", EntityType.PERSON)
-    g2.add_edge(apple2, beats2, "acquired")
-
-    labels = ["Apple", "Beats"]
-
-    confidence = run_propagation(g1, g2, embedder, labels, ["acquired"])
-
-    # Cross-type pairs should not even appear in the confidence dict
-    assert (apple1.id, apple2.id) not in confidence
-    assert (beats1.id, beats2.id) not in confidence
-
-
-def test_same_type_entities_still_match(embedder):
-    """Entities with matching types should match normally — the type filter
-    should not interfere with valid matches."""
-    g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
-    beats1 = g1.add_entity("Beats", EntityType.ORGANIZATION)
-    g1.add_edge(apple1, beats1, "acquired")
-
-    g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
-    beats2 = g2.add_entity("Beats", EntityType.ORGANIZATION)
-    g2.add_edge(apple2, beats2, "acquired")
-
-    labels = ["Apple", "Beats"]
-
-    confidence = run_propagation(g1, g2, embedder, labels, ["acquired"])
-
-    assert confidence[(apple1.id, apple2.id)] > 0.8
-    assert confidence[(beats1.id, beats2.id)] > 0.8

@@ -7,7 +7,6 @@ import click
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
-from worldgraph.constants import EntityType
 from worldgraph.graph import Graph, save_graph
 
 load_dotenv()
@@ -18,7 +17,7 @@ SYSTEM_PROMPT = """You are an entity-relation extraction system. Given a news ar
 
 Be thorough: capture every entity and relation mentioned in the article. Use the exact names as they appear in the text. Each relation should be a concise verb phrase.
 
-Each entity should have a short unique id, the name as it appears in the text, and a type classification. Valid types are: person, organization, location, event, concept."""
+Each entity should have a short unique id and the name as it appears in the text."""
 
 
 class Entity(BaseModel):
@@ -26,9 +25,6 @@ class Entity(BaseModel):
         description="Short unique identifier for this entity, e.g. 'e1', 'e2'"
     )
     name: str = Field(description="Entity name as it appears in the article")
-    type: EntityType = Field(
-        description="Entity type: person, organization, location, event, or concept"
-    )
 
 
 class Relation(BaseModel):
@@ -92,7 +88,7 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
         graph = Graph(id=article_id)
         entity_map = {}
         for entity in extraction.entities:
-            node = graph.add_entity(entity.name, entity.type)
+            node = graph.add_entity(entity.name)
             entity_map[entity.id] = node
 
         for rel in extraction.relations:

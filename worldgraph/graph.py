@@ -5,18 +5,13 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from worldgraph.constants import NAME_EDGE, EntityType
+from worldgraph.constants import NAME_EDGE
 
 
 @dataclass
 class Node:
     id: str
     graph_id: str
-
-
-@dataclass
-class EntityNode(Node):
-    entity_type: EntityType = EntityType.CONCEPT
 
 
 @dataclass
@@ -37,11 +32,9 @@ class Graph:
     nodes: dict[str, Node] = field(default_factory=dict)
     edges: list[Edge] = field(default_factory=list)
 
-    def add_entity(self, name: str, entity_type: EntityType) -> EntityNode:
+    def add_entity(self, name: str) -> Node:
         """Add an entity node with an "is named" edge to a literal node."""
-        entity = EntityNode(
-            id=str(uuid.uuid4()), graph_id=self.id, entity_type=entity_type
-        )
+        entity = Node(id=str(uuid.uuid4()), graph_id=self.id)
         literal = LiteralNode(id=str(uuid.uuid4()), graph_id=self.id, label=name)
         self.nodes[entity.id] = entity
         self.nodes[literal.id] = literal
@@ -71,10 +64,6 @@ def load_graphs(graphs_dir: Path) -> list[Graph]:
             nid = n["id"]
             if "label" in n:
                 nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
-            elif "entity_type" in n:
-                nodes[nid] = EntityNode(
-                    id=nid, graph_id=graph_id, entity_type=EntityType(n["entity_type"])
-                )
             else:
                 nodes[nid] = Node(id=nid, graph_id=graph_id)
 
@@ -110,8 +99,6 @@ def save_graph(
     for n in graph.nodes.values():
         if isinstance(n, LiteralNode):
             nodes_out.append({"id": n.id, "label": n.label})
-        elif isinstance(n, EntityNode):
-            nodes_out.append({"id": n.id, "entity_type": n.entity_type.value})
         else:
             nodes_out.append({"id": n.id})
 
