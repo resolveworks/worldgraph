@@ -270,7 +270,8 @@ def propagate(
 def run_matching(
     graphs_dir: Path,
     output_path: Path,
-    threshold: float,
+    relation_threshold: float,
+    match_threshold: float,
     max_iter: int = 30,
     epsilon: float = 1e-4,
 ) -> None:
@@ -298,7 +299,9 @@ def run_matching(
 
     idf = build_idf(all_names)
     relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
-    functionality = compute_functionality(graphs, relation_embeddings, threshold)
+    functionality = compute_functionality(
+        graphs, relation_embeddings, relation_threshold
+    )
 
     confidence = propagate(
         unified,
@@ -307,13 +310,13 @@ def run_matching(
         functionality,
         max_iter=max_iter,
         epsilon=epsilon,
-        rel_gate=threshold,
+        rel_gate=relation_threshold,
     )
 
     # Select matches and build union-find
     uf = UnionFind()
     for (id_a, id_b), score in confidence.items():
-        if score >= threshold:
+        if score >= match_threshold:
             uf.union(id_a, id_b)
 
     # Group matched entities

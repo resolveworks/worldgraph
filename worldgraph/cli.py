@@ -28,10 +28,16 @@ def extract(model: str):
 
 @cli.command()
 @click.option(
-    "--threshold",
+    "--relation-threshold",
     default=0.8,
     type=float,
-    help="Relative similarity threshold for entity matching (SelectThreshold).",
+    help="Minimum cosine similarity for two relation phrases to be treated as equivalent.",
+)
+@click.option(
+    "--match-threshold",
+    default=0.8,
+    type=float,
+    help="Minimum confidence score to merge two entities.",
 )
 @click.option(
     "--max-iter",
@@ -39,6 +45,12 @@ def extract(model: str):
     type=int,
     help="Maximum propagation iterations.",
 )
-def match(threshold: float, max_iter: int):
+def match(relation_threshold: float, match_threshold: float, max_iter: int):
     """Stage 2: Entity alignment via similarity propagation — merge matched graphs."""
-    run_matching(GRAPHS_DIR, MATCHED_PATH, threshold, max_iter=max_iter)
+    run_matching(
+        GRAPHS_DIR,
+        MATCHED_PATH,
+        relation_threshold=relation_threshold,
+        match_threshold=match_threshold,
+        max_iter=max_iter,
+    )
