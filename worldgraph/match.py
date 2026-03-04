@@ -6,12 +6,9 @@ everything else.  Propagate structural evidence via exponential sum,
 threshold, merge via union-find.
 """
 
-import json
 import math
 import os
-import uuid
 from collections import defaultdict
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import NamedTuple
 
@@ -20,55 +17,14 @@ import numpy as np
 from dotenv import load_dotenv
 from fastembed import TextEmbedding
 
+from worldgraph.graph import Edge, Graph, LiteralNode, Node, entity_names, load_graphs, save_graph
+
 load_dotenv()
 
 
 class Functionality(NamedTuple):
     forward: float
     inverse: float
-
-
-# ---------------------------------------------------------------------------
-# Data structures
-# ---------------------------------------------------------------------------
-
-
-@dataclass
-class Node:
-    id: str
-    graph_id: str
-
-
-@dataclass
-class LiteralNode(Node):
-    label: str = ""
-
-
-@dataclass
-class Edge:
-    source: str  # node id
-    target: str  # node id
-    relation: str
-
-
-@dataclass
-class Graph:
-    id: str
-    nodes: dict[str, Node] = field(default_factory=dict)
-    edges: list[Edge] = field(default_factory=list)
-
-    def add_entity(self, name: str) -> Node:
-        """Add an entity node with an "is named" literal edge."""
-        entity = Node(id=str(uuid.uuid4()), graph_id=self.id)
-        lit = LiteralNode(id=str(uuid.uuid4()), graph_id=self.id, label=name)
-        self.nodes[entity.id] = entity
-        self.nodes[lit.id] = lit
-        self.edges.append(Edge(source=entity.id, target=lit.id, relation="is named"))
-        return entity
-
-    def add_edge(self, source: Node, target: Node, relation: str) -> None:
-        """Add a relation edge between two existing nodes."""
-        self.edges.append(Edge(source=source.id, target=target.id, relation=relation))
 
 
 class UnionFind:
@@ -93,86 +49,6 @@ class UnionFind:
         self.parent[ry] = rx
         if self.rank[rx] == self.rank[ry]:
             self.rank[rx] += 1
-
-
-# ---------------------------------------------------------------------------
-# Graph I/O
-# ---------------------------------------------------------------------------
-
-
-def load_graphs(graphs_dir: Path) -> list[Graph]:
-    """Load per-article graph JSON files from a directory.
-
-    Each graph's id is the article_id; each node's graph_id tracks its origin.
-    """
-    graphs: list[Graph] = []
-
-    for path in sorted(graphs_dir.glob("*.json")):
-        with open(path) as f:
-            g = json.load(f)
-
-        graph_id = g["id"]
-        nodes: dict[str, Node] = {}
-
-        for n in g["nodes"]:
-            nid = n["id"]
-            if "label" in n:
-                nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
-            else:
-                nodes[nid] = Node(id=nid, graph_id=graph_id)
-
-        edges: list[Edge] = []
-        for ed in g["edges"]:
-            edges.append(
-                Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
-            )
-
-        graphs.append(Graph(id=graph_id, nodes=nodes, edges=edges))
-
-    return graphs
-
-
-def entity_names(graph: Graph, eid: str) -> list[str]:
-    """Get the names of an entity by following its 'is named' edges."""
-    names = []
-    for edge in graph.edges:
-        if edge.relation == "is named" and edge.source == eid:
-            tgt = graph.nodes.get(edge.target)
-            if isinstance(tgt, LiteralNode):
-                names.append(tgt.label)
-    return names if names else [eid]
-
-
-def save_output(
-    graph: Graph,
-    matches: list[list[str]],
-    path: Path,
-) -> None:
-    """Write unified graph + match groups to JSON."""
-    nodes_out = []
-    for n in graph.nodes.values():
-        if isinstance(n, LiteralNode):
-            nodes_out.append({"id": n.id, "label": n.label})
-        else:
-            nodes_out.append({"id": n.id})
-
-    edges_out = []
-    for edge in graph.edges:
-        edges_out.append({
-            "source": edge.source,
-            "target": edge.target,
-            "relation": edge.relation,
-        })
-
-    output = {
-        "nodes": nodes_out,
-        "edges": edges_out,
-        "matches": matches,
-    }
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(output, f, indent=2)
 
 
 # ---------------------------------------------------------------------------
@@ -312,7 +188,7 @@ def _build_adjacency(
 
 def build_unified_graph(graphs: list[Graph]) -> Graph:
     """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs."""
-    unified = Graph(id="unified")
+    unified = Graph()
     for g in graphs:
         unified.nodes.update(g.nodes)
         unified.edges.extend(g.edges)
@@ -470,7 +346,7 @@ def run_matching(
         groups[uf.find(eid)].append(eid)
     match_groups = [members for members in groups.values() if len(members) > 1]
 
-    save_output(unified, match_groups, output_path)
+    save_graph(unified, output_path, match_groups)
 
     click.echo(f"\n{len(match_groups)} match groups:")
     for members in match_groups:

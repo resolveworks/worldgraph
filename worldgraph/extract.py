@@ -1,12 +1,13 @@
 import json
 import logging
-import uuid
 from pathlib import Path
 
 import anthropic
 import click
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+
+from worldgraph.graph import Graph, save_graph
 
 load_dotenv()
 
@@ -84,30 +85,16 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
         extraction = extract_article(client, article, model)
         data = extraction.model_dump()
 
-        # Replace LLM-generated entity IDs with UUIDs
-        id_map = {e["id"]: str(uuid.uuid4()) for e in data["entities"]}
-
-        nodes = []
-        edges = []
+        # Build graph using shared data model
+        graph = Graph(id=article_id)
+        entity_map = {}
         for entity in data["entities"]:
-            new_id = id_map[entity["id"]]
-            # Entity node (no "label" key)
-            nodes.append({"id": new_id})
-            # Literal node for the entity name
-            label_id = str(uuid.uuid4())
-            nodes.append({"id": label_id, "label": entity["name"]})
-            # "is named" edge from entity to its literal
-            edges.append(
-                {
-                    "source": new_id,
-                    "target": label_id,
-                    "relation": "is named",
-                }
-            )
+            node = graph.add_entity(entity["name"])
+            entity_map[entity["id"]] = node
 
         for rel in data["relations"]:
-            if rel["source"] not in id_map or rel["target"] not in id_map:
-                bad = [k for k in ("source", "target") if rel[k] not in id_map]
+            if rel["source"] not in entity_map or rel["target"] not in entity_map:
+                bad = [k for k in ("source", "target") if rel[k] not in entity_map]
                 logger.warning(
                     "Dropping relation %r — invalid %s: %s",
                     rel["relation"],
@@ -115,16 +102,8 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
                     ", ".join(repr(rel[k]) for k in bad),
                 )
                 continue
-            edges.append(
-                {
-                    "source": id_map[rel["source"]],
-                    "target": id_map[rel["target"]],
-                    "relation": rel["relation"],
-                }
-            )
+            graph.add_edge(entity_map[rel["source"]], entity_map[rel["target"]], rel["relation"])
 
-        graph = {"id": article_id, "nodes": nodes, "edges": edges}
-        with open(out_path, "w") as f:
-            json.dump(graph, f, indent=2)
+        save_graph(graph, out_path)
 
     click.echo(f"\nWrote graphs to {graphs_dir}/")

@@ -17,9 +17,8 @@ embeddings.  Tests verify that:
 
 import numpy as np
 
+from worldgraph.graph import Graph, LiteralNode
 from worldgraph.match import (
-    Graph,
-    LiteralNode,
     build_unified_graph,
     compute_functionality,
     propagate,

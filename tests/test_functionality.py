@@ -2,7 +2,8 @@
 
 import pytest
 
-from worldgraph.match import Graph, compute_functionality
+from worldgraph.graph import Graph
+from worldgraph.match import compute_functionality
 
 
 # ---------------------------------------------------------------------------
