@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Worldgraph Visualizer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #fff; font-family: monospace; overflow: hidden; }
+  #drop-zone {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px dashed #ccc; margin: 40px;
+    color: #999; font-size: 14px;
+  }
+  #drop-zone.hover { border-color: #000; color: #000; }
+  svg { position: absolute; inset: 0; }
+  .edge-label {
+    font-size: 9px; fill: #888;
+    pointer-events: none; user-select: none;
+  }
+  .node-label {
+    font-size: 11px; fill: #000;
+    pointer-events: none; user-select: none;
+  }
+  .name-variant {
+    font-size: 9px; fill: #888;
+    pointer-events: none; user-select: none;
+  }
+  #legend {
+    position: absolute; top: 12px; left: 12px;
+    font-size: 11px; color: #666; line-height: 1.6;
+  }
+  #legend span { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  #stats {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 11px; color: #666; text-align: right; line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div id="drop-zone">Drop matched.json here</div>
+<div id="legend" style="display:none">
+  <div><span style="background:#000"></span> entity</div>
+  <div><span style="background:#e33"></span> merged entity</div>
+</div>
+<div id="stats" style="display:none"></div>
+<svg id="graph"></svg>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const dropZone = document.getElementById('drop-zone');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('hover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('hover');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      dropZone.style.display = 'none';
+      render(data);
+    } catch (err) { alert('Invalid JSON: ' + err.message); }
+  };
+  reader.readAsText(file);
+});
+
+function render(data) {
+  const { nodes: rawNodes, edges: rawEdges, matches } = data;
+
+  // Build lookup: id -> node
+  const nodeMap = new Map();
+  rawNodes.forEach(n => nodeMap.set(n.id, n));
+
+  // Collect "is named" labels per entity node, track label node ids
+  const labelNodeIds = new Set();
+  const namesByEntity = new Map(); // entity id -> [name strings]
+  rawEdges.forEach(e => {
+    if (e.relation === 'is named') {
+      const target = nodeMap.get(e.target);
+      if (target && target.label) {
+        labelNodeIds.add(e.target);
+        if (!namesByEntity.has(e.source)) namesByEntity.set(e.source, []);
+        namesByEntity.get(e.source).push(target.label);
+      }
+    }
+  });
+
+  // Build match clusters: map each id to its canonical (first in cluster)
+  const idToCanonical = new Map();
+  const canonicalMembers = new Map(); // canonical -> [all member ids]
+  matches.forEach(cluster => {
+    const canon = cluster[0];
+    canonicalMembers.set(canon, cluster);
+    cluster.forEach(id => idToCanonical.set(id, canon));
+  });
+
+  // Resolve an id to its canonical (or itself if unmatched)
+  const resolve = id => idToCanonical.has(id) ? idToCanonical.get(id) : id;
+
+  // Build merged nodes: one per canonical entity
+  const seenCanonical = new Set();
+  const mergedNodes = [];
+  rawNodes.forEach(n => {
+    if (labelNodeIds.has(n.id)) return; // skip label nodes
+    const canon = resolve(n.id);
+    if (seenCanonical.has(canon)) return;
+    seenCanonical.add(canon);
+
+    // Collect all name variants from all members of this cluster
+    const members = canonicalMembers.get(canon) || [n.id];
+    const allNames = [];
+    members.forEach(mid => {
+      const names = namesByEntity.get(mid) || [];
+      names.forEach(name => { if (!allNames.includes(name)) allNames.push(name); });
+    });
+
+    const isMerged = members.length > 1;
+    mergedNodes.push({
+      id: canon,
+      label: allNames[0] || canon.slice(0, 8),
+      names: allNames,
+      merged: isMerged,
+    });
+  });
+
+  const mergedIdSet = new Set(mergedNodes.map(n => n.id));
+
+  // Structural edges: remap to canonical ids, skip "is named", deduplicate
+  const edgeSet = new Set();
+  const structEdges = [];
+  rawEdges.forEach(e => {
+    if (e.relation === 'is named') return;
+    const s = resolve(e.source);
+    const t = resolve(e.target);
+    if (s === t) return; // self-loop after merge
+    if (!mergedIdSet.has(s) || !mergedIdSet.has(t)) return;
+    const key = `${s}->${t}:${e.relation}`;
+    if (edgeSet.has(key)) return;
+    edgeSet.add(key);
+    structEdges.push({ source: s, target: t, relation: e.relation });
+  });
+
+  // Assign curve offsets for parallel edges between the same node pair
+  const pairCounts = new Map();
+  structEdges.forEach(e => {
+    const key = [e.source, e.target].sort().join('|');
+    const i = pairCounts.get(key) || 0;
+    pairCounts.set(key, i + 1);
+    e.pairIndex = i;
+    e.pairKey = key;
+  });
+  structEdges.forEach(e => {
+    const total = pairCounts.get(e.pairKey);
+    e.curve = total === 1 ? 0 : (e.pairIndex - (total - 1) / 2) * 40;
+  });
+
+  // Stats
+  const mergedCount = mergedNodes.filter(n => n.merged).length;
+  document.getElementById('stats').style.display = 'block';
+  document.getElementById('stats').innerHTML =
+    `${mergedNodes.length} entities<br>${structEdges.length} edges<br>${mergedCount} merged`;
+  document.getElementById('legend').style.display = 'block';
+
+  // D3 force simulation
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  const svg = d3.select('#graph')
+    .attr('width', width)
+    .attr('height', height);
+
+  const g = svg.append('g');
+
+  // Zoom
+  svg.call(d3.zoom().on('zoom', e => g.attr('transform', e.transform)));
+
+  const simulation = d3.forceSimulation(mergedNodes)
+    .force('link', d3.forceLink(structEdges).id(d => d.id).distance(200))
+    .force('charge', d3.forceManyBody().strength(-150))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collision', d3.forceCollide(25));
+
+  // Draw edges (paths for curved parallel edges)
+  const link = g.append('g')
+    .selectAll('path')
+    .data(structEdges)
+    .join('path')
+    .attr('stroke', '#ccc')
+    .attr('stroke-width', 1)
+    .attr('fill', 'none');
+
+  // Edge labels
+  const edgeLabel = g.append('g')
+    .selectAll('text')
+    .data(structEdges)
+    .join('text')
+    .attr('class', 'edge-label')
+    .text(d => d.relation);
+
+  // Draw nodes
+  const node = g.append('g')
+    .selectAll('circle')
+    .data(mergedNodes)
+    .join('circle')
+    .attr('r', d => d.merged ? 5 : 3)
+    .attr('fill', d => d.merged ? '#e33' : '#000')
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 0.5)
+    .call(d3.drag()
+      .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+      .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; })
+    );
+
+  // Node labels: all name variants stacked equally
+  const nodeLabel = g.append('g')
+    .selectAll('g')
+    .data(mergedNodes)
+    .join('g')
+    .each(function(d) {
+      const el = d3.select(this);
+      const names = d.names.length ? d.names : [d.label];
+      names.forEach((name, i) => {
+        el.append('text')
+          .attr('class', 'node-label')
+          .attr('dx', 8)
+          .attr('dy', 3 + i * 13)
+          .text(name);
+      });
+    });
+
+  // Compute control point for a curved edge
+  // Use consistent direction (lower id → higher id) so parallel edges
+  // between the same pair always offset to the same side.
+  function controlPoint(d) {
+    const flip = d.source.id > d.target.id;
+    const dx = flip ? d.source.x - d.target.x : d.target.x - d.source.x;
+    const dy = flip ? d.source.y - d.target.y : d.target.y - d.source.y;
+    const len = Math.sqrt(dx * dx + dy * dy) || 1;
+    const nx = -dy / len * d.curve;
+    const ny = dx / len * d.curve;
+    return { x: (d.source.x + d.target.x) / 2 + nx, y: (d.source.y + d.target.y) / 2 + ny };
+  }
+
+  simulation.on('tick', () => {
+    link.attr('d', d => {
+      if (d.curve === 0) return `M${d.source.x},${d.source.y}L${d.target.x},${d.target.y}`;
+      const cp = controlPoint(d);
+      return `M${d.source.x},${d.source.y}Q${cp.x},${cp.y} ${d.target.x},${d.target.y}`;
+    });
+    edgeLabel
+      .attr('x', d => { const cp = controlPoint(d); return (d.source.x + 2 * cp.x + d.target.x) / 4; })
+      .attr('y', d => { const cp = controlPoint(d); return (d.source.y + 2 * cp.y + d.target.y) / 4; });
+    node.attr('cx', d => d.x).attr('cy', d => d.y);
+    nodeLabel.attr('transform', d => `translate(${d.x},${d.y})`);
+  });
+}
+</script>
+</body>
+</html>
