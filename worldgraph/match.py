@@ -1,6 +1,6 @@
 """Stage 2: Entity alignment via PARIS-style similarity propagation.
 
-Entity names are represented as literal nodes connected by "is named"
+Entity names are represented as LiteralNodes connected by "is named"
 edges, so name similarity flows through the same graph structure as
 everything else.  Propagate structural evidence via exponential sum,
 threshold, merge via union-find.
@@ -17,7 +17,14 @@ import numpy as np
 from dotenv import load_dotenv
 from worldgraph.constants import RELATION_TEMPLATE
 from worldgraph.embed import Embedder
-from worldgraph.graph import Graph, LiteralNode, entity_names, load_graphs, save_graph
+from worldgraph.graph import (
+    EntityNode,
+    Graph,
+    LiteralNode,
+    entity_names,
+    load_graphs,
+    save_graph,
+)
 
 load_dotenv()
 
@@ -162,7 +169,7 @@ def build_unified_graph(graphs: list[Graph]) -> Graph:
 
 def propagate(
     graph: Graph,
-    literal_embeddings: dict[str, np.ndarray],
+    name_embeddings: dict[str, np.ndarray],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, Functionality],
     max_iter: int = 30,
@@ -174,7 +181,7 @@ def propagate(
     """Run similarity propagation on a single unified graph.
 
     Compares entity pairs from different source graphs (based on
-    node.graph_id).  Literal-literal confidence is computed on demand
+    node.graph_id).  Name-name confidence is computed on demand
     from embeddings.  Entity-entity confidence is updated iteratively.
 
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
@@ -196,32 +203,34 @@ def propagate(
             if float(np.dot(emb_a, emb_b)) >= rel_gate:
                 rel_passes_gate.add((ra, rb))
 
-    # Identify entity nodes (non-literal)
-    entity_ids = [
-        nid for nid, n in graph.nodes.items() if not isinstance(n, LiteralNode)
-    ]
+    # Identify entity nodes
+    entity_ids = [nid for nid, n in graph.nodes.items() if isinstance(n, EntityNode)]
 
     # Sparse confidence dict: only cross-graph entity-entity pairs.
     # Both orderings stored for convenient neighbor lookup.
+    # Hard type filter: skip cross-type pairs.
     confidence: dict[tuple[str, str], float] = {}
     pairs: list[tuple[str, str]] = []
     for i, id_a in enumerate(entity_ids):
+        type_a = graph.nodes[id_a].entity_type
         for id_b in entity_ids[i + 1 :]:
             if graph.nodes[id_a].graph_id == graph.nodes[id_b].graph_id:
+                continue
+            if type_a != graph.nodes[id_b].entity_type:
                 continue
             confidence[(id_a, id_b)] = 0.0
             confidence[(id_b, id_a)] = 0.0
             pairs.append((id_a, id_b))
 
     def _get_confidence(a: str, b: str) -> float:
-        """Look up confidence for any node pair, computing literal sim on demand."""
+        """Look up confidence for any node pair, computing name sim on demand."""
         if (a, b) in confidence:
             return confidence[(a, b)]
         node_a = graph.nodes[a]
         node_b = graph.nodes[b]
         if isinstance(node_a, LiteralNode) and isinstance(node_b, LiteralNode):
-            emb_a = literal_embeddings.get(node_a.label)
-            emb_b = literal_embeddings.get(node_b.label)
+            emb_a = name_embeddings.get(node_a.label)
+            emb_b = name_embeddings.get(node_b.label)
             if emb_a is not None and emb_b is not None:
                 return max(0.0, float(np.dot(emb_a, emb_b)))
         return 0.0
@@ -275,14 +284,14 @@ def run_matching(
     n_initial = len(graphs)
     click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
     for g in graphs:
-        entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
+        entities = [n for n in g.nodes.values() if isinstance(n, EntityNode)]
         click.echo(f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges")
 
     unified = build_unified_graph(graphs)
 
     embedder = Embedder(os.environ["EMBEDDING_MODEL"])
 
-    all_literals = sorted(
+    all_names = sorted(
         {
             n.label
             for g in graphs
@@ -292,13 +301,13 @@ def run_matching(
     )
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
 
-    literal_embeddings = embedder.embed(all_literals)
+    name_embeddings = embedder.embed(all_names)
     relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
     functionality = compute_functionality(graphs, relation_embeddings, threshold)
 
     confidence = propagate(
         unified,
-        literal_embeddings,
+        name_embeddings,
         relation_embeddings,
         functionality,
         max_iter=max_iter,
@@ -313,9 +322,7 @@ def run_matching(
             uf.union(id_a, id_b)
 
     # Group matched entities
-    entity_ids = [
-        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
-    ]
+    entity_ids = [nid for nid, n in unified.nodes.items() if isinstance(n, EntityNode)]
     groups: dict[str, list[str]] = defaultdict(list)
     for eid in entity_ids:
         groups[uf.find(eid)].append(eid)

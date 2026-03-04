@@ -2,7 +2,7 @@
 
 import pytest
 
-from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE
+from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE, EntityType
 from worldgraph.graph import Graph
 from worldgraph.match import compute_functionality
 
@@ -15,10 +15,10 @@ from worldgraph.match import compute_functionality
 def test_one_to_one_functionality_is_1(embedder):
     """A relation that maps each source to exactly one target has functionality 1.0."""
     g = Graph(id="g1")
-    apple = g.add_entity("Apple")
-    beats = g.add_entity("Beats")
-    google = g.add_entity("Google")
-    youtube = g.add_entity("YouTube")
+    apple = g.add_entity("Apple", EntityType.ORGANIZATION)
+    beats = g.add_entity("Beats", EntityType.ORGANIZATION)
+    google = g.add_entity("Google", EntityType.ORGANIZATION)
+    youtube = g.add_entity("YouTube", EntityType.ORGANIZATION)
     g.add_edge(apple, beats, "acquired")
     g.add_edge(google, youtube, "acquired")
 
@@ -30,9 +30,9 @@ def test_one_to_one_functionality_is_1(embedder):
 def test_fan_out_lowers_functionality(embedder):
     """One source mapping to two distinct targets halves functionality."""
     g = Graph(id="g1")
-    apple = g.add_entity("Apple")
-    beats = g.add_entity("Beats")
-    shazam = g.add_entity("Shazam")
+    apple = g.add_entity("Apple", EntityType.ORGANIZATION)
+    beats = g.add_entity("Beats", EntityType.ORGANIZATION)
+    shazam = g.add_entity("Shazam", EntityType.ORGANIZATION)
     g.add_edge(apple, beats, "acquired")
     g.add_edge(apple, shazam, "acquired")
 
@@ -44,10 +44,10 @@ def test_fan_out_lowers_functionality(embedder):
 def test_one_to_one_inv_functionality_is_1(embedder):
     """A relation that maps each target from exactly one source has inv_functionality 1.0."""
     g = Graph(id="g1")
-    apple = g.add_entity("Apple")
-    beats = g.add_entity("Beats")
-    google = g.add_entity("Google")
-    youtube = g.add_entity("YouTube")
+    apple = g.add_entity("Apple", EntityType.ORGANIZATION)
+    beats = g.add_entity("Beats", EntityType.ORGANIZATION)
+    google = g.add_entity("Google", EntityType.ORGANIZATION)
+    youtube = g.add_entity("YouTube", EntityType.ORGANIZATION)
     g.add_edge(apple, beats, "acquired")
     g.add_edge(google, youtube, "acquired")
 
@@ -59,9 +59,9 @@ def test_one_to_one_inv_functionality_is_1(embedder):
 def test_fan_in_lowers_inv_functionality(embedder):
     """Two sources mapping to the same target halves inv_functionality."""
     g = Graph(id="g1")
-    apple = g.add_entity("Apple")
-    google = g.add_entity("Google")
-    beats = g.add_entity("Beats")
+    apple = g.add_entity("Apple", EntityType.ORGANIZATION)
+    google = g.add_entity("Google", EntityType.ORGANIZATION)
+    beats = g.add_entity("Beats", EntityType.ORGANIZATION)
     g.add_edge(apple, beats, "acquired")
     g.add_edge(google, beats, "acquired")
 
@@ -74,16 +74,16 @@ def test_similar_phrases_pool_edges(embedder):
     """'acquired' and 'bought' are similar (cosine ~0.82), so their edges pool —
     raising out-degree and lowering functionality."""
     g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple")
-    beats = g1.add_entity("Beats")
-    google = g1.add_entity("Google")
-    youtube = g1.add_entity("YouTube")
+    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
+    beats = g1.add_entity("Beats", EntityType.ORGANIZATION)
+    google = g1.add_entity("Google", EntityType.ORGANIZATION)
+    youtube = g1.add_entity("YouTube", EntityType.ORGANIZATION)
     g1.add_edge(apple1, beats, "acquired")
     g1.add_edge(google, youtube, "acquired")
 
     g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple")
-    shazam = g2.add_entity("Shazam")
+    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
+    shazam = g2.add_entity("Shazam", EntityType.ORGANIZATION)
     g2.add_edge(apple2, shazam, "bought")
 
     rel_embs = embedder.embed(
@@ -97,14 +97,14 @@ def test_dissimilar_phrases_do_not_pool(embedder):
     """'acquired' and 'located in' are dissimilar, so their edges don't pool.
     'acquired' sees only its own one-to-one edges → functionality stays 1.0."""
     g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple")
-    beats = g1.add_entity("Beats")
+    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
+    beats = g1.add_entity("Beats", EntityType.ORGANIZATION)
     g1.add_edge(apple1, beats, "acquired")
 
     g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple")
-    california = g2.add_entity("California")
-    us = g2.add_entity("US")
+    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
+    california = g2.add_entity("California", EntityType.LOCATION)
+    us = g2.add_entity("US", EntityType.LOCATION)
     g2.add_edge(apple2, california, "located in")
     g2.add_edge(apple2, us, "located in")
 
@@ -119,13 +119,13 @@ def test_same_entity_name_across_graphs_pools(embedder):
     """The same source name in two graphs counts as one source, so two targets
     from that name across graphs raise out-degree."""
     g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple")
-    beats = g1.add_entity("Beats")
+    apple1 = g1.add_entity("Apple", EntityType.ORGANIZATION)
+    beats = g1.add_entity("Beats", EntityType.ORGANIZATION)
     g1.add_edge(apple1, beats, "acquired")
 
     g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple")
-    shazam = g2.add_entity("Shazam")
+    apple2 = g2.add_entity("Apple", EntityType.ORGANIZATION)
+    shazam = g2.add_entity("Shazam", EntityType.ORGANIZATION)
     g2.add_edge(apple2, shazam, "acquired")
 
     rel_embs = embedder.embed(["acquired", NAME_EDGE], template=RELATION_TEMPLATE)

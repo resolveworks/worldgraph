@@ -7,6 +7,7 @@ import click
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
 
+from worldgraph.constants import EntityType
 from worldgraph.graph import Graph, save_graph
 
 load_dotenv()
@@ -17,7 +18,7 @@ SYSTEM_PROMPT = """You are an entity-relation extraction system. Given a news ar
 
 Be thorough: capture every entity and relation mentioned in the article. Use the exact names as they appear in the text. Each relation should be a concise verb phrase.
 
-Each entity should have a short unique id and the name as it appears in the text."""
+Each entity should have a short unique id, the name as it appears in the text, and a type classification. Valid types are: person, organization, location, event, concept."""
 
 
 class Entity(BaseModel):
@@ -25,6 +26,9 @@ class Entity(BaseModel):
         description="Short unique identifier for this entity, e.g. 'e1', 'e2'"
     )
     name: str = Field(description="Entity name as it appears in the article")
+    type: EntityType = Field(
+        description="Entity type: person, organization, location, event, or concept"
+    )
 
 
 class Relation(BaseModel):
@@ -83,26 +87,27 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
 
         click.echo(f"[{i}/{len(articles)}] Extracting from: {article['title']}")
         extraction = extract_article(client, article, model)
-        data = extraction.model_dump()
 
         # Build graph using shared data model
         graph = Graph(id=article_id)
         entity_map = {}
-        for entity in data["entities"]:
-            node = graph.add_entity(entity["name"])
-            entity_map[entity["id"]] = node
+        for entity in extraction.entities:
+            node = graph.add_entity(entity.name, entity.type)
+            entity_map[entity.id] = node
 
-        for rel in data["relations"]:
-            if rel["source"] not in entity_map or rel["target"] not in entity_map:
-                bad = [k for k in ("source", "target") if rel[k] not in entity_map]
+        for rel in extraction.relations:
+            if rel.source not in entity_map or rel.target not in entity_map:
+                bad = [
+                    k for k in ("source", "target") if getattr(rel, k) not in entity_map
+                ]
                 logger.warning(
                     "Dropping relation %r — invalid %s: %s",
-                    rel["relation"],
+                    rel.relation,
                     ", ".join(bad),
-                    ", ".join(repr(rel[k]) for k in bad),
+                    ", ".join(repr(getattr(rel, k)) for k in bad),
                 )
                 continue
-            graph.add_edge(entity_map[rel["source"]], entity_map[rel["target"]], rel["relation"])
+            graph.add_edge(entity_map[rel.source], entity_map[rel.target], rel.relation)
 
         save_graph(graph, out_path)
 
