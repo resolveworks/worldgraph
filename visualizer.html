@@ -22,10 +22,6 @@
     font-size: 11px; fill: #000;
     pointer-events: none; user-select: none;
   }
-  .name-variant {
-    font-size: 9px; fill: #888;
-    pointer-events: none; user-select: none;
-  }
   #legend {
     position: absolute; top: 12px; left: 12px;
     font-size: 11px; color: #666; line-height: 1.6;
@@ -38,7 +34,7 @@
 </style>
 </head>
 <body>
-<div id="drop-zone">Drop matched.json here</div>
+<div id="drop-zone">Drop graph JSON file(s) here</div>
 <div id="legend" style="display:none">
   <div><span style="background:#000"></span> entity</div>
   <div><span style="background:#e33"></span> merged entity</div>
@@ -54,17 +50,28 @@ dropZone.addEventListener('dragleave', () => dropZone.classList.remove('hover'))
 dropZone.addEventListener('drop', e => {
   e.preventDefault();
   dropZone.classList.remove('hover');
-  const file = e.dataTransfer.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      dropZone.style.display = 'none';
-      render(data);
-    } catch (err) { alert('Invalid JSON: ' + err.message); }
-  };
-  reader.readAsText(file);
+  const files = [...e.dataTransfer.files].filter(f => f.name.endsWith('.json'));
+  if (!files.length) return;
+  const parsed = [];
+  let done = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try { parsed.push(JSON.parse(ev.target.result)); }
+      catch (err) { alert('Invalid JSON in ' + file.name + ': ' + err.message); }
+      if (++done === files.length && parsed.length) {
+        const merged = { nodes: [], edges: [], matches: [] };
+        parsed.forEach(data => {
+          merged.nodes.push(...(data.nodes || []));
+          merged.edges.push(...(data.edges || []));
+          merged.matches.push(...(data.matches || []));
+        });
+        dropZone.style.display = 'none';
+        render(merged);
+      }
+    };
+    reader.readAsText(file);
+  });
 });
 
 function render(data) {

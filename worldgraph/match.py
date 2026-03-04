@@ -17,7 +17,7 @@ import numpy as np
 from dotenv import load_dotenv
 from fastembed import TextEmbedding
 
-from worldgraph.graph import Edge, Graph, LiteralNode, Node, entity_names, load_graphs, save_graph
+from worldgraph.graph import Graph, LiteralNode, entity_names, load_graphs, save_graph
 
 load_dotenv()
 
@@ -137,10 +137,14 @@ def prepare_embeddings(
 
     Returns (literal_embeddings, relation_embeddings, functionality).
     """
-    all_literals = sorted({
-        n.label for g in graphs for n in g.nodes.values()
-        if isinstance(n, LiteralNode)
-    })
+    all_literals = sorted(
+        {
+            n.label
+            for g in graphs
+            for n in g.nodes.values()
+            if isinstance(n, LiteralNode)
+        }
+    )
     all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
     literal_embeddings = embed(all_literals, model)
     # Wrap relation phrases as "A {phrase} B" to give the model syntactic context
@@ -233,8 +237,7 @@ def propagate(
 
     # Identify entity nodes (non-literal)
     entity_ids = [
-        nid for nid, n in graph.nodes.items()
-        if not isinstance(n, LiteralNode)
+        nid for nid, n in graph.nodes.items() if not isinstance(n, LiteralNode)
     ]
 
     # Sparse confidence dict: only cross-graph entity-entity pairs.
@@ -242,7 +245,7 @@ def propagate(
     confidence: dict[tuple[str, str], float] = {}
     pairs: list[tuple[str, str]] = []
     for i, id_a in enumerate(entity_ids):
-        for id_b in entity_ids[i + 1:]:
+        for id_b in entity_ids[i + 1 :]:
             if graph.nodes[id_a].graph_id == graph.nodes[id_b].graph_id:
                 continue
             confidence[(id_a, id_b)] = 0.0
@@ -279,9 +282,7 @@ def propagate(
                     strength_sum += func_w * nbr_conf
 
             combined = (
-                1.0 - math.exp(-exp_lambda * strength_sum)
-                if strength_sum > 0
-                else 0.0
+                1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
             )
 
             old = confidence[(id_a, id_b)]
@@ -314,9 +315,7 @@ def run_matching(
     click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
     for g in graphs:
         entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
-        click.echo(
-            f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges"
-        )
+        click.echo(f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges")
 
     unified = build_unified_graph(graphs)
 
@@ -326,8 +325,13 @@ def run_matching(
     )
 
     confidence = propagate(
-        unified, literal_embeddings, relation_embeddings, functionality,
-        max_iter=max_iter, epsilon=epsilon, rel_gate=threshold,
+        unified,
+        literal_embeddings,
+        relation_embeddings,
+        functionality,
+        max_iter=max_iter,
+        epsilon=epsilon,
+        rel_gate=threshold,
     )
 
     # Select matches and build union-find
@@ -338,8 +342,7 @@ def run_matching(
 
     # Group matched entities
     entity_ids = [
-        nid for nid, n in unified.nodes.items()
-        if not isinstance(n, LiteralNode)
+        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
     ]
     groups: dict[str, list[str]] = defaultdict(list)
     for eid in entity_ids:
