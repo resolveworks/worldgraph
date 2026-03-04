@@ -23,21 +23,10 @@ In `matched.json`, entities with >1 occurrence are matched entities, edges with 
 
 ## Project Structure
 
-```
-data/
-  articles/               # Input: one {uuid}.json per article
-  graphs/                 # Output of stage 1: one {article_id}.json per article
-  matched.json            # Output of stage 2: merged graphs
-worldgraph/
-  __init__.py
-  cli.py                  # Click CLI entry point (worldgraph command group)
-  extract.py              # Stage 1: LLM-based entity/relation extraction → graph JSON
-  match.py                # Stage 2: Structural matching + graph merging
-.env.example              # Template for API key configuration
-pyproject.toml            # Project config, dependencies, CLI entry point
-README.md                 # Project proposal / algorithm design
-CLAUDE.md                 # This file
-```
+- `worldgraph/` — one module per pipeline stage (`extract.py`, `match.py`), plus `cli.py` for the Click entry point
+- `data/articles/` — input articles as `{uuid}.json`; `data/graphs/` — extraction output, one per article; `data/matched.json` — matching output
+- `docs/` — detailed algorithm write-ups referenced from this file
+- `tests/` — pytest suite, layered (see Testing Strategy below)
 
 ## Test Data
 
@@ -90,9 +79,9 @@ Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free
 
 One assumption per test, on the smallest input where it's observable. No mocking — real embeddings throughout. A failure at a higher layer should always be explainable by a failure at a lower layer.
 
-A session-scoped `embed_phrase(phrase)` fixture (in `conftest.py`) embeds relation phrases on demand and caches results — each unique phrase is embedded at most once per session.
+Session-scoped fixtures in `conftest.py`: `embed(text)` embeds any string on demand with caching; `embed_relation(phrase)` wraps with syntactic context (`"A {phrase} B"`) before embedding.
 
-- **Layer 1 — Unit**: individual primitives (`cosine_sim`, `compute_functionality`, `select_matches`, `UnionFind`)
+- **Layer 1 — Unit**: individual primitives (`compute_functionality`, `UnionFind`)
 - **Layer 2 — Propagation**: structural and functionality effects on similarity scores, convergence guarantees
 - **Layer 3 — Integration**: correct merges, no spurious matches, correct canonical names and confirmed edges
 
