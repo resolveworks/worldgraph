@@ -92,18 +92,7 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
         for entity in data["entities"]:
             new_id = id_map[entity["id"]]
             # Entity node (no "label" key)
-            nodes.append(
-                {
-                    "id": new_id,
-                    "occurrences": [
-                        {
-                            "article_id": article_id,
-                            "entity_id": new_id,
-                            "name": entity["name"],
-                        }
-                    ],
-                }
-            )
+            nodes.append({"id": new_id})
             # Literal node for the entity name
             label_id = str(uuid.uuid4())
             nodes.append({"id": label_id, "label": entity["name"]})
@@ -113,7 +102,6 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
                     "source": new_id,
                     "target": label_id,
                     "relation": "is named",
-                    "articles": [article_id],
                 }
             )
 
@@ -132,7 +120,6 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
                     "source": id_map[rel["source"]],
                     "target": id_map[rel["target"]],
                     "relation": rel["relation"],
-                    "articles": [article_id],
                 }
             )
 

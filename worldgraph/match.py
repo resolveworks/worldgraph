@@ -100,18 +100,11 @@ class UnionFind:
 # ---------------------------------------------------------------------------
 
 
-def load_graphs(
-    graphs_dir: Path,
-) -> tuple[list[Graph], dict[str, list[dict]], dict[tuple, list[str]]]:
+def load_graphs(graphs_dir: Path) -> list[Graph]:
     """Load per-article graph JSON files from a directory.
 
-    Returns:
-        graphs: list of Graph objects
-        entity_occurrences: entity_id -> list of {article_id, entity_id, name}
-        edge_articles: (graph_id, src, tgt, relation) -> list of article_ids
+    Each graph's id is the article_id; each node's graph_id tracks its origin.
     """
-    entity_occurrences: dict[str, list[dict]] = {}
-    edge_articles: dict[tuple, list[str]] = {}
     graphs: list[Graph] = []
 
     for path in sorted(graphs_dir.glob("*.json")):
@@ -127,28 +120,31 @@ def load_graphs(
                 nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
             else:
                 nodes[nid] = Node(id=nid, graph_id=graph_id)
-                entity_occurrences[nid] = n["occurrences"]
 
         edges: list[Edge] = []
         for ed in g["edges"]:
-            edge = Edge(
-                source=ed["source"], target=ed["target"], relation=ed["relation"]
+            edges.append(
+                Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
             )
-            edges.append(edge)
-            edge_articles[(graph_id, edge.source, edge.target, edge.relation)] = ed[
-                "articles"
-            ]
 
-        graph = Graph(id=graph_id, nodes=nodes, edges=edges)
-        graphs.append(graph)
+        graphs.append(Graph(id=graph_id, nodes=nodes, edges=edges))
 
-    return graphs, entity_occurrences, edge_articles
+    return graphs
+
+
+def entity_names(graph: Graph, eid: str) -> list[str]:
+    """Get the names of an entity by following its 'is named' edges."""
+    names = []
+    for edge in graph.edges:
+        if edge.relation == "is named" and edge.source == eid:
+            tgt = graph.nodes.get(edge.target)
+            if isinstance(tgt, LiteralNode):
+                names.append(tgt.label)
+    return names if names else [eid]
 
 
 def save_output(
     graph: Graph,
-    entity_occurrences: dict[str, list[dict]],
-    edge_articles: dict[tuple, list[str]],
     matches: list[list[str]],
     path: Path,
 ) -> None:
@@ -158,19 +154,14 @@ def save_output(
         if isinstance(n, LiteralNode):
             nodes_out.append({"id": n.id, "label": n.label})
         else:
-            nodes_out.append({"id": n.id, "occurrences": entity_occurrences[n.id]})
+            nodes_out.append({"id": n.id})
 
     edges_out = []
     for edge in graph.edges:
-        graph_id = graph.nodes[edge.source].graph_id
-        articles = edge_articles.get(
-            (graph_id, edge.source, edge.target, edge.relation), []
-        )
         edges_out.append({
             "source": edge.source,
             "target": edge.target,
             "relation": edge.relation,
-            "articles": articles,
         })
 
     output = {
@@ -231,22 +222,12 @@ def compute_functionality(
             ):
                 similar[r].append(r2)
 
-    # Build entity-to-names mapping: for each entity, find its "is named" labels
-    def _entity_names(g: Graph, eid: str) -> list[str]:
-        names = []
-        for edge in g.edges:
-            if edge.relation == "is named" and edge.source == eid:
-                tgt = g.nodes.get(edge.target)
-                if isinstance(tgt, LiteralNode):
-                    names.append(tgt.label)
-        return names if names else [eid]
-
     # Collect all (src_name, tgt_name) pairs per relation phrase
     phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for g in graphs:
         for edge in g.edges:
-            for src_name in _entity_names(g, edge.source):
-                for tgt_name in _entity_names(g, edge.target):
+            for src_name in entity_names(g, edge.source):
+                for tgt_name in entity_names(g, edge.target):
                     phrase_pairs[edge.relation].append((src_name, tgt_name))
 
     result: dict[str, Functionality] = {}
@@ -452,14 +433,13 @@ def run_matching(
     epsilon: float = 1e-4,
 ) -> None:
     """Load graphs, build unified graph, run single-pass matching, save."""
-    graphs, entity_occurrences, edge_articles = load_graphs(graphs_dir)
+    graphs = load_graphs(graphs_dir)
     n_initial = len(graphs)
     click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
     for g in graphs:
         entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
-        n_occ = sum(len(entity_occurrences[n.id]) for n in entities)
         click.echo(
-            f"  {g.id}: {len(entities)} entities ({n_occ} occurrences), {len(g.edges)} edges"
+            f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges"
         )
 
     unified = build_unified_graph(graphs)
@@ -490,21 +470,13 @@ def run_matching(
         groups[uf.find(eid)].append(eid)
     match_groups = [members for members in groups.values() if len(members) > 1]
 
-    save_output(unified, entity_occurrences, edge_articles, match_groups, output_path)
-
-    # Display results
-    def _names(eid: str) -> str:
-        if eid in entity_occurrences:
-            return " / ".join(sorted(set(o["name"] for o in entity_occurrences[eid])))
-        node = unified.nodes.get(eid)
-        return node.label if isinstance(node, LiteralNode) else eid
+    save_output(unified, match_groups, output_path)
 
     click.echo(f"\n{len(match_groups)} match groups:")
     for members in match_groups:
         names = []
         for eid in members:
-            for occ in entity_occurrences.get(eid, []):
-                names.append(occ["name"])
+            names.extend(entity_names(unified, eid))
         click.echo(f"  {' / '.join(sorted(set(names)))}")
 
     click.echo(f"\nWrote {output_path}")
