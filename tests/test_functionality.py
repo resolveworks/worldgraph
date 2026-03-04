@@ -2,6 +2,7 @@
 
 import pytest
 
+from worldgraph.constants import NAME_EDGE
 from worldgraph.graph import Graph
 from worldgraph.match import compute_functionality
 
@@ -23,7 +24,7 @@ def test_one_to_one_functionality_is_1(embed_relation):
 
     rel_embs = {
         "acquired": embed_relation("acquired"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g], rel_embs)
     assert func["acquired"].forward == pytest.approx(1.0)
@@ -40,7 +41,7 @@ def test_fan_out_lowers_functionality(embed_relation):
 
     rel_embs = {
         "acquired": embed_relation("acquired"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g], rel_embs)
     assert func["acquired"].forward == pytest.approx(0.5)
@@ -58,7 +59,7 @@ def test_one_to_one_inv_functionality_is_1(embed_relation):
 
     rel_embs = {
         "acquired": embed_relation("acquired"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g], rel_embs)
     assert func["acquired"].inverse == pytest.approx(1.0)
@@ -75,7 +76,7 @@ def test_fan_in_lowers_inv_functionality(embed_relation):
 
     rel_embs = {
         "acquired": embed_relation("acquired"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g], rel_embs)
     assert func["acquired"].inverse == pytest.approx(0.5)
@@ -100,7 +101,7 @@ def test_similar_phrases_pool_edges(embed_relation):
     rel_embs = {
         "acquired": embed_relation("acquired"),
         "bought": embed_relation("bought"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g1, g2], rel_embs)
     assert func["acquired"].forward < 1.0
@@ -124,7 +125,7 @@ def test_dissimilar_phrases_do_not_pool(embed_relation):
     rel_embs = {
         "acquired": embed_relation("acquired"),
         "located in": embed_relation("located in"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g1, g2], rel_embs)
     assert func["acquired"].forward == pytest.approx(1.0)
@@ -145,7 +146,7 @@ def test_same_entity_name_across_graphs_pools(embed_relation):
 
     rel_embs = {
         "acquired": embed_relation("acquired"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g1, g2], rel_embs)
     # Apple→{Beats, Shazam}: avg_out_degree = 2 → functionality = 0.5

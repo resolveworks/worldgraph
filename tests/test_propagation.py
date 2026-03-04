@@ -17,6 +17,7 @@ embeddings.  Tests verify that:
 
 import numpy as np
 
+from worldgraph.constants import NAME_EDGE
 from worldgraph.graph import Graph, LiteralNode
 from worldgraph.match import (
     build_unified_graph,
@@ -58,7 +59,7 @@ def run_propagation(
     """Convenience wrapper: embed relations, build unified graph, propagate."""
     unified = build_unified_graph([graph_a, graph_b])
     rel_embs = {r: embed_relation(r) for r in relations}
-    rel_embs["is named"] = embed_relation("is named")
+    rel_embs[NAME_EDGE] = embed_relation(NAME_EDGE)
     func = compute_functionality([graph_a, graph_b], rel_embs, threshold)
     return propagate(
         unified,
@@ -164,9 +165,7 @@ def test_weak_neighbors_do_not_produce_matches(embed, embed_relation):
 
     lit_embs = embed(["Apple", "Beats", "Google", "YouTube"])
 
-    confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["acquired"]
-    )
+    confidence = run_propagation(g1, g2, embed_relation, lit_embs, ["acquired"])
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from weak neighbors: {matches}"
@@ -246,10 +245,18 @@ def test_incoming_edges_propagate(embed, embed_relation):
 def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
     """A 1:1 (functional) relation should produce stronger confidence boost
     than a many-to-one relation, all else being equal."""
-    lit_embs = embed([
-        "Meridian Technologies", "Meridian Tech", "DataVault",
-        "Apple", "Google", "Microsoft", "Beats", "YouTube",
-    ])
+    lit_embs = embed(
+        [
+            "Meridian Technologies",
+            "Meridian Tech",
+            "DataVault",
+            "Apple",
+            "Google",
+            "Microsoft",
+            "Beats",
+            "YouTube",
+        ]
+    )
 
     # Background graphs for functionality: 'acquired' is 1:1, 'invested in' has fan-in
     fg1 = Graph(id="fg1")
@@ -272,7 +279,7 @@ def test_functional_relation_produces_stronger_evidence(embed, embed_relation):
     rel_embs = {
         "acquired": embed_relation("acquired"),
         "invested in": embed_relation("invested in"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([fg1, fg2], rel_embs)
     assert func["acquired"].inverse > func["invested in"].inverse
@@ -340,14 +347,19 @@ def test_multi_hop_propagation_across_iterations(embed, embed_relation):
     g2.add_edge(meridian2, beta, "purchased")
     g2.add_edge(beta, james2, "founded by")
 
-    lit_embs = embed([
-        "Meridian Technologies", "Meridian Tech",
-        "Alpha Corp", "Beta Inc", "James Chen",
-    ])
+    lit_embs = embed(
+        [
+            "Meridian Technologies",
+            "Meridian Tech",
+            "Alpha Corp",
+            "Beta Inc",
+            "James Chen",
+        ]
+    )
 
     relations = ["acquired", "purchased", "founded by"]
     rel_embs = {r: embed_relation(r) for r in relations}
-    rel_embs["is named"] = embed_relation("is named")
+    rel_embs[NAME_EDGE] = embed_relation(NAME_EDGE)
     func = compute_functionality([g1, g2], rel_embs)
 
     confidence = propagate(build_unified_graph([g1, g2]), lit_embs, rel_embs, func)
@@ -396,7 +408,10 @@ def test_name_variation_with_structural_reinforcement(embed, embed_relation):
     # Both should pass threshold
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = {(a, b) for a, b in matches}
-    assert (meridian1.id, meridian2.id) in matched_pairs or (meridian2.id, meridian1.id) in matched_pairs
+    assert (meridian1.id, meridian2.id) in matched_pairs or (
+        meridian2.id,
+        meridian1.id,
+    ) in matched_pairs
     assert (dv1.id, dv2.id) in matched_pairs or (dv2.id, dv1.id) in matched_pairs
 
 
@@ -455,9 +470,7 @@ def test_bidirectional_edges_accumulate(embed, embed_relation):
     dv2u = g2u.add_entity("DataVault")
     g2u.add_edge(m2u, dv2u, "acquired")
 
-    confidence_uni = run_propagation(
-        g1u, g2u, embed_relation, lit_embs, ["acquired"]
-    )
+    confidence_uni = run_propagation(g1u, g2u, embed_relation, lit_embs, ["acquired"])
 
     # Bidirectional
     g1b = Graph(id="g1b")
@@ -506,11 +519,13 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
 
     # Background: establish "founded" as a functional (1:1) relation
     bg_graphs = []
-    for i, (person, org) in enumerate([
-        ("Marcus Webb", "Alpha Corp"),
-        ("Sarah Chen", "Beta Inc"),
-        ("James Xu", "Gamma LLC"),
-    ]):
+    for i, (person, org) in enumerate(
+        [
+            ("Marcus Webb", "Alpha Corp"),
+            ("Sarah Chen", "Beta Inc"),
+            ("James Xu", "Gamma LLC"),
+        ]
+    ):
         bg = Graph(id=f"bg{i}")
         p = bg.add_entity(person)
         o = bg.add_entity(org)
@@ -521,14 +536,14 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
 
     rel_embs = {
         "founded": embed_relation("founded"),
-        "is named": embed_relation("is named"),
+        NAME_EDGE: embed_relation(NAME_EDGE),
     }
     func = compute_functionality([g1, g2] + bg_graphs, rel_embs)
 
     # Premise: name similarity alone is below threshold
-    sv_name_sim = float(np.dot(
-        lit_embs["Dr. Priya Sharma"], lit_embs["Dr. Elena Vasquez"]
-    ))
+    sv_name_sim = float(
+        np.dot(lit_embs["Dr. Priya Sharma"], lit_embs["Dr. Elena Vasquez"])
+    )
     assert sv_name_sim < 0.8
 
     confidence = propagate(build_unified_graph([g1, g2]), lit_embs, rel_embs, func)
@@ -537,10 +552,16 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embed, embed_relatio
 
     # Neither NovaTech nor Sharma/Vasquez should match
     matched_pairs = {(a, b) for a, b in matches}
-    assert (nova1.id, nova2.id) not in matched_pairs and (nova2.id, nova1.id) not in matched_pairs, (
+    assert (nova1.id, nova2.id) not in matched_pairs and (
+        nova2.id,
+        nova1.id,
+    ) not in matched_pairs, (
         "Identical names with no structural corroboration were incorrectly matched"
     )
-    assert (sharma.id, vasquez.id) not in matched_pairs and (vasquez.id, sharma.id) not in matched_pairs, (
+    assert (sharma.id, vasquez.id) not in matched_pairs and (
+        vasquez.id,
+        sharma.id,
+    ) not in matched_pairs, (
         "Structural evidence from shared anchor overrode name dissimilarity"
     )
 
@@ -559,33 +580,36 @@ def test_similar_names_disjoint_neighborhoods_no_match(embed, embed_relation):
     halcyon = g2.add_entity("Halcyon Genomics")
     g2.add_edge(lena, halcyon, "is CEO of")
 
-    lit_embs = embed([
-        "Dr. Elena Vasquez", "Dr. Lena Vasquez",
-        "Volta Systems", "Halcyon Genomics",
-    ])
+    lit_embs = embed(
+        [
+            "Dr. Elena Vasquez",
+            "Dr. Lena Vasquez",
+            "Volta Systems",
+            "Halcyon Genomics",
+        ]
+    )
 
     # Premise: names are similar enough that old system would match them
-    name_sim = float(np.dot(
-        lit_embs["Dr. Elena Vasquez"], lit_embs["Dr. Lena Vasquez"]
-    ))
+    name_sim = float(
+        np.dot(lit_embs["Dr. Elena Vasquez"], lit_embs["Dr. Lena Vasquez"])
+    )
     assert name_sim >= 0.8, (
         f"Premise failed: Elena/Lena name_sim ({name_sim:.3f}) below threshold"
     )
 
     # Premise: neighbor names have no similarity
-    nbr_sim = float(np.dot(
-        lit_embs["Volta Systems"], lit_embs["Halcyon Genomics"]
-    ))
+    nbr_sim = float(np.dot(lit_embs["Volta Systems"], lit_embs["Halcyon Genomics"]))
     assert nbr_sim < 0.5
 
-    confidence = run_propagation(
-        g1, g2, embed_relation, lit_embs, ["is CEO of"]
-    )
+    confidence = run_propagation(g1, g2, embed_relation, lit_embs, ["is CEO of"])
 
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = {(a, b) for a, b in matches}
 
-    assert (elena.id, lena.id) not in matched_pairs and (lena.id, elena.id) not in matched_pairs, (
+    assert (elena.id, lena.id) not in matched_pairs and (
+        lena.id,
+        elena.id,
+    ) not in matched_pairs, (
         f"Similar names with disjoint neighborhoods were incorrectly matched "
         f"(name_sim={name_sim:.3f}, no structural support)"
     )

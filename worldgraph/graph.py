@@ -5,6 +5,8 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from worldgraph.constants import NAME_EDGE
+
 
 @dataclass
 class Node:
@@ -36,7 +38,7 @@ class Graph:
         lit = LiteralNode(id=str(uuid.uuid4()), graph_id=self.id, label=name)
         self.nodes[entity.id] = entity
         self.nodes[lit.id] = lit
-        self.edges.append(Edge(source=entity.id, target=lit.id, relation="is named"))
+        self.edges.append(Edge(source=entity.id, target=lit.id, relation=NAME_EDGE))
         return entity
 
     def add_edge(self, source: Node, target: Node, relation: str) -> None:
@@ -77,10 +79,10 @@ def load_graphs(graphs_dir: Path) -> list[Graph]:
 
 
 def entity_names(graph: Graph, eid: str) -> list[str]:
-    """Get the names of an entity by following its 'is named' edges."""
+    """Get the names of an entity by following its NAME_EDGE edges."""
     names = []
     for edge in graph.edges:
-        if edge.relation == "is named" and edge.source == eid:
+        if edge.relation == NAME_EDGE and edge.source == eid:
             tgt = graph.nodes.get(edge.target)
             if isinstance(tgt, LiteralNode):
                 names.append(tgt.label)
@@ -102,11 +104,13 @@ def save_graph(
 
     edges_out = []
     for edge in graph.edges:
-        edges_out.append({
-            "source": edge.source,
-            "target": edge.target,
-            "relation": edge.relation,
-        })
+        edges_out.append(
+            {
+                "source": edge.source,
+                "target": edge.target,
+                "relation": edge.relation,
+            }
+        )
 
     output = {
         "id": graph.id,
