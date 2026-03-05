@@ -15,7 +15,7 @@ from typing import NamedTuple
 import click
 import numpy as np
 from dotenv import load_dotenv
-from worldgraph.constants import RELATION_TEMPLATE
+from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE
 from worldgraph.embed import Embedder
 from worldgraph.graph import (
     Graph,
@@ -263,7 +263,70 @@ def propagate(
 
 
 # ---------------------------------------------------------------------------
-# Top-level matching pipeline
+# High-level pipeline functions
+# ---------------------------------------------------------------------------
+
+
+def match_graphs(
+    graphs: list[Graph],
+    embedder: Embedder,
+    rel_threshold: float = 0.8,
+    **propagate_kwargs,
+) -> dict[tuple[str, str], float]:
+    """Core matching pipeline: graphs → confidence scores.
+
+    Builds unified graph, computes IDF / relation embeddings / functionality,
+    and runs similarity propagation. Returns the confidence dict.
+    """
+    unified = build_unified_graph(graphs)
+
+    all_names = [
+        n.label for g in graphs for n in g.nodes.values() if isinstance(n, LiteralNode)
+    ]
+    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
+
+    idf = build_idf(all_names)
+    relation_embeddings = embedder.embed(
+        [*all_relations, NAME_EDGE], template=RELATION_TEMPLATE
+    )
+    functionality = compute_functionality(graphs, relation_embeddings, rel_threshold)
+
+    return propagate(
+        unified,
+        idf,
+        relation_embeddings,
+        functionality,
+        rel_gate=rel_threshold,
+        **propagate_kwargs,
+    )
+
+
+def build_match_groups(
+    graphs: list[Graph],
+    confidence: dict[tuple[str, str], float],
+    threshold: float = 0.8,
+) -> list[set[str]]:
+    """Build match groups from confidence scores via union-find.
+
+    Returns list of sets, each containing matched entity IDs (groups of size > 1).
+    """
+    uf = UnionFind()
+    for (id_a, id_b), score in confidence.items():
+        if score >= threshold:
+            uf.union(id_a, id_b)
+
+    unified = build_unified_graph(graphs)
+    entity_ids = [
+        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
+    ]
+    groups: dict[str, list[str]] = defaultdict(list)
+    for eid in entity_ids:
+        groups[uf.find(eid)].append(eid)
+    return [set(members) for members in groups.values() if len(members) > 1]
+
+
+# ---------------------------------------------------------------------------
+# CLI entry point
 # ---------------------------------------------------------------------------
 
 
@@ -275,59 +338,27 @@ def run_matching(
     max_iter: int = 30,
     epsilon: float = 1e-4,
 ) -> None:
-    """Load graphs, build unified graph, run single-pass matching, save."""
+    """Load graphs, run matching pipeline, save results."""
     graphs = [load_graph(f) for f in graph_files]
     click.echo(f"Loaded {len(graphs)} graphs")
     for g in graphs:
         entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
         click.echo(f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges")
 
-    unified = build_unified_graph(graphs)
-
     embedder = Embedder(os.environ["EMBEDDING_MODEL"])
 
-    all_names = sorted(
-        {
-            n.label
-            for g in graphs
-            for n in g.nodes.values()
-            if isinstance(n, LiteralNode)
-        }
-    )
-    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
-
-    idf = build_idf(all_names)
-    relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
-    functionality = compute_functionality(
-        graphs, relation_embeddings, relation_threshold
-    )
-
-    confidence = propagate(
-        unified,
-        idf,
-        relation_embeddings,
-        functionality,
+    confidence = match_graphs(
+        graphs,
+        embedder,
+        rel_threshold=relation_threshold,
         max_iter=max_iter,
         epsilon=epsilon,
-        rel_gate=relation_threshold,
     )
 
-    # Select matches and build union-find
-    uf = UnionFind()
-    for (id_a, id_b), score in confidence.items():
-        if score >= match_threshold:
-            uf.union(id_a, id_b)
+    match_groups = build_match_groups(graphs, confidence, match_threshold)
 
-    # Group matched entities
-    entity_ids = [
-        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
-    ]
-    groups: dict[str, list[str]] = defaultdict(list)
-    for eid in entity_ids:
-        groups[uf.find(eid)].append(eid)
-    match_groups = [members for members in groups.values() if len(members) > 1]
-
-    save_graph(unified, output_path, match_groups)
+    unified = build_unified_graph(graphs)
+    save_graph(unified, output_path, [list(g) for g in match_groups])
 
     click.echo(f"\n{len(match_groups)} match groups:")
     for members in match_groups:

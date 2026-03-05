@@ -1,8 +1,8 @@
 """Layer 3 integration tests.
 
-These tests exercise the full matching pipeline: multiple graphs → unified
-graph → propagate → union-find → match groups.  They verify end-to-end
-correctness on multi-source scenarios that L2 tests don't cover:
+These tests exercise the full matching pipeline: multiple graphs →
+match_graphs → build_match_groups.  They verify end-to-end correctness
+on multi-source scenarios that L2 tests don't cover:
 
 - Transitive merging across 3+ sources via union-find
 - Cross-cluster isolation (independent events don't merge, even with
@@ -10,52 +10,13 @@ correctness on multi-source scenarios that L2 tests don't cover:
 - Cross-event entity linking (shared entity across clusters)
 """
 
-from collections import defaultdict
-
-from worldgraph.constants import NAME_EDGE, RELATION_TEMPLATE
-from worldgraph.embed import Embedder
-from worldgraph.graph import Graph, LiteralNode
-from worldgraph.match import (
-    UnionFind,
-    build_unified_graph,
-    compute_functionality,
-    propagate,
-)
-from worldgraph.names import build_idf
+from worldgraph.graph import Graph
+from worldgraph.match import build_match_groups, match_graphs
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-
-def _run_full_pipeline(
-    graphs: list[Graph],
-    embedder: Embedder,
-    labels: list[str],
-    relations: list[str],
-    match_threshold: float = 0.8,
-    **propagate_kwargs,
-) -> list[set[str]]:
-    """Run the full pipeline and return match groups as sets of entity IDs."""
-    unified = build_unified_graph(graphs)
-    idf = build_idf(labels)
-    rel_embs = embedder.embed([*relations, NAME_EDGE], template=RELATION_TEMPLATE)
-    func = compute_functionality(graphs, rel_embs)
-    confidence = propagate(unified, idf, rel_embs, func, **propagate_kwargs)
-
-    uf = UnionFind()
-    for (id_a, id_b), score in confidence.items():
-        if score >= match_threshold:
-            uf.union(id_a, id_b)
-
-    entity_ids = [
-        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
-    ]
-    groups: dict[str, list[str]] = defaultdict(list)
-    for eid in entity_ids:
-        groups[uf.find(eid)].append(eid)
-    return [set(members) for members in groups.values() if len(members) > 1]
 
 
 def _find_group_containing(groups: list[set[str]], entity_id: str) -> set[str] | None:
@@ -112,18 +73,9 @@ def test_three_source_with_person_name_variation(embedder):
     g3.add_edge(p3, su3, "alumna of")
     g3.add_edge(m3, dv3, "acquired")
 
-    labels = [
-        "Meridian Technologies",
-        "Dr. Priya Sharma",
-        "Priya Sharma",
-        "Dr. Sharma",
-        "James Chen",
-        "Stanford University",
-        "DataVault Inc",
-    ]
-    relations = ["hired", "collaborates with", "alumna of", "acquired"]
-
-    groups = _run_full_pipeline([g1, g2, g3], embedder, labels, relations)
+    graphs = [g1, g2, g3]
+    confidence = match_graphs(graphs, embedder)
+    groups = build_match_groups(graphs, confidence)
 
     m_group = _find_group_containing(groups, m1.id)
     assert m_group is not None, "Meridian entities not merged"
@@ -182,16 +134,9 @@ def test_identical_names_different_contexts_no_merge(embedder):
     b2.add_edge(jc_b2, lab_b2, "leads")
     b2.add_edge(lab_b2, epa_b2, "funded by")
 
-    labels = [
-        "Dr. James Chen",
-        "Advanced AI Lab",
-        "National Science Foundation",
-        "Climate Research Lab",
-        "Environmental Protection Agency",
-    ]
-    relations = ["leads", "funded by"]
-
-    groups = _run_full_pipeline([a1, a2, b1, b2], embedder, labels, relations)
+    graphs = [a1, a2, b1, b2]
+    confidence = match_graphs(graphs, embedder)
+    groups = build_match_groups(graphs, confidence)
 
     cluster_a_ids = {jc_a1.id, lab_a1.id, nsf_a1.id, jc_a2.id, lab_a2.id, nsf_a2.id}
     cluster_b_ids = {jc_b1.id, lab_b1.id, epa_b1.id, jc_b2.id, lab_b2.id, epa_b2.id}
@@ -255,15 +200,9 @@ def test_shared_entity_across_clusters(embedder):
     b2.add_edge(ftc_b2, m_b2, "investigates")
     b2.add_edge(m_b2, ev_b2, "CEO is")
 
-    labels = [
-        "Meridian Technologies",
-        "DataVault",
-        "Elena Vasquez",
-        "Federal Trade Commission",
-    ]
-    relations = ["acquired", "purchased", "CEO is", "investigates"]
-
-    groups = _run_full_pipeline([a1, a2, b1, b2], embedder, labels, relations)
+    graphs = [a1, a2, b1, b2]
+    confidence = match_graphs(graphs, embedder)
+    groups = build_match_groups(graphs, confidence)
 
     # All four Meridian entities should be in one group
     m_group = _find_group_containing(groups, m_a1.id)
@@ -322,16 +261,9 @@ def test_shared_person_across_clusters(embedder):
     b2.add_edge(ev4, summit2, "keynotes")
     b2.add_edge(ev4, su4, "alumna of")
 
-    labels = [
-        "Meridian Technologies",
-        "Elena Vasquez",
-        "DataVault Inc",
-        "Global Tech Summit",
-        "Stanford University",
-    ]
-    relations = ["CEO is", "acquired", "keynotes", "alumna of"]
-
-    groups = _run_full_pipeline([a1, a2, b1, b2], embedder, labels, relations)
+    graphs = [a1, a2, b1, b2]
+    confidence = match_graphs(graphs, embedder)
+    groups = build_match_groups(graphs, confidence)
 
     # All four Elena Vasquez entities should merge (within + across clusters)
     ev_group = _find_group_containing(groups, ev1.id)
