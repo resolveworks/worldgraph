@@ -14,7 +14,6 @@ def test_source_gets_inverse_functionality():
 
     func = {
         "acquired": Functionality(forward=0.5, inverse=0.8),
-        "is named": Functionality(1.0, 1.0),
     }
     adjacency = _build_weighted_adjacency(graph, func)
 
@@ -35,7 +34,6 @@ def test_target_gets_forward_functionality():
 
     func = {
         "acquired": Functionality(forward=0.5, inverse=0.8),
-        "is named": Functionality(1.0, 1.0),
     }
     adjacency = _build_weighted_adjacency(graph, func)
 
