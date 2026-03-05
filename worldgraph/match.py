@@ -34,6 +34,19 @@ class Functionality(NamedTuple):
     inverse: float
 
 
+class Neighbor(NamedTuple):
+    """An entry in a node's weighted adjacency list."""
+
+    entity_id: str
+    relation: str
+    func_weight: float
+
+
+# Type aliases for the main data structures flowing through the pipeline.
+Confidence = dict[tuple[str, str], float]
+MatchGroup = set[str]
+
+
 class UnionFind:
     def __init__(self):
         self.parent: dict = {}
@@ -88,41 +101,45 @@ def compute_functionality(
     all_relations = list(relation_embeddings)
 
     # Precompute which relations are similar to each relation
-    similar: dict[str, list[str]] = {r: [] for r in all_relations}
-    for i, r in enumerate(all_relations):
-        for j, r2 in enumerate(all_relations):
+    similar: dict[str, list[str]] = {rel: [] for rel in all_relations}
+    for rel in all_relations:
+        for other_rel in all_relations:
             if (
-                float(np.dot(relation_embeddings[r], relation_embeddings[r2]))
+                float(np.dot(relation_embeddings[rel], relation_embeddings[other_rel]))
                 >= threshold
             ):
-                similar[r].append(r2)
+                similar[rel].append(other_rel)
 
-    # Collect all (src_name, tgt_name) pairs per relation phrase
+    # Collect all (source_name, target_name) pairs per relation phrase
     phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
-    for g in graphs:
-        for edge in g.edges:
-            for src_name in entity_names(g, edge.source):
-                for tgt_name in entity_names(g, edge.target):
-                    phrase_pairs[edge.relation].append((src_name, tgt_name))
+    for graph in graphs:
+        for edge in graph.edges:
+            for source_name in entity_names(graph, edge.source):
+                for target_name in entity_names(graph, edge.target):
+                    phrase_pairs[edge.relation].append((source_name, target_name))
 
     result: dict[str, Functionality] = {}
-    for r in all_relations:
-        pooled = [pair for r2 in similar[r] for pair in phrase_pairs.get(r2, [])]
+    for rel in all_relations:
+        pooled = [
+            pair
+            for other_rel in similar[rel]
+            for pair in phrase_pairs.get(other_rel, [])
+        ]
         if not pooled:
-            result[r] = Functionality(1.0, 1.0)
+            result[rel] = Functionality(1.0, 1.0)
             continue
         targets_per_source: dict[str, set[str]] = defaultdict(set)
         sources_per_target: dict[str, set[str]] = defaultdict(set)
-        for src, tgt in pooled:
-            targets_per_source[src].add(tgt)
-            sources_per_target[tgt].add(src)
-        avg_out_degree = sum(len(v) for v in targets_per_source.values()) / len(
-            targets_per_source
-        )
-        avg_in_degree = sum(len(v) for v in sources_per_target.values()) / len(
-            sources_per_target
-        )
-        result[r] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
+        for source_name, target_name in pooled:
+            targets_per_source[source_name].add(target_name)
+            sources_per_target[target_name].add(source_name)
+        avg_out_degree = sum(
+            len(targets) for targets in targets_per_source.values()
+        ) / len(targets_per_source)
+        avg_in_degree = sum(
+            len(sources) for sources in sources_per_target.values()
+        ) / len(sources_per_target)
+        result[rel] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
 
     return result
 
@@ -132,42 +149,44 @@ def compute_functionality(
 # ---------------------------------------------------------------------------
 
 
-def _build_adjacency(
+def _build_weighted_adjacency(
     graph: Graph,
     functionality: dict[str, Functionality],
-) -> dict[str, list[tuple[str, str, float]]]:
+) -> dict[str, list[Neighbor]]:
     """Build per-entity adjacency list with direction-appropriate functionality.
 
     PARIS semantics: the functionality weight measures "if my neighbor matches,
     how strong is the evidence that I match?"
 
-    For edge src --r--> tgt:
-      - src uses inverse functionality: "given the target, how unique is the
+    For edge source --r--> target:
+      - source uses inverse functionality: "given the target, how unique is the
         source?"  If fun⁻¹(r) ≈ 1, a target match strongly implies a source match.
-      - tgt uses forward functionality: "given the source, how unique is the
+      - target uses forward functionality: "given the source, how unique is the
         target?"  If fun(r) ≈ 1, a source match strongly implies a target match.
-
-    Returns {entity_id: [(neighbor_id, relation, func_weight), ...]}.
     """
     default = Functionality(1.0, 1.0)
-    adj: dict[str, list[tuple[str, str, float]]] = defaultdict(list)
+    adjacency: dict[str, list[Neighbor]] = defaultdict(list)
     for edge in graph.edges:
         func = functionality.get(edge.relation, default)
-        adj[edge.source].append((edge.target, edge.relation, func.inverse))
-        adj[edge.target].append((edge.source, edge.relation, func.forward))
-    return adj
+        adjacency[edge.source].append(
+            Neighbor(edge.target, edge.relation, func.inverse)
+        )
+        adjacency[edge.target].append(
+            Neighbor(edge.source, edge.relation, func.forward)
+        )
+    return adjacency
 
 
 def build_unified_graph(graphs: list[Graph]) -> Graph:
     """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs."""
     unified = Graph()
-    for g in graphs:
-        unified.nodes.update(g.nodes)
-        unified.edges.extend(g.edges)
+    for graph in graphs:
+        unified.nodes.update(graph.nodes)
+        unified.edges.extend(graph.edges)
     return unified
 
 
-def propagate(
+def propagate_similarity(
     graph: Graph,
     idf: dict[str, float],
     relation_embeddings: dict[str, np.ndarray],
@@ -177,7 +196,7 @@ def propagate(
     rel_gate: float = 0.8,
     confidence_gate: float = 0.5,
     exp_lambda: float = 1.0,
-) -> dict[tuple[str, str], float]:
+) -> Confidence:
     """Run similarity propagation on a single unified graph.
 
     Compares entity pairs from different source graphs (based on
@@ -187,30 +206,32 @@ def propagate(
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     Both orderings (a,b) and (b,a) are stored for convenient lookup.
     """
-    adj = _build_adjacency(graph, functionality)
+    adjacency = _build_weighted_adjacency(graph, functionality)
 
     # Precompute which relation pairs pass the gate
-    all_rels = {edge.relation for edge in graph.edges}
-    rel_passes_gate: set[tuple[str, str]] = set()
-    for ra in all_rels:
-        emb_a = relation_embeddings.get(ra)
-        if emb_a is None:
+    all_relations = {edge.relation for edge in graph.edges}
+    relation_passes_gate: set[tuple[str, str]] = set()
+    for rel_a in all_relations:
+        embedding_a = relation_embeddings.get(rel_a)
+        if embedding_a is None:
             continue
-        for rb in all_rels:
-            emb_b = relation_embeddings.get(rb)
-            if emb_b is None:
+        for rel_b in all_relations:
+            embedding_b = relation_embeddings.get(rel_b)
+            if embedding_b is None:
                 continue
-            if float(np.dot(emb_a, emb_b)) >= rel_gate:
-                rel_passes_gate.add((ra, rb))
+            if float(np.dot(embedding_a, embedding_b)) >= rel_gate:
+                relation_passes_gate.add((rel_a, rel_b))
 
     # Identify entity nodes (non-literal nodes)
     entity_ids = [
-        nid for nid, n in graph.nodes.items() if not isinstance(n, LiteralNode)
+        node_id
+        for node_id, node in graph.nodes.items()
+        if not isinstance(node, LiteralNode)
     ]
 
     # Sparse confidence dict: only cross-graph entity-entity pairs.
     # Both orderings stored for convenient neighbor lookup.
-    confidence: dict[tuple[str, str], float] = {}
+    confidence: Confidence = {}
     pairs: list[tuple[str, str]] = []
     for i, id_a in enumerate(entity_ids):
         for id_b in entity_ids[i + 1 :]:
@@ -220,12 +241,12 @@ def propagate(
             confidence[(id_b, id_a)] = 0.0
             pairs.append((id_a, id_b))
 
-    def _get_confidence(a: str, b: str) -> float:
+    def _get_confidence(node_id_a: str, node_id_b: str) -> float:
         """Look up confidence for any node pair, computing name sim on demand."""
-        if (a, b) in confidence:
-            return confidence[(a, b)]
-        node_a = graph.nodes[a]
-        node_b = graph.nodes[b]
+        if (node_id_a, node_id_b) in confidence:
+            return confidence[(node_id_a, node_id_b)]
+        node_a = graph.nodes[node_id_a]
+        node_b = graph.nodes[node_id_b]
         if isinstance(node_a, LiteralNode) and isinstance(node_b, LiteralNode):
             return max(0.0, soft_tfidf(node_a.label, node_b.label, idf))
         return 0.0
@@ -236,15 +257,20 @@ def propagate(
         for id_a, id_b in pairs:
             strength_sum = 0.0
 
-            for nbr_a, rel_a, func_a in adj.get(id_a, []):
-                for nbr_b, rel_b, func_b in adj.get(id_b, []):
-                    if (rel_a, rel_b) not in rel_passes_gate:
+            for neighbor_a in adjacency.get(id_a, []):
+                for neighbor_b in adjacency.get(id_b, []):
+                    if (
+                        neighbor_a.relation,
+                        neighbor_b.relation,
+                    ) not in relation_passes_gate:
                         continue
-                    nbr_conf = _get_confidence(nbr_a, nbr_b)
-                    if nbr_conf < confidence_gate:
+                    neighbor_confidence = _get_confidence(
+                        neighbor_a.entity_id, neighbor_b.entity_id
+                    )
+                    if neighbor_confidence < confidence_gate:
                         continue
-                    func_w = min(func_a, func_b)
-                    strength_sum += func_w * nbr_conf
+                    weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
+                    strength_sum += weight * neighbor_confidence
 
             combined = (
                 1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
@@ -272,7 +298,7 @@ def match_graphs(
     embedder: Embedder,
     rel_threshold: float = 0.8,
     **propagate_kwargs,
-) -> dict[tuple[str, str], float]:
+) -> Confidence:
     """Core matching pipeline: graphs → confidence scores.
 
     Builds unified graph, computes IDF / relation embeddings / functionality,
@@ -281,9 +307,12 @@ def match_graphs(
     unified = build_unified_graph(graphs)
 
     all_names = [
-        n.label for g in graphs for n in g.nodes.values() if isinstance(n, LiteralNode)
+        node.label
+        for graph in graphs
+        for node in graph.nodes.values()
+        if isinstance(node, LiteralNode)
     ]
-    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
+    all_relations = sorted({edge.relation for graph in graphs for edge in graph.edges})
 
     idf = build_idf(all_names)
     relation_embeddings = embedder.embed(
@@ -291,7 +320,7 @@ def match_graphs(
     )
     functionality = compute_functionality(graphs, relation_embeddings, rel_threshold)
 
-    return propagate(
+    return propagate_similarity(
         unified,
         idf,
         relation_embeddings,
@@ -303,9 +332,9 @@ def match_graphs(
 
 def build_match_groups(
     graphs: list[Graph],
-    confidence: dict[tuple[str, str], float],
+    confidence: Confidence,
     threshold: float = 0.8,
-) -> list[set[str]]:
+) -> list[MatchGroup]:
     """Build match groups from confidence scores via union-find.
 
     Returns list of sets, each containing matched entity IDs (groups of size > 1).
@@ -317,11 +346,13 @@ def build_match_groups(
 
     unified = build_unified_graph(graphs)
     entity_ids = [
-        nid for nid, n in unified.nodes.items() if not isinstance(n, LiteralNode)
+        node_id
+        for node_id, node in unified.nodes.items()
+        if not isinstance(node, LiteralNode)
     ]
     groups: dict[str, list[str]] = defaultdict(list)
-    for eid in entity_ids:
-        groups[uf.find(eid)].append(eid)
+    for entity_id in entity_ids:
+        groups[uf.find(entity_id)].append(entity_id)
     return [set(members) for members in groups.values() if len(members) > 1]
 
 
@@ -339,11 +370,13 @@ def run_matching(
     epsilon: float = 1e-4,
 ) -> None:
     """Load graphs, run matching pipeline, save results."""
-    graphs = [load_graph(f) for f in graph_files]
+    graphs = [load_graph(path) for path in graph_files]
     click.echo(f"Loaded {len(graphs)} graphs")
-    for g in graphs:
-        entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
-        click.echo(f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges")
+    for graph in graphs:
+        entities = [
+            node for node in graph.nodes.values() if not isinstance(node, LiteralNode)
+        ]
+        click.echo(f"  {graph.id}: {len(entities)} entities, {len(graph.edges)} edges")
 
     embedder = Embedder(os.environ["EMBEDDING_MODEL"])
 
@@ -358,13 +391,13 @@ def run_matching(
     match_groups = build_match_groups(graphs, confidence, match_threshold)
 
     unified = build_unified_graph(graphs)
-    save_graph(unified, output_path, [list(g) for g in match_groups])
+    save_graph(unified, output_path, [list(group) for group in match_groups])
 
     click.echo(f"\n{len(match_groups)} match groups:")
     for members in match_groups:
         names = []
-        for eid in members:
-            names.extend(entity_names(unified, eid))
+        for entity_id in members:
+            names.extend(entity_names(unified, entity_id))
         click.echo(f"  {' / '.join(sorted(set(names)))}")
 
     click.echo(f"\nWrote {output_path}")

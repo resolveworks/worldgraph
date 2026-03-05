@@ -52,36 +52,42 @@ def load_graph(path: Path) -> Graph:
     The graph's id is the article_id; each node's graph_id tracks its origin.
     """
     with open(path) as f:
-        g = json.load(f)
+        data = json.load(f)
 
-    graph_id = g["id"]
+    graph_id = data["id"]
     nodes: dict[str, Node] = {}
 
-    for n in g["nodes"]:
-        nid = n["id"]
-        if "label" in n:
-            nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
+    for node_data in data["nodes"]:
+        node_id = node_data["id"]
+        if "label" in node_data:
+            nodes[node_id] = LiteralNode(
+                id=node_id, graph_id=graph_id, label=node_data["label"]
+            )
         else:
-            nodes[nid] = Node(id=nid, graph_id=graph_id)
+            nodes[node_id] = Node(id=node_id, graph_id=graph_id)
 
     edges: list[Edge] = []
-    for ed in g["edges"]:
+    for edge_data in data["edges"]:
         edges.append(
-            Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
+            Edge(
+                source=edge_data["source"],
+                target=edge_data["target"],
+                relation=edge_data["relation"],
+            )
         )
 
     return Graph(id=graph_id, nodes=nodes, edges=edges)
 
 
-def entity_names(graph: Graph, eid: str) -> list[str]:
+def entity_names(graph: Graph, entity_id: str) -> list[str]:
     """Get the names of an entity by following its NAME_EDGE edges."""
     names = []
     for edge in graph.edges:
-        if edge.relation == NAME_EDGE and edge.source == eid:
-            tgt = graph.nodes.get(edge.target)
-            if isinstance(tgt, LiteralNode):
-                names.append(tgt.label)
-    return names if names else [eid]
+        if edge.relation == NAME_EDGE and edge.source == entity_id:
+            target = graph.nodes.get(edge.target)
+            if isinstance(target, LiteralNode):
+                names.append(target.label)
+    return names if names else [entity_id]
 
 
 def save_graph(
@@ -91,11 +97,11 @@ def save_graph(
 ) -> None:
     """Write graph to JSON, with optional match groups."""
     nodes_out = []
-    for n in graph.nodes.values():
-        if isinstance(n, LiteralNode):
-            nodes_out.append({"id": n.id, "label": n.label})
+    for node in graph.nodes.values():
+        if isinstance(node, LiteralNode):
+            nodes_out.append({"id": node.id, "label": node.label})
         else:
-            nodes_out.append({"id": n.id})
+            nodes_out.append({"id": node.id})
 
     edges_out = []
     for edge in graph.edges:

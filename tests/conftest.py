@@ -13,7 +13,12 @@ load_dotenv()
 def embed_relations(graphs: list[Graph], embedder: Embedder) -> dict:
     """Collect all unique relations from graphs, add NAME_EDGE, and embed them."""
     relations = sorted(
-        {e.relation for g in graphs for e in g.edges if e.relation != NAME_EDGE}
+        {
+            edge.relation
+            for graph in graphs
+            for edge in graph.edges
+            if edge.relation != NAME_EDGE
+        }
     )
     return embedder.embed([*relations, NAME_EDGE], template=RELATION_TEMPLATE)
 

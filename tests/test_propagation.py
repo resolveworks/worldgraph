@@ -28,10 +28,10 @@ def _select_matches(confidence, threshold=0.8):
     """Select entity matches: pairs where confidence >= threshold."""
     seen = set()
     matches = []
-    for (a, b), v in confidence.items():
-        if v >= threshold and (b, a) not in seen:
-            matches.append((a, b))
-            seen.add((a, b))
+    for (id_a, id_b), score in confidence.items():
+        if score >= threshold and (id_b, id_a) not in seen:
+            matches.append((id_a, id_b))
+            seen.add((id_a, id_b))
     return matches
 
 
@@ -306,7 +306,7 @@ def test_name_variation_with_structural_reinforcement(embedder):
     confidence = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
-    matched_pairs = {(a, b) for a, b in matches}
+    matched_pairs = set(matches)
     assert (meridian1.id, meridian2.id) in matched_pairs or (
         meridian2.id,
         meridian1.id,
@@ -339,7 +339,7 @@ def test_dangling_entities_get_no_boost(embedder):
     confidence = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
-    matched_ids = {eid for pair in matches for eid in pair}
+    matched_ids = {entity_id for pair in matches for entity_id in pair}
     assert solar.id not in matched_ids
     assert wind.id not in matched_ids
 
@@ -439,7 +439,7 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     confidence = match_graphs([g1, g2, *bg_graphs], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
-    matched_pairs = {(a, b) for a, b in matches}
+    matched_pairs = set(matches)
     assert (nova1.id, nova2.id) not in matched_pairs and (
         nova2.id,
         nova1.id,
@@ -478,7 +478,7 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
     confidence = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
-    matched_pairs = {(a, b) for a, b in matches}
+    matched_pairs = set(matches)
 
     assert (elena.id, lena.id) not in matched_pairs and (
         lena.id,

@@ -21,9 +21,9 @@ from worldgraph.match import build_match_groups, match_graphs
 
 def _find_group_containing(groups: list[set[str]], entity_id: str) -> set[str] | None:
     """Find the match group containing a given entity ID."""
-    for g in groups:
-        if entity_id in g:
-            return g
+    for group in groups:
+        if entity_id in group:
+            return group
     return None
 
 
