@@ -593,3 +593,138 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
         f"Similar names with disjoint neighborhoods were incorrectly matched "
         f"(name_sim={name_sim:.3f}, no structural support)"
     )
+
+
+# ---------------------------------------------------------------------------
+# Convergence / early stopping
+# ---------------------------------------------------------------------------
+
+
+def test_simple_graph_stabilizes_well_before_max_iter(embedder):
+    """A simple two-entity graph should reach a fixed point well before
+    max_iter=30. Comparing max_iter=10 vs max_iter=30 should give identical
+    results (mutual reinforcement between the two pairs converges quickly)."""
+    g1 = Graph(id="g1")
+    apple1 = g1.add_entity("Apple")
+    beats1 = g1.add_entity("Beats")
+    g1.add_edge(apple1, beats1, "acquired")
+
+    g2 = Graph(id="g2")
+    apple2 = g2.add_entity("Apple")
+    beats2 = g2.add_entity("Beats")
+    g2.add_edge(apple2, beats2, "acquired")
+
+    labels = ["Apple", "Beats"]
+
+    conf_10 = run_propagation(g1, g2, embedder, labels, ["acquired"], max_iter=10)
+    conf_30 = run_propagation(g1, g2, embedder, labels, ["acquired"], max_iter=30)
+
+    assert conf_10[(apple1.id, apple2.id)] == conf_30[(apple1.id, apple2.id)]
+    assert conf_10[(beats1.id, beats2.id)] == conf_30[(beats1.id, beats2.id)]
+
+
+def test_multi_hop_needs_multiple_iterations(embedder):
+    """A chain graph needs multiple iterations — max_iter=1 should produce
+    lower confidence for the far end than max_iter=30."""
+    g1 = Graph(id="g1")
+    a1 = g1.add_entity("Alpha Corp")
+    b1 = g1.add_entity("James Chen")
+    c1 = g1.add_entity("DataVault")
+    g1.add_edge(a1, b1, "founded by")
+    g1.add_edge(b1, c1, "leads")
+
+    g2 = Graph(id="g2")
+    a2 = g2.add_entity("Alpha Corp")
+    b2 = g2.add_entity("James Chen")
+    c2 = g2.add_entity("DataVault")
+    g2.add_edge(a2, b2, "founded by")
+    g2.add_edge(b2, c2, "leads")
+
+    labels = ["Alpha Corp", "James Chen", "DataVault"]
+    relations = ["founded by", "leads"]
+
+    conf_1 = run_propagation(g1, g2, embedder, labels, relations, max_iter=1)
+    conf_30 = run_propagation(g1, g2, embedder, labels, relations, max_iter=30)
+
+    # The far-end pair (Alpha/Alpha) should benefit from more iterations
+    assert conf_30[(a1.id, a2.id)] >= conf_1[(a1.id, a2.id)]
+
+
+# ---------------------------------------------------------------------------
+# Confidence gate isolation
+# ---------------------------------------------------------------------------
+
+
+def test_confidence_gate_blocks_weak_anchor(embedder):
+    """When an anchor's name similarity falls below the confidence gate,
+    it should not contribute structural evidence.
+
+    'Meridian Tech' / 'Meridian Technologies' have name sim ~0.85.
+    With confidence_gate=0.95, the anchor is blocked → no propagation."""
+    g1 = Graph(id="g1")
+    apple1 = g1.add_entity("Apple")
+    meridian1 = g1.add_entity("Meridian Technologies")
+    g1.add_edge(apple1, meridian1, "acquired")
+
+    g2 = Graph(id="g2")
+    apple2 = g2.add_entity("Apple")
+    meridian2 = g2.add_entity("Meridian Tech")
+    g2.add_edge(apple2, meridian2, "acquired")
+
+    labels = ["Apple", "Meridian Technologies", "Meridian Tech"]
+
+    # High gate: Meridian name sim (~0.85) is below gate
+    conf_high_gate = run_propagation(
+        g1, g2, embedder, labels, ["acquired"], confidence_gate=0.95
+    )
+    # Low gate: Meridian name sim passes
+    conf_low_gate = run_propagation(
+        g1, g2, embedder, labels, ["acquired"], confidence_gate=0.5
+    )
+
+    # With high gate, Apple pair gets no structural boost from Meridian anchor
+    assert (
+        conf_high_gate[(apple1.id, apple2.id)] < conf_low_gate[(apple1.id, apple2.id)]
+    )
+
+
+# ---------------------------------------------------------------------------
+# Monotonicity
+# ---------------------------------------------------------------------------
+
+
+def test_confidence_is_monotonically_nondecreasing(embedder):
+    """Confidence should never decrease as more iterations run."""
+    g1 = Graph(id="g1")
+    meridian1 = g1.add_entity("Meridian Technologies")
+    dv1 = g1.add_entity("DataVault Inc")
+    ceo1 = g1.add_entity("Elena Vasquez")
+    g1.add_edge(meridian1, dv1, "acquired")
+    g1.add_edge(meridian1, ceo1, "hired")
+
+    g2 = Graph(id="g2")
+    meridian2 = g2.add_entity("Meridian Tech")
+    dv2 = g2.add_entity("DataVault Inc")
+    ceo2 = g2.add_entity("Elena Vasquez")
+    g2.add_edge(meridian2, dv2, "purchased")
+    g2.add_edge(meridian2, ceo2, "employed")
+
+    labels = [
+        "Meridian Technologies",
+        "Meridian Tech",
+        "DataVault Inc",
+        "Elena Vasquez",
+    ]
+    relations = ["acquired", "purchased", "hired", "employed"]
+
+    prev_conf = run_propagation(g1, g2, embedder, labels, relations, max_iter=1)
+    for n_iter in [2, 5, 10]:
+        curr_conf = run_propagation(
+            g1, g2, embedder, labels, relations, max_iter=n_iter
+        )
+        for pair, val in curr_conf.items():
+            assert val >= prev_conf[pair] - 1e-9, (
+                f"Confidence decreased for {pair}: {prev_conf[pair]:.6f} → {val:.6f} "
+                f"at max_iter={n_iter}"
+            )
+        prev_conf = curr_conf
