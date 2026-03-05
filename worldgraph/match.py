@@ -21,7 +21,7 @@ from worldgraph.graph import (
     Graph,
     LiteralNode,
     entity_names,
-    load_graphs,
+    load_graph,
     save_graph,
 )
 from worldgraph.names import build_idf, soft_tfidf
@@ -268,7 +268,7 @@ def propagate(
 
 
 def run_matching(
-    graphs_dir: Path,
+    graph_files: list[Path],
     output_path: Path,
     relation_threshold: float,
     match_threshold: float,
@@ -276,9 +276,8 @@ def run_matching(
     epsilon: float = 1e-4,
 ) -> None:
     """Load graphs, build unified graph, run single-pass matching, save."""
-    graphs = load_graphs(graphs_dir)
-    n_initial = len(graphs)
-    click.echo(f"Loaded {n_initial} graphs from {graphs_dir}/")
+    graphs = [load_graph(f) for f in graph_files]
+    click.echo(f"Loaded {len(graphs)} graphs")
     for g in graphs:
         entities = [n for n in g.nodes.values() if not isinstance(n, LiteralNode)]
         click.echo(f"  {g.id}: {len(entities)} entities, {len(g.edges)} edges")

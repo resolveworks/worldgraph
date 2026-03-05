@@ -61,20 +61,19 @@ Date: {article["date"]}
     return response.parsed_output
 
 
-def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
+def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> None:
     """Run extraction on all articles, writing one graph JSON per article."""
-    article_files = sorted(articles_dir.glob("*.json"))
     articles = []
     for f in article_files:
         with open(f) as fh:
             articles.append(json.load(fh))
 
-    graphs_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
     client = anthropic.Anthropic()
 
     for i, article in enumerate(articles, 1):
         article_id = article["id"]
-        out_path = graphs_dir / f"{article_id}.json"
+        out_path = output_dir / f"{article_id}.json"
         if out_path.exists():
             click.echo(
                 f"[{i}/{len(articles)}] Skipping (already extracted): {article['title']}"
@@ -107,4 +106,4 @@ def run_extraction(articles_dir: Path, graphs_dir: Path, model: str) -> None:
 
         save_graph(graph, out_path)
 
-    click.echo(f"\nWrote graphs to {graphs_dir}/")
+    click.echo(f"\nWrote graphs to {output_dir}/")

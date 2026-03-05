@@ -46,36 +46,31 @@ class Graph:
         self.edges.append(Edge(source=source.id, target=target.id, relation=relation))
 
 
-def load_graphs(graphs_dir: Path) -> list[Graph]:
-    """Load per-article graph JSON files from a directory.
+def load_graph(path: Path) -> Graph:
+    """Load a single graph JSON file.
 
-    Each graph's id is the article_id; each node's graph_id tracks its origin.
+    The graph's id is the article_id; each node's graph_id tracks its origin.
     """
-    graphs: list[Graph] = []
+    with open(path) as f:
+        g = json.load(f)
 
-    for path in sorted(graphs_dir.glob("*.json")):
-        with open(path) as f:
-            g = json.load(f)
+    graph_id = g["id"]
+    nodes: dict[str, Node] = {}
 
-        graph_id = g["id"]
-        nodes: dict[str, Node] = {}
+    for n in g["nodes"]:
+        nid = n["id"]
+        if "label" in n:
+            nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
+        else:
+            nodes[nid] = Node(id=nid, graph_id=graph_id)
 
-        for n in g["nodes"]:
-            nid = n["id"]
-            if "label" in n:
-                nodes[nid] = LiteralNode(id=nid, graph_id=graph_id, label=n["label"])
-            else:
-                nodes[nid] = Node(id=nid, graph_id=graph_id)
+    edges: list[Edge] = []
+    for ed in g["edges"]:
+        edges.append(
+            Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
+        )
 
-        edges: list[Edge] = []
-        for ed in g["edges"]:
-            edges.append(
-                Edge(source=ed["source"], target=ed["target"], relation=ed["relation"])
-            )
-
-        graphs.append(Graph(id=graph_id, nodes=nodes, edges=edges))
-
-    return graphs
+    return Graph(id=graph_id, nodes=nodes, edges=edges)
 
 
 def entity_names(graph: Graph, eid: str) -> list[str]:
