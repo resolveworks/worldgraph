@@ -4,7 +4,7 @@ These tests exercise match_graphs() on small graphs with real embeddings.
 Tests verify that:
 
 - Matching names + matching relations produce correct matches
-- Synonym relations propagate through the relation gate
+- Synonym relations propagate via continuous relation similarity
 - Dissimilar relations, weak neighbors, and many weak paths produce no
   spurious matches (GH issue #1)
 - Incoming edges propagate evidence (not just outgoing)
@@ -63,8 +63,8 @@ def test_matching_names_and_relations_produce_matches(embedder):
 
 
 def test_synonym_relations_propagate(embedder):
-    """Synonym relation phrases ('acquired' / 'purchased') should pass the
-    relation gate and produce correct matches."""
+    """Synonym relation phrases ('acquired' / 'purchased') should have high
+    relation similarity and produce correct matches."""
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
@@ -87,8 +87,8 @@ def test_synonym_relations_propagate(embedder):
 
 
 def test_dissimilar_relations_do_not_propagate(embedder):
-    """Unrelated relation phrases ('acquired' vs 'located in') should not
-    pass the relation gate — no matches between unrelated graphs."""
+    """Unrelated relation phrases ('acquired' vs 'located in') have low
+    relation similarity — no matches between unrelated graphs."""
     g1 = Graph(id="g1")
     apple = g1.add_entity("Apple")
     beats = g1.add_entity("Beats")
@@ -395,9 +395,9 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     """A shared high-confidence anchor should not cause entities with
     different names to match.
 
-    NovaTech Labs has identical name sim across graphs. "founded"
-    passes the relation gate. But under exponential sum, a single
-    structural path is insufficient to cross the threshold."""
+    NovaTech Labs has identical name sim across graphs. But under
+    exponential sum, a single structural path is insufficient to cross
+    the threshold."""
     g1 = Graph(id="g1")
     sharma = g1.add_entity("Dr. Priya Sharma")
     nova1 = g1.add_entity("NovaTech Labs")
@@ -536,36 +536,6 @@ def test_multi_hop_needs_multiple_iterations(embedder):
 
     # The far-end pair (Alpha/Alpha) should benefit from more iterations
     assert conf_30[(a1.id, a2.id)] >= conf_1[(a1.id, a2.id)]
-
-
-# ---------------------------------------------------------------------------
-# Confidence gate isolation
-# ---------------------------------------------------------------------------
-
-
-def test_confidence_gate_blocks_weak_anchor(embedder):
-    """When an anchor's name similarity falls below the confidence gate,
-    it should not contribute structural evidence.
-
-    'Meridian Tech' / 'Meridian Technologies' have name sim ~0.85.
-    With confidence_gate=0.95, the anchor is blocked → no propagation."""
-    g1 = Graph(id="g1")
-    apple1 = g1.add_entity("Apple")
-    meridian1 = g1.add_entity("Meridian Technologies")
-    g1.add_edge(apple1, meridian1, "acquired")
-
-    g2 = Graph(id="g2")
-    apple2 = g2.add_entity("Apple")
-    meridian2 = g2.add_entity("Meridian Tech")
-    g2.add_edge(apple2, meridian2, "acquired")
-
-    conf_high_gate = match_graphs([g1, g2], embedder, confidence_gate=0.95)
-    conf_low_gate = match_graphs([g1, g2], embedder, confidence_gate=0.5)
-
-    # With high gate, Apple pair gets no structural boost from Meridian anchor
-    assert (
-        conf_high_gate[(apple1.id, apple2.id)] < conf_low_gate[(apple1.id, apple2.id)]
-    )
 
 
 # ---------------------------------------------------------------------------

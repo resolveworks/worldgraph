@@ -193,24 +193,29 @@ def propagate_similarity(
     functionality: dict[str, Functionality],
     max_iter: int = 30,
     epsilon: float = 1e-4,
-    rel_gate: float = 0.8,
-    confidence_gate: float = 0.5,
     exp_lambda: float = 1.0,
 ) -> Confidence:
     """Run similarity propagation on a single unified graph.
 
     Compares entity pairs from different source graphs (based on
     node.graph_id).  Name-name confidence is computed on demand
-    via Soft TF-IDF.  Entity-entity confidence is updated iteratively.
+    via Soft TF-IDF.  Entity-entity confidence is updated iteratively
+    using double-buffering (each iteration reads from the previous
+    iteration's values).
+
+    Relation similarity and neighbor confidence are continuous
+    multipliers — no hard gates.  Each propagation path contributes:
+
+        rel_sim(r_a, r_b) × min(func_a, func_b) × neighbor_confidence
 
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     Both orderings (a,b) and (b,a) are stored for convenient lookup.
     """
     adjacency = _build_weighted_adjacency(graph, functionality)
 
-    # Precompute which relation pairs pass the gate
+    # Precompute pairwise relation similarities (continuous, not gated)
     all_relations = {edge.relation for edge in graph.edges}
-    relation_passes_gate: set[tuple[str, str]] = set()
+    rel_sim: dict[tuple[str, str], float] = {}
     for rel_a in all_relations:
         embedding_a = relation_embeddings.get(rel_a)
         if embedding_a is None:
@@ -219,8 +224,7 @@ def propagate_similarity(
             embedding_b = relation_embeddings.get(rel_b)
             if embedding_b is None:
                 continue
-            if float(np.dot(embedding_a, embedding_b)) >= rel_gate:
-                relation_passes_gate.add((rel_a, rel_b))
+            rel_sim[(rel_a, rel_b)] = max(0.0, float(np.dot(embedding_a, embedding_b)))
 
     # Identify entity nodes (non-literal nodes)
     entity_ids = [
@@ -241,10 +245,10 @@ def propagate_similarity(
             confidence[(id_b, id_a)] = 0.0
             pairs.append((id_a, id_b))
 
-    def _get_confidence(node_id_a: str, node_id_b: str) -> float:
+    def _get_confidence(node_id_a: str, node_id_b: str, prev: Confidence) -> float:
         """Look up confidence for any node pair, computing name sim on demand."""
-        if (node_id_a, node_id_b) in confidence:
-            return confidence[(node_id_a, node_id_b)]
+        if (node_id_a, node_id_b) in prev:
+            return prev[(node_id_a, node_id_b)]
         node_a = graph.nodes[node_id_a]
         node_b = graph.nodes[node_id_b]
         if isinstance(node_a, LiteralNode) and isinstance(node_b, LiteralNode):
@@ -252,6 +256,7 @@ def propagate_similarity(
         return 0.0
 
     for _ in range(max_iter):
+        prev = dict(confidence)
         changed = False
 
         for id_a, id_b in pairs:
@@ -259,24 +264,22 @@ def propagate_similarity(
 
             for neighbor_a in adjacency.get(id_a, []):
                 for neighbor_b in adjacency.get(id_b, []):
-                    if (
-                        neighbor_a.relation,
-                        neighbor_b.relation,
-                    ) not in relation_passes_gate:
+                    rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
+                    if rs <= 0.0:
                         continue
                     neighbor_confidence = _get_confidence(
-                        neighbor_a.entity_id, neighbor_b.entity_id
+                        neighbor_a.entity_id, neighbor_b.entity_id, prev
                     )
-                    if neighbor_confidence < confidence_gate:
+                    if neighbor_confidence <= 0.0:
                         continue
                     weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
-                    strength_sum += weight * neighbor_confidence
+                    strength_sum += rs * weight * neighbor_confidence
 
             combined = (
                 1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
             )
 
-            old = confidence[(id_a, id_b)]
+            old = prev[(id_a, id_b)]
             if combined > old + epsilon:
                 confidence[(id_a, id_b)] = combined
                 confidence[(id_b, id_a)] = combined
@@ -296,7 +299,7 @@ def propagate_similarity(
 def match_graphs(
     graphs: list[Graph],
     embedder: Embedder,
-    rel_threshold: float = 0.8,
+    rel_cluster_threshold: float = 0.8,
     **propagate_kwargs,
 ) -> Confidence:
     """Core matching pipeline: graphs → confidence scores.
@@ -318,14 +321,15 @@ def match_graphs(
     relation_embeddings = embedder.embed(
         [*all_relations, NAME_EDGE], template=RELATION_TEMPLATE
     )
-    functionality = compute_functionality(graphs, relation_embeddings, rel_threshold)
+    functionality = compute_functionality(
+        graphs, relation_embeddings, rel_cluster_threshold
+    )
 
     return propagate_similarity(
         unified,
         idf,
         relation_embeddings,
         functionality,
-        rel_gate=rel_threshold,
         **propagate_kwargs,
     )
 
@@ -383,7 +387,7 @@ def run_matching(
     confidence = match_graphs(
         graphs,
         embedder,
-        rel_threshold=relation_threshold,
+        rel_cluster_threshold=relation_threshold,
         max_iter=max_iter,
         epsilon=epsilon,
     )
