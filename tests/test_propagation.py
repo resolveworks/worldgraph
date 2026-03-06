@@ -545,6 +545,43 @@ def test_multi_hop_needs_multiple_iterations(embedder):
 # ---------------------------------------------------------------------------
 
 
+def test_same_graph_entities_never_match(embedder):
+    """Entities from the same article should never form a match pair,
+    even when they have identical names."""
+    g1 = Graph(id="g1")
+    apple1 = g1.add_entity("Apple")
+    beats1 = g1.add_entity("Beats")
+    g1.add_edge(apple1, beats1, "acquired")
+
+    g2 = Graph(id="g2")
+    apple2 = g2.add_entity("Apple")
+    beats2 = g2.add_entity("Beats")
+    g2.add_edge(apple2, beats2, "acquired")
+
+    confidence = match_graphs([g1, g2], embedder)
+
+    for id_a, id_b in confidence.keys():
+        node_a = g1.nodes.get(id_a) or g2.nodes.get(id_a)
+        node_b = g1.nodes.get(id_b) or g2.nodes.get(id_b)
+        assert node_a.graph_id != node_b.graph_id, (
+            f"Same-graph pair found: {node_a.name} and {node_b.name} "
+            f"both from graph '{node_a.graph_id}'"
+        )
+
+
+def test_single_graph_produces_no_matches(embedder):
+    """match_graphs with a single graph should return empty confidence.
+    Degenerate input shouldn't break."""
+    g1 = Graph(id="g1")
+    apple = g1.add_entity("Apple")
+    beats = g1.add_entity("Beats")
+    g1.add_edge(apple, beats, "acquired")
+
+    confidence = match_graphs([g1], embedder)
+
+    assert len(confidence) == 0, f"Expected no matches, got: {confidence}"
+
+
 def test_confidence_is_monotonically_nondecreasing(embedder):
     """Confidence should never decrease as more iterations run."""
     g1 = Graph(id="g1")
