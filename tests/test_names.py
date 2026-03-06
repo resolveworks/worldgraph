@@ -124,3 +124,22 @@ def test_nfkd_normalization_matches_accented_forms():
     idf = build_idf(["José García", "Jose Garcia", "DataVault"])
     score = soft_tfidf("José García", "Jose Garcia", idf)
     assert score == pytest.approx(1.0)
+
+
+# ---------------------------------------------------------------------------
+# Symmetry
+# ---------------------------------------------------------------------------
+
+
+def test_soft_tfidf_is_symmetric():
+    """soft_tfidf(a, b) should equal soft_tfidf(b, a)."""
+    labels = ["Meridian Technologies", "Meridian Tech", "DataVault Inc", "Elena Vasquez"]
+    idf = build_idf(labels)
+    for a, b in [
+        ("Meridian Technologies", "Meridian Tech"),
+        ("DataVault Inc", "Elena Vasquez"),
+        ("Meridian Technologies", "Elena Vasquez"),
+    ]:
+        assert soft_tfidf(a, b, idf) == pytest.approx(soft_tfidf(b, a, idf)), (
+            f"soft_tfidf is not symmetric for ({a!r}, {b!r})"
+        )

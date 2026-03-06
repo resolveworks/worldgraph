@@ -545,6 +545,36 @@ def test_multi_hop_needs_multiple_iterations(embedder):
 # ---------------------------------------------------------------------------
 
 
+def test_same_graph_entities_never_match(embedder):
+    """Two entities within the same article graph should never appear as a
+    match pair, regardless of name similarity."""
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple Inc")
+    music = g.add_entity("Apple Music")
+    g.add_edge(apple, music, "owns")
+
+    g2 = Graph(id="g2")
+    anchor = g2.add_entity("Google")
+    g2.add_entity("Alphabet")
+
+    confidence = match_graphs([g, g2], embedder)
+
+    assert (apple.id, music.id) not in confidence
+    assert (music.id, apple.id) not in confidence
+
+
+def test_single_graph_produces_no_matches(embedder):
+    """match_graphs with a single graph should return an empty confidence dict."""
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple")
+    beats = g.add_entity("Beats")
+    g.add_edge(apple, beats, "acquired")
+
+    confidence = match_graphs([g], embedder)
+
+    assert confidence == {}
+
+
 def test_confidence_is_monotonically_nondecreasing(embedder):
     """Confidence should never decrease as more iterations run."""
     g1 = Graph(id="g1")
