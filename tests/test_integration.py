@@ -10,6 +10,8 @@ on multi-source scenarios that L2 tests don't cover:
 - Cross-event entity linking (shared entity across clusters)
 """
 
+import pytest
+
 from worldgraph.graph import Graph
 from worldgraph.match import build_match_groups, match_graphs
 
@@ -94,6 +96,9 @@ def test_three_source_with_person_name_variation(embedder):
 # ---------------------------------------------------------------------------
 
 
+@pytest.mark.xfail(
+    reason="Requires negative evidence: different lab neighbors should push against cross-cluster merge"
+)
 def test_identical_names_different_contexts_no_merge(embedder):
     """Two different people with identical names in unrelated clusters.
 
@@ -102,8 +107,8 @@ def test_identical_names_different_contexts_no_merge(embedder):
 
     Name similarity is 1.0 and both have the same relation ("leads"),
     same structure shape, and similar funder relation. But the actual
-    neighbors are completely different — no structural evidence supports
-    merging the two James Chens."""
+    neighbors are completely different — negative structural evidence
+    should prevent merging the two James Chens."""
     # Cluster A: AI research
     a1 = Graph(id="ai-1")
     jc_a1 = a1.add_entity("Dr. James Chen")

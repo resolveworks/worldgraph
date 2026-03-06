@@ -5,18 +5,12 @@ import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from worldgraph.constants import NAME_EDGE
-
 
 @dataclass
 class Node:
     id: str
     graph_id: str
-
-
-@dataclass
-class LiteralNode(Node):
-    label: str = ""
+    name: str
 
 
 @dataclass
@@ -33,12 +27,9 @@ class Graph:
     edges: list[Edge] = field(default_factory=list)
 
     def add_entity(self, name: str) -> Node:
-        """Add an entity node with an "is named" edge to a literal node."""
-        entity = Node(id=str(uuid.uuid4()), graph_id=self.id)
-        literal = LiteralNode(id=str(uuid.uuid4()), graph_id=self.id, label=name)
+        """Add an entity node with the given name."""
+        entity = Node(id=str(uuid.uuid4()), graph_id=self.id, name=name)
         self.nodes[entity.id] = entity
-        self.nodes[literal.id] = literal
-        self.edges.append(Edge(source=entity.id, target=literal.id, relation=NAME_EDGE))
         return entity
 
     def add_edge(self, source: Node, target: Node, relation: str) -> None:
@@ -47,10 +38,7 @@ class Graph:
 
 
 def load_graph(path: Path) -> Graph:
-    """Load a single graph JSON file.
-
-    The graph's id is the article_id; each node's graph_id tracks its origin.
-    """
+    """Load a single graph JSON file."""
     with open(path) as f:
         data = json.load(f)
 
@@ -59,12 +47,7 @@ def load_graph(path: Path) -> Graph:
 
     for node_data in data["nodes"]:
         node_id = node_data["id"]
-        if "label" in node_data:
-            nodes[node_id] = LiteralNode(
-                id=node_id, graph_id=graph_id, label=node_data["label"]
-            )
-        else:
-            nodes[node_id] = Node(id=node_id, graph_id=graph_id)
+        nodes[node_id] = Node(id=node_id, graph_id=graph_id, name=node_data["name"])
 
     edges: list[Edge] = []
     for edge_data in data["edges"]:
@@ -79,17 +62,6 @@ def load_graph(path: Path) -> Graph:
     return Graph(id=graph_id, nodes=nodes, edges=edges)
 
 
-def entity_names(graph: Graph, entity_id: str) -> list[str]:
-    """Get the names of an entity by following its NAME_EDGE edges."""
-    names = []
-    for edge in graph.edges:
-        if edge.relation == NAME_EDGE and edge.source == entity_id:
-            target = graph.nodes.get(edge.target)
-            if isinstance(target, LiteralNode):
-                names.append(target.label)
-    return names if names else [entity_id]
-
-
 def save_graph(
     graph: Graph,
     path: Path,
@@ -98,10 +70,7 @@ def save_graph(
     """Write graph to JSON, with optional match groups."""
     nodes_out = []
     for node in graph.nodes.values():
-        if isinstance(node, LiteralNode):
-            nodes_out.append({"id": node.id, "label": node.label})
-        else:
-            nodes_out.append({"id": node.id})
+        nodes_out.append({"id": node.id, "name": node.name})
 
     edges_out = []
     for edge in graph.edges:
