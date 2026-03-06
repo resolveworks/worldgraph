@@ -87,6 +87,7 @@ Session-scoped fixture in `conftest.py`: `embedder` provides a session-scoped `E
 
 ## Conventions
 
+- **CI/GitHub Actions**: when working on an issue (not already on a PR), always create a pull request with `gh pr create` after pushing your branch. Never just post a compare link — open the actual PR.
 - Keep the pipeline modular — each stage should be runnable independently
-- Implementation shortcuts are fine (no error handling, no production polish) — but the core algorithm must be designed to hold up on real, noisy, large-scale news data
+- The core algorithm must be designed to hold up on real, noisy, multilingual, large-scale news data
 - All intermediate outputs should be inspectable (write to JSON files between stages)
