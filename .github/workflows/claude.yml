@@ -21,8 +21,6 @@ jobs:
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'issues' && contains(github.event.issue.body, '@claude'))
     runs-on: self-hosted
-    container:
-      image: node:20
     steps:
       - uses: actions/checkout@v4
       - uses: anthropics/claude-code-action@v1
