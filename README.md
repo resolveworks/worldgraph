@@ -23,8 +23,8 @@ Another article covering the same event produces a structurally similar subgraph
 
 Entity pairs across graphs are compared using **PARIS-style similarity propagation** (Suchanek et al., 2011), adapted for free-text relation phrases:
 
-- Entity names are modeled as **literal nodes** connected to their entity via `"is named"` edges. Entity-entity confidence starts at zero — name similarity enters as structural evidence through propagation, not as initialization. This means name evidence and relational evidence are treated uniformly.
-- Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones). Neighbor evidence below a confidence gate (0.5) is ignored to prevent weak similarities from accumulating into false positives.
+- Entity-entity confidence is **seeded from name similarity** (Soft TF-IDF + Jaro-Winkler) before propagation begins. This gives the iteration loop initial signal to work with — structurally connected neighbors that share similar names start with nonzero scores, which then propagate outward.
+- Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones). Neighbor pairs with zero confidence are skipped.
 - Evidence from multiple paths is aggregated with an exponential sum: `1 - exp(-λ × Σ strengths)`. This naturally rewards breadth — a single strong path is heavily discounted (~0.63), while multiple paths accumulate proportionally.
 - Repeat until scores converge, then threshold to decide which pairs to merge
 
