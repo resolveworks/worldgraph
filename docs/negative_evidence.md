@@ -93,13 +93,7 @@ The gate (e.g. 0.3) ensures negative evidence only modulates pairs that are alre
 
 ### Convergence implications
 
-Multiplying by a negative factor makes the update non-monotone — a pair's score can decrease between iterations. This breaks FLORA's convergence guarantee. Two mitigations:
-
-1. **Apply negative evidence only at the end.** Run positive-only propagation to convergence (guaranteed by monotonicity), then apply negative factors as post-processing. Simple and safe, but misses the opportunity for negative evidence to prevent cascading false matches during propagation.
-
-2. **Apply per-iteration but with a ratchet.** Allow scores to decrease, but never below `max(name_sim, score × (1 - max_decrease))`. This bounds the per-iteration decrease and prevents oscillation. Convergence is not formally guaranteed but is practically achievable with a decreasing `max_decrease` schedule.
-
-Option 1 is the conservative starting point. Option 2 is the target if post-processing proves insufficient.
+Multiplying by a negative factor makes the update non-monotone — a pair's score can decrease between iterations. This breaks FLORA's strict monotone convergence guarantee. The dampening coefficient (`alpha`) and per-path floor bound the magnitude of any single negative adjustment, and scores can never drop below `floor^k` (where k is the number of edges), so they can't collapse to zero. This makes practical convergence likely but not formally guaranteed — oscillation across pairs in circular dependency chains is theoretically possible. If convergence issues arise, `alpha` and `floor` are the tuning knobs.
 
 ### What negative evidence does NOT replace
 
