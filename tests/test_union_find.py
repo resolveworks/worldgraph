@@ -59,7 +59,7 @@ def test_union_is_idempotent():
 
 
 def test_works_with_tuple_keys():
-    """Entity keys in the codebase are (graph_id, entity_id) tuples."""
+    """UnionFind should work with any hashable key type, not just strings."""
     uf = UnionFind()
     uf.union(("g1", "e1"), ("g2", "e1"))
     uf.union(("g2", "e1"), ("g3", "e1"))
