@@ -317,10 +317,11 @@ def build_match_groups(
     graphs: list[Graph],
     confidence: Confidence,
     threshold: float = 0.8,
-) -> list[MatchGroup]:
+) -> tuple[list[MatchGroup], Graph]:
     """Build match groups from confidence scores via union-find.
 
-    Returns list of sets, each containing matched entity IDs (groups of size > 1).
+    Returns (match_groups, unified_graph) where match_groups is a list of sets,
+    each containing matched entity IDs (groups of size > 1).
     """
     uf = UnionFind()
     for (id_a, id_b), score in confidence.items():
@@ -331,7 +332,7 @@ def build_match_groups(
     groups: dict[str, list[str]] = defaultdict(list)
     for entity_id in unified.nodes:
         groups[uf.find(entity_id)].append(entity_id)
-    return [set(members) for members in groups.values() if len(members) > 1]
+    return [set(members) for members in groups.values() if len(members) > 1], unified
 
 
 # ---------------------------------------------------------------------------
@@ -365,9 +366,7 @@ def run_matching(
         epsilon=epsilon,
     )
 
-    match_groups = build_match_groups(graphs, confidence, match_threshold)
-
-    unified = build_unified_graph(graphs)
+    match_groups, unified = build_match_groups(graphs, confidence, match_threshold)
     save_graph(unified, output_path, [list(group) for group in match_groups])
 
     click.echo(f"\n{len(match_groups)} match groups:")
