@@ -12,7 +12,6 @@ The target input is a continuous feed of all major news outlets — not a curate
 
 1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs → `data/graphs/{article_id}.json`
 2. **Match** — Align entities across graphs using similarity propagation → `data/matched.json`
-3. **Score** — Score each deduplicated fact by cross-source agreement
 
 ```bash
 worldgraph extract data/articles/*.json -o data/graphs/    # data/articles/ → data/graphs/
@@ -47,7 +46,7 @@ The matching stage implements **similarity propagation** (inspired by PARIS/FLOR
 
 **Similarity Flooding** (Melnik et al., 2002): entity similarity propagates through graph structure iteratively. To know if two entities match you need to know if their neighbors match — propagation dissolves this circularity by never making hard early decisions. See [docs/similarity_flooding.md](docs/similarity_flooding.md) for a detailed explanation of the algorithm and its evolution.
 
-**PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with *functionality weighting* — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones. See [docs/functionality.md](docs/functionality.md) for a detailed explanation.
+**PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with _functionality weighting_ — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones. See [docs/functionality.md](docs/functionality.md) for a detailed explanation.
 
 **FLORA** (Peng, Bonald, Suchanek, 2025): PARIS successor using fuzzy logic (t-norms/t-conorms) instead of probability, with proven convergence and explicit dangling-entity handling.
 
@@ -87,7 +86,7 @@ Session-scoped fixture in `conftest.py`: `embedder` provides a session-scoped `E
 
 ## Conventions
 
+- **Clean refactors, not patches**: this is an early-stage project with no external users. Every change should produce a pristine new state — never add backward-compatibility shims, preserve stale signatures, or keep dead code around "just in case". Refactor completely: rename freely, change interfaces, delete old code. No technical debt.
 - **CI/GitHub Actions**: when working on an issue (not already on a PR), always create a pull request with `gh pr create` after pushing your branch. Never just post a compare link — open the actual PR.
-- Keep the pipeline modular — each stage should be runnable independently
-- The core algorithm must be designed to hold up on real, noisy, multilingual, large-scale news data
-- All intermediate outputs should be inspectable (write to JSON files between stages)
+- **Pipeline modularity**: each stage should be runnable independently.
+- **Scale-readiness**: the core algorithm must hold up on real, noisy, multilingual, large-scale news data.

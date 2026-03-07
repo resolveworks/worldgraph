@@ -32,9 +32,9 @@ Relations are compared via sentence embedding similarity — "acquired", "bought
 
 Entities with no credible match in another graph are simply left unmerged (dangling entities, following FLORA, Peng et al., 2025).
 
-### 3. Score
+### 3. Score (planned)
 
-After merging, each unique fact is scored by how many independent sources report it. Entities with multiple occurrences are matched entities; edges with multiple source articles are confirmed facts.
+Once matching is battle-tested, a scoring stage will rank each deduplicated fact by cross-source agreement — entities with multiple occurrences are matched entities, edges confirmed by multiple independent articles are higher-confidence facts. Provenance tracking through the pipeline makes this possible: every merged entity and edge retains its source articles.
 
 ## Algorithm Design
 
