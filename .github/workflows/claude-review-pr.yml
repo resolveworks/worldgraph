@@ -1,11 +1,11 @@
-name: Claude Code Review
+name: Claude — Review PR
 
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
 
 jobs:
-  claude-review:
+  review-pr:
     if: |
       github.event.pull_request.draft == false && (
         github.event.pull_request.user.login == 'claude[bot]' ||
@@ -27,8 +27,8 @@ jobs:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.head.ref }}
 
-      - name: Run Claude Code Review
-        id: claude-review
+      - name: Review PR
+        id: review-pr
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -44,4 +44,3 @@ jobs:
             Then submit a formal review:
             - If there are no issues: `gh pr review ${{ github.event.pull_request.number }} --approve -b "Looks good."`
             - If there are issues: `gh pr review ${{ github.event.pull_request.number }} --request-changes -b "<description of issues>"` with a clear explanation of each issue and what needs to change.
-

@@ -1,11 +1,11 @@
-name: Claude Code
+name: Claude — Fix Issue
 
 on:
   issues:
     types: [opened]
 
 jobs:
-  claude:
+  fix-issue:
     runs-on: self-hosted
     permissions:
       contents: write
@@ -18,8 +18,8 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Run Claude Code
-        id: claude
+      - name: Fix issue
+        id: fix-issue
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
