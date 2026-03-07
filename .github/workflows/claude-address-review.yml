@@ -34,7 +34,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          claude_args: "--model claude-opus-4-6 --allowed-tools Bash(gh pr:*)"
+          claude_args: "--model claude-opus-4-6 --allowed-tools Bash(gh:*) Bash(uv:*)"
           prompt: |
             A review on PR #${{ github.event.pull_request.number }} requested changes. Implement the requested fixes.
 
@@ -44,6 +44,6 @@ jobs:
 
             Also check for any inline review comments with `gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments` and address those too.
 
-            After implementing the fixes, commit and push to the PR branch.
+            Run `uv run pytest` to verify all tests pass after implementing the fixes. Then commit and push to the PR branch.
 
             Every change you make should leave the codebase looking like it was always designed this way. No compat shims, no dead code, no half-measures — if something needs to change, change it fully.
