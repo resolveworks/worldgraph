@@ -77,7 +77,7 @@ def test_three_source_with_person_name_variation(embedder):
 
     graphs = [g1, g2, g3]
     confidence = match_graphs(graphs, embedder)
-    groups = build_match_groups(graphs, confidence)
+    groups, _ = build_match_groups(graphs, confidence)
 
     m_group = _find_group_containing(groups, m1.id)
     assert m_group is not None, "Meridian entities not merged"
@@ -141,7 +141,7 @@ def test_identical_names_different_contexts_no_merge(embedder):
 
     graphs = [a1, a2, b1, b2]
     confidence = match_graphs(graphs, embedder)
-    groups = build_match_groups(graphs, confidence)
+    groups, _ = build_match_groups(graphs, confidence)
 
     cluster_a_ids = {jc_a1.id, lab_a1.id, nsf_a1.id, jc_a2.id, lab_a2.id, nsf_a2.id}
     cluster_b_ids = {jc_b1.id, lab_b1.id, epa_b1.id, jc_b2.id, lab_b2.id, epa_b2.id}
@@ -207,7 +207,7 @@ def test_shared_entity_across_clusters(embedder):
 
     graphs = [a1, a2, b1, b2]
     confidence = match_graphs(graphs, embedder)
-    groups = build_match_groups(graphs, confidence)
+    groups, _ = build_match_groups(graphs, confidence)
 
     # All four Meridian entities should be in one group
     m_group = _find_group_containing(groups, m_a1.id)
@@ -268,7 +268,7 @@ def test_shared_person_across_clusters(embedder):
 
     graphs = [a1, a2, b1, b2]
     confidence = match_graphs(graphs, embedder)
-    groups = build_match_groups(graphs, confidence)
+    groups, _ = build_match_groups(graphs, confidence)
 
     # All four Elena Vasquez entities should merge (within + across clusters)
     ev_group = _find_group_containing(groups, ev1.id)
