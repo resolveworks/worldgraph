@@ -10,8 +10,6 @@ on multi-source scenarios that L2 tests don't cover:
 - Cross-event entity linking (shared entity across clusters)
 """
 
-import pytest
-
 from worldgraph.graph import Graph
 from worldgraph.match import build_match_groups, match_graphs
 
@@ -96,9 +94,6 @@ def test_three_source_with_person_name_variation(embedder):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="Requires negative evidence: different lab neighbors should push against cross-cluster merge"
-)
 def test_identical_names_different_contexts_no_merge(embedder):
     """Two different people with identical names in unrelated clusters.
 

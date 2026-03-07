@@ -175,6 +175,128 @@ def _build_weighted_adjacency(
     return adjacency
 
 
+def _build_forward_adjacency(
+    graph: Graph,
+    functionality: dict[str, Functionality],
+) -> dict[str, list[Neighbor]]:
+    """Build per-entity forward adjacency for negative evidence.
+
+    For negative evidence, we need forward functionality: "given the source,
+    how many targets does this relation map to?" If the answer is one (high
+    forward functionality) and the target doesn't match, that's damning.
+
+    For each edge source --r--> target, the source gets a neighbor entry
+    with forward functionality. Both directions are included symmetrically:
+    the target also gets a neighbor entry (with inverse functionality as the
+    "forward" direction from target's perspective).
+    """
+    default = Functionality(1.0, 1.0)
+    adjacency: dict[str, list[Neighbor]] = defaultdict(list)
+    for edge in graph.edges:
+        func = functionality.get(edge.relation, default)
+        adjacency[edge.source].append(
+            Neighbor(edge.target, edge.relation, func.forward)
+        )
+        adjacency[edge.target].append(
+            Neighbor(edge.source, edge.relation, func.inverse)
+        )
+    return adjacency
+
+
+def compute_negative_factor(
+    id_a: str,
+    id_b: str,
+    forward_adj: dict[str, list[Neighbor]],
+    rel_sim: dict[tuple[str, str], float],
+    confidence: Confidence,
+    alpha: float = 0.3,
+    floor: float = 0.5,
+    rel_threshold: float = 0.8,
+) -> float:
+    """Compute dampened negative factor for an entity pair.
+
+    For each neighbor y of a (via relation r), check whether y matches any
+    neighbor y' of b (via a similar relation r'). If no match is found and
+    the relation is functional, penalize the pair.
+
+    Both directions are checked independently; the more charitable (higher)
+    factor is used.  This reflects news graph reality: articles cover
+    different aspects of the same entity, so missing neighbors on one side
+    is common and should not compound penalties from both directions.
+
+    Returns a value in (0, 1] that multiplies the positive confidence.
+    """
+    neg_a = _one_sided_negative(
+        id_a,
+        id_b,
+        forward_adj,
+        rel_sim,
+        confidence,
+        alpha,
+        floor,
+        rel_threshold,
+    )
+    neg_b = _one_sided_negative(
+        id_b,
+        id_a,
+        forward_adj,
+        rel_sim,
+        confidence,
+        alpha,
+        floor,
+        rel_threshold,
+    )
+    return max(neg_a, neg_b)
+
+
+def _one_sided_negative(
+    id_a: str,
+    id_b: str,
+    forward_adj: dict[str, list[Neighbor]],
+    rel_sim: dict[tuple[str, str], float],
+    confidence: Confidence,
+    alpha: float,
+    floor: float,
+    rel_threshold: float,
+) -> float:
+    """Negative factor from a's perspective.
+
+    Computes a functionality-weighted average mismatch across a's neighbors,
+    then converts to a multiplicative penalty.  The weighted average
+    naturally normalizes for the number of neighbors: an entity with
+    5 neighbors, 4 matching and 1 not, gets a mild penalty (20% mismatch),
+    while an entity with 1 non-matching neighbor gets a strong one (100%).
+
+    Relation similarity is treated as binary (matching or not) using
+    ``rel_threshold``.  This prevents synonym relations from creating
+    cascading mismatch penalties — "acquired" and "purchased" are either
+    similar enough to count as the same role, or they aren't.
+    """
+    neighbors_a = forward_adj.get(id_a, [])
+    if not neighbors_a:
+        return 1.0
+
+    total_weight = 0.0
+    weighted_mismatch = 0.0
+    for neighbor_a in neighbors_a:
+        match_prob = 0.0
+        for neighbor_b in forward_adj.get(id_b, []):
+            rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
+            if rs < rel_threshold:
+                continue
+            nbr_conf = confidence.get((neighbor_a.entity_id, neighbor_b.entity_id), 0.0)
+            match_prob += nbr_conf
+        match_prob = min(match_prob, 1.0)
+        total_weight += neighbor_a.func_weight
+        weighted_mismatch += neighbor_a.func_weight * (1.0 - match_prob)
+
+    if total_weight == 0.0:
+        return 1.0
+
+    avg_mismatch = weighted_mismatch / total_weight
+    return max(1.0 - alpha * avg_mismatch, floor)
+
+
 def build_unified_graph(graphs: list[Graph]) -> Graph:
     """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs."""
     unified = Graph()
@@ -192,6 +314,9 @@ def propagate_similarity(
     max_iter: int = 30,
     epsilon: float = 1e-4,
     exp_lambda: float = 1.0,
+    neg_alpha: float = 0.3,
+    neg_floor: float = 0.5,
+    neg_gate: float = 0.3,
 ) -> Confidence:
     """Run similarity propagation on a single unified graph.
 
@@ -206,10 +331,17 @@ def propagate_similarity(
 
         rel_sim(r_a, r_b) × min(func_a, func_b) × neighbor_confidence
 
+    After computing the positive update, a dampened negative factor is
+    applied to pairs above ``neg_gate``.  This penalizes pairs whose
+    functional neighbors have no matching counterpart in the other entity's
+    neighborhood, preventing false merges between entities with identical
+    names but different structural contexts.
+
     Returns confidence: (entity_id_a, entity_id_b) -> float in [0, 1].
     Both orderings (a,b) and (b,a) are stored for convenient lookup.
     """
     adjacency = _build_weighted_adjacency(graph, functionality)
+    forward_adj = _build_forward_adjacency(graph, functionality)
 
     # Precompute pairwise relation similarities (continuous, not gated)
     all_relations = {edge.relation for edge in graph.edges}
@@ -241,8 +373,22 @@ def propagate_similarity(
             confidence[(id_b, id_a)] = name_sim
             pairs.append((id_a, id_b))
 
+    # Name-similarity seed is fixed and used by the negative factor to
+    # check whether neighbors match.  Using name sim (not propagated
+    # confidence) prevents circular reinforcement where structural evidence
+    # from an entity pair inflates its own neighbors' match quality, which
+    # in turn weakens the negative penalty on the original pair.
+    name_seed: Confidence = dict(confidence)
+
+    # Positive base tracks the monotone non-decreasing positive signal,
+    # computed using positive_base values for structural propagation.
+    # Final confidence = positive_base × negative_factor, recomputed each
+    # iteration so negative evidence never compounds.
+    positive_base: Confidence = dict(confidence)
+
     for _ in range(max_iter):
         prev = dict(confidence)
+        prev_base = dict(positive_base)
         changed = False
 
         for id_a, id_b in pairs:
@@ -253,7 +399,10 @@ def propagate_similarity(
                     rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
                     if rs <= 0.0:
                         continue
-                    neighbor_confidence = prev.get(
+                    # Structural propagation uses positive_base so that
+                    # negative penalties on neighbors don't suppress
+                    # legitimate positive signal.
+                    neighbor_confidence = prev_base.get(
                         (neighbor_a.entity_id, neighbor_b.entity_id), 0.0
                     )
                     if neighbor_confidence <= 0.0:
@@ -261,12 +410,35 @@ def propagate_similarity(
                     weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
                     strength_sum += rs * weight * neighbor_confidence
 
-            combined = (
+            positive = (
                 1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
             )
 
+            old_base = prev_base[(id_a, id_b)]
+            base = max(positive, old_base)
+            positive_base[(id_a, id_b)] = base
+            positive_base[(id_b, id_a)] = base
+
+            # Apply negative evidence to pairs with enough positive signal.
+            # The negative factor uses name_seed (fixed name similarity)
+            # to check whether neighbors match, preventing circular
+            # reinforcement through structural propagation.
+            if base > neg_gate:
+                neg = compute_negative_factor(
+                    id_a,
+                    id_b,
+                    forward_adj,
+                    rel_sim,
+                    name_seed,
+                    alpha=neg_alpha,
+                    floor=neg_floor,
+                )
+                combined = base * neg
+            else:
+                combined = base
+
             old = prev[(id_a, id_b)]
-            if combined > old + epsilon:
+            if abs(combined - old) > epsilon:
                 confidence[(id_a, id_b)] = combined
                 confidence[(id_b, id_a)] = combined
                 changed = True
