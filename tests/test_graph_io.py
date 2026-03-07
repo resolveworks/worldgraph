@@ -7,7 +7,7 @@ from worldgraph.graph import Graph, Node, Edge, load_graph, save_graph
 
 
 def test_save_load_roundtrip_single_graph(tmp_path: Path):
-    """Single-article graph: graph_id is omitted per-node and inferred on load."""
+    """Single-article graph: graph_id is always serialized per node."""
     g = Graph(id="article-1")
     n1 = g.add_entity("Alice")
     n2 = g.add_entity("Bob")
@@ -16,11 +16,11 @@ def test_save_load_roundtrip_single_graph(tmp_path: Path):
     path = tmp_path / "g.json"
     save_graph(g, path)
 
-    # graph_id should NOT appear in the JSON (all nodes share graph.id)
+    # graph_id should appear on every node
     with open(path) as f:
         data = json.load(f)
     for node_data in data["nodes"]:
-        assert "graph_id" not in node_data
+        assert node_data["graph_id"] == "article-1"
 
     loaded = load_graph(path)
     for node in loaded.nodes.values():
@@ -39,13 +39,13 @@ def test_save_load_roundtrip_unified_graph(tmp_path: Path):
     path = tmp_path / "unified.json"
     save_graph(g, path)
 
-    # Only nodes with a different graph_id should have it serialized
+    # Every node should have graph_id serialized
     with open(path) as f:
         data = json.load(f)
     nodes_by_id = {n["id"]: n for n in data["nodes"]}
     assert nodes_by_id["n1"]["graph_id"] == "article-1"
     assert nodes_by_id["n2"]["graph_id"] == "article-2"
-    assert "graph_id" not in nodes_by_id["n3"]
+    assert nodes_by_id["n3"]["graph_id"] == "unified"
 
     # Round-trip preserves per-node graph_id
     loaded = load_graph(path)

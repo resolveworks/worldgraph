@@ -49,7 +49,7 @@ def load_graph(path: Path) -> Graph:
         node_id = node_data["id"]
         nodes[node_id] = Node(
             id=node_id,
-            graph_id=node_data.get("graph_id", graph_id),
+            graph_id=node_data["graph_id"],
             name=node_data["name"],
         )
 
@@ -74,10 +74,7 @@ def save_graph(
     """Write graph to JSON, with optional match groups."""
     nodes_out = []
     for node in graph.nodes.values():
-        entry: dict[str, str] = {"id": node.id, "name": node.name}
-        if node.graph_id != graph.id:
-            entry["graph_id"] = node.graph_id
-        nodes_out.append(entry)
+        nodes_out.append({"id": node.id, "graph_id": node.graph_id, "name": node.name})
 
     edges_out = []
     for edge in graph.edges:
