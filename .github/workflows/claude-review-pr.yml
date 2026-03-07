@@ -41,6 +41,8 @@ jobs:
 
             Review the changes for bugs, logic errors, security issues, and CLAUDE.md compliance. Focus on high-signal issues only — do not flag style nits, potential issues that depend on specific inputs, or subjective suggestions.
 
+            Pay special attention to cleanliness: the codebase should look like it was always designed this way. Flag any leftover dead code, backward-compatibility shims, or half-finished refactors as issues worth fixing.
+
             Then submit a formal review:
             - If there are no issues: `gh pr review ${{ github.event.pull_request.number }} --approve -b "Looks good."`
             - If there are issues: `gh pr review ${{ github.event.pull_request.number }} --request-changes -b "<description of issues>"` with a clear explanation of each issue and what needs to change.
