@@ -47,7 +47,11 @@ def load_graph(path: Path) -> Graph:
 
     for node_data in data["nodes"]:
         node_id = node_data["id"]
-        nodes[node_id] = Node(id=node_id, graph_id=graph_id, name=node_data["name"])
+        nodes[node_id] = Node(
+            id=node_id,
+            graph_id=node_data["graph_id"],
+            name=node_data["name"],
+        )
 
     edges: list[Edge] = []
     for edge_data in data["edges"]:
@@ -70,7 +74,7 @@ def save_graph(
     """Write graph to JSON, with optional match groups."""
     nodes_out = []
     for node in graph.nodes.values():
-        nodes_out.append({"id": node.id, "name": node.name})
+        nodes_out.append({"id": node.id, "graph_id": node.graph_id, "name": node.name})
 
     edges_out = []
     for edge in graph.edges:
