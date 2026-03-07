@@ -10,62 +10,59 @@ The target input is a continuous feed of all major news outlets — not a curate
 
 ## Architecture (PoC Pipeline)
 
-1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs → `data/graphs/{article_id}.json`
-2. **Match** — Align entities across graphs using similarity propagation → `data/matched.json`
+1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs (one JSON per article)
+2. **Match** — Align entities across graphs using similarity propagation
 
 ```bash
-worldgraph extract data/articles/*.json -o data/graphs/    # data/articles/ → data/graphs/
-worldgraph match data/graphs/*.json -o data/matched.json   # data/graphs/  → data/matched.json
+worldgraph extract articles/*.json -o graphs/    # article JSON → per-article graph JSON
+worldgraph match graphs/*.json -o matched.json   # per-article graphs → unified matched graph
 ```
 
-In `matched.json`, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
+In the matched output, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
 
 ## Project Structure
 
 - `worldgraph/` — one module per pipeline stage (`extract.py`, `match.py`), plus `cli.py` for the Click entry point
-- `data/articles/` — input articles as `{uuid}.json`; `data/graphs/` — extraction output, one per article; `data/matched.json` — matching output
 - `docs/` — detailed algorithm write-ups referenced from this file
 - `tests/` — pytest suite, layered (see Testing Strategy below)
 
-## Test Data
-
-`data/articles/` contains synthetic news articles (one `{uuid}.json` per article) covering multiple independent event clusters. Each cluster has several outlets reporting the same underlying facts with different wording.
-
-The articles are designed to exercise the algorithm's key challenges:
-
-- **Entity name variation**: same entity referred to differently across articles (e.g. "Meridian Technologies" / "Meridian Tech", "Dr. Priya Sharma" / "P. Sharma")
-- **Relation phrasing variation**: same fact expressed with different verbs/phrases (e.g. "acquired" / "buys" / "purchase")
-- **Cross-event entity linking**: entities that appear in multiple event clusters
-- **Dangling entities**: most entities in any given article have no counterpart in most other articles
-
 ## Matching Algorithm
 
-The matching stage implements **similarity propagation** (inspired by PARIS/FLORA) adapted for free-text relation phrases.
+The matching stage implements **similarity propagation** (inspired by PARIS/FLORA) adapted for free-text relation phrases. The design is driven by the literature and validated by automated tests — we don't have real-world ground truth yet, so the tests encode what the algorithm *should* do based on the papers and our understanding of the domain. When a test fails, it's either a bug or a wrong assumption about what the algorithm needs.
 
-### Key concepts from the literature
+See `docs/` for detailed write-ups on each concept referenced below.
 
-**Similarity Flooding** (Melnik et al., 2002): entity similarity propagates through graph structure iteratively. To know if two entities match you need to know if their neighbors match — propagation dissolves this circularity by never making hard early decisions. See [docs/similarity_flooding.md](docs/similarity_flooding.md) for a detailed explanation of the algorithm and its evolution.
+### What's implemented
 
-**PARIS** (Suchanek et al., 2011): extends SF to knowledge base alignment with _functionality weighting_ — a relation's contribution to entity similarity is scaled by how functional it is (how often it maps a subject to a unique object). Rare/specific relations carry more signal than generic ones. See [docs/functionality.md](docs/functionality.md) for a detailed explanation.
+The core propagation loop (`match.py`):
 
-**FLORA** (Peng, Bonald, Suchanek, 2025): PARIS successor using fuzzy logic (t-norms/t-conorms) instead of probability, with proven convergence and explicit dangling-entity handling.
+1. **Name-similarity seeding** — Soft TF-IDF + Jaro-Winkler seeds the confidence dict before iteration starts. This gives propagation initial signal to work with. See [docs/name_similarity.md](docs/name_similarity.md).
 
-### Our adaptations
+2. **Relation similarity via sentence embeddings** — relation phrase similarity is a continuous multiplier on propagation paths, not a binary gate. "acquired" ↔ "purchased" (~0.85) contributes proportionally; "acquired" ↔ "located in" (~0.1) contributes almost nothing. This replaces the identical-label requirement in standard SF/PARIS.
 
-Standard SF/PARIS assume a shared or alignable relation vocabulary. We have free-text phrases. Adaptations:
+3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with similar relation phrases pooled. See [docs/functionality.md](docs/functionality.md).
 
-1. **Relation similarity via sentence embeddings**: instead of requiring identical edge labels to allow propagation, gate propagation paths by cosine similarity of relation phrase embeddings. Only paths where rel_sim >= threshold propagate; "acquired" and "buys" pass (~0.85), "acquired" and "located in" don't. Entity name similarity uses Soft TF-IDF + Jaro-Winkler instead of embeddings — see [docs/name_similarity.md](docs/name_similarity.md).
+4. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `rel_sim × min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
 
-2. **Functionality from phrase frequency**: a relation phrase appearing as the unique connection between two specific entities is maximally specific. Approximate PARIS functionality as inverse average degree of the relation in the graph.
+5. **Monotone non-decreasing updates** — confidence only goes up, never down. Preserves convergence guarantees (FLORA-style).
 
-3. **Dangling entities by default**: most entities won't match anything across most graph pairs. Threshold-based finalization naturally leaves them unmerged — no special handling needed.
+6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Final grouping via union-find.
 
-4. **Exponential sum aggregation**: structural evidence is `1 - exp(-λ × Σ strengths)` where each path contributes `functionality × neighbor_confidence`. This inherently rewards breadth — a single strong path is heavily discounted, multiple paths accumulate proportionally.
+### What's not implemented (yet)
 
-### What we don't do (yet)
+These are documented in `docs/` with design sketches but no code.
 
-- PARIS-style joint relation alignment loop (relation similarities updated from entity similarities, alternately) — we pre-compute relation similarity from embeddings and hold it fixed
-- The full IsoRankN spectral clustering for N-graph alignment — we run pairwise and merge transitively
+- **Negative evidence** ([docs/negative_evidence.md](docs/negative_evidence.md)) — the absence of expected neighbor matches should count against entity equivalence. Without this, entities with identical names but different contexts merge incorrectly (see `test_identical_names_different_contexts_no_merge`, `test_similar_names_disjoint_neighborhoods_no_match`). PARIS tried this and abandoned it as too aggressive; we propose a dampened version.
+
+- **Progressive merging** ([docs/progressive_merging.md](docs/progressive_merging.md)) — commit high-confidence merges during propagation and continue with enriched neighborhoods. Currently all merging is post-processing via union-find.
+
+- **Local functionality** — FLORA uses per-entity functionality (`1/|targets for this specific source|`), not just global averages. We only compute global.
+
+- **Confidence-weighted union-find** ([docs/multi_graph_alignment.md](docs/multi_graph_alignment.md)) — current union-find enforces blind transitivity. A↔B and B↔C above threshold merges all three regardless of A↔C score. Validating group coherence would catch the worst cascading false merges.
+
+- **Cross-lingual support** ([docs/cross_lingual.md](docs/cross_lingual.md)) — swapping to a multilingual embedding model. The algorithm is language-agnostic by design; only the model choice needs to change.
+
+- **Joint relation alignment** — PARIS alternates entity and relation alignment. We pre-compute relation similarity from embeddings and hold it fixed.
 
 ## Tech Stack
 
@@ -90,3 +87,4 @@ Session-scoped fixture in `conftest.py`: `embedder` provides a session-scoped `E
 - **CI/GitHub Actions**: when working on an issue (not already on a PR), always create a pull request with `gh pr create` after pushing your branch. Never just post a compare link — open the actual PR.
 - **Pipeline modularity**: each stage should be runnable independently.
 - **Scale-readiness**: the core algorithm must hold up on real, noisy, multilingual, large-scale news data.
+- **Tests before fixes**: when a matching failure is identified, write a failing test (xfail if needed) that captures the specific scenario before changing the algorithm. The test encodes what "correct" means; the fix is just making it pass.
