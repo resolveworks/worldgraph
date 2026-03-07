@@ -26,6 +26,9 @@ jobs:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.head.ref }}
 
+      - name: Install pre-commit hooks
+        run: uv run pre-commit install
+
       - name: Address review
         id: address-review
         uses: anthropics/claude-code-action@v1
