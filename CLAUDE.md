@@ -15,8 +15,8 @@ The target input is a continuous feed of all major news outlets — not a curate
 3. **Score** — Score each deduplicated fact by cross-source agreement
 
 ```bash
-worldgraph extract                               # data/articles/ → data/graphs/
-worldgraph match                                 # data/graphs/  → data/matched.json
+worldgraph extract data/articles/*.json -o data/graphs/    # data/articles/ → data/graphs/
+worldgraph match data/graphs/*.json -o data/matched.json   # data/graphs/  → data/matched.json
 ```
 
 In `matched.json`, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
