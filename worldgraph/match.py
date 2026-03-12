@@ -2,8 +2,12 @@
 
 Entity names are stored directly on nodes.  Name similarity seeds the
 confidence dict before the iteration loop, so structural evidence
-propagates from iteration 1.  Exponential sum aggregation, threshold,
-merge via union-find.
+propagates from iteration 1.  Relation similarity is treated as binary
+via a single threshold that defines equivalence classes over free-text
+relation phrases — above threshold = same relation, below = different.
+This threshold is used consistently for functionality pooling, positive
+propagation gating, and negative evidence.  Exponential sum aggregation,
+threshold, merge via union-find.
 """
 
 import math
@@ -211,7 +215,8 @@ def compute_negative_factor(
     confidence: Confidence,
     alpha: float = 0.3,
     floor: float = 0.5,
-    rel_threshold: float = 0.8,
+    *,
+    rel_threshold: float,
 ) -> float:
     """Compute dampened negative factor for an entity pair.
 
@@ -224,6 +229,9 @@ def compute_negative_factor(
     different aspects of the same entity, so missing neighbors on one side
     is common and should not compound penalties from both directions.
 
+    ``rel_threshold`` is the same relation equivalence threshold used by
+    positive propagation and functionality pooling.
+
     Returns a value in (0, 1] that multiplies the positive confidence.
     """
     neg_a = _one_sided_negative(
@@ -234,7 +242,7 @@ def compute_negative_factor(
         confidence,
         alpha,
         floor,
-        rel_threshold,
+        rel_threshold=rel_threshold,
     )
     neg_b = _one_sided_negative(
         id_b,
@@ -244,7 +252,7 @@ def compute_negative_factor(
         confidence,
         alpha,
         floor,
-        rel_threshold,
+        rel_threshold=rel_threshold,
     )
     return max(neg_a, neg_b)
 
@@ -257,6 +265,7 @@ def _one_sided_negative(
     confidence: Confidence,
     alpha: float,
     floor: float,
+    *,
     rel_threshold: float,
 ) -> float:
     """Negative factor from a's perspective.
@@ -268,9 +277,8 @@ def _one_sided_negative(
     while an entity with 1 non-matching neighbor gets a strong one (100%).
 
     Relation similarity is treated as binary (matching or not) using
-    ``rel_threshold``.  This prevents synonym relations from creating
-    cascading mismatch penalties — "acquired" and "purchased" are either
-    similar enough to count as the same role, or they aren't.
+    ``rel_threshold`` — the same threshold used by positive propagation
+    and functionality pooling.
     """
     neighbors_a = forward_adj.get(id_a, [])
     if not neighbors_a:
@@ -311,6 +319,7 @@ def propagate_similarity(
     idf: dict[str, float],
     relation_embeddings: dict[str, np.ndarray],
     functionality: dict[str, Functionality],
+    rel_threshold: float = 0.8,
     max_iter: int = 30,
     epsilon: float = 1e-4,
     exp_lambda: float = 1.0,
@@ -326,10 +335,15 @@ def propagate_similarity(
     using double-buffering (each iteration reads from the previous
     iteration's values).
 
-    Relation similarity and neighbor confidence are continuous
-    multipliers — no hard gates.  Each propagation path contributes:
+    Relation similarity is treated as binary via ``rel_threshold``:
+    relation pairs with embedding similarity >= threshold are considered
+    the same relation; below threshold they are skipped entirely.  This
+    is the same threshold used by ``compute_functionality`` for pooling
+    and by ``compute_negative_factor`` for mismatch detection — one
+    concept of relation equivalence throughout.  Each propagation path
+    contributes:
 
-        rel_sim(r_a, r_b) × min(func_a, func_b) × neighbor_confidence
+        min(func_a, func_b) × neighbor_confidence
 
     After computing the positive update, a dampened negative factor is
     applied to pairs above ``neg_gate``.  This penalizes pairs whose
@@ -343,7 +357,7 @@ def propagate_similarity(
     adjacency = _build_weighted_adjacency(graph, functionality)
     forward_adj = _build_forward_adjacency(graph, functionality)
 
-    # Precompute pairwise relation similarities (continuous, not gated)
+    # Precompute pairwise relation similarities (gated by rel_threshold)
     all_relations = {edge.relation for edge in graph.edges}
     rel_sim: dict[tuple[str, str], float] = {}
     for rel_a in all_relations:
@@ -397,7 +411,7 @@ def propagate_similarity(
             for neighbor_a in adjacency.get(id_a, []):
                 for neighbor_b in adjacency.get(id_b, []):
                     rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
-                    if rs <= 0.0:
+                    if rs < rel_threshold:
                         continue
                     # Structural propagation uses positive_base so that
                     # negative penalties on neighbors don't suppress
@@ -408,7 +422,7 @@ def propagate_similarity(
                     if neighbor_confidence <= 0.0:
                         continue
                     weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
-                    strength_sum += rs * weight * neighbor_confidence
+                    strength_sum += weight * neighbor_confidence
 
             positive = (
                 1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
@@ -432,6 +446,7 @@ def propagate_similarity(
                     name_seed,
                     alpha=neg_alpha,
                     floor=neg_floor,
+                    rel_threshold=rel_threshold,
                 )
                 combined = base * neg
             else:
@@ -463,7 +478,12 @@ def match_graphs(
     """Core matching pipeline: graphs → confidence scores.
 
     Builds unified graph, computes IDF / relation embeddings / functionality,
-    and runs similarity propagation. Returns the confidence dict.
+    and runs similarity propagation.  ``rel_cluster_threshold`` is the single
+    relation equivalence threshold: relation pairs with embedding similarity
+    above this value are treated as the same relation for functionality
+    pooling, positive propagation gating, and negative evidence.
+
+    Returns the confidence dict.
     """
     unified = build_unified_graph(graphs)
 
@@ -481,6 +501,7 @@ def match_graphs(
         idf,
         relation_embeddings,
         functionality,
+        rel_threshold=rel_cluster_threshold,
         **propagate_kwargs,
     )
 
