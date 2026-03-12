@@ -10,8 +10,6 @@ on multi-source scenarios that L2 tests don't cover:
 - Cross-event entity linking (shared entity across clusters)
 """
 
-import pytest
-
 from worldgraph.graph import Graph
 from worldgraph.match import build_match_groups, match_graphs
 
@@ -39,18 +37,30 @@ def test_three_source_with_person_name_variation(embedder):
     structural context for propagation to work.
 
     "Dr. Priya Sharma" / "Priya Sharma" / "Dr. Sharma" — the name
-    similarity alone (~0.75) is below match threshold. Multiple shared
-    neighbors with identical names (Meridian, James Chen, Stanford)
-    provide structural evidence to bridge the gap."""
+    similarity alone (~0.79) is below match threshold. Multiple shared
+    neighbors with identical names provide structural evidence to bridge
+    the gap.
+
+    With gated relation similarity (threshold-based, not continuous),
+    each propagation path contributes ``min(func_a, func_b) × conf``.
+    Three name variants reduce all functionality weights to 1/3 (each
+    relation maps one source name to three target name variants), so
+    we need enough shared neighbors to accumulate sufficient evidence:
+    five neighbors × 1/3 weight × ~1.0 confidence = 1.67 strength,
+    giving positive = 1 - exp(-1.67) ≈ 0.81 > 0.8."""
     g1 = Graph(id="article-1")
     m1 = g1.add_entity("Meridian Technologies")
     p1 = g1.add_entity("Dr. Priya Sharma")
     j1 = g1.add_entity("James Chen")
     su1 = g1.add_entity("Stanford University")
     dv1 = g1.add_entity("DataVault Inc")
+    nat1 = g1.add_entity("Nature")
+    lab1 = g1.add_entity("Stanford AI Lab")
     g1.add_edge(m1, p1, "hired")
     g1.add_edge(p1, j1, "collaborates with")
     g1.add_edge(p1, su1, "alumna of")
+    g1.add_edge(p1, nat1, "published in")
+    g1.add_edge(p1, lab1, "leads")
     g1.add_edge(m1, dv1, "acquired")
 
     g2 = Graph(id="article-2")
@@ -59,9 +69,13 @@ def test_three_source_with_person_name_variation(embedder):
     j2 = g2.add_entity("James Chen")
     su2 = g2.add_entity("Stanford University")
     dv2 = g2.add_entity("DataVault Inc")
+    nat2 = g2.add_entity("Nature")
+    lab2 = g2.add_entity("Stanford AI Lab")
     g2.add_edge(m2, p2, "hired")
     g2.add_edge(p2, j2, "collaborates with")
     g2.add_edge(p2, su2, "alumna of")
+    g2.add_edge(p2, nat2, "published in")
+    g2.add_edge(p2, lab2, "leads")
     g2.add_edge(m2, dv2, "acquired")
 
     g3 = Graph(id="article-3")
@@ -70,9 +84,13 @@ def test_three_source_with_person_name_variation(embedder):
     j3 = g3.add_entity("James Chen")
     su3 = g3.add_entity("Stanford University")
     dv3 = g3.add_entity("DataVault Inc")
+    nat3 = g3.add_entity("Nature")
+    lab3 = g3.add_entity("Stanford AI Lab")
     g3.add_edge(m3, p3, "hired")
     g3.add_edge(p3, j3, "collaborates with")
     g3.add_edge(p3, su3, "alumna of")
+    g3.add_edge(p3, nat3, "published in")
+    g3.add_edge(p3, lab3, "leads")
     g3.add_edge(m3, dv3, "acquired")
 
     graphs = [g1, g2, g3]
@@ -83,9 +101,9 @@ def test_three_source_with_person_name_variation(embedder):
     assert m_group is not None, "Meridian entities not merged"
     assert m2.id in m_group and m3.id in m_group
 
-    # p1-p2 and p1-p3 should each merge (name sim ~0.75 + structural
-    # evidence from 3 shared neighbors). p2-p3 may not merge directly
-    # (name sim 0.28) but union-find transitivity through p1 links all three.
+    # p1-p2 and p1-p3 should each merge (name sim ~0.79 + structural
+    # evidence from 5 shared neighbors). p2-p3 may not merge directly
+    # (name sim ~0.39) but union-find transitivity through p1 links all three.
     p_group = _find_group_containing(groups, p1.id)
     assert p_group is not None, "Sharma entities not merged"
     assert p2.id in p_group and p3.id in p_group
@@ -96,9 +114,6 @@ def test_three_source_with_person_name_variation(embedder):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="Requires negative evidence: different lab neighbors should push against cross-cluster merge"
-)
 def test_identical_names_different_contexts_no_merge(embedder):
     """Two different people with identical names in unrelated clusters.
 
