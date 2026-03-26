@@ -7,7 +7,12 @@ on:
 jobs:
   address-review:
     if: |
-      github.event.review.state == 'changes_requested' && (
+      (
+        github.event.review.state == 'changes_requested' || (
+          github.event.review.state == 'commented' &&
+          github.event.review.user.login == 'claude[bot]'
+        )
+      ) && (
         github.event.review.user.login == 'claude[bot]' ||
         github.event.review.author_association == 'OWNER' ||
         github.event.review.author_association == 'MEMBER' ||
