@@ -524,6 +524,18 @@ def propagate_similarity(
         seen_canon: set[tuple[str, str]] = set()
         positive_base: Confidence = {}
 
+        # Precompute best name similarity per canonical pair in a single O(n²) pass.
+        best_name_per_canon: dict[tuple[str, str], float] = {}
+        for orig_a, orig_b in all_pairs:
+            ca, cb = uf.find(orig_a), uf.find(orig_b)
+            if ca == cb:
+                continue
+            cpair = (ca, cb) if ca < cb else (cb, ca)
+            best_name_per_canon[cpair] = max(
+                best_name_per_canon.get(cpair, 0.0),
+                name_seed.get((orig_a, orig_b), 0.0),
+            )
+
         for id_a, id_b in all_pairs:
             ca, cb = uf.find(id_a), uf.find(id_b)
             if ca == cb:
@@ -533,15 +545,7 @@ def propagate_similarity(
                 seen_canon.add(pair)
                 canon_pairs.append(pair)
 
-                # Seed: max name similarity across all member pairs
-                best_name = 0.0
-                for orig_a, orig_b in all_pairs:
-                    oa, ob = uf.find(orig_a), uf.find(orig_b)
-                    cpair = (oa, ob) if oa < ob else (ob, oa)
-                    if cpair == pair:
-                        best_name = max(best_name, name_seed.get((orig_a, orig_b), 0.0))
-
-                # Carry forward from previous epoch
+                best_name = best_name_per_canon.get(pair, 0.0)
                 carry = carried_confidence.get(pair, 0.0)
                 seed = max(best_name, carry)
                 positive_base[pair] = seed
