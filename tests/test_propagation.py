@@ -598,3 +598,68 @@ def test_positive_evidence_is_monotonically_nondecreasing(embedder):
                 f"at max_iter={n_iter}"
             )
         prev_conf = curr_conf
+
+
+# ---------------------------------------------------------------------------
+# Progressive merging: enriched neighborhoods
+# ---------------------------------------------------------------------------
+
+
+def test_progressive_merging_enriches_neighborhoods(embedder):
+    """Progressive merging lets evidence from transitively-matched entities
+    compound across epochs.
+
+    Articles A and B describe the same acquisition with identical entity names
+    and two shared neighbors — enough for high confidence (>0.9) in epoch 1.
+    Article C uses a short name variant with only ONE shared neighbor per
+    pairwise comparison. After A+B merge, the merged entity's enriched
+    neighborhood provides TWO structural paths to C, boosting confidence.
+
+    Article A: [Nexora Corp] —acquired→ [DataVault], —headquartered in→ [Austin]
+    Article B: [Nexora Corp] —bought→ [DataVault], —headquartered in→ [Austin]
+    Article C: [NXR Corp] —acquired→ [DataVault], —founded by→ [James Chen]
+
+    Without progressive merging: C's NXR Corp has low name sim to Nexora Corp
+    and one structural path (DataVault). With progressive merging: after A+B
+    merge, the merged entity has edges to both DataVault and Austin, and the
+    confidence for C↔merged improves."""
+    g_a = Graph(id="article-a")
+    nexora_a = g_a.add_entity("Nexora Corp")
+    dv_a = g_a.add_entity("DataVault")
+    austin_a = g_a.add_entity("Austin")
+    g_a.add_edge(nexora_a, dv_a, "acquired")
+    g_a.add_edge(nexora_a, austin_a, "headquartered in")
+
+    g_b = Graph(id="article-b")
+    nexora_b = g_b.add_entity("Nexora Corp")
+    dv_b = g_b.add_entity("DataVault")
+    austin_b = g_b.add_entity("Austin")
+    g_b.add_edge(nexora_b, dv_b, "bought")
+    g_b.add_edge(nexora_b, austin_b, "headquartered in")
+
+    g_c = Graph(id="article-c")
+    nexora_c = g_c.add_entity("NXR Corp")
+    dv_c = g_c.add_entity("DataVault")
+    chen_c = g_c.add_entity("James Chen")
+    g_c.add_edge(nexora_c, dv_c, "acquired")
+    g_c.add_edge(nexora_c, chen_c, "founded by")
+
+    graphs = [g_a, g_b, g_c]
+
+    # With progressive merging (default max_epochs=5), A+B merge in epoch 1
+    # (identical names + 2 shared neighbors → confidence > 0.9). In epoch 2,
+    # the merged entity's enriched neighborhood benefits C's match.
+    conf_multi = match_graphs(graphs, embedder)
+
+    # With max_epochs=1, no progressive merging occurs.
+    conf_single = match_graphs(graphs, embedder, max_epochs=1)
+
+    # Progressive merging should produce higher confidence for C's entity
+    # matching A's (or equivalently B's, since A+B are merged).
+    multi_score = conf_multi.get((nexora_c.id, nexora_a.id), 0.0)
+    single_score = conf_single.get((nexora_c.id, nexora_a.id), 0.0)
+
+    assert multi_score > single_score, (
+        f"Progressive merging did not improve confidence for NXR Corp ↔ Nexora Corp: "
+        f"multi={multi_score:.4f}, single={single_score:.4f}"
+    )

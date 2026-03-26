@@ -299,3 +299,72 @@ def test_shared_person_across_clusters(embedder):
         assert not (group & m_ids and group & summit_ids), (
             f"Meridian and Summit incorrectly merged: {group}"
         )
+
+
+# ---------------------------------------------------------------------------
+# 4. Progressive merging does not cause cascading false merges
+# ---------------------------------------------------------------------------
+
+
+def test_progressive_merging_no_cascading_false_merges(embedder):
+    """Two unrelated clusters with similar structure should stay separate
+    even with progressive merging enabled.
+
+    Cluster A: Dr. Sarah Kim leads Quantum Computing Lab, funded by DARPA
+    Cluster B: Dr. Sarah Kim leads Marine Biology Lab, funded by NOAA
+
+    Same pattern as test_identical_names_different_contexts_no_merge but
+    explicitly exercises progressive merging (within-cluster pairs above
+    0.9 trigger epoch 2). After within-cluster merges, the cross-cluster
+    canonical pair should NOT merge despite enriched neighborhoods —
+    negative evidence from mismatched neighbors (Quantum vs Marine, DARPA
+    vs NOAA) prevents it."""
+    # Cluster A: quantum research (2 sources)
+    a1 = Graph(id="quantum-1")
+    sk_a1 = a1.add_entity("Dr. Sarah Kim")
+    lab_a1 = a1.add_entity("Quantum Computing Lab")
+    darpa_a1 = a1.add_entity("DARPA")
+    a1.add_edge(sk_a1, lab_a1, "leads")
+    a1.add_edge(lab_a1, darpa_a1, "funded by")
+
+    a2 = Graph(id="quantum-2")
+    sk_a2 = a2.add_entity("Dr. Sarah Kim")
+    lab_a2 = a2.add_entity("Quantum Computing Lab")
+    darpa_a2 = a2.add_entity("DARPA")
+    a2.add_edge(sk_a2, lab_a2, "leads")
+    a2.add_edge(lab_a2, darpa_a2, "funded by")
+
+    # Cluster B: marine biology (2 sources) — same name, same structure
+    b1 = Graph(id="marine-1")
+    sk_b1 = b1.add_entity("Dr. Sarah Kim")
+    lab_b1 = b1.add_entity("Marine Biology Lab")
+    noaa_b1 = b1.add_entity("NOAA")
+    b1.add_edge(sk_b1, lab_b1, "leads")
+    b1.add_edge(lab_b1, noaa_b1, "funded by")
+
+    b2 = Graph(id="marine-2")
+    sk_b2 = b2.add_entity("Dr. Sarah Kim")
+    lab_b2 = b2.add_entity("Marine Biology Lab")
+    noaa_b2 = b2.add_entity("NOAA")
+    b2.add_edge(sk_b2, lab_b2, "leads")
+    b2.add_edge(lab_b2, noaa_b2, "funded by")
+
+    graphs = [a1, a2, b1, b2]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    cluster_a_ids = {sk_a1.id, lab_a1.id, darpa_a1.id, sk_a2.id, lab_a2.id, darpa_a2.id}
+    cluster_b_ids = {sk_b1.id, lab_b1.id, noaa_b1.id, sk_b2.id, lab_b2.id, noaa_b2.id}
+
+    for group in groups:
+        has_a = bool(group & cluster_a_ids)
+        has_b = bool(group & cluster_b_ids)
+        assert not (has_a and has_b), (
+            f"Progressive merging caused cascading false merge across clusters: {group}"
+        )
+
+    # Within-cluster merges should still work
+    sk_a_group = _find_group_containing(groups, sk_a1.id)
+    assert sk_a_group is not None and sk_a2.id in sk_a_group
+    sk_b_group = _find_group_containing(groups, sk_b1.id)
+    assert sk_b_group is not None and sk_b2.id in sk_b_group
