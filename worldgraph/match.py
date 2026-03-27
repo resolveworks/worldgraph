@@ -152,62 +152,6 @@ def compute_functionality(
 # ---------------------------------------------------------------------------
 
 
-def _build_weighted_adjacency(
-    graph: Graph,
-    functionality: dict[str, Functionality],
-) -> dict[str, list[Neighbor]]:
-    """Build per-entity adjacency list with direction-appropriate functionality.
-
-    PARIS semantics: the functionality weight measures "if my neighbor matches,
-    how strong is the evidence that I match?"
-
-    For edge source --r--> target:
-      - source uses inverse functionality: "given the target, how unique is the
-        source?"  If fun⁻¹(r) ≈ 1, a target match strongly implies a source match.
-      - target uses forward functionality: "given the source, how unique is the
-        target?"  If fun(r) ≈ 1, a source match strongly implies a target match.
-    """
-    default = Functionality(1.0, 1.0)
-    adjacency: dict[str, list[Neighbor]] = defaultdict(list)
-    for edge in graph.edges:
-        func = functionality.get(edge.relation, default)
-        adjacency[edge.source].append(
-            Neighbor(edge.target, edge.relation, func.inverse)
-        )
-        adjacency[edge.target].append(
-            Neighbor(edge.source, edge.relation, func.forward)
-        )
-    return adjacency
-
-
-def _build_forward_adjacency(
-    graph: Graph,
-    functionality: dict[str, Functionality],
-) -> dict[str, list[Neighbor]]:
-    """Build per-entity forward adjacency for negative evidence.
-
-    For negative evidence, we need forward functionality: "given the source,
-    how many targets does this relation map to?" If the answer is one (high
-    forward functionality) and the target doesn't match, that's damning.
-
-    For each edge source --r--> target, the source gets a neighbor entry
-    with forward functionality. Both directions are included symmetrically:
-    the target also gets a neighbor entry (with inverse functionality as the
-    "forward" direction from target's perspective).
-    """
-    default = Functionality(1.0, 1.0)
-    adjacency: dict[str, list[Neighbor]] = defaultdict(list)
-    for edge in graph.edges:
-        func = functionality.get(edge.relation, default)
-        adjacency[edge.source].append(
-            Neighbor(edge.target, edge.relation, func.forward)
-        )
-        adjacency[edge.target].append(
-            Neighbor(edge.source, edge.relation, func.inverse)
-        )
-    return adjacency
-
-
 def compute_negative_factor(
     id_a: str,
     id_b: str,
