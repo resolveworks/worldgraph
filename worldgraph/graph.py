@@ -49,11 +49,10 @@ def load_graph(path: Path) -> Graph:
 
     for node_data in data["nodes"]:
         node_id = node_data["id"]
-        raw_names = node_data.get("names") or [node_data["name"]]
         nodes[node_id] = Node(
             id=node_id,
             graph_id=node_data["graph_id"],
-            names=raw_names if isinstance(raw_names, list) else [raw_names],
+            names=node_data["names"],
         )
 
     edges: list[Edge] = []

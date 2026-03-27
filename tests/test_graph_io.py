@@ -73,23 +73,3 @@ def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
     loaded = load_graph(path)
     assert loaded.nodes[n1.id].names == ["Meridian Technologies", "Meridian Tech"]
     assert loaded.nodes[n2.id].names == ["DataVault"]
-
-
-def test_load_legacy_single_name_format(tmp_path: Path):
-    """Loading a graph saved with the old single-name format works."""
-    data = {
-        "id": "legacy",
-        "nodes": [
-            {"id": "n1", "graph_id": "legacy", "name": "Alice"},
-            {"id": "n2", "graph_id": "legacy", "name": "Bob"},
-        ],
-        "edges": [{"source": "n1", "target": "n2", "relation": "knows"}],
-        "matches": [],
-    }
-    path = tmp_path / "legacy.json"
-    with open(path, "w") as f:
-        json.dump(data, f)
-
-    loaded = load_graph(path)
-    assert loaded.nodes["n1"].names == ["Alice"]
-    assert loaded.nodes["n2"].names == ["Bob"]
