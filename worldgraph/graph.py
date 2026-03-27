@@ -10,7 +10,7 @@ from pathlib import Path
 class Node:
     id: str
     graph_id: str
-    name: str
+    names: list[str]
 
 
 @dataclass
@@ -26,9 +26,11 @@ class Graph:
     nodes: dict[str, Node] = field(default_factory=dict)
     edges: list[Edge] = field(default_factory=list)
 
-    def add_entity(self, name: str) -> Node:
-        """Add an entity node with the given name."""
-        entity = Node(id=str(uuid.uuid4()), graph_id=self.id, name=name)
+    def add_entity(self, names: str | list[str]) -> Node:
+        """Add an entity node with the given name(s)."""
+        if isinstance(names, str):
+            names = [names]
+        entity = Node(id=str(uuid.uuid4()), graph_id=self.id, names=names)
         self.nodes[entity.id] = entity
         return entity
 
@@ -47,10 +49,11 @@ def load_graph(path: Path) -> Graph:
 
     for node_data in data["nodes"]:
         node_id = node_data["id"]
+        raw_names = node_data.get("names") or [node_data["name"]]
         nodes[node_id] = Node(
             id=node_id,
             graph_id=node_data["graph_id"],
-            name=node_data["name"],
+            names=raw_names if isinstance(raw_names, list) else [raw_names],
         )
 
     edges: list[Edge] = []
@@ -74,7 +77,9 @@ def save_graph(
     """Write graph to JSON, with optional match groups."""
     nodes_out = []
     for node in graph.nodes.values():
-        nodes_out.append({"id": node.id, "graph_id": node.graph_id, "name": node.name})
+        nodes_out.append(
+            {"id": node.id, "graph_id": node.graph_id, "names": node.names}
+        )
 
     edges_out = []
     for edge in graph.edges:

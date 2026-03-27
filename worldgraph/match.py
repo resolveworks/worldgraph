@@ -1,8 +1,9 @@
 """Stage 2: Entity alignment via PARIS-style similarity propagation.
 
-Entity names are stored directly on nodes.  Name similarity seeds the
-confidence dict before the iteration loop, so structural evidence
-propagates from iteration 1.  Relation similarity is treated as binary
+Entity names are stored as lists on nodes (multi-label).  Name similarity
+seeds the confidence dict before the iteration loop using the max over all
+name pairs, so structural evidence propagates from iteration 1.  Relation
+similarity is treated as binary
 via a single threshold that defines equivalence classes over free-text
 relation phrases — above threshold = same relation, below = different.
 This threshold is used consistently for functionality pooling, positive
@@ -116,8 +117,8 @@ def compute_functionality(
     phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for graph in graphs:
         for edge in graph.edges:
-            source_name = graph.nodes[edge.source].name
-            target_name = graph.nodes[edge.target].name
+            source_name = graph.nodes[edge.source].names[0]
+            target_name = graph.nodes[edge.target].names[0]
             phrase_pairs[edge.relation].append((source_name, target_name))
 
     result: dict[str, Functionality] = {}
@@ -380,9 +381,11 @@ def propagate_similarity(
             if graph.nodes[id_a].graph_id == graph.nodes[id_b].graph_id:
                 continue
             name_sim = max(
-                0.0,
-                soft_tfidf(graph.nodes[id_a].name, graph.nodes[id_b].name, idf),
+                soft_tfidf(na, nb, idf)
+                for na in graph.nodes[id_a].names
+                for nb in graph.nodes[id_b].names
             )
+            name_sim = max(0.0, name_sim)
             confidence[(id_a, id_b)] = name_sim
             confidence[(id_b, id_a)] = name_sim
             pairs.append((id_a, id_b))
@@ -487,7 +490,9 @@ def match_graphs(
     """
     unified = build_unified_graph(graphs)
 
-    all_names = [node.name for graph in graphs for node in graph.nodes.values()]
+    all_names = [
+        name for graph in graphs for node in graph.nodes.values() for name in node.names
+    ]
     all_relations = sorted({edge.relation for graph in graphs for edge in graph.edges})
 
     idf = build_idf(all_names)
@@ -564,7 +569,7 @@ def run_matching(
 
     click.echo(f"\n{len(match_groups)} match groups:")
     for members in match_groups:
-        names = {unified.nodes[eid].name for eid in members}
+        names = {n for eid in members for n in unified.nodes[eid].names}
         click.echo(f"  {' / '.join(sorted(names))}")
 
     click.echo(f"\nWrote {output_path}")
