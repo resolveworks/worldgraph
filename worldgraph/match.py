@@ -394,6 +394,8 @@ def _build_epoch_adjacency(
         func = functionality.get(edge.relation, default)
         src = uf.find(edge.source)
         tgt = uf.find(edge.target)
+        if src == tgt:
+            continue
         # Weighted adjacency (for positive propagation)
         key_src = (tgt, edge.relation)
         if key_src not in adj_seen[src]:
