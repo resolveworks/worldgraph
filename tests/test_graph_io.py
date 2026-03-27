@@ -1,4 +1,4 @@
-"""Tests for graph save/load round-trip, including per-node graph_id."""
+"""Tests for graph save/load round-trip, including per-node graph_id and multi-label names."""
 
 import json
 from pathlib import Path
@@ -31,9 +31,9 @@ def test_save_load_roundtrip_unified_graph(tmp_path: Path):
     """Unified graph with nodes from different source graphs preserves graph_id."""
     g = Graph(id="unified")
     # Manually add nodes with different source graph_ids
-    g.nodes["n1"] = Node(id="n1", graph_id="article-1", name="Alice")
-    g.nodes["n2"] = Node(id="n2", graph_id="article-2", name="Bob")
-    g.nodes["n3"] = Node(id="n3", graph_id="unified", name="Carol")
+    g.nodes["n1"] = Node(id="n1", graph_id="article-1", names=["Alice"])
+    g.nodes["n2"] = Node(id="n2", graph_id="article-2", names=["Bob"])
+    g.nodes["n3"] = Node(id="n3", graph_id="unified", names=["Carol"])
     g.edges.append(Edge(source="n1", target="n2", relation="knows"))
 
     path = tmp_path / "unified.json"
@@ -52,3 +52,24 @@ def test_save_load_roundtrip_unified_graph(tmp_path: Path):
     assert loaded.nodes["n1"].graph_id == "article-1"
     assert loaded.nodes["n2"].graph_id == "article-2"
     assert loaded.nodes["n3"].graph_id == "unified"
+
+
+def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
+    """Entities with multiple names survive save/load round-trip."""
+    g = Graph(id="article-1")
+    n1 = g.add_entity(["Meridian Technologies", "Meridian Tech"])
+    n2 = g.add_entity("DataVault")
+    g.add_edge(n1, n2, "acquired")
+
+    path = tmp_path / "g.json"
+    save_graph(g, path)
+
+    with open(path) as f:
+        data = json.load(f)
+    node_by_id = {n["id"]: n for n in data["nodes"]}
+    assert node_by_id[n1.id]["names"] == ["Meridian Technologies", "Meridian Tech"]
+    assert node_by_id[n2.id]["names"] == ["DataVault"]
+
+    loaded = load_graph(path)
+    assert loaded.nodes[n1.id].names == ["Meridian Technologies", "Meridian Tech"]
+    assert loaded.nodes[n2.id].names == ["DataVault"]

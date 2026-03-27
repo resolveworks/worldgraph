@@ -13,6 +13,7 @@ Tests verify that:
 - Name variation with structural reinforcement (the core use case)
 - Dangling entities get no structural evidence
 - Exponential sum accumulates evidence from multiple paths (bidirectional > unidirectional)
+- Multi-label entities use max similarity across all names during seeding
 """
 
 from worldgraph.graph import Graph
@@ -427,7 +428,9 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     # Premise: name similarity alone is below threshold
     from worldgraph.names import build_idf, soft_tfidf
 
-    names = [n.name for g in [g1, g2, *bg_graphs] for n in g.nodes.values()]
+    names = [
+        name for g in [g1, g2, *bg_graphs] for n in g.nodes.values() for name in n.names
+    ]
     idf = build_idf(names)
     sv_name_sim = soft_tfidf("Dr. Priya Sharma", "Dr. Elena Vasquez", idf)
     assert sv_name_sim < 0.8
@@ -598,3 +601,54 @@ def test_positive_evidence_is_monotonically_nondecreasing(embedder):
                 f"at max_iter={n_iter}"
             )
         prev_conf = curr_conf
+
+
+# ---------------------------------------------------------------------------
+# Multi-label name seeding
+# ---------------------------------------------------------------------------
+
+
+def test_multi_label_entity_uses_best_name_pair(embedder):
+    """An entity with multiple names should seed similarity using the best
+    name pair across both entities' name lists.
+
+    "Meridian Technologies" stored as names=["Meridian Technologies"] in g1,
+    and names=["Meridian Tech", "Meridian Technologies"] in g2.  The best
+    pair is "Meridian Technologies"/"Meridian Technologies" (score ~1.0),
+    not "Meridian Technologies"/"Meridian Tech" (~0.88).
+
+    Without multi-label support, only one name is stored and the closest
+    pair may be missed, under-estimating similarity."""
+    g1 = Graph(id="g1")
+    m1 = g1.add_entity("Meridian Technologies")
+    dv1 = g1.add_entity("DataVault")
+    g1.add_edge(m1, dv1, "acquired")
+
+    g2 = Graph(id="g2")
+    m2 = g2.add_entity(["Meridian Tech", "Meridian Technologies"])
+    dv2 = g2.add_entity("DataVault")
+    g2.add_edge(m2, dv2, "purchased")
+
+    confidence = match_graphs([g1, g2], embedder)
+
+    # With multi-label, the best name pair is exact match → seed ~1.0
+    # Without, if only "Meridian Tech" is stored, seed would be ~0.88
+    assert confidence[(m1.id, m2.id)] > 0.8
+
+
+def test_multi_label_all_names_contribute_to_idf(embedder):
+    """All names in an entity's name list should contribute to IDF
+    computation, not just the first."""
+    g1 = Graph(id="g1")
+    m1 = g1.add_entity(["Meridian Technologies", "Meridian Tech"])
+    dv1 = g1.add_entity("DataVault")
+    g1.add_edge(m1, dv1, "acquired")
+
+    g2 = Graph(id="g2")
+    m2 = g2.add_entity("Meridian Technologies")
+    dv2 = g2.add_entity("DataVault")
+    g2.add_edge(m2, dv2, "purchased")
+
+    # Should not raise — multi-label names flow through the pipeline
+    confidence = match_graphs([g1, g2], embedder)
+    assert confidence[(m1.id, m2.id)] > 0.8
