@@ -652,3 +652,96 @@ def test_multi_label_all_names_contribute_to_idf(embedder):
     # Should not raise — multi-label names flow through the pipeline
     confidence = match_graphs([g1, g2], embedder)
     assert confidence[(m1.id, m2.id)] > 0.8
+
+
+# ---------------------------------------------------------------------------
+# Progressive merging — enriched neighborhood
+# ---------------------------------------------------------------------------
+
+
+def test_progressive_merging_enriched_neighborhood(embedder):
+    """Progressive merging enriches neighborhoods across epochs, enabling
+    matches that pairwise comparison alone cannot produce.
+
+    Articles A and B describe Meridian Corp with overlapping structure
+    (DataVault, James Chen, Stanford) plus unique neighbors (A: Austin,
+    B: Volta Systems).  They merge in epoch 1 (identical names + strong
+    structural match).
+
+    Article C describes "Meridian Tech Corp" — moderate name similarity
+    (~0.64) to "Meridian Corp", sharing one neighbor with A (Austin) and
+    one with B (Volta Systems), plus James Chen (shared by both).
+
+    Without progressive merging (max_epochs=1), C's best pairwise match
+    sees only 2 structural paths (James Chen + one of Austin/Volta).
+    With progressive merging, the merged A+B entity has ALL neighbors
+    (DataVault, James Chen, Stanford, Austin, Volta), giving C three
+    matching paths.  The additional structural evidence produces a
+    measurably higher confidence.
+    """
+    # Article A: Meridian Corp with DataVault, James Chen, Stanford, Austin
+    ga = Graph(id="a")
+    ma = ga.add_entity("Meridian Corp")
+    dva = ga.add_entity("DataVault")
+    ja = ga.add_entity("James Chen")
+    su_a = ga.add_entity("Stanford University")
+    austin_a = ga.add_entity("Austin")
+    ga.add_edge(ma, dva, "acquired")
+    ga.add_edge(ma, ja, "CEO is")
+    ga.add_edge(ma, su_a, "alumna of")
+    ga.add_edge(ma, austin_a, "headquartered in")
+
+    # Article B: Meridian Corp with DataVault, James Chen, Stanford, Volta
+    gb = Graph(id="b")
+    mb = gb.add_entity("Meridian Corp")
+    dvb = gb.add_entity("DataVault")
+    jb = gb.add_entity("James Chen")
+    su_b = gb.add_entity("Stanford University")
+    volta_b = gb.add_entity("Volta Systems")
+    gb.add_edge(mb, dvb, "purchased")
+    gb.add_edge(mb, jb, "CEO is")
+    gb.add_edge(mb, su_b, "alumna of")
+    gb.add_edge(mb, volta_b, "partnered with")
+
+    # Article C: "Meridian Tech Corp" — moderate name sim, neighbors from
+    # both A-unique (Austin) and B-unique (Volta) plus shared (James Chen)
+    gc = Graph(id="c")
+    mc = gc.add_entity("Meridian Tech Corp")
+    austin_c = gc.add_entity("Austin")
+    volta_c = gc.add_entity("Volta Systems")
+    jc = gc.add_entity("James Chen")
+    gc.add_edge(mc, austin_c, "headquartered in")
+    gc.add_edge(mc, volta_c, "partnered with")
+    gc.add_edge(mc, jc, "CEO is")
+
+    graphs = [ga, gb, gc]
+
+    # Premise: name similarity alone is insufficient
+    from worldgraph.names import build_idf, soft_tfidf
+
+    names = [name for g in graphs for n in g.nodes.values() for name in n.names]
+    idf = build_idf(names)
+    assert soft_tfidf("Meridian Tech Corp", "Meridian Corp", idf) < 0.8
+
+    # Premise: A+B merge above merge_threshold in epoch 1
+    conf_single = match_graphs(graphs, embedder, max_epochs=1)
+    assert conf_single[(ma.id, mb.id)] >= 0.9, (
+        f"A-B should merge: {conf_single[(ma.id, mb.id)]:.3f}"
+    )
+
+    # Without progressive merging, C sees only pairwise evidence
+    conf_progressive = match_graphs(graphs, embedder, max_epochs=5)
+
+    # Progressive merging produces strictly higher confidence for C
+    c_single = max(
+        conf_single.get((mc.id, ma.id), 0),
+        conf_single.get((mc.id, mb.id), 0),
+    )
+    c_progressive = max(
+        conf_progressive.get((mc.id, ma.id), 0),
+        conf_progressive.get((mc.id, mb.id), 0),
+    )
+    assert c_progressive > c_single, (
+        f"Progressive merging should improve C's match: "
+        f"single={c_single:.3f}, progressive={c_progressive:.3f}"
+    )
