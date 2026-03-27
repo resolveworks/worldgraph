@@ -315,6 +315,99 @@ def build_unified_graph(graphs: list[Graph]) -> Graph:
     return unified
 
 
+def propagate_positive(
+    adjacency: dict[str, list[Neighbor]],
+    pairs: list[tuple[str, str]],
+    positive_base: Confidence,
+    *,
+    rel_sim: dict[tuple[str, str], float],
+    rel_threshold: float,
+    max_iter: int,
+    epsilon: float,
+    exp_lambda: float,
+) -> Confidence:
+    """Run the monotone non-decreasing positive fixpoint loop.
+
+    Updates ``positive_base`` in place and returns it.  Each iteration
+    reads from the previous snapshot (double-buffering) and applies the
+    monotone max rule: new value = max(structural_update, old_value).
+    """
+    for _ in range(max_iter):
+        prev_base = dict(positive_base)
+        changed = False
+
+        for id_a, id_b in pairs:
+            strength_sum = 0.0
+
+            for neighbor_a in adjacency.get(id_a, []):
+                for neighbor_b in adjacency.get(id_b, []):
+                    rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
+                    if rs < rel_threshold:
+                        continue
+                    neighbor_confidence = prev_base.get(
+                        (neighbor_a.entity_id, neighbor_b.entity_id), 0.0
+                    )
+                    if neighbor_confidence <= 0.0:
+                        continue
+                    weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
+                    strength_sum += weight * neighbor_confidence
+
+            positive = (
+                1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
+            )
+
+            old_base = prev_base[(id_a, id_b)]
+            base = max(positive, old_base)
+            positive_base[(id_a, id_b)] = base
+            positive_base[(id_b, id_a)] = base
+
+            if abs(base - old_base) > epsilon:
+                changed = True
+
+        if not changed:
+            break
+
+    return positive_base
+
+
+def apply_negative(
+    positive_base: Confidence,
+    pairs: list[tuple[str, str]],
+    forward_adj: dict[str, list[Neighbor]],
+    rel_sim: dict[tuple[str, str], float],
+    name_seed: Confidence,
+    *,
+    neg_alpha: float,
+    neg_floor: float,
+    neg_gate: float,
+    rel_threshold: float,
+) -> Confidence:
+    """Apply negative dampening as a single post-convergence pass.
+
+    The negative factor uses ``name_seed`` (fixed name similarity) to
+    check whether neighbors match, preventing circular reinforcement.
+    Returns a new confidence dict with dampened values.
+    """
+    confidence = dict(positive_base)
+    for id_a, id_b in pairs:
+        base = positive_base[(id_a, id_b)]
+        if base > neg_gate:
+            neg = compute_negative_factor(
+                id_a,
+                id_b,
+                forward_adj,
+                rel_sim,
+                name_seed,
+                alpha=neg_alpha,
+                floor=neg_floor,
+                rel_threshold=rel_threshold,
+            )
+            combined = base * neg
+            confidence[(id_a, id_b)] = combined
+            confidence[(id_b, id_a)] = combined
+    return confidence
+
+
 def propagate_similarity(
     graph: Graph,
     idf: dict[str, float],
@@ -397,68 +490,28 @@ def propagate_similarity(
     # in turn weakens the negative penalty on the original pair.
     name_seed: Confidence = dict(confidence)
 
-    # Positive base tracks the monotone non-decreasing positive signal,
-    # computed using positive_base values for structural propagation.
-    positive_base: Confidence = dict(confidence)
+    positive_base = propagate_positive(
+        adjacency,
+        pairs,
+        dict(confidence),
+        rel_sim=rel_sim,
+        rel_threshold=rel_threshold,
+        max_iter=max_iter,
+        epsilon=epsilon,
+        exp_lambda=exp_lambda,
+    )
 
-    # --- Positive fixpoint loop (monotone non-decreasing) ---
-    for _ in range(max_iter):
-        prev_base = dict(positive_base)
-        changed = False
-
-        for id_a, id_b in pairs:
-            strength_sum = 0.0
-
-            for neighbor_a in adjacency.get(id_a, []):
-                for neighbor_b in adjacency.get(id_b, []):
-                    rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
-                    if rs < rel_threshold:
-                        continue
-                    neighbor_confidence = prev_base.get(
-                        (neighbor_a.entity_id, neighbor_b.entity_id), 0.0
-                    )
-                    if neighbor_confidence <= 0.0:
-                        continue
-                    weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
-                    strength_sum += weight * neighbor_confidence
-
-            positive = (
-                1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
-            )
-
-            old_base = prev_base[(id_a, id_b)]
-            base = max(positive, old_base)
-            positive_base[(id_a, id_b)] = base
-            positive_base[(id_b, id_a)] = base
-
-            if abs(base - old_base) > epsilon:
-                changed = True
-
-        if not changed:
-            break
-
-    # --- Apply negative dampening in a single post-convergence pass ---
-    # The negative factor uses name_seed (fixed name similarity) to check
-    # whether neighbors match, preventing circular reinforcement.
-    confidence = dict(positive_base)
-    for id_a, id_b in pairs:
-        base = positive_base[(id_a, id_b)]
-        if base > neg_gate:
-            neg = compute_negative_factor(
-                id_a,
-                id_b,
-                forward_adj,
-                rel_sim,
-                name_seed,
-                alpha=neg_alpha,
-                floor=neg_floor,
-                rel_threshold=rel_threshold,
-            )
-            combined = base * neg
-            confidence[(id_a, id_b)] = combined
-            confidence[(id_b, id_a)] = combined
-
-    return confidence
+    return apply_negative(
+        positive_base,
+        pairs,
+        forward_adj,
+        rel_sim,
+        name_seed,
+        neg_alpha=neg_alpha,
+        neg_floor=neg_floor,
+        neg_gate=neg_gate,
+        rel_threshold=rel_threshold,
+    )
 
 
 # ---------------------------------------------------------------------------
