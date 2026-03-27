@@ -399,12 +399,10 @@ def propagate_similarity(
 
     # Positive base tracks the monotone non-decreasing positive signal,
     # computed using positive_base values for structural propagation.
-    # Final confidence = positive_base × negative_factor, recomputed each
-    # iteration so negative evidence never compounds.
     positive_base: Confidence = dict(confidence)
 
+    # --- Positive fixpoint loop (monotone non-decreasing) ---
     for _ in range(max_iter):
-        prev = dict(confidence)
         prev_base = dict(positive_base)
         changed = False
 
@@ -416,9 +414,6 @@ def propagate_similarity(
                     rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
                     if rs < rel_threshold:
                         continue
-                    # Structural propagation uses positive_base so that
-                    # negative penalties on neighbors don't suppress
-                    # legitimate positive signal.
                     neighbor_confidence = prev_base.get(
                         (neighbor_a.entity_id, neighbor_b.entity_id), 0.0
                     )
@@ -436,33 +431,32 @@ def propagate_similarity(
             positive_base[(id_a, id_b)] = base
             positive_base[(id_b, id_a)] = base
 
-            # Apply negative evidence to pairs with enough positive signal.
-            # The negative factor uses name_seed (fixed name similarity)
-            # to check whether neighbors match, preventing circular
-            # reinforcement through structural propagation.
-            if base > neg_gate:
-                neg = compute_negative_factor(
-                    id_a,
-                    id_b,
-                    forward_adj,
-                    rel_sim,
-                    name_seed,
-                    alpha=neg_alpha,
-                    floor=neg_floor,
-                    rel_threshold=rel_threshold,
-                )
-                combined = base * neg
-            else:
-                combined = base
-
-            old = prev[(id_a, id_b)]
-            if abs(combined - old) > epsilon:
-                confidence[(id_a, id_b)] = combined
-                confidence[(id_b, id_a)] = combined
+            if abs(base - old_base) > epsilon:
                 changed = True
 
         if not changed:
             break
+
+    # --- Apply negative dampening in a single post-convergence pass ---
+    # The negative factor uses name_seed (fixed name similarity) to check
+    # whether neighbors match, preventing circular reinforcement.
+    confidence = dict(positive_base)
+    for id_a, id_b in pairs:
+        base = positive_base[(id_a, id_b)]
+        if base > neg_gate:
+            neg = compute_negative_factor(
+                id_a,
+                id_b,
+                forward_adj,
+                rel_sim,
+                name_seed,
+                alpha=neg_alpha,
+                floor=neg_floor,
+                rel_threshold=rel_threshold,
+            )
+            combined = base * neg
+            confidence[(id_a, id_b)] = combined
+            confidence[(id_b, id_a)] = combined
 
     return confidence
 
