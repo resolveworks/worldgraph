@@ -760,6 +760,8 @@ def run_matching(
     match_threshold: float,
     max_iter: int = 30,
     epsilon: float = 1e-4,
+    merge_threshold: float = 0.9,
+    max_epochs: int = 5,
 ) -> None:
     """Load graphs, run matching pipeline, save results."""
     graphs = [load_graph(path) for path in graph_files]
@@ -777,6 +779,8 @@ def run_matching(
         rel_cluster_threshold=relation_threshold,
         max_iter=max_iter,
         epsilon=epsilon,
+        merge_threshold=merge_threshold,
+        max_epochs=max_epochs,
     )
 
     match_groups, unified = build_match_groups(graphs, confidence, match_threshold)
