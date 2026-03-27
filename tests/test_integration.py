@@ -299,3 +299,72 @@ def test_shared_person_across_clusters(embedder):
         assert not (group & m_ids and group & summit_ids), (
             f"Meridian and Summit incorrectly merged: {group}"
         )
+
+
+# ---------------------------------------------------------------------------
+# 4. Progressive merging does not cause cascading false merges
+# ---------------------------------------------------------------------------
+
+
+def test_progressive_merging_no_cascading_false_merges(embedder):
+    """Two unrelated clusters with similar structure should stay separate
+    even with progressive merging enabled.
+
+    Cluster A: NovaTech acquired DataVault (CEO: James Chen)
+    Cluster B: Quantum Labs acquired ClearSky (CEO: Sarah Park)
+
+    Both clusters have isomorphic structure (acquirer → target, acquirer
+    → CEO), but all entity names differ.  Within-cluster entities merge
+    across sources (identical names), but cross-cluster entities must
+    not merge even after progressive merging enriches neighborhoods."""
+    # Cluster A, source 1
+    a1 = Graph(id="nova-1")
+    nt_a1 = a1.add_entity("NovaTech")
+    dv_a1 = a1.add_entity("DataVault")
+    jc_a1 = a1.add_entity("James Chen")
+    a1.add_edge(nt_a1, dv_a1, "acquired")
+    a1.add_edge(nt_a1, jc_a1, "CEO is")
+
+    # Cluster A, source 2
+    a2 = Graph(id="nova-2")
+    nt_a2 = a2.add_entity("NovaTech")
+    dv_a2 = a2.add_entity("DataVault")
+    jc_a2 = a2.add_entity("James Chen")
+    a2.add_edge(nt_a2, dv_a2, "purchased")
+    a2.add_edge(nt_a2, jc_a2, "CEO is")
+
+    # Cluster B, source 1
+    b1 = Graph(id="quantum-1")
+    ql_b1 = b1.add_entity("Quantum Labs")
+    cs_b1 = b1.add_entity("ClearSky")
+    sp_b1 = b1.add_entity("Sarah Park")
+    b1.add_edge(ql_b1, cs_b1, "acquired")
+    b1.add_edge(ql_b1, sp_b1, "CEO is")
+
+    # Cluster B, source 2
+    b2 = Graph(id="quantum-2")
+    ql_b2 = b2.add_entity("Quantum Labs")
+    cs_b2 = b2.add_entity("ClearSky")
+    sp_b2 = b2.add_entity("Sarah Park")
+    b2.add_edge(ql_b2, cs_b2, "purchased")
+    b2.add_edge(ql_b2, sp_b2, "CEO is")
+
+    graphs = [a1, a2, b1, b2]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    cluster_a_ids = {nt_a1.id, dv_a1.id, jc_a1.id, nt_a2.id, dv_a2.id, jc_a2.id}
+    cluster_b_ids = {ql_b1.id, cs_b1.id, sp_b1.id, ql_b2.id, cs_b2.id, sp_b2.id}
+
+    for group in groups:
+        has_a = bool(group & cluster_a_ids)
+        has_b = bool(group & cluster_b_ids)
+        assert not (has_a and has_b), (
+            f"Progressive merging caused cross-cluster false merge: {group}"
+        )
+
+    # Within-cluster merges should still work
+    nt_group = _find_group_containing(groups, nt_a1.id)
+    assert nt_group is not None and nt_a2.id in nt_group
+    ql_group = _find_group_containing(groups, ql_b1.id)
+    assert ql_group is not None and ql_b2.id in ql_group
