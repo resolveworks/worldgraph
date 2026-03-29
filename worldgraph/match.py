@@ -38,11 +38,22 @@ class Functionality(NamedTuple):
 
 
 class Neighbor(NamedTuple):
-    """An entry in a node's weighted adjacency list."""
+    """An entry in a node's weighted adjacency list.
+
+    ``func_weight`` is used by positive propagation (inverse for outgoing,
+    forward for incoming — measures how uniquely the neighbor determines
+    this entity).
+
+    ``neg_func_weight`` is used by negative evidence (forward for outgoing,
+    inverse for incoming — measures how uniquely this entity determines
+    the neighbor, so a missing match on a functional relation penalizes
+    heavily).
+    """
 
     entity_id: str
     relation: str
     func_weight: float
+    neg_func_weight: float
 
 
 # Type aliases for the main data structures flowing through the pipeline.
@@ -254,8 +265,8 @@ def _one_sided_negative(
             nbr_conf = 1.0 if ra == rb else confidence.get((ra, rb), 0.0)
             match_prob += nbr_conf
         match_prob = min(match_prob, 1.0)
-        total_weight += neighbor_a.func_weight
-        weighted_mismatch += neighbor_a.func_weight * (1.0 - match_prob)
+        total_weight += neighbor_a.neg_func_weight
+        weighted_mismatch += neighbor_a.neg_func_weight * (1.0 - match_prob)
 
     if total_weight == 0.0:
         return 1.0
@@ -313,11 +324,15 @@ def _build_adjacency(
         key_src = (tgt, edge.relation)
         if key_src not in seen[src]:
             seen[src].add(key_src)
-            adjacency[src].append(Neighbor(tgt, edge.relation, func.inverse))
+            adjacency[src].append(
+                Neighbor(tgt, edge.relation, func.inverse, func.forward)
+            )
         key_tgt = (src, edge.relation)
         if key_tgt not in seen[tgt]:
             seen[tgt].add(key_tgt)
-            adjacency[tgt].append(Neighbor(src, edge.relation, func.forward))
+            adjacency[tgt].append(
+                Neighbor(src, edge.relation, func.forward, func.inverse)
+            )
     return dict(adjacency)
 
 
@@ -508,7 +523,12 @@ def propagate_similarity(
                     if key not in seen:
                         seen.add(key)
                         deduped.append(
-                            Neighbor(canon_nbr, nbr.relation, nbr.func_weight)
+                            Neighbor(
+                                canon_nbr,
+                                nbr.relation,
+                                nbr.func_weight,
+                                nbr.neg_func_weight,
+                            )
                         )
                 canonical_adj[new_canon] = deduped
 
