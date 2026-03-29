@@ -48,13 +48,13 @@ The core propagation loop (`match.py`):
 
 6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Final grouping via union-find.
 
+7. **Negative evidence** ([docs/negative_evidence.md](docs/negative_evidence.md)) — dampened negative factor penalizes entity pairs whose functional neighbors don't match. Applied once per convergence cycle, after positive evidence stabilizes. Uses name-seed confidence (not structural) for neighbor matching to prevent circular reinforcement.
+
+8. **Progressive merging** ([docs/progressive_merging.md](docs/progressive_merging.md)) — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles.
+
 ### What's not implemented (yet)
 
 These are documented in `docs/` with design sketches but no code.
-
-- **Negative evidence** ([docs/negative_evidence.md](docs/negative_evidence.md)) — the absence of expected neighbor matches should count against entity equivalence. Without this, entities with identical names but different contexts merge incorrectly (see `test_identical_names_different_contexts_no_merge`, `test_similar_names_disjoint_neighborhoods_no_match`). PARIS tried this and abandoned it as too aggressive; we propose a dampened version.
-
-- **Progressive merging** ([docs/progressive_merging.md](docs/progressive_merging.md)) — commit high-confidence merges during propagation and continue with enriched neighborhoods. Currently all merging is post-processing via union-find.
 
 - **Local functionality** — FLORA uses per-entity functionality (`1/|targets for this specific source|`), not just global averages. We only compute global.
 

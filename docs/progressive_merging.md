@@ -40,28 +40,36 @@ Strategy 2 avoids the convergence issues of progressive merging but misses the e
 
 ## Our approach: epoch-based progressive merging
 
-Neither the literature nor standard fixpoint theory provides a clean answer for progressive merging during propagation. We propose a hybrid that preserves most of the convergence properties while gaining the neighborhood enrichment benefit.
+Neither the literature nor standard fixpoint theory provides a clean answer for progressive merging during propagation. We propose a single-loop design that preserves most of the convergence properties while gaining the neighborhood enrichment benefit.
 
 ### The mechanism
 
-Divide propagation into **epochs**. Within each epoch, run standard propagation (monotone non-decreasing, convergence guaranteed). Between epochs, commit matches and merge:
+A single propagation loop runs positive evidence to convergence, applies negative dampening, then checks for merges. When merges are found, the canonical adjacency is updated incrementally and propagation continues with enriched neighborhoods:
 
 ```
-for epoch in range(max_epochs):
-    # Phase 1: Standard propagation within the epoch
-    confidence = propagate_to_convergence(graph, confidence)
+for iteration in range(max_iter):
+    # Phase 1: Positive propagation (monotone non-decreasing)
+    confidence = propagate_one_step(confidence)
+    if not converged:
+        continue
 
-    # Phase 2: Commit high-confidence merges
+    # Phase 2: Negative dampening (post-convergence)
+    confidence = apply_negative(confidence)
+
+    # Phase 3: Commit high-confidence merges
     new_merges = find_merges(confidence, threshold=merge_threshold)
     if not new_merges:
-        break  # No new merges → global convergence
+        break  # Converged, no new merges → done
 
-    # Phase 3: Merge entities in the graph
-    graph = apply_merges(graph, new_merges)
-
-    # Phase 4: Re-seed confidence for the merged graph
-    confidence = reseed(graph, confidence, new_merges)
+    # Phase 4: Update adjacency incrementally, remap pairs/confidence
+    for a, b in new_merges:
+        uf.union(a, b)
+        canonical_adj[uf.find(a)] = dedup(adj[a] + adj[b])
+    confidence, pairs = remap_to_canonical(confidence, pairs, uf)
+    confidence = reseed_from_names(confidence, name_seed)  # prevent compounding dampening
 ```
+
+The key insight: maintaining a `canonical_adj` alongside the UnionFind, updated incrementally on merge, avoids rebuilding adjacency from scratch each cycle. Each merge costs O(degree), not O(|edges|).
 
 ### What merging means concretely
 

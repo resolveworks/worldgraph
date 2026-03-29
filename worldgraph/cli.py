@@ -47,19 +47,13 @@ def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
     "--max-iter",
     default=30,
     type=int,
-    help="Maximum propagation iterations per epoch.",
+    help="Maximum propagation iterations.",
 )
 @click.option(
     "--merge-threshold",
     default=0.9,
     type=float,
-    help="Minimum confidence to commit a merge between epochs.",
-)
-@click.option(
-    "--max-epochs",
-    default=5,
-    type=int,
-    help="Maximum number of progressive merge epochs.",
+    help="Minimum confidence to commit a progressive merge during propagation.",
 )
 def match(
     graphs: tuple[Path, ...],
@@ -68,7 +62,6 @@ def match(
     match_threshold: float,
     max_iter: int,
     merge_threshold: float,
-    max_epochs: int,
 ):
     """Stage 2: Entity alignment via similarity propagation — merge matched graphs."""
     run_matching(
@@ -78,5 +71,4 @@ def match(
         match_threshold=match_threshold,
         max_iter=max_iter,
         merge_threshold=merge_threshold,
-        max_epochs=max_epochs,
     )

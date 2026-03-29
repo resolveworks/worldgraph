@@ -723,14 +723,14 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     idf = build_idf(names)
     assert soft_tfidf("Meridian Tech Corp", "Meridian Corp", idf) < 0.8
 
-    # Premise: A+B merge above merge_threshold in epoch 1
-    conf_single = match_graphs(graphs, embedder, max_epochs=1)
+    # Premise: A+B merge above merge_threshold
+    conf_single = match_graphs(graphs, embedder, merge_threshold=float("inf"))
     assert conf_single[(ma.id, mb.id)] >= 0.9, (
         f"A-B should merge: {conf_single[(ma.id, mb.id)]:.3f}"
     )
 
-    # Without progressive merging, C sees only pairwise evidence
-    conf_progressive = match_graphs(graphs, embedder, max_epochs=5)
+    # Without progressive merging (merge_threshold=inf), C sees only pairwise evidence
+    conf_progressive = match_graphs(graphs, embedder)
 
     # Progressive merging produces strictly higher confidence for C
     c_single = max(

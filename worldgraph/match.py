@@ -155,13 +155,14 @@ def compute_functionality(
 def compute_negative_factor(
     id_a: str,
     id_b: str,
-    forward_adj: dict[str, list[Neighbor]],
+    adj: dict[str, list[Neighbor]],
     rel_sim: dict[tuple[str, str], float],
     confidence: Confidence,
     alpha: float = 0.3,
     floor: float = 0.5,
     *,
     rel_threshold: float,
+    uf: UnionFind,
 ) -> float:
     """Compute dampened negative factor for an entity pair.
 
@@ -182,22 +183,24 @@ def compute_negative_factor(
     neg_a = _one_sided_negative(
         id_a,
         id_b,
-        forward_adj,
+        adj,
         rel_sim,
         confidence,
         alpha,
         floor,
         rel_threshold=rel_threshold,
+        uf=uf,
     )
     neg_b = _one_sided_negative(
         id_b,
         id_a,
-        forward_adj,
+        adj,
         rel_sim,
         confidence,
         alpha,
         floor,
         rel_threshold=rel_threshold,
+        uf=uf,
     )
     return max(neg_a, neg_b)
 
@@ -205,13 +208,14 @@ def compute_negative_factor(
 def _one_sided_negative(
     id_a: str,
     id_b: str,
-    forward_adj: dict[str, list[Neighbor]],
+    adj: dict[str, list[Neighbor]],
     rel_sim: dict[tuple[str, str], float],
     confidence: Confidence,
     alpha: float,
     floor: float,
     *,
     rel_threshold: float,
+    uf: UnionFind,
 ) -> float:
     """Negative factor from a's perspective.
 
@@ -224,20 +228,30 @@ def _one_sided_negative(
     Relation similarity is treated as binary (matching or not) using
     ``rel_threshold`` — the same threshold used by positive propagation
     and functionality pooling.
+
+    Neighbor entity IDs are resolved through ``uf`` to handle merged
+    entities whose adjacency entries may reference pre-merge IDs.
     """
-    neighbors_a = forward_adj.get(id_a, [])
+    neighbors_a = adj.get(id_a, [])
     if not neighbors_a:
         return 1.0
 
     total_weight = 0.0
     weighted_mismatch = 0.0
     for neighbor_a in neighbors_a:
+        ra = uf.find(neighbor_a.entity_id)
+        if ra == id_a:
+            continue
         match_prob = 0.0
-        for neighbor_b in forward_adj.get(id_b, []):
+        for neighbor_b in adj.get(id_b, []):
+            rb = uf.find(neighbor_b.entity_id)
+            if rb == id_b:
+                continue
             rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
             if rs < rel_threshold:
                 continue
-            nbr_conf = confidence.get((neighbor_a.entity_id, neighbor_b.entity_id), 0.0)
+            # Same canonical entity = perfect match (both sides merged).
+            nbr_conf = 1.0 if ra == rb else confidence.get((ra, rb), 0.0)
             match_prob += nbr_conf
         match_prob = min(match_prob, 1.0)
         total_weight += neighbor_a.func_weight
@@ -259,99 +273,6 @@ def build_unified_graph(graphs: list[Graph]) -> Graph:
     return unified
 
 
-def propagate_positive(
-    adjacency: dict[str, list[Neighbor]],
-    pairs: list[tuple[str, str]],
-    positive_base: Confidence,
-    *,
-    rel_sim: dict[tuple[str, str], float],
-    rel_threshold: float,
-    max_iter: int,
-    epsilon: float,
-    exp_lambda: float,
-) -> Confidence:
-    """Run the monotone non-decreasing positive fixpoint loop.
-
-    Updates ``positive_base`` in place and returns it.  Each iteration
-    reads from the previous snapshot (double-buffering) and applies the
-    monotone max rule: new value = max(structural_update, old_value).
-    """
-    for _ in range(max_iter):
-        prev_base = dict(positive_base)
-        changed = False
-
-        for id_a, id_b in pairs:
-            strength_sum = 0.0
-
-            for neighbor_a in adjacency.get(id_a, []):
-                for neighbor_b in adjacency.get(id_b, []):
-                    rs = rel_sim.get((neighbor_a.relation, neighbor_b.relation), 0.0)
-                    if rs < rel_threshold:
-                        continue
-                    neighbor_confidence = prev_base.get(
-                        (neighbor_a.entity_id, neighbor_b.entity_id), 0.0
-                    )
-                    if neighbor_confidence <= 0.0:
-                        continue
-                    weight = min(neighbor_a.func_weight, neighbor_b.func_weight)
-                    strength_sum += weight * neighbor_confidence
-
-            positive = (
-                1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
-            )
-
-            old_base = prev_base[(id_a, id_b)]
-            base = max(positive, old_base)
-            positive_base[(id_a, id_b)] = base
-            positive_base[(id_b, id_a)] = base
-
-            if abs(base - old_base) > epsilon:
-                changed = True
-
-        if not changed:
-            break
-
-    return positive_base
-
-
-def apply_negative(
-    positive_base: Confidence,
-    pairs: list[tuple[str, str]],
-    forward_adj: dict[str, list[Neighbor]],
-    rel_sim: dict[tuple[str, str], float],
-    name_seed: Confidence,
-    *,
-    neg_alpha: float,
-    neg_floor: float,
-    neg_gate: float,
-    rel_threshold: float,
-) -> Confidence:
-    """Apply negative dampening as a single post-convergence pass.
-
-    The negative factor uses ``name_seed`` (fixed name similarity) to
-    check whether neighbors match, preventing circular reinforcement.
-    Returns a new confidence dict with dampened values.
-    """
-    confidence = dict(positive_base)
-    for id_a, id_b in pairs:
-        base = positive_base[(id_a, id_b)]
-        if base > neg_gate:
-            neg = compute_negative_factor(
-                id_a,
-                id_b,
-                forward_adj,
-                rel_sim,
-                name_seed,
-                alpha=neg_alpha,
-                floor=neg_floor,
-                rel_threshold=rel_threshold,
-            )
-            combined = base * neg
-            confidence[(id_a, id_b)] = combined
-            confidence[(id_b, id_a)] = combined
-    return confidence
-
-
 def _build_rel_sim(
     graph: Graph,
     relation_embeddings: dict[str, np.ndarray],
@@ -371,130 +292,71 @@ def _build_rel_sim(
     return rel_sim
 
 
-def _build_epoch_adjacency(
+def _build_adjacency(
     graph: Graph,
     functionality: dict[str, Functionality],
-    uf: UnionFind,
-) -> tuple[dict[str, list[Neighbor]], dict[str, list[Neighbor]]]:
-    """Build adjacency lists using union-find canonical reps.
+) -> dict[str, list[Neighbor]]:
+    """Build the initial canonical adjacency from graph edges.
 
-    Merged entities' neighborhoods are unioned: each edge contributes
-    neighbors keyed by the canonical rep of both endpoints.  Duplicate
-    entries (same canonical neighbor + same relation) are deduplicated
-    to prevent inflated evidence from merged entities having multiple
-    copies of structurally identical edges.
+    Each edge contributes two entries (one per endpoint).  Duplicate
+    entries (same neighbor + same relation) are deduplicated to prevent
+    inflated evidence.
     """
     default = Functionality(1.0, 1.0)
-    # Collect unique (entity, neighbor, relation) triples per direction
-    adj_seen: dict[str, set[tuple[str, str]]] = defaultdict(set)
-    fwd_seen: dict[str, set[tuple[str, str]]] = defaultdict(set)
+    seen: dict[str, set[tuple[str, str]]] = defaultdict(set)
     adjacency: dict[str, list[Neighbor]] = defaultdict(list)
-    forward_adj: dict[str, list[Neighbor]] = defaultdict(list)
     for edge in graph.edges:
         func = functionality.get(edge.relation, default)
-        src = uf.find(edge.source)
-        tgt = uf.find(edge.target)
+        src, tgt = edge.source, edge.target
         if src == tgt:
             continue
-        # Weighted adjacency (for positive propagation)
         key_src = (tgt, edge.relation)
-        if key_src not in adj_seen[src]:
-            adj_seen[src].add(key_src)
+        if key_src not in seen[src]:
+            seen[src].add(key_src)
             adjacency[src].append(Neighbor(tgt, edge.relation, func.inverse))
         key_tgt = (src, edge.relation)
-        if key_tgt not in adj_seen[tgt]:
-            adj_seen[tgt].add(key_tgt)
+        if key_tgt not in seen[tgt]:
+            seen[tgt].add(key_tgt)
             adjacency[tgt].append(Neighbor(src, edge.relation, func.forward))
-        # Forward adjacency (for negative evidence)
-        if key_src not in fwd_seen[src]:
-            fwd_seen[src].add(key_src)
-            forward_adj[src].append(Neighbor(tgt, edge.relation, func.forward))
-        if key_tgt not in fwd_seen[tgt]:
-            fwd_seen[tgt].add(key_tgt)
-            forward_adj[tgt].append(Neighbor(src, edge.relation, func.inverse))
-    return adjacency, forward_adj
+    return dict(adjacency)
 
 
-def _build_epoch_pairs(
-    graph: Graph,
-    uf: UnionFind,
-) -> list[tuple[str, str]]:
-    """Build cross-graph entity pairs between canonical reps.
-
-    Maps original entity IDs through uf.find(), deduplicates, and
-    skips pairs where all members share a single source graph.
-    """
-    # Collect which graph_ids each canonical rep covers
-    canon_graphs: dict[str, set[str]] = defaultdict(set)
-    for eid, node in graph.nodes.items():
-        canon_graphs[uf.find(eid)].add(node.graph_id)
-
-    canons = sorted(canon_graphs.keys())
+def _build_pairs(graph: Graph) -> list[tuple[str, str]]:
+    """Build cross-graph entity pairs."""
+    graph_ids = {eid: node.graph_id for eid, node in graph.nodes.items()}
+    entities = sorted(graph.nodes.keys())
     pairs: list[tuple[str, str]] = []
-    for i, ca in enumerate(canons):
-        for cb in canons[i + 1 :]:
-            # Skip if all members of both groups are from the same graph
-            if len(canon_graphs[ca] | canon_graphs[cb]) == 1:
-                continue
-            pairs.append((ca, cb))
+    for i, a in enumerate(entities):
+        for b in entities[i + 1 :]:
+            if graph_ids[a] != graph_ids[b]:
+                pairs.append((a, b))
     return pairs
 
 
-def _seed_epoch_confidence(
+def _seed_confidence(
     graph: Graph,
     idf: dict[str, float],
-    uf: UnionFind,
     pairs: list[tuple[str, str]],
-    prev_confidence: Confidence | None = None,
 ) -> tuple[Confidence, Confidence]:
-    """Seed confidence for an epoch using max name similarity across members.
+    """Seed confidence from name similarity.
 
-    For each canonical pair (ca, cb), the name seed is the maximum
-    soft-TFIDF score across all name pairs from all members of both
-    groups.  The full seed additionally carries forward previous epoch
-    confidence.
-
-    Returns (full_seed, name_seed) — the full seed is used for positive
-    propagation, while the name-only seed is used for negative evidence
-    to prevent circular reinforcement across epochs.
+    Returns (confidence, name_seed) — initially identical.  ``name_seed``
+    is kept fixed (modulo remapping on merge) and used by negative evidence
+    to prevent circular reinforcement.
     """
-    # Build member lists per canonical rep
-    members: dict[str, list[str]] = defaultdict(list)
-    for eid in graph.nodes:
-        members[uf.find(eid)].append(eid)
-
-    full_seed: Confidence = {}
+    confidence: Confidence = {}
     name_seed: Confidence = {}
-    for ca, cb in pairs:
-        # Max name similarity across all member-pair name comparisons
-        best_name = 0.0
-        for ma in members[ca]:
-            for mb in members[cb]:
-                if graph.nodes[ma].graph_id == graph.nodes[mb].graph_id:
-                    continue
-                for na in graph.nodes[ma].names:
-                    for nb in graph.nodes[mb].names:
-                        best_name = max(best_name, soft_tfidf(na, nb, idf))
-        best_name = max(0.0, best_name)
-
-        name_seed[(ca, cb)] = best_name
-        name_seed[(cb, ca)] = best_name
-
-        # Carry forward previous confidence between any member pairs
-        best_prev = 0.0
-        if prev_confidence:
-            for ma in members[ca]:
-                for mb in members[cb]:
-                    best_prev = max(
-                        best_prev,
-                        prev_confidence.get((ma, mb), 0.0),
-                    )
-
-        seed = max(best_name, best_prev)
-        full_seed[(ca, cb)] = seed
-        full_seed[(cb, ca)] = seed
-
-    return full_seed, name_seed
+    for a, b in pairs:
+        best = 0.0
+        for na in graph.nodes[a].names:
+            for nb in graph.nodes[b].names:
+                best = max(best, soft_tfidf(na, nb, idf))
+        best = max(0.0, best)
+        confidence[(a, b)] = best
+        confidence[(b, a)] = best
+        name_seed[(a, b)] = best
+        name_seed[(b, a)] = best
+    return confidence, name_seed
 
 
 def propagate_similarity(
@@ -510,110 +372,228 @@ def propagate_similarity(
     neg_floor: float = 0.5,
     neg_gate: float = 0.3,
     merge_threshold: float = 0.9,
-    max_epochs: int = 5,
 ) -> tuple[Confidence, UnionFind]:
-    """Run epoch-based similarity propagation with progressive merging.
+    """Run similarity propagation with inline progressive merging.
 
-    Each epoch runs the positive fixpoint loop to convergence, applies
-    negative dampening, then commits high-confidence merges via union-find.
-    Merged entities' neighborhoods are unioned for subsequent epochs,
-    allowing evidence from transitively-matched entities to compound.
+    A single propagation loop alternates positive evidence accumulation
+    and negative dampening.  When pairs exceed ``merge_threshold``, they
+    are merged via union-find and the canonical adjacency is updated
+    incrementally — no epoch rebuild required.
 
-    With default ``merge_threshold=0.9`` and ``max_epochs=5``, pairs
-    scoring below 0.9 never trigger progressive merges, so the epoch
-    loop exits after one epoch — reproducing the previous non-epoch
-    behavior.
+    Positive updates use the monotone max rule (new = max(structural, old))
+    so positive evidence never decreases.  Negative dampening is applied
+    as a multiplicative factor after each positive pass.
 
-    Returns (confidence, union_find) where confidence maps canonical-rep
-    pairs to scores and union_find tracks all committed merges.
+    On merge, the canonical adjacency for the new representative is built
+    by combining and deduplicating the adjacency lists of the merged
+    entities — O(degree) per merge, not O(|edges|).
+
+    Returns (confidence, union_find) where confidence maps original
+    entity-ID pairs to scores and union_find tracks all committed merges.
     """
     rel_sim = _build_rel_sim(graph, relation_embeddings)
     uf = UnionFind()
-
-    # Initialize all entities in the union-find
     for eid in graph.nodes:
         uf.find(eid)
 
-    confidence: Confidence = {}
-    # Track the best score seen for each original entity pair across all
-    # epochs.  Enriched neighborhoods in later epochs can strengthen
-    # negative evidence, but earlier positive evidence should not be lost.
-    best_confidence: Confidence = {}
-    prev_epoch_confidence: Confidence | None = None
+    canonical_adj = _build_adjacency(graph, functionality)
+    pairs = _build_pairs(graph)
 
-    for _epoch in range(max_epochs):
-        adjacency, forward_adj = _build_epoch_adjacency(graph, functionality, uf)
-        pairs = _build_epoch_pairs(graph, uf)
+    if not pairs:
+        return {}, uf
 
-        if not pairs:
-            break
+    confidence, name_seed = _seed_confidence(graph, idf, pairs)
 
-        confidence, name_seed = _seed_epoch_confidence(
-            graph, idf, uf, pairs, prev_epoch_confidence
-        )
+    # Track which graph_ids each canonical rep covers (for pair filtering).
+    canon_graphs: dict[str, set[str]] = defaultdict(set)
+    for eid, node in graph.nodes.items():
+        canon_graphs[eid].add(node.graph_id)
 
-        positive_base = propagate_positive(
-            adjacency,
-            pairs,
-            dict(confidence),
-            rel_sim=rel_sim,
-            rel_threshold=rel_threshold,
-            max_iter=max_iter,
-            epsilon=epsilon,
-            exp_lambda=exp_lambda,
-        )
+    for _ in range(max_iter):
+        prev = dict(confidence)
+        pos_changed = False
 
-        confidence = apply_negative(
-            positive_base,
-            pairs,
-            forward_adj,
-            rel_sim,
-            name_seed,
-            neg_alpha=neg_alpha,
-            neg_floor=neg_floor,
-            neg_gate=neg_gate,
-            rel_threshold=rel_threshold,
-        )
-
-        # Expand this epoch's canonical-rep scores to original entity
-        # pairs and merge into best_confidence.
-        members_now: dict[str, list[str]] = defaultdict(list)
-        for eid in graph.nodes:
-            members_now[uf.find(eid)].append(eid)
-
-        for (ca, cb), score in confidence.items():
-            if ca == cb:
-                continue
-            for ma in members_now.get(ca, [ca]):
-                for mb in members_now.get(cb, [cb]):
-                    if graph.nodes[ma].graph_id == graph.nodes[mb].graph_id:
-                        continue
-                    old = best_confidence.get((ma, mb), -1.0)
-                    new = max(old, score)
-                    best_confidence[(ma, mb)] = new
-                    best_confidence[(mb, ma)] = new
-
-        # Find new merges above merge_threshold
-        new_merges = []
+        # --- Positive propagation ---
         for ca, cb in pairs:
-            if confidence.get((ca, cb), 0.0) >= merge_threshold:
-                if uf.find(ca) != uf.find(cb):
-                    new_merges.append((ca, cb))
+            strength_sum = 0.0
+            for nbr_a in canonical_adj.get(ca, []):
+                ra = uf.find(nbr_a.entity_id)
+                if ra == ca:
+                    continue
+                for nbr_b in canonical_adj.get(cb, []):
+                    rb = uf.find(nbr_b.entity_id)
+                    if rb == cb:
+                        continue
+                    rs = rel_sim.get((nbr_a.relation, nbr_b.relation), 0.0)
+                    if rs < rel_threshold:
+                        continue
+                    nc = prev.get((ra, rb), 0.0)
+                    if nc <= 0.0:
+                        continue
+                    weight = min(nbr_a.func_weight, nbr_b.func_weight)
+                    strength_sum += weight * nc
 
-        if not new_merges:
-            break
+            positive = (
+                1.0 - math.exp(-exp_lambda * strength_sum) if strength_sum > 0 else 0.0
+            )
+            old = prev[(ca, cb)]
+            new_val = max(positive, old)
+            confidence[(ca, cb)] = new_val
+            confidence[(cb, ca)] = new_val
+            if abs(new_val - old) > epsilon:
+                pos_changed = True
 
-        for ca, cb in new_merges:
-            uf.union(ca, cb)
+        # Keep iterating positive until convergence before applying
+        # negative dampening and checking for merges.
+        if pos_changed:
+            continue
 
-        prev_epoch_confidence = confidence
+        # --- Negative dampening (positive has converged) ---
+        for ca, cb in pairs:
+            base = confidence[(ca, cb)]
+            if base > neg_gate:
+                neg = compute_negative_factor(
+                    ca,
+                    cb,
+                    canonical_adj,
+                    rel_sim,
+                    name_seed,
+                    alpha=neg_alpha,
+                    floor=neg_floor,
+                    rel_threshold=rel_threshold,
+                    uf=uf,
+                )
+                combined = base * neg
+                confidence[(ca, cb)] = combined
+                confidence[(cb, ca)] = combined
 
-    # Set confidence=1.0 for all pairs within the same UF group
-    # (they were merged with high confidence during epochs).
+        # --- Progressive merging ---
+        new_merges = [
+            (ca, cb)
+            for ca, cb in pairs
+            if confidence.get((ca, cb), 0.0) >= merge_threshold
+            and uf.find(ca) != uf.find(cb)
+        ]
+
+        if new_merges:
+            # Record pre-merge state for adjacency combination.
+            pre_merge_canons: set[str] = set()
+            pre_merge_graphs: dict[str, set[str]] = {}
+            for ca, cb in new_merges:
+                pre_merge_canons.add(ca)
+                pre_merge_canons.add(cb)
+                pre_merge_graphs[ca] = set(canon_graphs.get(ca, set()))
+                pre_merge_graphs[cb] = set(canon_graphs.get(cb, set()))
+
+            for ca, cb in new_merges:
+                uf.union(ca, cb)
+
+            # Group pre-merge canonical reps by their new representative.
+            merge_groups: dict[str, list[str]] = defaultdict(list)
+            for old_canon in pre_merge_canons:
+                merge_groups[uf.find(old_canon)].append(old_canon)
+
+            # Update canonical_adj incrementally: combine + dedup.
+            for new_canon, old_canons in merge_groups.items():
+                combined: list[Neighbor] = []
+                for oc in old_canons:
+                    combined.extend(canonical_adj.get(oc, []))
+                seen: set[tuple[str, str]] = set()
+                deduped: list[Neighbor] = []
+                for nbr in combined:
+                    canon_nbr = uf.find(nbr.entity_id)
+                    if canon_nbr == new_canon:
+                        continue
+                    key = (canon_nbr, nbr.relation)
+                    if key not in seen:
+                        seen.add(key)
+                        deduped.append(
+                            Neighbor(canon_nbr, nbr.relation, nbr.func_weight)
+                        )
+                canonical_adj[new_canon] = deduped
+
+            # Update canon_graphs for merged reps.
+            for new_canon, old_canons in merge_groups.items():
+                combined_graphs: set[str] = set()
+                for oc in old_canons:
+                    combined_graphs |= pre_merge_graphs.get(
+                        oc, canon_graphs.get(oc, set())
+                    )
+                canon_graphs[new_canon] = combined_graphs
+
+            # Remap pairs to canonical reps, dedup, drop self-pairs.
+            new_pairs: list[tuple[str, str]] = []
+            pair_set: set[tuple[str, str]] = set()
+            for a, b in pairs:
+                ra, rb = uf.find(a), uf.find(b)
+                if ra == rb:
+                    continue
+                pair = (min(ra, rb), max(ra, rb))
+                if pair in pair_set:
+                    continue
+                if len(canon_graphs.get(ra, set()) | canon_graphs.get(rb, set())) == 1:
+                    continue
+                pair_set.add(pair)
+                new_pairs.append(pair)
+            pairs = new_pairs
+
+            # Remap confidence and name_seed to canonical reps.
+            new_conf: Confidence = {}
+            for (a, b), score in confidence.items():
+                ra, rb = uf.find(a), uf.find(b)
+                if ra == rb:
+                    continue
+                old = new_conf.get((ra, rb), 0.0)
+                new_conf[(ra, rb)] = max(old, score)
+                new_conf[(rb, ra)] = max(old, score)
+            confidence = new_conf
+
+            new_name: Confidence = {}
+            for (a, b), score in name_seed.items():
+                ra, rb = uf.find(a), uf.find(b)
+                if ra == rb:
+                    continue
+                old = new_name.get((ra, rb), 0.0)
+                new_name[(ra, rb)] = max(old, score)
+                new_name[(rb, ra)] = max(old, score)
+            name_seed = new_name
+
+            # Re-seed: confidence should never fall below name similarity.
+            # Without this, negative dampening compounds across merge cycles
+            # (dampened values get dampened again after the next convergence).
+            for ca, cb in pairs:
+                ns = name_seed.get((ca, cb), 0.0)
+                if ns > confidence.get((ca, cb), 0.0):
+                    confidence[(ca, cb)] = ns
+                    confidence[(cb, ca)] = ns
+
+            if not pairs:
+                break
+            # Merges happened — continue propagating with enriched neighborhoods.
+            continue
+
+        # Positive converged, no new merges — done.
+        break
+
+    # Expand canonical-rep confidence to original entity-ID pairs.
     members: dict[str, list[str]] = defaultdict(list)
     for eid in graph.nodes:
         members[uf.find(eid)].append(eid)
 
+    final: Confidence = {}
+    for (ca, cb), score in confidence.items():
+        if ca == cb:
+            continue
+        for ma in members.get(ca, [ca]):
+            for mb in members.get(cb, [cb]):
+                if graph.nodes[ma].graph_id == graph.nodes[mb].graph_id:
+                    continue
+                old = final.get((ma, mb), 0.0)
+                new_val = max(old, score)
+                final[(ma, mb)] = new_val
+                final[(mb, ma)] = new_val
+
+    # Merged pairs get 1.0 — they were committed with high confidence.
     for group_members in members.values():
         if len(group_members) < 2:
             continue
@@ -621,10 +601,10 @@ def propagate_similarity(
             for mb in group_members[i + 1 :]:
                 if graph.nodes[ma].graph_id == graph.nodes[mb].graph_id:
                     continue
-                best_confidence[(ma, mb)] = 1.0
-                best_confidence[(mb, ma)] = 1.0
+                final[(ma, mb)] = 1.0
+                final[(mb, ma)] = 1.0
 
-    return best_confidence, uf
+    return final, uf
 
 
 # ---------------------------------------------------------------------------
@@ -707,7 +687,6 @@ def run_matching(
     max_iter: int = 30,
     epsilon: float = 1e-4,
     merge_threshold: float = 0.9,
-    max_epochs: int = 5,
 ) -> None:
     """Load graphs, run matching pipeline, save results."""
     graphs = [load_graph(path) for path in graph_files]
@@ -726,7 +705,6 @@ def run_matching(
         max_iter=max_iter,
         epsilon=epsilon,
         merge_threshold=merge_threshold,
-        max_epochs=max_epochs,
     )
 
     match_groups, unified = build_match_groups(graphs, confidence, match_threshold)
