@@ -18,6 +18,7 @@ Tests verify that:
 
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
+from worldgraph.names import build_idf, soft_tfidf
 
 
 # ---------------------------------------------------------------------------
@@ -440,9 +441,9 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = set(matches)
     # NovaTech Labs has identical names (seed ~1.0) but the only neighbor
-    # (founder) doesn't match — negative evidence legitimately reduces
-    # confidence.  With neg_alpha=0.3 the final score can drop below 0.8.
-    # This is acceptable: the test's purpose is the assertion below.
+    # (founder) doesn't match — the negative channel propagates founder
+    # mismatch, and the Bayesian combination can push the final score
+    # below 0.8.  This is acceptable: the test's purpose is below.
 
     # sharma/vasquez should NOT match — structural anchor alone
     # cannot override name dissimilarity
@@ -573,10 +574,9 @@ def test_single_graph_produces_no_matches(embedder):
     assert confidence == {}
 
 
-def test_positive_evidence_is_monotonically_nondecreasing(embedder):
-    """Without negative evidence, confidence should never decrease as more
-    iterations run. Negative evidence (applied when pairs exceed neg_gate)
-    can reduce scores, so we disable it here to test pure positive propagation."""
+def test_propagation_converges(embedder):
+    """Both positive and negative channels should converge: running with
+    more iterations than needed should not change the result."""
     g1 = Graph(id="g1")
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
@@ -591,16 +591,13 @@ def test_positive_evidence_is_monotonically_nondecreasing(embedder):
     g2.add_edge(meridian2, dv2, "purchased")
     g2.add_edge(meridian2, ceo2, "employed")
 
-    # Disable negative evidence by setting alpha=0
-    prev_conf = match_graphs([g1, g2], embedder, max_iter=1, neg_alpha=0.0)
-    for n_iter in [2, 5, 10]:
-        curr_conf = match_graphs([g1, g2], embedder, max_iter=n_iter, neg_alpha=0.0)
-        for pair, val in curr_conf.items():
-            assert val >= prev_conf[pair] - 1e-9, (
-                f"Confidence decreased for {pair}: {prev_conf[pair]:.6f} → {val:.6f} "
-                f"at max_iter={n_iter}"
-            )
-        prev_conf = curr_conf
+    conf_10 = match_graphs([g1, g2], embedder, max_iter=10)
+    conf_30 = match_graphs([g1, g2], embedder, max_iter=30)
+    for pair, val in conf_30.items():
+        assert abs(val - conf_10.get(pair, 0.0)) < 1e-9, (
+            f"Score changed between max_iter=10 and max_iter=30 for {pair}: "
+            f"{conf_10.get(pair, 0.0):.6f} → {val:.6f}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -744,4 +741,84 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     assert c_progressive > c_single, (
         f"Progressive merging should improve C's match: "
         f"single={c_single:.3f}, progressive={c_progressive:.3f}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Negative evidence should use structural confidence (not name_seed)
+# ---------------------------------------------------------------------------
+
+
+def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors(
+    embedder,
+):
+    """Negative evidence should not penalize an entity pair when its
+    functional neighbors are structurally matched.
+
+    "Meridian Technologies" and "Meridian Tech" share two structural paths:
+    acquired → DataVault (identical names) and CEO → a person with weak name
+    similarity but shared sub-neighbor (Stanford University).
+
+    The positive channel discovers the CEO match via Stanford.  The negative
+    channel sees CEO name dissimilarity (~0.7) but Stanford's zero
+    dissimilarity blocks negative propagation for the CEO pair.  The
+    Bayesian combination divides out the name prior, so only the structural
+    growth matters — and positive grew more than negative.
+    """
+    g1 = Graph(id="g1")
+    m1 = g1.add_entity("Meridian Technologies")
+    dv1 = g1.add_entity("DataVault")
+    ceo1 = g1.add_entity("Dr. Alice M. Johnson")
+    uni1 = g1.add_entity("Stanford University")
+    g1.add_edge(m1, dv1, "acquired")
+    g1.add_edge(m1, ceo1, "CEO")
+    g1.add_edge(ceo1, uni1, "graduated from")
+
+    g2 = Graph(id="g2")
+    m2 = g2.add_entity("Meridian Tech")
+    dv2 = g2.add_entity("DataVault")
+    ceo2 = g2.add_entity("A. Johnson")
+    uni2 = g2.add_entity("Stanford University")
+    g2.add_edge(m2, dv2, "purchased")
+    g2.add_edge(m2, ceo2, "CEO")
+    g2.add_edge(ceo2, uni2, "graduated from")
+
+    # Background to establish CEO as functional (1:1)
+    bg_graphs = []
+    for i, (person, org) in enumerate(
+        [
+            ("Marcus Webb", "Alpha Corp"),
+            ("Sarah Chen", "Beta Inc"),
+            ("James Xu", "Gamma LLC"),
+        ]
+    ):
+        bg = Graph(id=f"bg{i}")
+        p = bg.add_entity(person)
+        o = bg.add_entity(org)
+        bg.add_edge(p, o, "CEO")
+        bg_graphs.append(bg)
+
+    graphs = [g1, g2, *bg_graphs]
+
+    # Premise: CEO name similarity is weak (structural propagation needed)
+    all_names = [n for g in graphs for node in g.nodes.values() for n in node.names]
+    idf = build_idf(all_names)
+    assert soft_tfidf("Dr. Alice M. Johnson", "A. Johnson", idf) < 0.5
+
+    confidence = match_graphs(graphs, embedder)
+
+    # CEO pair should be structurally matched despite weak names
+    ceo_score = confidence.get(
+        (ceo1.id, ceo2.id), confidence.get((ceo2.id, ceo1.id), 0.0)
+    )
+    assert ceo_score > 0.6, (
+        f"CEO pair should be structurally matched, got {ceo_score:.3f}"
+    )
+
+    # Meridian should not be over-penalized — the CEO targets match
+    # structurally via Stanford.
+    meridian_score = confidence.get((m1.id, m2.id), confidence.get((m2.id, m1.id), 0.0))
+    assert meridian_score > 0.8, (
+        f"Negative evidence over-penalized Meridian: score={meridian_score:.3f} "
+        f"(CEO structural match={ceo_score:.3f})"
     )
