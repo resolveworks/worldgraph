@@ -54,46 +54,49 @@ In knowledge base alignment (PARIS's domain), completeness is somewhat reasonabl
 
 FLORA (Peng et al. 2025) explicitly excludes negation from its framework. The "Simple Positive FIS" (Definition 1) requires all variables to be non-decreasing, which is what makes the Knaster-Tarski convergence proof work. Allowing scores to decrease would break monotonicity and void the convergence guarantee.
 
-## Our approach: dampened negative evidence
+By switching from Knaster-Tarski (monotone updates) to Banach (contraction mappings) as our convergence framework, this restriction is lifted — scores can decrease, and negative evidence integrates naturally into each iteration. See [similarity_flooding.md](similarity_flooding.md) for the full theoretical comparison.
+
+## Our approach: integrated negative evidence via damped iteration
 
 We need negative evidence but cannot afford PARIS's brittleness. The key insight is that negative evidence should be **weaker and more selective** than positive evidence, reflecting the fundamental asymmetry in our setting:
 
 - A match between neighbors is *reliable* positive evidence (two articles independently reporting the same fact)
 - A *missing* match could mean many things (incomplete coverage, relation phrasing mismatch, extraction error)
 
-### Dampened negative factor
+### How it works
 
-For each entity pair `(a, b)`, compute a negative factor:
+Positive and negative evidence are computed together in each propagation step, feeding into a single score per entity pair. For each pair `(a, b)`, we examine all neighbor pairs `(y, y')` connected via similar relations:
 
-```
-neg(a, b) = PRODUCT_{edge r(a, y)} max(
-    1 - alpha × fun(r) × PRODUCT_{edge r'(b, y')} (1 - Pr(y ≡ y')),
-    floor
-)
-```
+- **Positive**: if the neighbor pair's confidence is above 0.5 (likely match), it contributes to `pos_strength`, weighted by inverse functionality — matching neighbors of a functional relation are strong evidence FOR the match.
+- **Negative**: if the neighbor pair's confidence is below 0.5 (likely non-match), it contributes to `neg_strength`, weighted by forward functionality — a functional relation whose target doesn't match is evidence AGAINST the match.
 
-Where:
-- `alpha < 1` is a dampening coefficient (e.g. 0.3) that weakens the negative signal relative to PARIS's full-strength version
-- `floor` (e.g. 0.5) prevents any single missing match from killing the score entirely
-- `fun(r)` is forward functionality — only functional relations generate negative evidence
-- The inner product checks whether `y` matches *any* of `b`'s neighbors via similar relations
-
-The dampening addresses the incompleteness problem: even with high forward functionality and no matching target, the penalty is at most `(1 - alpha × 1.0)` per path, clamped to `floor`.
-
-### When to apply
-
-Negative evidence should activate only when there is already positive evidence to temper. If a pair has near-zero positive similarity, negative evidence is irrelevant. Apply as:
+Both are aggregated via exp-sum and combined with the name-similarity seed:
 
 ```
-final(a, b) = positive(a, b) × neg(a, b)    if positive(a, b) > gate
-             positive(a, b)                   otherwise
+pos_agg = 1 - exp(-λ × pos_strength)
+neg_agg = 1 - exp(-λ × neg_strength)
+
+seed = name_similarity(a, b)
+computed = seed + pos_agg × (1 - seed) - neg_agg × seed
 ```
 
-The gate (e.g. 0.3) ensures negative evidence only modulates pairs that are already plausible matches. This prevents wasting computation on the vast majority of pairs that will never match.
+The seed serves as the baseline. Positive evidence pushes toward 1.0 (proportional to the room above seed), negative evidence pushes toward 0.0 (proportional to the seed itself). With no structural evidence, the score equals the seed. With strong negative evidence and no positive evidence, the score approaches zero.
 
-### Convergence implications
+### The 0.5 threshold as a natural gate
 
-Multiplying by a negative factor makes the update non-monotone — a pair's score can decrease between iterations. This breaks FLORA's strict monotone convergence guarantee. The dampening coefficient (`alpha`) and per-path floor bound the magnitude of any single negative adjustment, and scores can never drop below `floor^k` (where k is the number of edges), so they can't collapse to zero. This makes practical convergence likely but not formally guaranteed — oscillation across pairs in circular dependency chains is theoretically possible. If convergence issues arise, `alpha` and `floor` are the tuning knobs.
+The threshold for contributing positive vs negative evidence is 0.5 — the point of maximum uncertainty. A neighbor pair with confidence 0.6 contributes weak positive evidence. One with confidence 0.1 contributes strong negative evidence. One at exactly 0.5 contributes nothing.
+
+This replaces the separate "gate" mechanism from the dual-channel design. There is no need for a separate activation threshold — the 0.5 boundary naturally ensures that negative evidence only affects pairs whose neighbors have meaningful non-match signal.
+
+### Self-correcting dynamics
+
+Unlike PARIS's one-shot negative factor, our approach is iterative and self-correcting. Consider two entities whose CEO neighbors initially have low name similarity (0.35). In early iterations, `1 - 0.35 = 0.65 > 0.5`, so the CEO pair generates negative evidence for the parent entities. But if the CEO pair has its own structural evidence (e.g. both graduated from the same university), its confidence rises across iterations. Once it crosses 0.5, it switches from generating negative evidence to generating positive evidence. The damped iteration converges to a consistent assignment.
+
+This dynamic is impossible with the dual-channel monotone approach, where negative evidence is fixed at seed values to prevent circular reinforcement. Damped iteration allows circular reinforcement, bounded by the contraction property — feedback loops shrink geometrically rather than exploding.
+
+### Convergence
+
+The damped update `new = (1-α) × old + α × computed` ensures convergence for sparse graphs (see [similarity_flooding.md](similarity_flooding.md) for the full convergence analysis). Negative evidence does not require special treatment — it is part of the same contraction mapping. Each iteration brings the score vector closer to the unique fixed point regardless of whether individual scores go up or down.
 
 ### What negative evidence does NOT replace
 
@@ -114,3 +117,4 @@ Negative evidence interacts with several other components:
 
 - Suchanek, Abiteboul, Senellart. *PARIS: Probabilistic Alignment of Relations, Instances, and Schema.* VLDB 2011. Section 4 (Equations 4-7), Section 6.3 (experimental evaluation of negative evidence).
 - Peng, Bonald, Suchanek. *FLORA: Unsupervised Knowledge Graph Alignment by Fuzzy Logic.* 2025. Definition 1 (no-negation constraint), Theorem 1 (convergence requires monotonicity).
+- Lizorkin, Velikhov, Grinev, Turdakov. *Accuracy Estimate and Optimization Techniques for SimRank Computation.* PVLDB 2008. (Contraction convergence proof for iterative graph similarity with decay factor.)

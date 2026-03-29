@@ -18,6 +18,7 @@ Tests verify that:
 
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
+from worldgraph.names import build_idf, soft_tfidf
 
 
 # ---------------------------------------------------------------------------
@@ -440,9 +441,9 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = set(matches)
     # NovaTech Labs has identical names (seed ~1.0) but the only neighbor
-    # (founder) doesn't match — negative evidence legitimately reduces
-    # confidence.  With neg_alpha=0.3 the final score can drop below 0.8.
-    # This is acceptable: the test's purpose is the assertion below.
+    # (founder) doesn't match — negative evidence from the founder mismatch
+    # can push the score below 0.8.  This is acceptable: the test's purpose
+    # is below.
 
     # sharma/vasquez should NOT match — structural anchor alone
     # cannot override name dissimilarity
@@ -573,10 +574,9 @@ def test_single_graph_produces_no_matches(embedder):
     assert confidence == {}
 
 
-def test_positive_evidence_is_monotonically_nondecreasing(embedder):
-    """Without negative evidence, confidence should never decrease as more
-    iterations run. Negative evidence (applied when pairs exceed neg_gate)
-    can reduce scores, so we disable it here to test pure positive propagation."""
+def test_propagation_converges(embedder):
+    """Propagation should converge: running with more iterations than
+    needed should not change the result."""
     g1 = Graph(id="g1")
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
@@ -591,16 +591,13 @@ def test_positive_evidence_is_monotonically_nondecreasing(embedder):
     g2.add_edge(meridian2, dv2, "purchased")
     g2.add_edge(meridian2, ceo2, "employed")
 
-    # Disable negative evidence by setting alpha=0
-    prev_conf = match_graphs([g1, g2], embedder, max_iter=1, neg_alpha=0.0)
-    for n_iter in [2, 5, 10]:
-        curr_conf = match_graphs([g1, g2], embedder, max_iter=n_iter, neg_alpha=0.0)
-        for pair, val in curr_conf.items():
-            assert val >= prev_conf[pair] - 1e-9, (
-                f"Confidence decreased for {pair}: {prev_conf[pair]:.6f} → {val:.6f} "
-                f"at max_iter={n_iter}"
-            )
-        prev_conf = curr_conf
+    conf_10 = match_graphs([g1, g2], embedder, max_iter=10)
+    conf_30 = match_graphs([g1, g2], embedder, max_iter=30)
+    for pair, val in conf_30.items():
+        assert abs(val - conf_10.get(pair, 0.0)) < 1e-9, (
+            f"Score changed between max_iter=10 and max_iter=30 for {pair}: "
+            f"{conf_10.get(pair, 0.0):.6f} → {val:.6f}"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -652,3 +649,174 @@ def test_multi_label_all_names_contribute_to_idf(embedder):
     # Should not raise — multi-label names flow through the pipeline
     confidence = match_graphs([g1, g2], embedder)
     assert confidence[(m1.id, m2.id)] > 0.8
+
+
+# ---------------------------------------------------------------------------
+# Progressive merging — enriched neighborhood
+# ---------------------------------------------------------------------------
+
+
+def test_progressive_merging_enriched_neighborhood(embedder):
+    """Progressive merging enriches neighborhoods across epochs, enabling
+    matches that pairwise comparison alone cannot produce.
+
+    Articles A and B describe Meridian Corp with overlapping structure
+    (DataVault, James Chen, Stanford) plus unique neighbors (A: Austin,
+    B: Volta Systems).  They merge in epoch 1 (identical names + strong
+    structural match).
+
+    Article C describes "Meridian Tech Corp" — moderate name similarity
+    (~0.64) to "Meridian Corp", sharing one neighbor with A (Austin) and
+    one with B (Volta Systems), plus James Chen (shared by both).
+
+    Without progressive merging (max_epochs=1), C's best pairwise match
+    sees only 2 structural paths (James Chen + one of Austin/Volta).
+    With progressive merging, the merged A+B entity has ALL neighbors
+    (DataVault, James Chen, Stanford, Austin, Volta), giving C three
+    matching paths.  The additional structural evidence produces a
+    measurably higher confidence.
+    """
+    # Article A: Meridian Corp with DataVault, James Chen, Stanford, Austin
+    ga = Graph(id="a")
+    ma = ga.add_entity("Meridian Corp")
+    dva = ga.add_entity("DataVault")
+    ja = ga.add_entity("James Chen")
+    su_a = ga.add_entity("Stanford University")
+    austin_a = ga.add_entity("Austin")
+    ga.add_edge(ma, dva, "acquired")
+    ga.add_edge(ma, ja, "CEO is")
+    ga.add_edge(ma, su_a, "alumna of")
+    ga.add_edge(ma, austin_a, "headquartered in")
+
+    # Article B: Meridian Corp with DataVault, James Chen, Stanford, Volta
+    gb = Graph(id="b")
+    mb = gb.add_entity("Meridian Corp")
+    dvb = gb.add_entity("DataVault")
+    jb = gb.add_entity("James Chen")
+    su_b = gb.add_entity("Stanford University")
+    volta_b = gb.add_entity("Volta Systems")
+    gb.add_edge(mb, dvb, "purchased")
+    gb.add_edge(mb, jb, "CEO is")
+    gb.add_edge(mb, su_b, "alumna of")
+    gb.add_edge(mb, volta_b, "partnered with")
+
+    # Article C: "Meridian Tech Corp" — moderate name sim, neighbors from
+    # both A-unique (Austin) and B-unique (Volta) plus shared (James Chen)
+    gc = Graph(id="c")
+    mc = gc.add_entity("Meridian Tech Corp")
+    austin_c = gc.add_entity("Austin")
+    volta_c = gc.add_entity("Volta Systems")
+    jc = gc.add_entity("James Chen")
+    gc.add_edge(mc, austin_c, "headquartered in")
+    gc.add_edge(mc, volta_c, "partnered with")
+    gc.add_edge(mc, jc, "CEO is")
+
+    graphs = [ga, gb, gc]
+
+    # Premise: name similarity alone is insufficient
+    from worldgraph.names import build_idf, soft_tfidf
+
+    names = [name for g in graphs for n in g.nodes.values() for name in n.names]
+    idf = build_idf(names)
+    assert soft_tfidf("Meridian Tech Corp", "Meridian Corp", idf) < 0.8
+
+    # Premise: A+B merge above merge_threshold
+    conf_single = match_graphs(graphs, embedder, merge_threshold=float("inf"))
+    assert conf_single[(ma.id, mb.id)] >= 0.9, (
+        f"A-B should merge: {conf_single[(ma.id, mb.id)]:.3f}"
+    )
+
+    # Without progressive merging (merge_threshold=inf), C sees only pairwise evidence
+    conf_progressive = match_graphs(graphs, embedder)
+
+    # Progressive merging produces strictly higher confidence for C
+    c_single = max(
+        conf_single.get((mc.id, ma.id), 0),
+        conf_single.get((mc.id, mb.id), 0),
+    )
+    c_progressive = max(
+        conf_progressive.get((mc.id, ma.id), 0),
+        conf_progressive.get((mc.id, mb.id), 0),
+    )
+    assert c_progressive > c_single, (
+        f"Progressive merging should improve C's match: "
+        f"single={c_single:.3f}, progressive={c_progressive:.3f}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Negative evidence should use structural confidence (not name_seed)
+# ---------------------------------------------------------------------------
+
+
+def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors(
+    embedder,
+):
+    """Negative evidence should not penalize an entity pair when its
+    functional neighbors are structurally matched.
+
+    "Meridian Technologies" and "Meridian Tech" share two structural paths:
+    acquired → DataVault (identical names) and CEO → a person with weak name
+    similarity but shared sub-neighbor (Stanford University).
+
+    Propagation discovers the CEO match via Stanford.  Even though the CEO
+    names are dissimilar, the structural evidence from the shared Stanford
+    neighbor outweighs the negative signal from name mismatch.
+    """
+    g1 = Graph(id="g1")
+    m1 = g1.add_entity("Meridian Technologies")
+    dv1 = g1.add_entity("DataVault")
+    ceo1 = g1.add_entity("Dr. Alice M. Johnson")
+    uni1 = g1.add_entity("Stanford University")
+    g1.add_edge(m1, dv1, "acquired")
+    g1.add_edge(m1, ceo1, "CEO")
+    g1.add_edge(ceo1, uni1, "graduated from")
+
+    g2 = Graph(id="g2")
+    m2 = g2.add_entity("Meridian Tech")
+    dv2 = g2.add_entity("DataVault")
+    ceo2 = g2.add_entity("A. Johnson")
+    uni2 = g2.add_entity("Stanford University")
+    g2.add_edge(m2, dv2, "purchased")
+    g2.add_edge(m2, ceo2, "CEO")
+    g2.add_edge(ceo2, uni2, "graduated from")
+
+    # Background to establish CEO as functional (1:1)
+    bg_graphs = []
+    for i, (person, org) in enumerate(
+        [
+            ("Marcus Webb", "Alpha Corp"),
+            ("Sarah Chen", "Beta Inc"),
+            ("James Xu", "Gamma LLC"),
+        ]
+    ):
+        bg = Graph(id=f"bg{i}")
+        p = bg.add_entity(person)
+        o = bg.add_entity(org)
+        bg.add_edge(p, o, "CEO")
+        bg_graphs.append(bg)
+
+    graphs = [g1, g2, *bg_graphs]
+
+    # Premise: CEO name similarity is weak (structural propagation needed)
+    all_names = [n for g in graphs for node in g.nodes.values() for n in node.names]
+    idf = build_idf(all_names)
+    assert soft_tfidf("Dr. Alice M. Johnson", "A. Johnson", idf) < 0.5
+
+    confidence = match_graphs(graphs, embedder)
+
+    # CEO pair should be structurally matched despite weak names
+    ceo_score = confidence.get(
+        (ceo1.id, ceo2.id), confidence.get((ceo2.id, ceo1.id), 0.0)
+    )
+    assert ceo_score > 0.6, (
+        f"CEO pair should be structurally matched, got {ceo_score:.3f}"
+    )
+
+    # Meridian should not be over-penalized — the CEO targets match
+    # structurally via Stanford.
+    meridian_score = confidence.get((m1.id, m2.id), confidence.get((m2.id, m1.id), 0.0))
+    assert meridian_score > 0.8, (
+        f"Negative evidence over-penalized Meridian: score={meridian_score:.3f} "
+        f"(CEO structural match={ceo_score:.3f})"
+    )

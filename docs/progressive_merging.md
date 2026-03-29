@@ -38,30 +38,37 @@ This is relevant because it suggests two fundamentally different strategies:
 
 Strategy 2 avoids the convergence issues of progressive merging but misses the enriched-neighborhood benefit.
 
-## Our approach: epoch-based progressive merging
+## Our approach: progressive merging within damped iteration
 
-Neither the literature nor standard fixpoint theory provides a clean answer for progressive merging during propagation. We propose a hybrid that preserves most of the convergence properties while gaining the neighborhood enrichment benefit.
+We use a single-loop design where propagation runs with damped updates (positive and negative evidence integrated into each step), and merges are committed when the iteration converges. Merged neighborhoods then compound structural evidence in subsequent iterations.
 
 ### The mechanism
 
-Divide propagation into **epochs**. Within each epoch, run standard propagation (monotone non-decreasing, convergence guaranteed). Between epochs, commit matches and merge:
-
 ```
-for epoch in range(max_epochs):
-    # Phase 1: Standard propagation within the epoch
-    confidence = propagate_to_convergence(graph, confidence)
+for iteration in range(max_iter):
+    # Damped propagation step (positive + negative in one pass)
+    for each pair (a, b):
+        computed = seed + pos_agg(neighbors) × (1 - seed) - neg_agg(neighbors) × seed
+        confidence(a, b) = (1 - α) × old + α × computed
+    if not converged:
+        continue
 
-    # Phase 2: Commit high-confidence merges
+    # Commit high-confidence merges
     new_merges = find_merges(confidence, threshold=merge_threshold)
     if not new_merges:
-        break  # No new merges → global convergence
+        break  # Converged, no new merges → done
 
-    # Phase 3: Merge entities in the graph
-    graph = apply_merges(graph, new_merges)
-
-    # Phase 4: Re-seed confidence for the merged graph
-    confidence = reseed(graph, confidence, new_merges)
+    # Update adjacency incrementally, remap pairs/confidence
+    for a, b in new_merges:
+        uf.union(a, b)
+        canonical_adj[uf.find(a)] = dedup(adj[a] + adj[b])
+    confidence, pairs = remap_to_canonical(confidence, pairs, uf)
 ```
+
+Key properties:
+- **No separate phases**: positive and negative evidence are computed together in each step, not sequentially. See [negative_evidence.md](negative_evidence.md) for how this works.
+- **No reseeding**: the damped update naturally anchors to the seed — there is no compounding dampening effect that requires periodic reseeding.
+- **Incremental adjacency**: maintaining a `canonical_adj` alongside the UnionFind avoids rebuilding adjacency from scratch each cycle. Each merge costs O(degree), not O(|edges|).
 
 ### What merging means concretely
 
@@ -94,15 +101,15 @@ The merge threshold should be conservative. A false merge during propagation is 
 
 ### Convergence properties
 
-Within each epoch, propagation converges normally (monotone non-decreasing on a finite lattice). Between epochs, merging changes the graph structure, so the overall process is not a standard fixpoint iteration.
+Within each convergence cycle, the damped iteration converges via the contraction mapping property (see [similarity_flooding.md](similarity_flooding.md)). Between cycles, merging changes the graph structure, so the overall process is not a single contraction mapping.
 
-However, the process is still well-behaved:
+However, the process is well-behaved:
 1. **Merges are irreversible**: once committed, entities stay merged. The set of merged entities grows monotonically.
 2. **The graph shrinks**: each merge reduces the entity count by one. The process must terminate in at most N-1 merge steps.
-3. **Confidence is non-decreasing across epochs**: `max(confidence(a, x), confidence(b, x)) >= confidence(a, x)` for all `x`.
-4. **Termination**: if no epoch produces new merges, the process halts.
+3. **Within-cycle convergence**: each cycle converges to the unique fixed point of the current graph's contraction mapping. The fixed point changes when merges alter the graph structure.
+4. **Termination**: if no cycle produces new merges, the process halts.
 
-This is not a formal convergence guarantee in the FLORA sense (no Knaster-Tarski applies to the cross-epoch dynamics). But the monotonic reduction in entity count provides a strong termination guarantee, and the conservative merge threshold limits cascade risk.
+The conservative merge threshold (0.9) limits cascade risk: only very high-confidence pairs are merged, and enriched neighborhoods from those merges are unlikely to create false matches above the same threshold.
 
 ### Interaction with negative evidence
 
@@ -110,9 +117,7 @@ Progressive merging and [negative evidence](negative_evidence.md) interact in tw
 
 1. **Enriched neighborhoods improve negative evidence quality.** After merging, a combined entity has more edges, which means more opportunities for both positive AND negative evidence. A false match candidate that survived against sparse individual neighborhoods may fail against the richer merged neighborhood.
 
-2. **Negative evidence prevents false progressive merges.** If negative evidence runs within each epoch (before the merge step), it can suppress pairs that had high positive scores but contradictory functional relations. This is a safety mechanism against the cascade risk of progressive merging.
-
-The recommended order within each epoch: propagate positive evidence → apply negative dampening → commit merges above threshold.
+2. **Negative evidence prevents false progressive merges.** Because negative evidence is integrated into each propagation step (not applied post-hoc), it suppresses pairs with contradictory functional relations before they ever reach the merge threshold. This is a natural safety mechanism against cascade risk.
 
 ## What progressive merging does NOT solve
 
@@ -123,5 +128,5 @@ The recommended order within each epoch: propagate positive evidence → apply n
 ## References
 
 - Suchanek, Abiteboul, Senellart. *PARIS: Probabilistic Alignment of Relations, Instances, and Schema.* VLDB 2011. Section 5.2 (maximal assignment as soft progressive commitment).
-- Peng, Bonald, Suchanek. *FLORA: Unsupervised Knowledge Graph Alignment by Fuzzy Logic.* 2025. Theorem 1 (convergence requires monotonicity — why merging during propagation is problematic).
+- Peng, Bonald, Suchanek. *FLORA: Unsupervised Knowledge Graph Alignment by Fuzzy Logic.* 2025. Theorem 1 (convergence requires monotonicity — contrast with our contraction-based approach).
 - Liao, Sabetiansfahani, Bhatt, Ben-Hur. *IsoRankN: Spectral Methods for Global Alignment of Multiple Protein Networks.* Bioinformatics 2009. Sections 2.2-2.4 (star spread as alternative to progressive merging).
