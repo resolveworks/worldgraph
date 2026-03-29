@@ -374,6 +374,19 @@ def _seed_confidence(
     return confidence, name_seed
 
 
+def _remap_confidence(conf: Confidence, uf: UnionFind) -> Confidence:
+    """Remap a confidence dict to canonical reps, taking max on collisions."""
+    remapped: Confidence = {}
+    for (a, b), score in conf.items():
+        ra, rb = uf.find(a), uf.find(b)
+        if ra == rb:
+            continue
+        old = remapped.get((ra, rb), 0.0)
+        remapped[(ra, rb)] = max(old, score)
+        remapped[(rb, ra)] = max(old, score)
+    return remapped
+
+
 def propagate_similarity(
     graph: Graph,
     idf: dict[str, float],
@@ -418,11 +431,6 @@ def propagate_similarity(
         return {}, uf
 
     confidence, name_seed = _seed_confidence(graph, idf, pairs)
-
-    # Track which graph_ids each canonical rep covers (for pair filtering).
-    canon_graphs: dict[str, set[str]] = defaultdict(set)
-    for eid, node in graph.nodes.items():
-        canon_graphs[eid].add(node.graph_id)
 
     for _ in range(max_iter):
         prev = dict(confidence)
@@ -491,24 +499,14 @@ def propagate_similarity(
         ]
 
         if new_merges:
-            # Record pre-merge state for adjacency combination.
-            pre_merge_canons: set[str] = set()
-            pre_merge_graphs: dict[str, set[str]] = {}
-            for ca, cb in new_merges:
-                pre_merge_canons.add(ca)
-                pre_merge_canons.add(cb)
-                pre_merge_graphs[ca] = set(canon_graphs.get(ca, set()))
-                pre_merge_graphs[cb] = set(canon_graphs.get(cb, set()))
-
+            all_merged = {e for ca, cb in new_merges for e in (ca, cb)}
             for ca, cb in new_merges:
                 uf.union(ca, cb)
 
-            # Group pre-merge canonical reps by their new representative.
-            merge_groups: dict[str, list[str]] = defaultdict(list)
-            for old_canon in pre_merge_canons:
-                merge_groups[uf.find(old_canon)].append(old_canon)
-
             # Update canonical_adj incrementally: combine + dedup.
+            merge_groups: dict[str, list[str]] = defaultdict(list)
+            for e in all_merged:
+                merge_groups[uf.find(e)].append(e)
             for new_canon, old_canons in merge_groups.items():
                 combined: list[Neighbor] = []
                 for oc in old_canons:
@@ -532,55 +530,24 @@ def propagate_similarity(
                         )
                 canonical_adj[new_canon] = deduped
 
-            # Update canon_graphs for merged reps.
-            for new_canon, old_canons in merge_groups.items():
-                combined_graphs: set[str] = set()
-                for oc in old_canons:
-                    combined_graphs |= pre_merge_graphs.get(
-                        oc, canon_graphs.get(oc, set())
-                    )
-                canon_graphs[new_canon] = combined_graphs
-
-            # Remap pairs to canonical reps, dedup, drop self-pairs.
-            new_pairs: list[tuple[str, str]] = []
+            # Remap pairs, confidence, name_seed to canonical reps.
             pair_set: set[tuple[str, str]] = set()
+            new_pairs: list[tuple[str, str]] = []
             for a, b in pairs:
                 ra, rb = uf.find(a), uf.find(b)
                 if ra == rb:
                     continue
                 pair = (min(ra, rb), max(ra, rb))
-                if pair in pair_set:
-                    continue
-                if len(canon_graphs.get(ra, set()) | canon_graphs.get(rb, set())) == 1:
-                    continue
-                pair_set.add(pair)
-                new_pairs.append(pair)
+                if pair not in pair_set:
+                    pair_set.add(pair)
+                    new_pairs.append(pair)
             pairs = new_pairs
 
-            # Remap confidence and name_seed to canonical reps.
-            new_conf: Confidence = {}
-            for (a, b), score in confidence.items():
-                ra, rb = uf.find(a), uf.find(b)
-                if ra == rb:
-                    continue
-                old = new_conf.get((ra, rb), 0.0)
-                new_conf[(ra, rb)] = max(old, score)
-                new_conf[(rb, ra)] = max(old, score)
-            confidence = new_conf
-
-            new_name: Confidence = {}
-            for (a, b), score in name_seed.items():
-                ra, rb = uf.find(a), uf.find(b)
-                if ra == rb:
-                    continue
-                old = new_name.get((ra, rb), 0.0)
-                new_name[(ra, rb)] = max(old, score)
-                new_name[(rb, ra)] = max(old, score)
-            name_seed = new_name
+            confidence = _remap_confidence(confidence, uf)
+            name_seed = _remap_confidence(name_seed, uf)
 
             # Re-seed: confidence should never fall below name similarity.
-            # Without this, negative dampening compounds across merge cycles
-            # (dampened values get dampened again after the next convergence).
+            # Without this, negative dampening compounds across merge cycles.
             for ca, cb in pairs:
                 ns = name_seed.get((ca, cb), 0.0)
                 if ns > confidence.get((ca, cb), 0.0):
@@ -589,7 +556,6 @@ def propagate_similarity(
 
             if not pairs:
                 break
-            # Merges happened — continue propagating with enriched neighborhoods.
             continue
 
         # Positive converged, no new merges — done.
