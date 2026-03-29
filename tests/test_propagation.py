@@ -441,9 +441,9 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = set(matches)
     # NovaTech Labs has identical names (seed ~1.0) but the only neighbor
-    # (founder) doesn't match — the negative channel propagates founder
-    # mismatch, and the Bayesian combination can push the final score
-    # below 0.8.  This is acceptable: the test's purpose is below.
+    # (founder) doesn't match — negative evidence from the founder mismatch
+    # can push the score below 0.8.  This is acceptable: the test's purpose
+    # is below.
 
     # sharma/vasquez should NOT match — structural anchor alone
     # cannot override name dissimilarity
@@ -575,8 +575,8 @@ def test_single_graph_produces_no_matches(embedder):
 
 
 def test_propagation_converges(embedder):
-    """Both positive and negative channels should converge: running with
-    more iterations than needed should not change the result."""
+    """Propagation should converge: running with more iterations than
+    needed should not change the result."""
     g1 = Graph(id="g1")
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
@@ -759,11 +759,9 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
     acquired → DataVault (identical names) and CEO → a person with weak name
     similarity but shared sub-neighbor (Stanford University).
 
-    The positive channel discovers the CEO match via Stanford.  The negative
-    channel sees CEO name dissimilarity (~0.7) but Stanford's zero
-    dissimilarity blocks negative propagation for the CEO pair.  The
-    Bayesian combination divides out the name prior, so only the structural
-    growth matters — and positive grew more than negative.
+    Propagation discovers the CEO match via Stanford.  Even though the CEO
+    names are dissimilar, the structural evidence from the shared Stanford
+    neighbor outweighs the negative signal from name mismatch.
     """
     g1 = Graph(id="g1")
     m1 = g1.add_entity("Meridian Technologies")

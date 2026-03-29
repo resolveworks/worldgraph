@@ -38,17 +38,17 @@ The core propagation loop (`match.py`):
 
 1. **Name-similarity seeding** — Soft TF-IDF + Jaro-Winkler seeds the confidence dict before iteration starts. This gives propagation initial signal to work with. See [docs/name_similarity.md](docs/name_similarity.md).
 
-2. **Relation similarity via sentence embeddings** — relation phrase similarity is a continuous multiplier on propagation paths, not a binary gate. "acquired" ↔ "purchased" (~0.85) contributes proportionally; "acquired" ↔ "located in" (~0.1) contributes almost nothing. This replaces the identical-label requirement in standard SF/PARIS.
+2. **Relation similarity via sentence embeddings** — relation phrase similarity is thresholded into equivalence classes. "acquired" ↔ "purchased" (above threshold) are treated as equivalent; "acquired" ↔ "located in" (below) are not. The threshold is used consistently for functionality pooling and propagation gating.
 
-3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with similar relation phrases pooled. See [docs/functionality.md](docs/functionality.md).
+3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with equivalent relation phrases pooled. See [docs/functionality.md](docs/functionality.md).
 
-4. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `rel_sim × min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
+4. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
 
-5. **Monotone non-decreasing updates** — confidence only goes up, never down. Preserves convergence guarantees (FLORA-style).
+5. **Damped fixed-point iteration** — `new = (1-d)*old + d*computed` where computed integrates positive and negative evidence around the name-similarity seed. Converges via contraction (see [docs/similarity_flooding.md](docs/similarity_flooding.md)).
 
 6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Final grouping via union-find.
 
-7. **Negative evidence** ([docs/negative_evidence.md](docs/negative_evidence.md)) — dampened negative factor penalizes entity pairs whose functional neighbors don't match. Applied once per convergence cycle, after positive evidence stabilizes. Uses name-seed confidence (not structural) for neighbor matching to prevent circular reinforcement.
+7. **Negative evidence** ([docs/negative_evidence.md](docs/negative_evidence.md)) — integrated directly into the single propagation score. Neighbors with confidence < 0.5 contribute negative evidence weighted by forward functionality, pushing the score toward 0. Damped iteration bounds circular reinforcement geometrically.
 
 8. **Progressive merging** ([docs/progressive_merging.md](docs/progressive_merging.md)) — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles.
 

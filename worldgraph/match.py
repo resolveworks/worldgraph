@@ -1,19 +1,18 @@
-"""Stage 2: Entity alignment via dual-channel similarity propagation.
+"""Stage 2: Entity alignment via damped similarity propagation.
 
-Two independent propagation channels run in parallel:
+A single confidence score per entity pair is iteratively refined using
+damped fixed-point iteration.  Each step computes structural evidence
+from matching neighbor pairs (positive: neighbors likely match, weighted
+by inverse functionality; negative: neighbors likely don't match, weighted
+by forward functionality) and blends it with the previous score via a
+damping factor.
 
-- **Positive** (similarity): seeded from name similarity, propagated with
-  inverse functionality weights.  Measures structural evidence FOR a match.
-- **Negative** (dissimilarity): seeded from 1 − name similarity, propagated
-  with forward functionality weights.  Measures structural evidence AGAINST.
-
-Both use the same algorithm (exp-sum aggregation, monotone max).  They are
-combined via Bayesian log-odds that divides out the shared name-similarity
-prior to avoid double-counting.
+Name similarity seeds the initial scores and serves as the baseline that
+structural evidence modulates up or down.
 
 Relation similarity is treated as binary via a single threshold that defines
 equivalence classes over free-text relation phrases.  This threshold is used
-consistently for functionality pooling and both propagation channels.
+consistently for functionality pooling and propagation gating.
 """
 
 import math
@@ -45,17 +44,17 @@ class Functionality(NamedTuple):
 class Neighbor(NamedTuple):
     """An entry in a node's weighted adjacency list.
 
-    ``func_weight`` is used by the positive (similarity) channel — inverse
-    functionality for outgoing, forward for incoming.
+    ``pos_weight`` weights positive evidence — inverse functionality for
+    outgoing edges, forward functionality for incoming edges.
 
-    ``neg_func_weight`` is used by the negative (dissimilarity) channel —
-    forward functionality for outgoing, inverse for incoming.
+    ``neg_weight`` weights negative evidence — forward functionality for
+    outgoing edges, inverse functionality for incoming edges.
     """
 
     entity_id: str
     relation: str
-    func_weight: float
-    neg_func_weight: float
+    pos_weight: float
+    neg_weight: float
 
 
 # Type aliases for the main data structures flowing through the pipeline.
@@ -165,35 +164,6 @@ def compute_functionality(
 # ---------------------------------------------------------------------------
 
 
-def _combine_bayesian(
-    pos: float,
-    neg: float,
-    prior: float,
-    clamp: float = 0.01,
-) -> float:
-    """Combine positive and negative confidence via Bayesian log-odds.
-
-    Both channels are seeded from the same name-similarity prior (pos from
-    ``prior``, neg from ``1 - prior``).  To avoid double-counting, the
-    prior is divided out in log-odds space::
-
-        logit(final) = logit(pos) - logit(neg) - logit(prior)
-
-    When there is no structural evidence (pos == prior, neg == 1 - prior),
-    the two structural terms cancel and the result equals the prior.
-
-    Inputs are clamped to ``[clamp, 1 - clamp]`` before taking logit so
-    that the log-odds stay in a bounded range (±4.6 with the default).
-    """
-
-    def _logit(x: float) -> float:
-        x = max(clamp, min(1.0 - clamp, x))
-        return math.log(x / (1.0 - x))
-
-    log_odds = _logit(pos) - _logit(neg) - _logit(prior)
-    return 1.0 / (1.0 + math.exp(-max(-40.0, min(40.0, log_odds))))
-
-
 def build_unified_graph(graphs: list[Graph]) -> Graph:
     """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs."""
     unified = Graph()
@@ -244,13 +214,17 @@ def _build_adjacency(
         if key_src not in seen[src]:
             seen[src].add(key_src)
             adjacency[src].append(
-                Neighbor(tgt, edge.relation, func.inverse, func.forward)
+                Neighbor(
+                    tgt, edge.relation, pos_weight=func.inverse, neg_weight=func.forward
+                )
             )
         key_tgt = (src, edge.relation)
         if key_tgt not in seen[tgt]:
             seen[tgt].add(key_tgt)
             adjacency[tgt].append(
-                Neighbor(src, edge.relation, func.forward, func.inverse)
+                Neighbor(
+                    src, edge.relation, pos_weight=func.forward, neg_weight=func.inverse
+                )
             )
     return dict(adjacency)
 
@@ -271,17 +245,14 @@ def _seed_confidence(
     graph: Graph,
     idf: dict[str, float],
     pairs: list[tuple[str, str]],
-) -> tuple[Confidence, Confidence, Confidence]:
-    """Seed both propagation channels from name similarity.
+) -> tuple[Confidence, Confidence]:
+    """Seed confidence from name similarity.
 
-    Returns (pos_conf, neg_conf, name_sim):
-
-    - ``pos_conf``: seeded from name similarity (positive channel).
-    - ``neg_conf``: seeded from 1 − name similarity (negative channel).
-    - ``name_sim``: read-only prior for the Bayesian combination.
+    Returns (conf, name_sim) where both are initialized from the best
+    soft-TF-IDF score across all name pairs.  ``name_sim`` is kept as a
+    read-only baseline for the seed-as-baseline update formula.
     """
-    pos_conf: Confidence = {}
-    neg_conf: Confidence = {}
+    conf: Confidence = {}
     name_sim: Confidence = {}
     for a, b in pairs:
         best = 0.0
@@ -289,13 +260,11 @@ def _seed_confidence(
             for nb in graph.nodes[b].names:
                 best = max(best, soft_tfidf(na, nb, idf))
         best = max(0.0, best)
-        pos_conf[(a, b)] = best
-        pos_conf[(b, a)] = best
-        neg_conf[(a, b)] = 1.0 - best
-        neg_conf[(b, a)] = 1.0 - best
+        conf[(a, b)] = best
+        conf[(b, a)] = best
         name_sim[(a, b)] = best
         name_sim[(b, a)] = best
-    return pos_conf, neg_conf, name_sim
+    return conf, name_sim
 
 
 def _remap_confidence(conf: Confidence, uf: UnionFind) -> Confidence:
@@ -321,27 +290,27 @@ def propagate_similarity(
     epsilon: float = 1e-4,
     exp_lambda: float = 1.0,
     merge_threshold: float = 0.9,
+    damping: float = 0.5,
 ) -> tuple[Confidence, UnionFind]:
-    """Run dual-channel similarity propagation with progressive merging.
+    """Run damped similarity propagation with progressive merging.
 
-    Two independent channels propagate in the same loop:
+    A single confidence score per entity pair integrates both positive and
+    negative structural evidence.  Each iteration computes a new score from
+    neighbor confidences and blends it with the old score via damping::
 
-    - **pos_conf**: seeded from name similarity, propagated with
-      ``func_weight`` (inverse functionality).  Monotone non-decreasing.
-    - **neg_conf**: seeded from 1 − name similarity, propagated with
-      ``neg_func_weight`` (forward functionality).  Monotone non-decreasing.
+        computed = seed + pos_agg * (1 - seed) - neg_agg * seed
+        new = (1 - damping) * old + damping * computed
 
-    Neither channel reads the other.  Both use the same algorithm (exp-sum
-    aggregation, monotone max rule).  They are combined only for merge
-    decisions and the final output via ``_combine_bayesian``, which divides
-    out the shared name-similarity prior to avoid double-counting.
+    Name similarity (``seed``) is the baseline: positive evidence pushes
+    toward 1.0, negative evidence pushes toward 0.0.  With no structural
+    evidence the fixpoint equals the seed.
 
     On merge, the canonical adjacency for the new representative is built
     by combining and deduplicating the adjacency lists of the merged
     entities — O(degree) per merge, not O(|edges|).
 
     Returns (confidence, union_find) where confidence maps original
-    entity-ID pairs to combined scores and union_find tracks all merges.
+    entity-ID pairs to scores and union_find tracks all merges.
     """
     rel_sim = _build_rel_sim(graph, relation_embeddings)
     uf = UnionFind()
@@ -354,14 +323,12 @@ def propagate_similarity(
     if not pairs:
         return {}, uf
 
-    pos_conf, neg_conf, name_sim = _seed_confidence(graph, idf, pairs)
+    conf, name_sim = _seed_confidence(graph, idf, pairs)
 
     for _ in range(max_iter):
-        prev_pos = dict(pos_conf)
-        prev_neg = dict(neg_conf)
+        prev = dict(conf)
         changed = False
 
-        # --- Dual-channel propagation ---
         for ca, cb in pairs:
             pos_strength = 0.0
             neg_strength = 0.0
@@ -378,53 +345,47 @@ def propagate_similarity(
                     if rs < rel_threshold:
                         continue
 
-                    # Only propagate evidence that is "more likely than
-                    # not" — prevents weak signals from bouncing between
-                    # entity pairs and amplifying into false confidence.
-                    pos_nc = prev_pos.get((ra, rb), 0.0)
-                    if pos_nc > 0.5:
-                        pos_strength += (
-                            min(nbr_a.func_weight, nbr_b.func_weight) * pos_nc
-                        )
+                    if ra == rb:
+                        # Neighbors already merged — strongest positive evidence.
+                        pos_strength += min(nbr_a.pos_weight, nbr_b.pos_weight)
+                        continue
 
-                    neg_nc = prev_neg.get((ra, rb), 0.0)
+                    nc = prev.get((ra, rb), 0.0)
+                    if nc > 0.5:
+                        pos_strength += min(nbr_a.pos_weight, nbr_b.pos_weight) * nc
+
+                    neg_nc = 1.0 - nc
                     if neg_nc > 0.5:
-                        neg_strength += (
-                            min(nbr_a.neg_func_weight, nbr_b.neg_func_weight) * neg_nc
-                        )
+                        neg_strength += min(nbr_a.neg_weight, nbr_b.neg_weight) * neg_nc
 
-            # Exp-sum aggregation + monotone max for both channels.
-            pos_new = (
+            # Exp-sum aggregation + seed-as-baseline combination.
+            pos_agg = (
                 1.0 - math.exp(-exp_lambda * pos_strength) if pos_strength > 0 else 0.0
             )
-            old_pos = prev_pos[(ca, cb)]
-            pos_val = max(pos_new, old_pos)
-            pos_conf[(ca, cb)] = pos_val
-            pos_conf[(cb, ca)] = pos_val
-
-            neg_new = (
+            neg_agg = (
                 1.0 - math.exp(-exp_lambda * neg_strength) if neg_strength > 0 else 0.0
             )
-            old_neg = prev_neg[(ca, cb)]
-            neg_val = max(neg_new, old_neg)
-            neg_conf[(ca, cb)] = neg_val
-            neg_conf[(cb, ca)] = neg_val
 
-            if abs(pos_val - old_pos) > epsilon or abs(neg_val - old_neg) > epsilon:
+            seed = name_sim[(ca, cb)]
+            computed = seed + pos_agg * (1.0 - seed) - neg_agg * seed
+            computed = max(0.0, min(1.0, computed))
+
+            old = prev[(ca, cb)]
+            new_val = (1.0 - damping) * old + damping * computed
+            conf[(ca, cb)] = new_val
+            conf[(cb, ca)] = new_val
+
+            if abs(new_val - old) > epsilon:
                 changed = True
 
         if changed:
             continue
 
-        # --- Progressive merging (on Bayesian combined score) ---
+        # --- Progressive merging (directly on single score) ---
         new_merges = [
             (ca, cb)
             for ca, cb in pairs
-            if _combine_bayesian(
-                pos_conf[(ca, cb)], neg_conf[(ca, cb)], name_sim[(ca, cb)]
-            )
-            >= merge_threshold
-            and uf.find(ca) != uf.find(cb)
+            if conf[(ca, cb)] >= merge_threshold and uf.find(ca) != uf.find(cb)
         ]
 
         if new_merges:
@@ -453,13 +414,13 @@ def propagate_similarity(
                             Neighbor(
                                 canon_nbr,
                                 nbr.relation,
-                                nbr.func_weight,
-                                nbr.neg_func_weight,
+                                nbr.pos_weight,
+                                nbr.neg_weight,
                             )
                         )
                 canonical_adj[new_canon] = deduped
 
-            # Remap pairs and all three dicts to canonical reps.
+            # Remap pairs and confidence dicts to canonical reps.
             pair_set: set[tuple[str, str]] = set()
             new_pairs: list[tuple[str, str]] = []
             for a, b in pairs:
@@ -472,15 +433,14 @@ def propagate_similarity(
                     new_pairs.append(pair)
             pairs = new_pairs
 
-            pos_conf = _remap_confidence(pos_conf, uf)
-            neg_conf = _remap_confidence(neg_conf, uf)
+            conf = _remap_confidence(conf, uf)
             name_sim = _remap_confidence(name_sim, uf)
 
             if not pairs:
                 break
             continue
 
-        # Both channels converged, no new merges — done.
+        # Converged, no new merges — done.
         break
 
     # Expand canonical-rep confidence to original entity-ID pairs.
@@ -489,14 +449,9 @@ def propagate_similarity(
         members[uf.find(eid)].append(eid)
 
     final: Confidence = {}
-    for (ca, cb), pos_score in pos_conf.items():
+    for (ca, cb), score in conf.items():
         if ca == cb:
             continue
-        score = _combine_bayesian(
-            pos_score,
-            neg_conf.get((ca, cb), 0.0),
-            name_sim.get((ca, cb), 0.5),
-        )
         for ma in members.get(ca, [ca]):
             for mb in members.get(cb, [cb]):
                 if graph.nodes[ma].graph_id == graph.nodes[mb].graph_id:
@@ -537,7 +492,7 @@ def match_graphs(
     and runs similarity propagation.  ``rel_cluster_threshold`` is the single
     relation equivalence threshold: relation pairs with embedding similarity
     above this value are treated as the same relation for functionality
-    pooling, positive propagation gating, and negative evidence.
+    pooling and propagation gating.
 
     Returns the confidence dict.
     """
