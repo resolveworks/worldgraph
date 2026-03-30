@@ -394,6 +394,9 @@ def propagate_similarity(
                 uf.union(ca, cb)
 
             # Update canonical_adj incrementally: combine + dedup.
+            # Dedup by (canonical_neighbor, relation_equivalence_class) —
+            # synonym relations to the same neighbor represent the same
+            # structural evidence and must not inflate pos_strength.
             merge_groups: dict[str, list[str]] = defaultdict(list)
             for e in all_merged:
                 merge_groups[uf.find(e)].append(e)
@@ -401,23 +404,37 @@ def propagate_similarity(
                 combined: list[Neighbor] = []
                 for oc in old_canons:
                     combined.extend(canonical_adj.get(oc, []))
-                seen: set[tuple[str, str]] = set()
-                deduped: list[Neighbor] = []
+                # Group by canonical neighbor, then keep one entry per
+                # relation equivalence class (max pos_weight wins).
+                per_nbr: dict[str, list[Neighbor]] = defaultdict(list)
                 for nbr in combined:
                     canon_nbr = uf.find(nbr.entity_id)
                     if canon_nbr == new_canon:
                         continue
-                    key = (canon_nbr, nbr.relation)
-                    if key not in seen:
-                        seen.add(key)
-                        deduped.append(
-                            Neighbor(
-                                canon_nbr,
-                                nbr.relation,
-                                nbr.pos_weight,
-                                nbr.neg_weight,
-                            )
+                    per_nbr[canon_nbr].append(
+                        Neighbor(
+                            canon_nbr, nbr.relation, nbr.pos_weight, nbr.neg_weight
                         )
+                    )
+                deduped: list[Neighbor] = []
+                for canon_nbr, entries in per_nbr.items():
+                    # Cluster entries by relation similarity: each entry
+                    # joins the first cluster whose representative is
+                    # similar (>= rel_threshold).  Within each cluster,
+                    # keep the entry with the highest pos_weight.
+                    clusters: list[Neighbor] = []
+                    for entry in entries:
+                        merged_into = False
+                        for i, rep in enumerate(clusters):
+                            sim = rel_sim.get((entry.relation, rep.relation), 0.0)
+                            if sim >= rel_threshold:
+                                if entry.pos_weight > rep.pos_weight:
+                                    clusters[i] = entry
+                                merged_into = True
+                                break
+                        if not merged_into:
+                            clusters.append(entry)
+                    deduped.extend(clusters)
                 canonical_adj[new_canon] = deduped
 
             # Remap pairs and confidence dicts to canonical reps.

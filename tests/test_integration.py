@@ -368,3 +368,86 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
     assert nt_group is not None and nt_a2.id in nt_group
     ql_group = _find_group_containing(groups, ql_b1.id)
     assert ql_group is not None and ql_b2.id in ql_group
+
+
+# ---------------------------------------------------------------------------
+# 5. Synonym relation inflation after progressive merging
+# ---------------------------------------------------------------------------
+
+
+def test_synonym_inflation_false_merge_via_shared_hub(embedder):
+    """Synonym relation variants to the same canonical neighbor must not
+    inflate positive evidence after progressive merging.
+
+    Five articles about Meridian Technologies acquiring two different
+    companies.  A neutral article (g0) mentions only Meridian with an
+    unrelated edge, enabling all Meridian instances to merge via
+    union-find transitivity (no cross-entity negative evidence in g0).
+
+    After merge, canonical Lightwave and canonical CloudScale each have
+    two adjacency entries to canonical Meridian ("acquired" + "purchased").
+    Without deduplication by relation equivalence class, the propagation
+    loop's ``ra == rb`` path fires 2×2 = 4 times, inflating pos_strength
+    to ~2.0 and pos_agg to 0.865 — well above the 0.8 match threshold
+    despite Lightwave and CloudScale having zero name similarity.
+
+    With proper dedup (one entry per relation cluster per neighbor), only
+    one combination fires, giving pos_strength ~0.5, pos_agg ~0.39 —
+    correctly below threshold."""
+    # g0: neutral article — Meridian only, no cross-entity negative evidence
+    g0 = Graph(id="neutral")
+    m0 = g0.add_entity("Meridian Technologies")
+    pit0 = g0.add_entity("Pittsburgh")
+    g0.add_edge(m0, pit0, "is based in")
+
+    # g1: Meridian acquired Lightwave
+    g1 = Graph(id="acq-lw")
+    m1 = g1.add_entity("Meridian Technologies")
+    lw1 = g1.add_entity("Lightwave Analytics")
+    g1.add_edge(m1, lw1, "acquired")
+
+    # g2: Meridian purchased Lightwave (synonym)
+    g2 = Graph(id="pur-lw")
+    m2 = g2.add_entity("Meridian Technologies")
+    lw2 = g2.add_entity("Lightwave Analytics")
+    g2.add_edge(m2, lw2, "purchased")
+
+    # g3: Meridian acquired CloudScale
+    g3 = Graph(id="acq-cs")
+    m3 = g3.add_entity("Meridian Technologies")
+    cs3 = g3.add_entity("CloudScale")
+    g3.add_edge(m3, cs3, "acquired")
+
+    # g4: Meridian purchased CloudScale (synonym)
+    g4 = Graph(id="pur-cs")
+    m4 = g4.add_entity("Meridian Technologies")
+    cs4 = g4.add_entity("CloudScale")
+    g4.add_edge(m4, cs4, "purchased")
+
+    graphs = [g0, g1, g2, g3, g4]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    # All Meridian instances should merge
+    m_group = _find_group_containing(groups, m0.id)
+    assert m_group is not None, "Meridian entities not merged"
+    assert {m0.id, m1.id, m2.id, m3.id, m4.id} <= m_group
+
+    # Both Lightwave instances should merge
+    lw_group = _find_group_containing(groups, lw1.id)
+    assert lw_group is not None, "Lightwave entities not merged"
+    assert lw2.id in lw_group
+
+    # Both CloudScale instances should merge
+    cs_group = _find_group_containing(groups, cs3.id)
+    assert cs_group is not None, "CloudScale entities not merged"
+    assert cs4.id in cs_group
+
+    # Lightwave and CloudScale must NOT merge — they are different companies
+    # with zero name similarity; only inflated synonym evidence could merge them
+    lw_ids = {lw1.id, lw2.id}
+    cs_ids = {cs3.id, cs4.id}
+    for group in groups:
+        assert not (group & lw_ids and group & cs_ids), (
+            f"Synonym inflation caused false merge of Lightwave and CloudScale: {group}"
+        )
