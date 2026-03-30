@@ -10,6 +10,8 @@ on multi-source scenarios that L2 tests don't cover:
 - Cross-event entity linking (shared entity across clusters)
 """
 
+import pytest
+
 from worldgraph.graph import Graph
 from worldgraph.match import build_match_groups, match_graphs
 
@@ -368,3 +370,204 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
     assert nt_group is not None and nt_a2.id in nt_group
     ql_group = _find_group_containing(groups, ql_b1.id)
     assert ql_group is not None and ql_b2.id in ql_group
+
+
+# ---------------------------------------------------------------------------
+# 5. Synonym relation inflation (false merges from real data)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    reason="negative evidence cascade: cross-entity CFO-relation pairs "
+    "(Cascade≠CloudScale) suppress the shared employee's confidence "
+    "below 0.5, which cascades as negative evidence back to the company "
+    "same-name pairs, preventing legitimate merges",
+    strict=True,
+)
+def test_shared_employee_bridge_no_company_merge(embedder):
+    """A person who held the same role at two different companies should
+    not cause those companies to be placed in the same match group, and
+    same-name company entities should still merge.
+
+    Teresa Nakamura was CFO at both Cascade Robotics and CloudScale,
+    reported by two sources with different phrasings.  Same-name merges
+    (Cascade₁↔Cascade₂, CloudScale₁↔CloudScale₂) should work, but the
+    companies themselves should not be merged.
+
+    Currently fails because the formula ``computed = seed + pos*(1-seed)
+    - neg*seed`` zeroes out positive evidence when seed=1.0.  The negative
+    evidence from Cascade≠CloudScale (nc=0 → neg) suppresses Nakamura's
+    confidence, which cascades back as negative evidence to the company
+    same-name pairs.
+
+    Reproduces the Cascade Robotics / CloudScale pattern from real data."""
+    g1 = Graph(id="g1")
+    nak1 = g1.add_entity("Teresa Nakamura")
+    cascade1 = g1.add_entity("Cascade Robotics")
+    cloud1 = g1.add_entity("CloudScale")
+    g1.add_edge(nak1, cascade1, "is CFO of")
+    g1.add_edge(nak1, cloud1, "was CFO at")
+
+    g2 = Graph(id="g2")
+    nak2 = g2.add_entity("Teresa Nakamura")
+    cascade2 = g2.add_entity("Cascade Robotics")
+    cloud2 = g2.add_entity("CloudScale")
+    g2.add_edge(nak2, cascade2, "appointed CFO of")
+    g2.add_edge(nak2, cloud2, "is chief financial officer of")
+
+    graphs = [g1, g2]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    # Cascade and CloudScale are different companies — must stay separate.
+    cascade_ids = {cascade1.id, cascade2.id}
+    cloud_ids = {cloud1.id, cloud2.id}
+    for group in groups:
+        assert not (group & cascade_ids and group & cloud_ids), (
+            f"Companies falsely merged via shared employee bridge: {group}"
+        )
+
+    # Same-name merges within each company should still work.
+    cas_group = _find_group_containing(groups, cascade1.id)
+    assert cas_group is not None and cascade2.id in cas_group
+    cloud_group = _find_group_containing(groups, cloud1.id)
+    assert cloud_group is not None and cloud2.id in cloud_group
+
+
+@pytest.mark.xfail(
+    reason="negative evidence cascade: cross-entity relation pairs "
+    "(DPC≠Vantara) suppress the shared third-party neighbors' "
+    "confidence below 0.5, which cascades as negative evidence to "
+    "the same-name entity pairs, preventing legitimate merges",
+    strict=True,
+)
+def test_regulator_and_regulated_entity_stay_separate(embedder):
+    """A regulatory body and the entity it regulates should not merge,
+    and same-name entities should still merge across sources.
+
+    Two news outlets (DataWatch EU, EuroPrivacy Wire) both report on
+    the Data Protection Commission and Vantara AI.  Same-name merges
+    (DPC₁↔DPC₂, Vantara₁↔Vantara₂) should work, but the regulator
+    and company should stay separate.
+
+    Currently fails because the negative evidence from DPC≠Vantara
+    (both receive edges from DataWatch/EuroPrivacy via similar "reported
+    on"/"published report on" relations) suppresses the third-party
+    neighbors' confidence, cascading to all same-name pairs.
+
+    Reproduces the DPC / Vantara AI pattern from real data."""
+    g1 = Graph(id="g1")
+    dpc1 = g1.add_entity("Data Protection Commission")
+    vantara1 = g1.add_entity("Vantara AI")
+    dw1 = g1.add_entity("DataWatch EU")
+    euro1 = g1.add_entity("EuroPrivacy Wire")
+    g1.add_edge(dw1, dpc1, "reported on")
+    g1.add_edge(dw1, vantara1, "reported on")
+    g1.add_edge(euro1, dpc1, "published report on")
+    g1.add_edge(euro1, vantara1, "published report on")
+
+    g2 = Graph(id="g2")
+    dpc2 = g2.add_entity("Data Protection Commission")
+    vantara2 = g2.add_entity("Vantara AI")
+    dw2 = g2.add_entity("DataWatch EU")
+    euro2 = g2.add_entity("EuroPrivacy Wire")
+    g2.add_edge(dw2, dpc2, "published report on")
+    g2.add_edge(dw2, vantara2, "published report on")
+    g2.add_edge(euro2, dpc2, "reported on")
+    g2.add_edge(euro2, vantara2, "reported on")
+
+    graphs = [g1, g2]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    # DPC and Vantara are fundamentally different entities.
+    dpc_ids = {dpc1.id, dpc2.id}
+    vantara_ids = {vantara1.id, vantara2.id}
+    for group in groups:
+        assert not (group & dpc_ids and group & vantara_ids), (
+            f"Regulator and regulated entity incorrectly merged: {group}"
+        )
+
+    # Same-name merges should still work.
+    dpc_group = _find_group_containing(groups, dpc1.id)
+    assert dpc_group is not None and dpc2.id in dpc_group
+    vantara_group = _find_group_containing(groups, vantara1.id)
+    assert vantara_group is not None and vantara2.id in vantara_group
+
+
+# ---------------------------------------------------------------------------
+# 6. Synonym relation inflation (false cross-entity merge)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    reason="synonym relation inflation: after progressive merging, each "
+    "synonym relation variant to the same canonical neighbor contributes "
+    "independently to pos_strength, counting one structural path N×M "
+    "times instead of once",
+    strict=True,
+)
+def test_synonym_inflation_false_merge_via_shared_hub(embedder):
+    """Two different acquisition targets should not merge just because
+    they were acquired by the same company, even when multiple sources
+    report the acquisitions with synonym relation phrases.
+
+    A neutral article (hub only, no targets) lets the hub entity merge
+    across all articles via progressive merging, bypassing the negative-
+    evidence cascade that would otherwise suppress same-name merges.
+
+    After the hub fully merges, each target has two adjacency entries to
+    the canonical hub ("acquired" + "purchased").  The 2×2=4 combinations
+    each contribute min(pos_weight) to pos_strength via the unconditional
+    ra==rb path, inflating a single structural path to pos_agg ≈ 0.87.
+    With a single relation variant the same path gives ≈ 0.39.
+
+    Reproduces the Lightwave Analytics / CloudScale false merge pattern
+    from real data (both acquired by Meridian Technologies)."""
+    # Neutral article: hub entity with an unrelated edge.
+    # This lets the hub merge with all other hub instances without
+    # encountering cross-target negative evidence.
+    g0 = Graph(id="g0")
+    hub0 = g0.add_entity("Meridian Technologies")
+    loc0 = g0.add_entity("Pittsburgh")
+    g0.add_edge(hub0, loc0, "is based in")
+
+    # Target-B articles (2 synonym variants)
+    g1 = Graph(id="g1")
+    hub1 = g1.add_entity("Meridian Technologies")
+    b1 = g1.add_entity("Lightwave Analytics")
+    g1.add_edge(hub1, b1, "acquired")
+
+    g2 = Graph(id="g2")
+    hub2 = g2.add_entity("Meridian Technologies")
+    b2 = g2.add_entity("Lightwave Analytics")
+    g2.add_edge(hub2, b2, "purchased")
+
+    # Target-C articles (2 synonym variants)
+    g3 = Graph(id="g3")
+    hub3 = g3.add_entity("Meridian Technologies")
+    c1 = g3.add_entity("CloudScale")
+    g3.add_edge(hub3, c1, "acquired")
+
+    g4 = Graph(id="g4")
+    hub4 = g4.add_entity("Meridian Technologies")
+    c2 = g4.add_entity("CloudScale")
+    g4.add_edge(hub4, c2, "purchased")
+
+    graphs = [g0, g1, g2, g3, g4]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    # Lightwave and CloudScale are different companies — must stay separate.
+    b_ids = {b1.id, b2.id}
+    c_ids = {c1.id, c2.id}
+    for group in groups:
+        assert not (group & b_ids and group & c_ids), (
+            f"Acquisition targets falsely merged via synonym inflation: {group}"
+        )
+
+    # Same-name merges should work (the neutral article enables this).
+    b_group = _find_group_containing(groups, b1.id)
+    assert b_group is not None and b2.id in b_group
+    c_group = _find_group_containing(groups, c1.id)
+    assert c_group is not None and c2.id in c_group

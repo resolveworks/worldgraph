@@ -16,6 +16,8 @@ Tests verify that:
 - Multi-label entities use max similarity across all names during seeding
 """
 
+import pytest
+
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
 from worldgraph.names import build_idf, soft_tfidf
@@ -820,3 +822,67 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
         f"Negative evidence over-penalized Meridian: score={meridian_score:.3f} "
         f"(CEO structural match={ceo_score:.3f})"
     )
+
+
+# ---------------------------------------------------------------------------
+# Synonym relation inflation (false merges from real data)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    reason="negative evidence cascade: cross-entity CEO-relation pairs "
+    "(Park≠Chen) suppress the shared company's confidence below 0.5, "
+    "which then becomes negative evidence for same-name entity pairs, "
+    "preventing legitimate merges",
+    strict=True,
+)
+def test_predecessor_successor_at_same_company_no_match(embedder):
+    """A CEO transition at the same company reported by two sources with
+    different phrasings should correctly merge same-name entities while
+    keeping the predecessor and successor separate.
+
+    Two sources report that David Park holds the CEO role and Sarah Chen
+    was named CEO.  Same-name entities (Park₁↔Park₂, Chen₁↔Chen₂,
+    Nextera₁↔Nextera₂) should merge.  But the cross-entity pair
+    Park↔Chen should stay below the match threshold.
+
+    Currently fails because the formula ``computed = seed + pos*(1-seed)
+    - neg*seed`` zeroes out positive evidence when seed=1.0.  The negative
+    evidence from Park≠Chen (nc=0 → neg) suppresses the Nextera pair's
+    confidence below 0.5, which cascades as negative evidence back to
+    the Park and Chen same-name pairs.
+
+    Reproduces the David Park / Sarah Chen pattern from real data."""
+    g1 = Graph(id="g1")
+    park1 = g1.add_entity("David Park")
+    chen1 = g1.add_entity("Sarah Chen")
+    nextera1 = g1.add_entity("Nextera Energy Solutions")
+    g1.add_edge(park1, nextera1, "is CEO of")
+    g1.add_edge(chen1, nextera1, "was named CEO of")
+
+    g2 = Graph(id="g2")
+    park2 = g2.add_entity("David Park")
+    chen2 = g2.add_entity("Sarah Chen")
+    nextera2 = g2.add_entity("Nextera Energy Solutions")
+    g2.add_edge(park2, nextera2, "serves as CEO of")
+    g2.add_edge(chen2, nextera2, "became CEO of")
+
+    confidence = match_graphs([g1, g2], embedder)
+
+    # Same-name entities should merge despite sharing a company neighbor.
+    matches = _select_matches(confidence, threshold=0.8)
+    park_ids = {park1.id, park2.id}
+    chen_ids = {chen1.id, chen2.id}
+    assert any(id_a in park_ids and id_b in park_ids for id_a, id_b in matches), (
+        "Same-name Park entities should match"
+    )
+    assert any(id_a in chen_ids and id_b in chen_ids for id_a, id_b in matches), (
+        "Same-name Chen entities should match"
+    )
+
+    # Park and Chen have zero name similarity — they should NOT match.
+    for id_a, id_b in matches:
+        assert not (
+            (id_a in park_ids and id_b in chen_ids)
+            or (id_a in chen_ids and id_b in park_ids)
+        ), "Predecessor and successor CEOs incorrectly matched"
