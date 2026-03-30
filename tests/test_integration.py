@@ -368,3 +368,97 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
     assert nt_group is not None and nt_a2.id in nt_group
     ql_group = _find_group_containing(groups, ql_b1.id)
     assert ql_group is not None and ql_b2.id in ql_group
+
+
+# ---------------------------------------------------------------------------
+# 5. Negative evidence cascade (GH issue #30)
+# ---------------------------------------------------------------------------
+
+
+def test_shared_employee_bridge_no_company_merge(embedder):
+    """A person who held the same role at two different companies should not
+    cause those companies' same-name merges to be suppressed.
+
+    Teresa Nakamura was CFO of both Cascade Robotics and CloudScale Analytics.
+    The Cascade≠CloudScale cross-pairs generate negative evidence that cascades
+    through Nakamura's confidence, suppressing all same-name merges."""
+    g1 = Graph(id="g1")
+    nakamura1 = g1.add_entity("Teresa Nakamura")
+    cascade1 = g1.add_entity("Cascade Robotics")
+    cloudscale1 = g1.add_entity("CloudScale Analytics")
+    g1.add_edge(nakamura1, cascade1, "is CFO of")
+    g1.add_edge(nakamura1, cloudscale1, "is CFO of")
+
+    g2 = Graph(id="g2")
+    nakamura2 = g2.add_entity("Teresa Nakamura")
+    cascade2 = g2.add_entity("Cascade Robotics")
+    cloudscale2 = g2.add_entity("CloudScale Analytics")
+    g2.add_edge(nakamura2, cascade2, "is CFO of")
+    g2.add_edge(nakamura2, cloudscale2, "is CFO of")
+
+    graphs = [g1, g2]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    # All three same-name pairs should merge
+    cascade_group = _find_group_containing(groups, cascade1.id)
+    assert cascade_group is not None and cascade2.id in cascade_group, (
+        "Cascade Robotics same-name merge suppressed by negative evidence cascade"
+    )
+    cloudscale_group = _find_group_containing(groups, cloudscale1.id)
+    assert cloudscale_group is not None and cloudscale2.id in cloudscale_group, (
+        "CloudScale Analytics same-name merge suppressed by negative evidence cascade"
+    )
+
+    # Companies must NOT merge with each other
+    cascade_ids = {cascade1.id, cascade2.id}
+    cloudscale_ids = {cloudscale1.id, cloudscale2.id}
+    for group in groups:
+        assert not (group & cascade_ids and group & cloudscale_ids), (
+            "Cascade and CloudScale incorrectly merged"
+        )
+
+
+def test_regulator_and_regulated_entity_stay_separate(embedder):
+    """Two journalist outlets report on both a regulator (DPC) and a company
+    (Vantara AI) using similar relation phrases.  The DPC≠Vantara cross-pairs
+    should not cascade to suppress same-name merges for the journalists."""
+    g1 = Graph(id="g1")
+    dw1 = g1.add_entity("DataWatch EU")
+    dpc1 = g1.add_entity("Data Protection Commission")
+    vantara1 = g1.add_entity("Vantara AI")
+    g1.add_edge(dw1, dpc1, "reported on")
+    g1.add_edge(dw1, vantara1, "reported on")
+
+    g2 = Graph(id="g2")
+    dw2 = g2.add_entity("DataWatch EU")
+    dpc2 = g2.add_entity("Data Protection Commission")
+    vantara2 = g2.add_entity("Vantara AI")
+    g2.add_edge(dw2, dpc2, "published report on")
+    g2.add_edge(dw2, vantara2, "published report on")
+
+    graphs = [g1, g2]
+    confidence = match_graphs(graphs, embedder)
+    groups, _ = build_match_groups(graphs, confidence)
+
+    # All same-name pairs should merge
+    dw_group = _find_group_containing(groups, dw1.id)
+    assert dw_group is not None and dw2.id in dw_group, (
+        "DataWatch EU same-name merge suppressed by negative evidence cascade"
+    )
+    dpc_group = _find_group_containing(groups, dpc1.id)
+    assert dpc_group is not None and dpc2.id in dpc_group, (
+        "DPC same-name merge suppressed by negative evidence cascade"
+    )
+    vantara_group = _find_group_containing(groups, vantara1.id)
+    assert vantara_group is not None and vantara2.id in vantara_group, (
+        "Vantara AI same-name merge suppressed by negative evidence cascade"
+    )
+
+    # DPC and Vantara must NOT merge with each other
+    dpc_ids = {dpc1.id, dpc2.id}
+    vantara_ids = {vantara1.id, vantara2.id}
+    for group in groups:
+        assert not (group & dpc_ids and group & vantara_ids), (
+            "DPC and Vantara AI incorrectly merged"
+        )

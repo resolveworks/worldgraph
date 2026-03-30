@@ -820,3 +820,52 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
         f"Negative evidence over-penalized Meridian: score={meridian_score:.3f} "
         f"(CEO structural match={ceo_score:.3f})"
     )
+
+
+# ---------------------------------------------------------------------------
+# Negative evidence cascade (GH issue #30)
+# ---------------------------------------------------------------------------
+
+
+def test_predecessor_successor_at_same_company_no_match(embedder):
+    """CEO succession: outgoing and incoming CEOs both have CEO-type edges
+    to the same company.  The cross-person pairs (Park₁↔Chen₂, Chen₁↔Park₂)
+    have zero confidence, but each person has a same-name counterpart with
+    confidence ~1.0.  Negative evidence from the cross-person pairs must not
+    cascade through the shared company neighbor to suppress the legitimate
+    same-name merges.
+
+    GH issue #30: the formula ``computed = seed + pos*(1-seed) - neg*seed``
+    zeroes out positive evidence when seed=1.0, so Nextera's score drops from
+    the cross-person negative evidence alone.  Nextera then falls below 0.5,
+    becoming negative evidence for the Park and Chen same-name pairs too."""
+    g1 = Graph(id="g1")
+    park1 = g1.add_entity("David Park")
+    chen1 = g1.add_entity("Sarah Chen")
+    nextera1 = g1.add_entity("Nextera Energy Solutions")
+    g1.add_edge(park1, nextera1, "is CEO of")
+    g1.add_edge(chen1, nextera1, "is former CEO of")
+
+    g2 = Graph(id="g2")
+    park2 = g2.add_entity("David Park")
+    chen2 = g2.add_entity("Sarah Chen")
+    nextera2 = g2.add_entity("Nextera Energy Solutions")
+    g2.add_edge(park2, nextera2, "is outgoing CEO of")
+    g2.add_edge(chen2, nextera2, "is CEO of")
+
+    confidence = match_graphs([g1, g2], embedder)
+
+    # Different people must not merge
+    assert confidence.get((park1.id, chen2.id), 0) < 0.5
+    assert confidence.get((chen1.id, park2.id), 0) < 0.5
+
+    # Same-name pairs must not be suppressed by the cascade
+    assert confidence[(park1.id, park2.id)] >= 0.8, (
+        f"David Park same-name merge suppressed: {confidence[(park1.id, park2.id)]:.3f}"
+    )
+    assert confidence[(chen1.id, chen2.id)] >= 0.8, (
+        f"Sarah Chen same-name merge suppressed: {confidence[(chen1.id, chen2.id)]:.3f}"
+    )
+    assert confidence[(nextera1.id, nextera2.id)] >= 0.8, (
+        f"Nextera same-name merge suppressed: {confidence[(nextera1.id, nextera2.id)]:.3f}"
+    )

@@ -68,7 +68,7 @@ We need negative evidence but cannot afford PARIS's brittleness. The key insight
 Positive and negative evidence are computed together in each propagation step, feeding into a single score per entity pair. For each pair `(a, b)`, we examine all neighbor pairs `(y, y')` connected via similar relations:
 
 - **Positive**: if the neighbor pair's confidence is above 0.5 (likely match), it contributes to `pos_strength`, weighted by inverse functionality — matching neighbors of a functional relation are strong evidence FOR the match.
-- **Negative**: if the neighbor pair's confidence is below 0.5 (likely non-match), it contributes to `neg_strength`, weighted by forward functionality — a functional relation whose target doesn't match is evidence AGAINST the match.
+- **Negative**: if the neighbor pair's confidence is below 0.5 (likely non-match), it contributes to `neg_strength`, weighted by forward functionality — **but only if neither neighbor has a better counterpart** (see "Best-counterpart gating" below).
 
 Both are aggregated via exp-sum and combined with the name-similarity seed:
 
@@ -81,6 +81,18 @@ computed = seed + pos_agg × (1 - seed) - neg_agg × seed
 ```
 
 The seed serves as the baseline. Positive evidence pushes toward 1.0 (proportional to the room above seed), negative evidence pushes toward 0.0 (proportional to the seed itself). With no structural evidence, the score equals the seed. With strong negative evidence and no positive evidence, the score approaches zero.
+
+### Best-counterpart gating
+
+A naive all-pairs approach to negative evidence generates a contribution for every low-confidence `(y, y')` cross-pair. This causes a cascade problem (GH issue #30): when entity A has neighbors X and Y connected via relation-similar edges, the cross-pair X↔Y' (which is legitimately low-confidence because X and Y are different entities) generates negative evidence even though X has a high-confidence counterpart X'. The negative evidence drags A's confidence below 0.5, and A then becomes negative evidence for its own neighbors — a self-reinforcing cascade that suppresses all same-name merges in the connected component.
+
+The fix: before accumulating negative evidence, a first pass finds the best counterpart confidence for each neighbor. A low-confidence pair `(y, y')` only contributes negative evidence if **both** `y` and `y'` lack a better alternative (best counterpart confidence ≤ 0.5). If either neighbor has a good match elsewhere, the low-confidence cross-pair is irrelevant — it reflects expected structural non-correspondence, not evidence of non-identity.
+
+This preserves negative evidence where it matters (a neighbor with NO good counterpart) while preventing cascade through well-matched neighbors.
+
+### Merged-neighbor deduplication
+
+After progressive merging, a single merged neighbor may appear in the canonical adjacency via multiple relation-similar edge entries (e.g. "is CEO of" and "is outgoing CEO of" — different strings, but embedding-similar). The propagation inner loop would count each entry independently, inflating positive evidence from the `ra == rb` (already-merged) case. Since a merged neighbor is a single structural fact regardless of how many surface-form edges survived adjacency dedup, the loop deduplicates by canonical neighbor ID: each merged neighbor contributes at most one positive-evidence entry.
 
 ### The 0.5 threshold as a natural gate
 

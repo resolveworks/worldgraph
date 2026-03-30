@@ -305,6 +305,16 @@ def propagate_similarity(
     toward 1.0, negative evidence pushes toward 0.0.  With no structural
     evidence the fixpoint equals the seed.
 
+    Negative evidence is gated by best-counterpart matching: a low-confidence
+    neighbor pair only contributes negative evidence if neither neighbor has a
+    better alternative (confidence > 0.5).  This prevents cascade where
+    irrelevant cross-pairs (e.g. Park₁↔Chen₂ when Park₁ already matches
+    Park₂) suppress same-name merges in the connected component.
+
+    Merged-neighbor contributions (``ra == rb``) are deduplicated by
+    canonical neighbor ID so that multiple relation-similar edges to the
+    same merged entity count as a single structural fact.
+
     On merge, the canonical adjacency for the new representative is built
     by combining and deduplicating the adjacency lists of the merged
     entities — O(degree) per merge, not O(|edges|).
@@ -333,11 +343,39 @@ def propagate_similarity(
             pos_strength = 0.0
             neg_strength = 0.0
 
-            for nbr_a in canonical_adj.get(ca, []):
+            nbrs_a = canonical_adj.get(ca, [])
+            nbrs_b = canonical_adj.get(cb, [])
+
+            # First pass: find the best counterpart confidence for each
+            # neighbor.  A neighbor that has a good match (>0.5) elsewhere
+            # should not contribute negative evidence from a worse cross-pair.
+            best_for_a: dict[str, float] = {}
+            best_for_b: dict[str, float] = {}
+            for nbr_a in nbrs_a:
                 ra = uf.find(nbr_a.entity_id)
                 if ra == ca:
                     continue
-                for nbr_b in canonical_adj.get(cb, []):
+                for nbr_b in nbrs_b:
+                    rb = uf.find(nbr_b.entity_id)
+                    if rb == cb:
+                        continue
+                    rs = rel_sim.get((nbr_a.relation, nbr_b.relation), 0.0)
+                    if rs < rel_threshold:
+                        continue
+                    nc = 1.0 if ra == rb else prev.get((ra, rb), 0.0)
+                    best_for_a[ra] = max(best_for_a.get(ra, 0.0), nc)
+                    best_for_b[rb] = max(best_for_b.get(rb, 0.0), nc)
+
+            # Second pass: accumulate positive and negative evidence.
+            # A merged neighbor (ra == rb) is one structural fact regardless
+            # of how many relation-similar edges survive adjacency dedup, so
+            # we count it at most once per canonical neighbor.
+            merged_pos_seen: set[str] = set()
+            for nbr_a in nbrs_a:
+                ra = uf.find(nbr_a.entity_id)
+                if ra == ca:
+                    continue
+                for nbr_b in nbrs_b:
                     rb = uf.find(nbr_b.entity_id)
                     if rb == cb:
                         continue
@@ -346,8 +384,9 @@ def propagate_similarity(
                         continue
 
                     if ra == rb:
-                        # Neighbors already merged — strongest positive evidence.
-                        pos_strength += min(nbr_a.pos_weight, nbr_b.pos_weight)
+                        if ra not in merged_pos_seen:
+                            merged_pos_seen.add(ra)
+                            pos_strength += min(nbr_a.pos_weight, nbr_b.pos_weight)
                         continue
 
                     nc = prev.get((ra, rb), 0.0)
@@ -356,7 +395,13 @@ def propagate_similarity(
 
                     neg_nc = 1.0 - nc
                     if neg_nc > 0.5:
-                        neg_strength += min(nbr_a.neg_weight, nbr_b.neg_weight) * neg_nc
+                        # Only count negative evidence if neither neighbor has
+                        # a better counterpart — prevents cascade from
+                        # irrelevant cross-pairs (GH issue #30).
+                        if best_for_a[ra] <= 0.5 and best_for_b[rb] <= 0.5:
+                            neg_strength += (
+                                min(nbr_a.neg_weight, nbr_b.neg_weight) * neg_nc
+                            )
 
             # Exp-sum aggregation + seed-as-baseline combination.
             pos_agg = (
