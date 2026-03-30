@@ -65,10 +65,13 @@ We need negative evidence but cannot afford PARIS's brittleness. The key insight
 
 ### How it works
 
-Positive and negative evidence are computed together in each propagation step, feeding into a single score per entity pair. For each pair `(a, b)`, we examine all neighbor pairs `(y, y')` connected via similar relations:
+Positive and negative evidence are computed together in each propagation step, feeding into a single score per entity pair. For each pair `(a, b)`, we examine each neighbor `y` of `a` and find its **best counterpart** among `b`'s neighbors connected via similar relations:
 
-- **Positive**: if the neighbor pair's confidence is above 0.5 (likely match), it contributes to `pos_strength`, weighted by inverse functionality — matching neighbors of a functional relation are strong evidence FOR the match.
-- **Negative**: if the neighbor pair's confidence is below 0.5 (likely non-match), it contributes to `neg_strength`, weighted by forward functionality — a functional relation whose target doesn't match is evidence AGAINST the match.
+- **Positive**: if the best counterpart's confidence is above 0.5 (likely match), `y` contributes to `pos_strength`, weighted by functionality — a matching neighbor on a functional relation is strong evidence FOR the match.
+- **Negative**: if the best counterpart's confidence is below 0.5 (no good match), `y` contributes to `neg_strength`, weighted by functionality — a functional relation whose target has no counterpart is evidence AGAINST the match.
+- **No counterpart**: if `y` has no relation-similar neighbors on `b`'s side at all, it contributes nothing — absence of a comparable relation is not evidence (could be incomplete article coverage).
+
+Each neighbor contributes exactly once, based on its best counterpart. This avoids the all-pairs pitfall where a neighbor that matches well with one counterpart also generates bogus negative evidence from unrelated cross-pairs. For example, if `a` has neighbors Park and Chen both via "is CEO of", and `b` also has Park and Chen, the all-pairs approach would count Park₁↔Chen₂ as negative evidence despite Park₁ having a perfect match in Park₂. The per-neighbor approach correctly identifies Park₁'s best counterpart as Park₂ and contributes only positive evidence.
 
 Both are aggregated via exp-sum and combined with the name-similarity seed:
 

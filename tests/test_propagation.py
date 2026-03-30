@@ -16,8 +16,6 @@ Tests verify that:
 - Multi-label entities use max similarity across all names during seeding
 """
 
-import pytest
-
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
 from worldgraph.names import build_idf, soft_tfidf
@@ -829,13 +827,6 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="negative evidence cascade: cross-entity CEO-relation pairs "
-    "(Park≠Chen) suppress the shared company's confidence below 0.5, "
-    "which then becomes negative evidence for same-name entity pairs, "
-    "preventing legitimate merges",
-    strict=True,
-)
 def test_predecessor_successor_at_same_company_no_match(embedder):
     """A CEO transition at the same company reported by two sources with
     different phrasings should correctly merge same-name entities while

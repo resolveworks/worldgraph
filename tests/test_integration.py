@@ -10,8 +10,6 @@ on multi-source scenarios that L2 tests don't cover:
 - Cross-event entity linking (shared entity across clusters)
 """
 
-import pytest
-
 from worldgraph.graph import Graph
 from worldgraph.match import build_match_groups, match_graphs
 
@@ -377,13 +375,6 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="negative evidence cascade: cross-entity CFO-relation pairs "
-    "(Cascade≠CloudScale) suppress the shared employee's confidence "
-    "below 0.5, which cascades as negative evidence back to the company "
-    "same-name pairs, preventing legitimate merges",
-    strict=True,
-)
 def test_shared_employee_bridge_no_company_merge(embedder):
     """A person who held the same role at two different companies should
     not cause those companies to be placed in the same match group, and
@@ -434,13 +425,6 @@ def test_shared_employee_bridge_no_company_merge(embedder):
     assert cloud_group is not None and cloud2.id in cloud_group
 
 
-@pytest.mark.xfail(
-    reason="negative evidence cascade: cross-entity relation pairs "
-    "(DPC≠Vantara) suppress the shared third-party neighbors' "
-    "confidence below 0.5, which cascades as negative evidence to "
-    "the same-name entity pairs, preventing legitimate merges",
-    strict=True,
-)
 def test_regulator_and_regulated_entity_stay_separate(embedder):
     """A regulatory body and the entity it regulates should not merge,
     and same-name entities should still merge across sources.

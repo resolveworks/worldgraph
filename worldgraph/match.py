@@ -1,18 +1,18 @@
 """Stage 2: Entity alignment via damped similarity propagation.
 
 A single confidence score per entity pair is iteratively refined using
-damped fixed-point iteration.  Each step computes structural evidence
-from matching neighbor pairs (positive: neighbors likely match, weighted
-by inverse functionality; negative: neighbors likely don't match, weighted
-by forward functionality) and blends it with the previous score via a
-damping factor.
+damped fixed-point iteration.  Each step computes per-neighbor structural
+evidence (positive: neighbor's best counterpart is a likely match;
+negative: neighbor has no good counterpart) and blends it with the
+previous score via a damping factor.
 
 Name similarity seeds the initial scores and serves as the baseline that
 structural evidence modulates up or down.
 
 Relation similarity is treated as binary via a single threshold that defines
 equivalence classes over free-text relation phrases.  This threshold is used
-consistently for functionality pooling and propagation gating.
+consistently for relation clustering, functionality pooling, adjacency
+deduplication, and propagation gating.
 """
 
 import math
@@ -93,8 +93,7 @@ class UnionFind:
 
 def compute_functionality(
     graphs: list[Graph],
-    rel_sim: dict[tuple[str, str], float],
-    threshold: float = 0.8,
+    rel_clusters: dict[str, int],
 ) -> dict[str, Functionality]:
     """Compute functionality and inverse functionality for each relation phrase.
 
@@ -107,44 +106,26 @@ def compute_functionality(
     the relation uniquely determines the source — strong backward evidence.
 
     Entity names (not IDs) are used so that the same entity mentioned across
-    multiple graphs pools its statistics. For each relation phrase r, edges
-    whose phrase r' satisfies rel_sim[(r, r')] >= threshold are pooled
-    together — the same threshold used in similarity propagation.
+    multiple graphs pools its statistics.  Edges whose relation phrases belong
+    to the same cluster are pooled together.
 
     Returns dict from phrase to Functionality(forward, inverse).
     """
-    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
-
-    similar: dict[str, list[str]] = {
-        rel: [
-            other
-            for other in all_relations
-            if rel_sim.get((rel, other), 0.0) >= threshold
-        ]
-        for rel in all_relations
-    }
-
-    # Collect all (source_name, target_name) pairs per relation phrase
-    phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    # Collect all (source_name, target_name) pairs per relation cluster.
+    cluster_pairs: dict[int, list[tuple[str, str]]] = defaultdict(list)
     for graph in graphs:
         for edge in graph.edges:
+            cid = rel_clusters.get(edge.relation, -1)
             source_name = graph.nodes[edge.source].names[0]
             target_name = graph.nodes[edge.target].names[0]
-            phrase_pairs[edge.relation].append((source_name, target_name))
+            cluster_pairs[cid].append((source_name, target_name))
 
-    result: dict[str, Functionality] = {}
-    for rel in all_relations:
-        pooled = [
-            pair
-            for other_rel in similar[rel]
-            for pair in phrase_pairs.get(other_rel, [])
-        ]
-        if not pooled:
-            result[rel] = Functionality(1.0, 1.0)
-            continue
+    # Compute functionality per cluster, then map back to each phrase.
+    cluster_func: dict[int, Functionality] = {}
+    for cid, pairs in cluster_pairs.items():
         targets_per_source: dict[str, set[str]] = defaultdict(set)
         sources_per_target: dict[str, set[str]] = defaultdict(set)
-        for source_name, target_name in pooled:
+        for source_name, target_name in pairs:
             targets_per_source[source_name].add(target_name)
             sources_per_target[target_name].add(source_name)
         avg_out_degree = sum(
@@ -153,9 +134,12 @@ def compute_functionality(
         avg_in_degree = sum(
             len(sources) for sources in sources_per_target.values()
         ) / len(sources_per_target)
-        result[rel] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
+        cluster_func[cid] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
 
-    return result
+    return {
+        rel: cluster_func.get(cid, Functionality(1.0, 1.0))
+        for rel, cid in rel_clusters.items()
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -190,51 +174,58 @@ def build_rel_sim(
     return rel_sim
 
 
-def _dedup_neighbors(
-    neighbors: list[Neighbor],
+def build_rel_clusters(
     rel_sim: dict[tuple[str, str], float],
     rel_threshold: float,
-) -> list[Neighbor]:
-    """Deduplicate neighbor entries by (neighbor_id, relation equivalence class).
+) -> dict[str, int]:
+    """Assign each relation phrase to an equivalence class.
 
-    Entries to the same neighbor via embedding-similar relations represent
-    the same structural evidence.  This groups them by neighbor ID, then
-    clusters by relation similarity (same threshold used for propagation
-    gating and functionality pooling), keeping the max-weight entry per
-    cluster.
+    Greedy single-linkage: each phrase joins the first cluster whose
+    representative has similarity >= threshold.  Returns a mapping from
+    phrase to integer cluster ID.
     """
-    per_nbr: dict[str, list[Neighbor]] = defaultdict(list)
-    for nbr in neighbors:
-        per_nbr[nbr.entity_id].append(nbr)
+    clusters: list[str] = []  # representative phrase per cluster
+    mapping: dict[str, int] = {}
+    for rel in sorted({r for pair in rel_sim for r in pair}):
+        for i, rep in enumerate(clusters):
+            if rel_sim.get((rel, rep), 0.0) >= rel_threshold:
+                mapping[rel] = i
+                break
+        else:
+            mapping[rel] = len(clusters)
+            clusters.append(rel)
+    return mapping
 
-    result: list[Neighbor] = []
-    for entries in per_nbr.values():
-        clusters: list[Neighbor] = []
-        for entry in entries:
-            merged = False
-            for i, rep in enumerate(clusters):
-                if rel_sim.get((entry.relation, rep.relation), 0.0) >= rel_threshold:
-                    if entry.pos_weight > rep.pos_weight:
-                        clusters[i] = entry
-                    merged = True
-                    break
-            if not merged:
-                clusters.append(entry)
-        result.extend(clusters)
-    return result
+
+def _dedup_neighbors(
+    neighbors: list[Neighbor],
+    rel_clusters: dict[str, int],
+) -> list[Neighbor]:
+    """Deduplicate neighbor entries by (neighbor_id, relation cluster).
+
+    Entries to the same neighbor via equivalent relations represent the
+    same structural evidence.  Keeps the max-weight entry per
+    (neighbor, cluster) group.
+    """
+    best: dict[tuple[str, int], Neighbor] = {}
+    for nbr in neighbors:
+        key = (nbr.entity_id, rel_clusters.get(nbr.relation, -1))
+        prev = best.get(key)
+        if prev is None or nbr.pos_weight > prev.pos_weight:
+            best[key] = nbr
+    return list(best.values())
 
 
 def _build_adjacency(
     graph: Graph,
     functionality: dict[str, Functionality],
-    rel_sim: dict[tuple[str, str], float],
-    rel_threshold: float,
+    rel_clusters: dict[str, int],
 ) -> dict[str, list[Neighbor]]:
     """Build the initial canonical adjacency from graph edges.
 
     Each edge contributes two entries (one per endpoint).  Entries to the
-    same neighbor via similar relations are deduplicated by relation
-    equivalence class to prevent inflated evidence.
+    same neighbor via equivalent relations are deduplicated by relation
+    cluster to prevent inflated evidence.
     """
     default = Functionality(1.0, 1.0)
     adjacency: dict[str, list[Neighbor]] = defaultdict(list)
@@ -254,8 +245,7 @@ def _build_adjacency(
             )
         )
     return {
-        eid: _dedup_neighbors(nbrs, rel_sim, rel_threshold)
-        for eid, nbrs in adjacency.items()
+        eid: _dedup_neighbors(nbrs, rel_clusters) for eid, nbrs in adjacency.items()
     }
 
 
@@ -313,9 +303,8 @@ def _remap_confidence(conf: Confidence, uf: UnionFind) -> Confidence:
 def propagate_similarity(
     graph: Graph,
     idf: dict[str, float],
-    rel_sim: dict[tuple[str, str], float],
+    rel_clusters: dict[str, int],
     functionality: dict[str, Functionality],
-    rel_threshold: float = 0.8,
     max_iter: int = 30,
     epsilon: float = 1e-4,
     exp_lambda: float = 1.0,
@@ -325,8 +314,14 @@ def propagate_similarity(
     """Run damped similarity propagation with progressive merging.
 
     A single confidence score per entity pair integrates both positive and
-    negative structural evidence.  Each iteration computes a new score from
-    neighbor confidences and blends it with the old score via damping::
+    negative structural evidence.  For each neighbor of entity A, we find
+    its best counterpart among B's neighbors (same relation cluster) and
+    contribute once — positive if the best counterpart confidence exceeds
+    0.5, negative if it falls below.  Neighbors that resolve to either
+    entity in the pair are excluded to prevent circular self-reference
+    (an intra-graph edge between A and B must not serve as evidence that
+    A and B are the same entity).  The result is blended with the previous
+    score via damping::
 
         computed = seed + pos_agg * (1 - seed) - neg_agg * seed
         new = (1 - damping) * old + damping * computed
@@ -346,7 +341,7 @@ def propagate_similarity(
     for eid in graph.nodes:
         uf.find(eid)
 
-    canonical_adj = _build_adjacency(graph, functionality, rel_sim, rel_threshold)
+    canonical_adj = _build_adjacency(graph, functionality, rel_clusters)
     pairs = _build_pairs(graph)
 
     if not pairs:
@@ -362,30 +357,39 @@ def propagate_similarity(
             pos_strength = 0.0
             neg_strength = 0.0
 
+            # Per-neighbor best-counterpart: for each neighbor of ca,
+            # find its best match among cb's neighbors and contribute once.
+            nbrs_b = canonical_adj.get(cb, [])
             for nbr_a in canonical_adj.get(ca, []):
                 ra = uf.find(nbr_a.entity_id)
-                if ra == ca:
+                if ra == ca or ra == cb:
                     continue
-                for nbr_b in canonical_adj.get(cb, []):
+
+                cluster_a = rel_clusters.get(nbr_a.relation, -1)
+                best_nc: float | None = None
+                best_pos_w = 0.0
+                best_neg_w = 0.0
+                for nbr_b in nbrs_b:
+                    if rel_clusters.get(nbr_b.relation, -2) != cluster_a:
+                        continue
                     rb = uf.find(nbr_b.entity_id)
-                    if rb == cb:
+                    if rb == cb or rb == ca:
                         continue
-                    rs = rel_sim.get((nbr_a.relation, nbr_b.relation), 0.0)
-                    if rs < rel_threshold:
-                        continue
+                    nc = 1.0 if ra == rb else prev.get((ra, rb), 0.0)
+                    if best_nc is None or nc > best_nc:
+                        best_nc = nc
+                        best_pos_w = min(nbr_a.pos_weight, nbr_b.pos_weight)
+                        best_neg_w = min(nbr_a.neg_weight, nbr_b.neg_weight)
 
-                    if ra == rb:
-                        # Neighbors already merged — strongest positive evidence.
-                        pos_strength += min(nbr_a.pos_weight, nbr_b.pos_weight)
-                        continue
+                if best_nc is None:
+                    continue
 
-                    nc = prev.get((ra, rb), 0.0)
-                    if nc > 0.5:
-                        pos_strength += min(nbr_a.pos_weight, nbr_b.pos_weight) * nc
-
-                    neg_nc = 1.0 - nc
+                if best_nc > 0.5:
+                    pos_strength += best_pos_w * best_nc
+                else:
+                    neg_nc = 1.0 - best_nc
                     if neg_nc > 0.5:
-                        neg_strength += min(nbr_a.neg_weight, nbr_b.neg_weight) * neg_nc
+                        neg_strength += best_neg_w * neg_nc
 
             # Exp-sum aggregation + seed-as-baseline combination.
             pos_agg = (
@@ -440,9 +444,7 @@ def propagate_similarity(
                     for nbr in combined
                     if uf.find(nbr.entity_id) != new_canon
                 ]
-                canonical_adj[new_canon] = _dedup_neighbors(
-                    remapped, rel_sim, rel_threshold
-                )
+                canonical_adj[new_canon] = _dedup_neighbors(remapped, rel_clusters)
 
             # Remap pairs and confidence dicts to canonical reps.
             pair_set: set[tuple[str, str]] = set()
@@ -512,11 +514,12 @@ def match_graphs(
 ) -> Confidence:
     """Core matching pipeline: graphs → confidence scores.
 
-    Builds unified graph, computes IDF / relation embeddings / functionality,
-    and runs similarity propagation.  ``rel_cluster_threshold`` is the single
-    relation equivalence threshold: relation pairs with embedding similarity
-    above this value are treated as the same relation for functionality
-    pooling and propagation gating.
+    Builds unified graph, computes IDF / relation embeddings / functionality /
+    relation clusters, and runs similarity propagation.
+    ``rel_cluster_threshold`` is the single relation equivalence threshold:
+    relation pairs with embedding similarity above this value are assigned
+    to the same cluster for functionality pooling, adjacency deduplication,
+    and propagation gating.
 
     Returns the confidence dict.
     """
@@ -530,14 +533,14 @@ def match_graphs(
     idf = build_idf(all_names)
     relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
     rel_sim = build_rel_sim(set(all_relations), relation_embeddings)
-    functionality = compute_functionality(graphs, rel_sim, rel_cluster_threshold)
+    rel_clusters = build_rel_clusters(rel_sim, rel_cluster_threshold)
+    functionality = compute_functionality(graphs, rel_clusters)
 
     confidence, _uf = propagate_similarity(
         unified,
         idf,
-        rel_sim,
+        rel_clusters,
         functionality,
-        rel_threshold=rel_cluster_threshold,
         **propagate_kwargs,
     )
     return confidence
