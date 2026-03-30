@@ -500,13 +500,6 @@ def test_regulator_and_regulated_entity_stay_separate(embedder):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="synonym relation inflation: after progressive merging, each "
-    "synonym relation variant to the same canonical neighbor contributes "
-    "independently to pos_strength, counting one structural path N×M "
-    "times instead of once",
-    strict=True,
-)
 def test_synonym_inflation_false_merge_via_shared_hub(embedder):
     """Two different acquisition targets should not merge just because
     they were acquired by the same company, even when multiple sources

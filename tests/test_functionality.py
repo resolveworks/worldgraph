@@ -2,7 +2,7 @@
 
 import pytest
 
-from conftest import embed_relations
+from conftest import compute_rel_sim
 
 from worldgraph.graph import Graph
 from worldgraph.match import compute_functionality
@@ -23,7 +23,7 @@ def test_one_to_one_functionality_is_1(embedder):
     g.add_edge(apple, beats, "acquired")
     g.add_edge(google, youtube, "acquired")
 
-    func = compute_functionality([g], embed_relations([g], embedder))
+    func = compute_functionality([g], compute_rel_sim([g], embedder))
     assert func["acquired"].forward == pytest.approx(1.0)
 
 
@@ -36,7 +36,7 @@ def test_fan_out_lowers_functionality(embedder):
     g.add_edge(apple, beats, "acquired")
     g.add_edge(apple, shazam, "acquired")
 
-    func = compute_functionality([g], embed_relations([g], embedder))
+    func = compute_functionality([g], compute_rel_sim([g], embedder))
     assert func["acquired"].forward == pytest.approx(0.5)
 
 
@@ -50,7 +50,7 @@ def test_one_to_one_inv_functionality_is_1(embedder):
     g.add_edge(apple, beats, "acquired")
     g.add_edge(google, youtube, "acquired")
 
-    func = compute_functionality([g], embed_relations([g], embedder))
+    func = compute_functionality([g], compute_rel_sim([g], embedder))
     assert func["acquired"].inverse == pytest.approx(1.0)
 
 
@@ -63,7 +63,7 @@ def test_fan_in_lowers_inv_functionality(embedder):
     g.add_edge(apple, beats, "acquired")
     g.add_edge(google, beats, "acquired")
 
-    func = compute_functionality([g], embed_relations([g], embedder))
+    func = compute_functionality([g], compute_rel_sim([g], embedder))
     assert func["acquired"].inverse == pytest.approx(0.5)
 
 
@@ -83,7 +83,7 @@ def test_similar_phrases_pool_edges(embedder):
     shazam = g2.add_entity("Shazam")
     g2.add_edge(apple2, shazam, "bought")
 
-    func = compute_functionality([g1, g2], embed_relations([g1, g2], embedder))
+    func = compute_functionality([g1, g2], compute_rel_sim([g1, g2], embedder))
     assert func["acquired"].forward < 1.0
 
 
@@ -102,7 +102,7 @@ def test_dissimilar_phrases_do_not_pool(embedder):
     g2.add_edge(apple2, california, "located in")
     g2.add_edge(apple2, us, "located in")
 
-    func = compute_functionality([g1, g2], embed_relations([g1, g2], embedder))
+    func = compute_functionality([g1, g2], compute_rel_sim([g1, g2], embedder))
     assert func["acquired"].forward == pytest.approx(1.0)
 
 
@@ -119,6 +119,6 @@ def test_same_entity_name_across_graphs_pools(embedder):
     shazam = g2.add_entity("Shazam")
     g2.add_edge(apple2, shazam, "acquired")
 
-    func = compute_functionality([g1, g2], embed_relations([g1, g2], embedder))
+    func = compute_functionality([g1, g2], compute_rel_sim([g1, g2], embedder))
     # Apple→{Beats, Shazam}: avg_out_degree = 2 → functionality = 0.5
     assert func["acquired"].forward == pytest.approx(0.5)

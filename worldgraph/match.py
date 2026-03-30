@@ -93,7 +93,7 @@ class UnionFind:
 
 def compute_functionality(
     graphs: list[Graph],
-    relation_embeddings: dict[str, np.ndarray],
+    rel_sim: dict[tuple[str, str], float],
     threshold: float = 0.8,
 ) -> dict[str, Functionality]:
     """Compute functionality and inverse functionality for each relation phrase.
@@ -108,22 +108,21 @@ def compute_functionality(
 
     Entity names (not IDs) are used so that the same entity mentioned across
     multiple graphs pools its statistics. For each relation phrase r, edges
-    whose phrase r' satisfies dot(r, r') >= threshold are pooled
+    whose phrase r' satisfies rel_sim[(r, r')] >= threshold are pooled
     together — the same threshold used in similarity propagation.
 
     Returns dict from phrase to Functionality(forward, inverse).
     """
-    all_relations = list(relation_embeddings)
+    all_relations = sorted({edge.relation for g in graphs for edge in g.edges})
 
-    # Precompute which relations are similar to each relation
-    similar: dict[str, list[str]] = {rel: [] for rel in all_relations}
-    for rel in all_relations:
-        for other_rel in all_relations:
-            if (
-                float(np.dot(relation_embeddings[rel], relation_embeddings[other_rel]))
-                >= threshold
-            ):
-                similar[rel].append(other_rel)
+    similar: dict[str, list[str]] = {
+        rel: [
+            other
+            for other in all_relations
+            if rel_sim.get((rel, other), 0.0) >= threshold
+        ]
+        for rel in all_relations
+    }
 
     # Collect all (source_name, target_name) pairs per relation phrase
     phrase_pairs: dict[str, list[tuple[str, str]]] = defaultdict(list)
@@ -173,18 +172,17 @@ def build_unified_graph(graphs: list[Graph]) -> Graph:
     return unified
 
 
-def _build_rel_sim(
-    graph: Graph,
+def build_rel_sim(
+    relations: set[str],
     relation_embeddings: dict[str, np.ndarray],
 ) -> dict[tuple[str, str], float]:
-    """Precompute pairwise relation similarities for all relations in graph."""
-    all_relations = {edge.relation for edge in graph.edges}
+    """Precompute pairwise relation similarities for a set of relation phrases."""
     rel_sim: dict[tuple[str, str], float] = {}
-    for rel_a in all_relations:
+    for rel_a in relations:
         embedding_a = relation_embeddings.get(rel_a)
         if embedding_a is None:
             continue
-        for rel_b in all_relations:
+        for rel_b in relations:
             embedding_b = relation_embeddings.get(rel_b)
             if embedding_b is None:
                 continue
@@ -192,41 +190,73 @@ def _build_rel_sim(
     return rel_sim
 
 
+def _dedup_neighbors(
+    neighbors: list[Neighbor],
+    rel_sim: dict[tuple[str, str], float],
+    rel_threshold: float,
+) -> list[Neighbor]:
+    """Deduplicate neighbor entries by (neighbor_id, relation equivalence class).
+
+    Entries to the same neighbor via embedding-similar relations represent
+    the same structural evidence.  This groups them by neighbor ID, then
+    clusters by relation similarity (same threshold used for propagation
+    gating and functionality pooling), keeping the max-weight entry per
+    cluster.
+    """
+    per_nbr: dict[str, list[Neighbor]] = defaultdict(list)
+    for nbr in neighbors:
+        per_nbr[nbr.entity_id].append(nbr)
+
+    result: list[Neighbor] = []
+    for entries in per_nbr.values():
+        clusters: list[Neighbor] = []
+        for entry in entries:
+            merged = False
+            for i, rep in enumerate(clusters):
+                if rel_sim.get((entry.relation, rep.relation), 0.0) >= rel_threshold:
+                    if entry.pos_weight > rep.pos_weight:
+                        clusters[i] = entry
+                    merged = True
+                    break
+            if not merged:
+                clusters.append(entry)
+        result.extend(clusters)
+    return result
+
+
 def _build_adjacency(
     graph: Graph,
     functionality: dict[str, Functionality],
+    rel_sim: dict[tuple[str, str], float],
+    rel_threshold: float,
 ) -> dict[str, list[Neighbor]]:
     """Build the initial canonical adjacency from graph edges.
 
-    Each edge contributes two entries (one per endpoint).  Duplicate
-    entries (same neighbor + same relation) are deduplicated to prevent
-    inflated evidence.
+    Each edge contributes two entries (one per endpoint).  Entries to the
+    same neighbor via similar relations are deduplicated by relation
+    equivalence class to prevent inflated evidence.
     """
     default = Functionality(1.0, 1.0)
-    seen: dict[str, set[tuple[str, str]]] = defaultdict(set)
     adjacency: dict[str, list[Neighbor]] = defaultdict(list)
     for edge in graph.edges:
         func = functionality.get(edge.relation, default)
         src, tgt = edge.source, edge.target
         if src == tgt:
             continue
-        key_src = (tgt, edge.relation)
-        if key_src not in seen[src]:
-            seen[src].add(key_src)
-            adjacency[src].append(
-                Neighbor(
-                    tgt, edge.relation, pos_weight=func.inverse, neg_weight=func.forward
-                )
+        adjacency[src].append(
+            Neighbor(
+                tgt, edge.relation, pos_weight=func.inverse, neg_weight=func.forward
             )
-        key_tgt = (src, edge.relation)
-        if key_tgt not in seen[tgt]:
-            seen[tgt].add(key_tgt)
-            adjacency[tgt].append(
-                Neighbor(
-                    src, edge.relation, pos_weight=func.forward, neg_weight=func.inverse
-                )
+        )
+        adjacency[tgt].append(
+            Neighbor(
+                src, edge.relation, pos_weight=func.forward, neg_weight=func.inverse
             )
-    return dict(adjacency)
+        )
+    return {
+        eid: _dedup_neighbors(nbrs, rel_sim, rel_threshold)
+        for eid, nbrs in adjacency.items()
+    }
 
 
 def _build_pairs(graph: Graph) -> list[tuple[str, str]]:
@@ -283,7 +313,7 @@ def _remap_confidence(conf: Confidence, uf: UnionFind) -> Confidence:
 def propagate_similarity(
     graph: Graph,
     idf: dict[str, float],
-    relation_embeddings: dict[str, np.ndarray],
+    rel_sim: dict[tuple[str, str], float],
     functionality: dict[str, Functionality],
     rel_threshold: float = 0.8,
     max_iter: int = 30,
@@ -312,12 +342,11 @@ def propagate_similarity(
     Returns (confidence, union_find) where confidence maps original
     entity-ID pairs to scores and union_find tracks all merges.
     """
-    rel_sim = _build_rel_sim(graph, relation_embeddings)
     uf = UnionFind()
     for eid in graph.nodes:
         uf.find(eid)
 
-    canonical_adj = _build_adjacency(graph, functionality)
+    canonical_adj = _build_adjacency(graph, functionality, rel_sim, rel_threshold)
     pairs = _build_pairs(graph)
 
     if not pairs:
@@ -401,24 +430,19 @@ def propagate_similarity(
                 combined: list[Neighbor] = []
                 for oc in old_canons:
                     combined.extend(canonical_adj.get(oc, []))
-                seen: set[tuple[str, str]] = set()
-                deduped: list[Neighbor] = []
-                for nbr in combined:
-                    canon_nbr = uf.find(nbr.entity_id)
-                    if canon_nbr == new_canon:
-                        continue
-                    key = (canon_nbr, nbr.relation)
-                    if key not in seen:
-                        seen.add(key)
-                        deduped.append(
-                            Neighbor(
-                                canon_nbr,
-                                nbr.relation,
-                                nbr.pos_weight,
-                                nbr.neg_weight,
-                            )
-                        )
-                canonical_adj[new_canon] = deduped
+                remapped = [
+                    Neighbor(
+                        uf.find(nbr.entity_id),
+                        nbr.relation,
+                        nbr.pos_weight,
+                        nbr.neg_weight,
+                    )
+                    for nbr in combined
+                    if uf.find(nbr.entity_id) != new_canon
+                ]
+                canonical_adj[new_canon] = _dedup_neighbors(
+                    remapped, rel_sim, rel_threshold
+                )
 
             # Remap pairs and confidence dicts to canonical reps.
             pair_set: set[tuple[str, str]] = set()
@@ -505,14 +529,13 @@ def match_graphs(
 
     idf = build_idf(all_names)
     relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
-    functionality = compute_functionality(
-        graphs, relation_embeddings, rel_cluster_threshold
-    )
+    rel_sim = build_rel_sim(set(all_relations), relation_embeddings)
+    functionality = compute_functionality(graphs, rel_sim, rel_cluster_threshold)
 
     confidence, _uf = propagate_similarity(
         unified,
         idf,
-        relation_embeddings,
+        rel_sim,
         functionality,
         rel_threshold=rel_cluster_threshold,
         **propagate_kwargs,
