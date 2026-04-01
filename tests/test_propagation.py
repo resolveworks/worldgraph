@@ -16,6 +16,8 @@ Tests verify that:
 - Multi-label entities use max similarity across all names during seeding
 """
 
+import pytest
+
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
 from worldgraph.names import build_idf, soft_tfidf
@@ -877,3 +879,78 @@ def test_predecessor_successor_at_same_company_no_match(embedder):
             (id_a in park_ids and id_b in chen_ids)
             or (id_a in chen_ids and id_b in park_ids)
         ), "Predecessor and successor CEOs incorrectly matched"
+
+
+# ---------------------------------------------------------------------------
+# Shared-event false merge (per-neighbor-best negative evidence gap)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    reason="per-neighbor-best generates zero negative evidence when "
+    "non-matching neighbors use relation clusters absent from the "
+    "other side, so shared-event positive evidence dominates",
+    strict=True,
+)
+def test_shared_event_does_not_merge_different_people(embedder):
+    """Two different people who both spoke at the same conference should
+    not be merged, even with a weak name prefix match ('Dr.').
+
+    Dr. Vasquez is CTO of Volta (semiconductor company).
+    Dr. Sharma founded Lightwave (analytics startup).
+    Multiple sources report each person attending TechForward Summit,
+    using synonym relations ('spoke at' / 'gave keynote at' / 'attended').
+    After progressive merging unifies same-name entities, the merged
+    neighborhoods share TechForward Summit across multiple relation
+    clusters while non-matching affiliations (Volta, IBM vs Lightwave,
+    Meridian) fall in clusters absent from the other side and generate
+    zero negative evidence.
+
+    Reproduces the Vasquez / Sharma false merge from real data."""
+    # Source 1: Vasquez spoke at "TechForward Summit" ("spoke at" cluster)
+    g1 = Graph(id="g1")
+    vasquez1 = g1.add_entity("Dr. Elena Vasquez")
+    volta1 = g1.add_entity("Volta Systems")
+    summit1 = g1.add_entity("TechForward Summit")
+    g1.add_edge(vasquez1, volta1, "newly installed as CTO of")
+    g1.add_edge(vasquez1, summit1, "spoke at")
+
+    # Source 2: Sharma attended "TechForward" (short name → separate entity,
+    # "attended" clusters with "spoke at", not "gave keynote at")
+    g2 = Graph(id="g2")
+    sharma2 = g2.add_entity("Dr. Priya Sharma")
+    lightwave2 = g2.add_entity("Lightwave Analytics")
+    summit2 = g2.add_entity("TechForward")
+    g2.add_edge(sharma2, lightwave2, "is founder of")
+    g2.add_edge(sharma2, summit2, "attended")
+
+    # Source 3: Vasquez gave keynote ("gave keynote at" cluster ≠ "spoke at")
+    g3 = Graph(id="g3")
+    vasquez3 = g3.add_entity("Dr. Elena Vasquez")
+    volta3 = g3.add_entity("Volta Systems")
+    ibm3 = g3.add_entity("IBM Research")
+    summit3 = g3.add_entity("TechForward Summit")
+    g3.add_edge(vasquez3, volta3, "is CTO of")
+    g3.add_edge(vasquez3, ibm3, "worked at")
+    g3.add_edge(vasquez3, summit3, "gave keynote at")
+
+    # Source 4: Sharma gave keynote at "TechForward Summit"
+    g4 = Graph(id="g4")
+    sharma4 = g4.add_entity("Dr. Priya Sharma")
+    lightwave4 = g4.add_entity("Lightwave Analytics")
+    meridian4 = g4.add_entity("Meridian Technologies")
+    summit4 = g4.add_entity("TechForward Summit")
+    g4.add_edge(sharma4, lightwave4, "co-founded")
+    g4.add_edge(sharma4, meridian4, "set to become SVP of Analytics at")
+    g4.add_edge(sharma4, summit4, "gave keynote at")
+
+    confidence = match_graphs([g1, g2, g3, g4], embedder)
+
+    matches = _select_matches(confidence, threshold=0.8)
+    vasquez_ids = {vasquez1.id, vasquez3.id}
+    sharma_ids = {sharma2.id, sharma4.id}
+    for id_a, id_b in matches:
+        assert not (
+            (id_a in vasquez_ids and id_b in sharma_ids)
+            or (id_a in sharma_ids and id_b in vasquez_ids)
+        ), "Different people who spoke at same event incorrectly matched"
