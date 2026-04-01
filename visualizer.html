@@ -81,20 +81,6 @@ function render(data) {
   const nodeMap = new Map();
   rawNodes.forEach(n => nodeMap.set(n.id, n));
 
-  // Collect "is named" labels per entity node, track label node ids
-  const labelNodeIds = new Set();
-  const namesByEntity = new Map(); // entity id -> [name strings]
-  rawEdges.forEach(e => {
-    if (e.relation === 'is named') {
-      const target = nodeMap.get(e.target);
-      if (target && target.label) {
-        labelNodeIds.add(e.target);
-        if (!namesByEntity.has(e.source)) namesByEntity.set(e.source, []);
-        namesByEntity.get(e.source).push(target.label);
-      }
-    }
-  });
-
   // Build match clusters: map each id to its canonical (first in cluster)
   const idToCanonical = new Map();
   const canonicalMembers = new Map(); // canonical -> [all member ids]
@@ -111,7 +97,6 @@ function render(data) {
   const seenCanonical = new Set();
   const mergedNodes = [];
   rawNodes.forEach(n => {
-    if (labelNodeIds.has(n.id)) return; // skip label nodes
     const canon = resolve(n.id);
     if (seenCanonical.has(canon)) return;
     seenCanonical.add(canon);
@@ -120,7 +105,8 @@ function render(data) {
     const members = canonicalMembers.get(canon) || [n.id];
     const allNames = [];
     members.forEach(mid => {
-      const names = namesByEntity.get(mid) || [];
+      const mn = nodeMap.get(mid);
+      const names = (mn && mn.names) || [];
       names.forEach(name => { if (!allNames.includes(name)) allNames.push(name); });
     });
 
@@ -139,7 +125,6 @@ function render(data) {
   const edgeSet = new Set();
   const structEdges = [];
   rawEdges.forEach(e => {
-    if (e.relation === 'is named') return;
     const s = resolve(e.source);
     const t = resolve(e.target);
     if (s === t) return; // self-loop after merge
