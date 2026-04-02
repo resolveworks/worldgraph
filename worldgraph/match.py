@@ -6,8 +6,8 @@ evidence (positive: neighbor's best counterpart is a likely match;
 negative: neighbor has no good counterpart) and blends it with the
 previous score via a damping factor.
 
-Name similarity seeds the initial scores and serves as the baseline that
-structural evidence modulates up or down.
+Name similarity seeds the initial scores; structural evidence is required
+for merging.
 
 Relation similarity is treated as binary via a single threshold that defines
 equivalence classes over free-text relation phrases.  This threshold is used
@@ -310,6 +310,7 @@ def propagate_similarity(
     exp_lambda: float = 1.0,
     merge_threshold: float = 0.9,
     damping: float = 0.5,
+    prior_strength: float = 1.0,
 ) -> tuple[Confidence, UnionFind]:
     """Run damped similarity propagation with progressive merging.
 
@@ -318,17 +319,32 @@ def propagate_similarity(
     its best counterpart among B's neighbors (same relation cluster) and
     contribute once — positive if the best counterpart confidence exceeds
     0.5, negative if it falls below.  Neighbors that resolve to either
-    entity in the pair are excluded to prevent circular self-reference
-    (an intra-graph edge between A and B must not serve as evidence that
-    A and B are the same entity).  The result is blended with the previous
-    score via damping::
+    entity in the pair are excluded to prevent circular self-reference.
 
-        computed = seed + pos_agg * (1 - seed) - neg_agg * seed
+    Evidence is computed **bidirectionally** (A→B and B→A) and averaged.
+    Positive evidence is weighted by **Bayesian shrinkage**
+    ``n / (n + κ)`` where ``n`` is the number of neighbors that found a
+    same-cluster counterpart and ``κ`` (``prior_strength``) controls how
+    many tested neighbors are needed before trusting structural matches.
+    Negative evidence has full weight — a mismatch on a functional
+    relation is decisive and does not need corroboration.
+
+    Each directional score is::
+
+        weight = n_tested / (n_tested + prior_strength)
+        evidence = pos_agg * (1 - seed) * weight - neg_agg * seed
+        computed_dir = seed + evidence
+
+    The final value is the simple average of both directions, blended
+    with the previous score via damping::
+
+        computed = (computed_fwd + computed_bwd) / 2
         new = (1 - damping) * old + damping * computed
 
-    Name similarity (``seed``) is the baseline: positive evidence pushes
-    toward 1.0, negative evidence pushes toward 0.0.  With no structural
-    evidence the fixpoint equals the seed.
+    Name similarity (``seed``) initialises the confidence scores so
+    propagation has signal to start with, and anchors the per-iteration
+    formula.  But merging requires structural evidence: pairs with zero
+    tested neighbors are never merged, regardless of name similarity.
 
     On merge, the canonical adjacency for the new representative is built
     by combining and deduplicating the adjacency lists of the merged
@@ -349,59 +365,85 @@ def propagate_similarity(
 
     conf, name_sim = _seed_confidence(graph, idf, pairs)
 
+    def _directional_evidence(
+        src: str,
+        tgt: str,
+        prev: Confidence,
+    ) -> tuple[float, float, int]:
+        """Per-neighbor best-counterpart evidence from src's perspective.
+
+        For each neighbor of *src*, find its best counterpart among *tgt*'s
+        neighbors in the same relation cluster and contribute positive
+        (nc > 0.5) or negative (nc < 0.5) evidence once.
+
+        Returns (pos_strength, neg_strength, n_with_counterpart).
+        """
+        pos_strength = 0.0
+        neg_strength = 0.0
+        n_with_counterpart = 0
+        nbrs_tgt = canonical_adj.get(tgt, [])
+        for nbr_s in canonical_adj.get(src, []):
+            rs = uf.find(nbr_s.entity_id)
+            if rs == src or rs == tgt:
+                continue
+
+            cluster_s = rel_clusters.get(nbr_s.relation, -1)
+            best_nc: float | None = None
+            best_pos_w = 0.0
+            best_neg_w = 0.0
+            for nbr_t in nbrs_tgt:
+                if rel_clusters.get(nbr_t.relation, -2) != cluster_s:
+                    continue
+                rt = uf.find(nbr_t.entity_id)
+                if rt == tgt or rt == src:
+                    continue
+                nc = 1.0 if rs == rt else prev.get((rs, rt), 0.0)
+                if best_nc is None or nc > best_nc:
+                    best_nc = nc
+                    best_pos_w = min(nbr_s.pos_weight, nbr_t.pos_weight)
+                    best_neg_w = min(nbr_s.neg_weight, nbr_t.neg_weight)
+
+            if best_nc is None:
+                continue
+
+            n_with_counterpart += 1
+            if best_nc > 0.5:
+                pos_strength += best_pos_w * best_nc
+            else:
+                neg_nc = 1.0 - best_nc
+                if neg_nc > 0.5:
+                    neg_strength += best_neg_w * neg_nc
+
+        return pos_strength, neg_strength, n_with_counterpart
+
+    n_tested: dict[tuple[str, str], int] = {}
+
     for _ in range(max_iter):
         prev = dict(conf)
         changed = False
 
         for ca, cb in pairs:
-            pos_strength = 0.0
-            neg_strength = 0.0
+            pos_fwd, neg_fwd, n_cp_fwd = _directional_evidence(ca, cb, prev)
+            pos_bwd, neg_bwd, n_cp_bwd = _directional_evidence(cb, ca, prev)
 
-            # Per-neighbor best-counterpart: for each neighbor of ca,
-            # find its best match among cb's neighbors and contribute once.
-            nbrs_b = canonical_adj.get(cb, [])
-            for nbr_a in canonical_adj.get(ca, []):
-                ra = uf.find(nbr_a.entity_id)
-                if ra == ca or ra == cb:
-                    continue
-
-                cluster_a = rel_clusters.get(nbr_a.relation, -1)
-                best_nc: float | None = None
-                best_pos_w = 0.0
-                best_neg_w = 0.0
-                for nbr_b in nbrs_b:
-                    if rel_clusters.get(nbr_b.relation, -2) != cluster_a:
-                        continue
-                    rb = uf.find(nbr_b.entity_id)
-                    if rb == cb or rb == ca:
-                        continue
-                    nc = 1.0 if ra == rb else prev.get((ra, rb), 0.0)
-                    if best_nc is None or nc > best_nc:
-                        best_nc = nc
-                        best_pos_w = min(nbr_a.pos_weight, nbr_b.pos_weight)
-                        best_neg_w = min(nbr_a.neg_weight, nbr_b.neg_weight)
-
-                if best_nc is None:
-                    continue
-
-                if best_nc > 0.5:
-                    pos_strength += best_pos_w * best_nc
-                else:
-                    neg_nc = 1.0 - best_nc
-                    if neg_nc > 0.5:
-                        neg_strength += best_neg_w * neg_nc
-
-            # Exp-sum aggregation + seed-as-baseline combination.
-            pos_agg = (
-                1.0 - math.exp(-exp_lambda * pos_strength) if pos_strength > 0 else 0.0
-            )
-            neg_agg = (
-                1.0 - math.exp(-exp_lambda * neg_strength) if neg_strength > 0 else 0.0
-            )
-
+            n_tested[(ca, cb)] = n_cp_fwd + n_cp_bwd
             seed = name_sim[(ca, cb)]
-            computed = seed + pos_agg * (1.0 - seed) - neg_agg * seed
-            computed = max(0.0, min(1.0, computed))
+
+            # Bidirectional: shrinkage-weighted average of both perspectives.
+            # Shrinkage applies only to positive evidence (structural
+            # matches need corroboration); negative evidence has full
+            # weight (a mismatch on a functional relation is decisive).
+            dir_sum = 0.0
+            for pos_s, neg_s, n_cp in (
+                (pos_fwd, neg_fwd, n_cp_fwd),
+                (pos_bwd, neg_bwd, n_cp_bwd),
+            ):
+                w = n_cp / (n_cp + prior_strength) if n_cp > 0 else 0.0
+                pa = 1.0 - math.exp(-exp_lambda * pos_s) if pos_s > 0 else 0.0
+                na = 1.0 - math.exp(-exp_lambda * neg_s) if neg_s > 0 else 0.0
+                evidence = pa * (1.0 - seed) * w - na * seed
+                dir_sum += max(0.0, min(1.0, seed + evidence))
+            computed = dir_sum / 2
 
             old = prev[(ca, cb)]
             new_val = (1.0 - damping) * old + damping * computed
@@ -414,11 +456,13 @@ def propagate_similarity(
         if changed:
             continue
 
-        # --- Progressive merging (directly on single score) ---
+        # --- Progressive merging (requires structural evidence) ---
         new_merges = [
             (ca, cb)
             for ca, cb in pairs
-            if conf[(ca, cb)] >= merge_threshold and uf.find(ca) != uf.find(cb)
+            if conf[(ca, cb)] >= merge_threshold
+            and uf.find(ca) != uf.find(cb)
+            and n_tested.get((ca, cb), 0) > 0
         ]
 
         if new_merges:

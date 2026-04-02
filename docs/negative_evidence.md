@@ -69,21 +69,37 @@ Positive and negative evidence are computed together in each propagation step, f
 
 - **Positive**: if the best counterpart's confidence is above 0.5 (likely match), `y` contributes to `pos_strength`, weighted by functionality — a matching neighbor on a functional relation is strong evidence FOR the match.
 - **Negative**: if the best counterpart's confidence is below 0.5 (no good match), `y` contributes to `neg_strength`, weighted by functionality — a functional relation whose target has no counterpart is evidence AGAINST the match.
-- **No counterpart**: if `y` has no relation-similar neighbors on `b`'s side at all, it contributes nothing — absence of a comparable relation is not evidence (could be incomplete article coverage).
+- **No counterpart**: if `y` has no relation-similar neighbors on `b`'s side at all, it contributes nothing. However, the number of neighbors that *do* find counterparts determines how much positive evidence is trusted (see Bayesian shrinkage below).
 
 Each neighbor contributes exactly once, based on its best counterpart. This avoids the all-pairs pitfall where a neighbor that matches well with one counterpart also generates bogus negative evidence from unrelated cross-pairs. For example, if `a` has neighbors Park and Chen both via "is CEO of", and `b` also has Park and Chen, the all-pairs approach would count Park₁↔Chen₂ as negative evidence despite Park₁ having a perfect match in Park₂. The per-neighbor approach correctly identifies Park₁'s best counterpart as Park₂ and contributes only positive evidence.
 
-Both are aggregated via exp-sum and combined with the name-similarity seed:
+Neighbors that resolve to either entity in the pair are excluded to prevent **circular self-reference** — an intra-graph edge between `a` and `b` (e.g. "appeared to speak with", "is CEO of") must not serve as evidence that `a` and `b` are the same entity.
+
+### Bidirectional evaluation with Bayesian shrinkage
+
+Evidence is computed from **both perspectives** — `a`'s neighbors seeking counterparts among `b`'s, and `b`'s neighbors seeking counterparts among `a`'s — and the two directional scores are averaged. This ensures the result does not depend on arbitrary pair ordering.
+
+Positive and negative evidence are treated asymmetrically. **Positive evidence** (structural matches) is weighted by a Bayesian shrinkage factor `n / (n + κ)`, where `n` is the number of neighbors that found a same-cluster counterpart and `κ` (`prior_strength`) controls how many tested neighbors are needed before trusting structural matches. **Negative evidence** (structural mismatches) has full weight — a mismatch on a functional relation is decisive and does not need corroboration.
+
+This asymmetry reflects that name similarity alone should never be sufficient for merging. Structural evidence is needed to *confirm* matches (hence shrinkage on positive), but a single mismatch should prevent them (full weight on negative).
 
 ```
 pos_agg = 1 - exp(-λ × pos_strength)
 neg_agg = 1 - exp(-λ × neg_strength)
 
 seed = name_similarity(a, b)
-computed = seed + pos_agg × (1 - seed) - neg_agg × seed
+weight = n_with_counterpart / (n_with_counterpart + κ)
+evidence = pos_agg × (1 - seed) × weight - neg_agg × seed
+computed_dir = seed + evidence
 ```
 
-The seed serves as the baseline. Positive evidence pushes toward 1.0 (proportional to the room above seed), negative evidence pushes toward 0.0 (proportional to the seed itself). With no structural evidence, the score equals the seed. With strong negative evidence and no positive evidence, the score approaches zero.
+The seed serves as the baseline that propagation anchors to. Positive evidence pushes toward 1.0 (proportional to the room above seed, discounted by shrinkage), negative evidence pushes toward 0.0 (proportional to the seed itself, at full strength). With no structural evidence the score equals the seed — but merging additionally requires `n_tested > 0`, so name similarity alone never triggers a merge.
+
+The final score averages the two directional scores:
+
+```
+computed = (computed_fwd + computed_bwd) / 2
+```
 
 ### The 0.5 threshold as a natural gate
 
@@ -105,8 +121,8 @@ The damped update `new = (1-α) × old + α × computed` ensures convergence for
 
 Negative evidence helps distinguish entities that share some structure but differ on specific relations. It does not help with:
 
-- **Completely disjoint graphs**: entities with no shared neighbors generate neither positive nor negative structural evidence
-- **Name-only matches**: if two entities match purely on name similarity with no structural support, negative evidence from unmatched neighbors could incorrectly suppress valid matches (the articles may simply cover different aspects of the entity)
+- **Completely disjoint graphs**: entities with no shared relation clusters generate neither positive nor negative structural evidence — the score falls back to the name-similarity seed, but the `n_tested > 0` merge gate prevents merging
+- **Name-only matches**: if two entities match purely on name similarity with no structural support, the score equals the seed but cannot trigger a merge
 
 ## Relation to the broader pipeline
 

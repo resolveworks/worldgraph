@@ -16,8 +16,6 @@ Tests verify that:
 - Multi-label entities use max similarity across all names during seeding
 """
 
-import pytest
-
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
 from worldgraph.names import build_idf, soft_tfidf
@@ -886,12 +884,6 @@ def test_predecessor_successor_at_same_company_no_match(embedder):
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    reason="per-neighbor-best generates zero negative evidence when "
-    "non-matching neighbors use relation clusters absent from the "
-    "other side, so shared-event positive evidence dominates",
-    strict=True,
-)
 def test_shared_event_does_not_merge_different_people(embedder):
     """Two different people who both spoke at the same conference should
     not be merged, even with a weak name prefix match ('Dr.').
