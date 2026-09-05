@@ -26,7 +26,7 @@ Entity pairs across graphs are compared using **PARIS-style similarity propagati
 - Entity-entity confidence is **seeded from name similarity** (Soft TF-IDF + Jaro-Winkler) before propagation begins. This gives the iteration loop initial signal to work with — structurally connected neighbors that share similar names start with nonzero scores, which then propagate outward.
 - Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones). Neighbor pairs with zero confidence are skipped.
 - Evidence from multiple paths is aggregated with an exponential sum: `1 - exp(-λ × Σ strengths)`. This naturally rewards breadth — a single strong path is heavily discounted (~0.63), while multiple paths accumulate proportionally.
-- Repeat until scores converge, then threshold to decide which pairs to merge
+- Repeat until scores converge; pairs whose score crosses the merge threshold — and that have at least one structurally tested neighbor — are merged
 
 Relations are compared via sentence embedding similarity — "acquired", "bought", "completed the purchase of" all cluster together without requiring a predefined schema. The standard Similarity Flooding algorithm (Melnik et al., 2002) requires identical edge labels to propagate similarity; we replace that binary gate with continuous relation-phrase similarity.
 
@@ -42,7 +42,7 @@ Once matching is battle-tested, a scoring stage will rank each deduplicated fact
 
 Entity resolution is inherently circular: to know if two entities are the same you need to know if they have the same relations to the same other entities — but resolving *those* entities has the same problem. Hard early decisions cascade: one wrong merge combines relationship sets and can trigger further wrong merges.
 
-Similarity propagation dissolves this by never making hard decisions during propagation. Soft scores iterate to a fixpoint; a single threshold at the end produces the final merge decisions.
+Similarity propagation dissolves this by keeping decisions soft for as long as possible. Scores iterate toward a fixpoint; only pairs that are very confident (merge threshold 0.9) *and* structurally corroborated are committed during propagation (progressive merging), and damped iteration bounds any circular reinforcement geometrically. Name similarity alone never merges anything — a pair with no tested neighbors stays unmerged no matter how similar the names.
 
 ### Relation functionality
 
@@ -56,7 +56,7 @@ Standard methods (SF, PARIS, FLORA) assume relations come from a controlled voca
 
 ### N-graph alignment
 
-Each article produces one graph. All article graphs are merged into a single unified graph, and propagation runs once over all cross-graph entity pairs simultaneously. Final matches are merged transitively via union-find.
+Each article produces one graph. All article graphs are merged into a single unified graph, and propagation runs once over all cross-graph entity pairs simultaneously. Matches are merged transitively via the union-find maintained during propagation — there is no second, post-hoc grouping pass.
 
 ## Open Problems
 

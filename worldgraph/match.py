@@ -148,8 +148,12 @@ def compute_functionality(
 
 
 def build_unified_graph(graphs: list[Graph]) -> Graph:
-    """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs."""
-    unified = Graph()
+    """Combine N article graphs into one. Node IDs are UUIDs — unique across graphs.
+
+    The unified graph gets the fixed id "unified" so that identical inputs
+    produce identical pipeline output.
+    """
+    unified = Graph(id="unified")
     for graph in graphs:
         unified.nodes.update(graph.nodes)
         unified.edges.extend(graph.edges)
@@ -311,7 +315,7 @@ def propagate_similarity(
     merge_threshold: float = 0.9,
     damping: float = 0.5,
     prior_strength: float = 1.0,
-) -> tuple[Confidence, UnionFind]:
+) -> tuple[Confidence, list[MatchGroup]]:
     """Run damped similarity propagation with progressive merging.
 
     A single confidence score per entity pair integrates both positive and
@@ -350,8 +354,11 @@ def propagate_similarity(
     by combining and deduplicating the adjacency lists of the merged
     entities — O(degree) per merge, not O(|edges|).
 
-    Returns (confidence, union_find) where confidence maps original
-    entity-ID pairs to scores and union_find tracks all merges.
+    Returns (confidence, match_groups). The union-find maintained during
+    propagation is the **sole merge authority**: a pair is merged iff it
+    crossed ``merge_threshold`` with at least one tested neighbor, and
+    ``match_groups`` lists exactly those committed groups (size > 1).
+    There is no second, post-hoc grouping pass.
     """
     uf = UnionFind()
     for eid in graph.nodes:
@@ -361,7 +368,7 @@ def propagate_similarity(
     pairs = _build_pairs(graph)
 
     if not pairs:
-        return {}, uf
+        return {}, []
 
     conf, name_sim = _seed_confidence(graph, idf, pairs)
 
@@ -542,7 +549,8 @@ def propagate_similarity(
                 final[(ma, mb)] = 1.0
                 final[(mb, ma)] = 1.0
 
-    return final, uf
+    match_groups = [set(m) for m in members.values() if len(m) > 1]
+    return final, match_groups
 
 
 # ---------------------------------------------------------------------------
@@ -555,8 +563,8 @@ def match_graphs(
     embedder: Embedder,
     rel_cluster_threshold: float = 0.8,
     **propagate_kwargs,
-) -> Confidence:
-    """Core matching pipeline: graphs → confidence scores.
+) -> tuple[Confidence, list[MatchGroup], Graph]:
+    """Core matching pipeline: graphs → (confidence, match groups, unified graph).
 
     Builds unified graph, computes IDF / relation embeddings / functionality /
     relation clusters, and runs similarity propagation.
@@ -565,7 +573,8 @@ def match_graphs(
     to the same cluster for functionality pooling, adjacency deduplication,
     and propagation gating.
 
-    Returns the confidence dict.
+    ``match_groups`` comes straight from the union-find inside propagation —
+    the sole merge authority (one threshold, gated on structural evidence).
     """
     unified = build_unified_graph(graphs)
 
@@ -580,36 +589,14 @@ def match_graphs(
     rel_clusters = build_rel_clusters(rel_sim, rel_cluster_threshold)
     functionality = compute_functionality(graphs, rel_clusters)
 
-    confidence, _uf = propagate_similarity(
+    confidence, match_groups = propagate_similarity(
         unified,
         idf,
         rel_clusters,
         functionality,
         **propagate_kwargs,
     )
-    return confidence
-
-
-def build_match_groups(
-    graphs: list[Graph],
-    confidence: Confidence,
-    threshold: float = 0.8,
-) -> tuple[list[MatchGroup], Graph]:
-    """Build match groups from confidence scores via union-find.
-
-    Returns (match_groups, unified_graph) where match_groups is a list of sets,
-    each containing matched entity IDs (groups of size > 1).
-    """
-    uf = UnionFind()
-    for (id_a, id_b), score in confidence.items():
-        if score >= threshold:
-            uf.union(id_a, id_b)
-
-    unified = build_unified_graph(graphs)
-    groups: dict[str, list[str]] = defaultdict(list)
-    for entity_id in unified.nodes:
-        groups[uf.find(entity_id)].append(entity_id)
-    return [set(members) for members in groups.values() if len(members) > 1], unified
+    return confidence, match_groups, unified
 
 
 # ---------------------------------------------------------------------------
@@ -621,10 +608,9 @@ def run_matching(
     graph_files: list[Path],
     output_path: Path,
     relation_threshold: float,
-    match_threshold: float,
+    merge_threshold: float,
     max_iter: int = 30,
     epsilon: float = 1e-4,
-    merge_threshold: float = 0.9,
 ) -> None:
     """Load graphs, run matching pipeline, save results."""
     graphs = [load_graph(path) for path in graph_files]
@@ -636,7 +622,7 @@ def run_matching(
 
     embedder = Embedder(os.environ["EMBEDDING_MODEL"])
 
-    confidence = match_graphs(
+    _confidence, match_groups, unified = match_graphs(
         graphs,
         embedder,
         rel_cluster_threshold=relation_threshold,
@@ -644,8 +630,6 @@ def run_matching(
         epsilon=epsilon,
         merge_threshold=merge_threshold,
     )
-
-    match_groups, unified = build_match_groups(graphs, confidence, match_threshold)
     save_graph(unified, output_path, [list(group) for group in match_groups])
 
     click.echo(f"\n{len(match_groups)} match groups:")

@@ -38,12 +38,6 @@ def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
     help="Minimum cosine similarity for two relation phrases to be treated as equivalent.",
 )
 @click.option(
-    "--match-threshold",
-    default=0.8,
-    type=float,
-    help="Minimum confidence score to merge two entities.",
-)
-@click.option(
     "--max-iter",
     default=30,
     type=int,
@@ -53,13 +47,12 @@ def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
     "--merge-threshold",
     default=0.9,
     type=float,
-    help="Minimum confidence to commit a progressive merge during propagation.",
+    help="Minimum confidence, backed by structural evidence, to merge two entities.",
 )
 def match(
     graphs: tuple[Path, ...],
     output: Path,
     relation_threshold: float,
-    match_threshold: float,
     max_iter: int,
     merge_threshold: float,
 ):
@@ -68,7 +61,6 @@ def match(
         list(graphs),
         output,
         relation_threshold=relation_threshold,
-        match_threshold=match_threshold,
         max_iter=max_iter,
         merge_threshold=merge_threshold,
     )

@@ -16,7 +16,7 @@ import itertools
 import pytest
 
 from worldgraph.graph import Graph
-from worldgraph.match import build_match_groups, match_graphs
+from worldgraph.match import match_graphs
 from worldgraph.names import build_idf, soft_tfidf
 
 
@@ -52,8 +52,7 @@ def _merge_scenario() -> list[Graph]:
 
 
 def _group_sets(graphs: list[Graph], embedder) -> set[frozenset[str]]:
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
     return {frozenset(g) for g in groups}
 
 
@@ -68,7 +67,7 @@ def test_confidence_is_symmetric(embedder):
     Consumers index confidence with arbitrary pair orderings; an
     asymmetric dict would silently return 0.0 for half of all lookups."""
     graphs = _merge_scenario()
-    confidence = match_graphs(graphs, embedder)
+    confidence, _, _ = match_graphs(graphs, embedder)
 
     assert confidence, "scenario produced no confidence entries"
     for (a, b), score in confidence.items():
@@ -88,14 +87,14 @@ def test_graph_order_does_not_change_results(embedder):
     derive from the input list; none of them may leak into the result."""
     graphs = _merge_scenario()
 
-    base_conf = match_graphs(graphs, embedder)
+    base_conf, _, _ = match_graphs(graphs, embedder)
     base_groups = _group_sets(graphs, embedder)
 
     # Premise: the scenario actually merges — otherwise this test is vacuous
     assert len(base_groups) >= 2, f"scenario too weak, only got {base_groups}"
 
     for perm in itertools.permutations(graphs):
-        perm_conf = match_graphs(list(perm), embedder)
+        perm_conf, _, _ = match_graphs(list(perm), embedder)
         perm_groups = _group_sets(list(perm), embedder)
 
         assert perm_groups == base_groups, f"groups differ for order {[g.id for g in perm]}"
@@ -113,7 +112,8 @@ def test_matching_is_deterministic(embedder):
     """Running the same input twice must produce identical output.
 
     No RNG, no wall-clock, and no set-iteration-order dependence is
-    allowed anywhere in the pipeline."""
+    allowed anywhere in the pipeline — including the unified graph id
+    and the match groups, not just the confidence scores."""
     graphs = _merge_scenario()
     assert match_graphs(graphs, embedder) == match_graphs(graphs, embedder)
 
@@ -125,9 +125,8 @@ def test_matching_is_deterministic(embedder):
 
 def test_empty_input_returns_no_matches(embedder):
     """An empty graph list is valid input and yields no matches."""
-    assert match_graphs([], embedder) == {}
-
-    groups, unified = build_match_groups([], {})
+    confidence, groups, unified = match_graphs([], embedder)
+    assert confidence == {}
     assert groups == []
     assert len(unified.nodes) == 0
 
@@ -135,9 +134,9 @@ def test_empty_input_returns_no_matches(embedder):
 def test_edgeless_identical_names_score_at_seed(embedder):
     """Edgeless entities fall back to the name-similarity seed.
 
-    Per docs/negative_evidence.md: "With no structural evidence the score
-    equals the seed."  Identical names therefore score 1.0 — but merging
-    is a separate question (see test_name_similarity_alone_never_merges)."""
+    With no structural evidence the score equals the seed.  Identical
+    names therefore score 1.0 — but merging is a separate question
+    (see test_name_similarity_alone_never_merges)."""
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
@@ -146,25 +145,20 @@ def test_edgeless_identical_names_score_at_seed(embedder):
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(apple1.id, apple2.id)] == pytest.approx(1.0)
     assert confidence[(beats1.id, beats2.id)] == pytest.approx(1.0)
 
 
-@pytest.mark.xfail(
-    reason="build_match_groups unions on score >= threshold without the "
-    "n_tested > 0 structural-evidence gate from propagate_similarity, so "
-    "identical names merge despite docs/negative_evidence.md: 'name "
-    "similarity alone never triggers a merge'",
-    strict=True,
-)
 def test_name_similarity_alone_never_merges(embedder):
     """Dangling entities with identical names must not form match groups.
 
-    docs/negative_evidence.md: the score falls back to the name-similarity
-    seed, "but the n_tested > 0 merge gate prevents merging" — name
-    similarity alone must never produce a group."""
+    With no structural evidence the score falls back to the name-similarity
+    seed, but the n_tested > 0 merge gate prevents merging — name
+    similarity alone must never produce a group. The in-loop union-find
+    is the sole merge authority; there is no post-hoc grouping path that
+    could bypass the structural-evidence gate."""
     g1 = Graph(id="g1")
     g1.add_entity("Apple")
     g1.add_entity("Beats")
@@ -173,8 +167,7 @@ def test_name_similarity_alone_never_merges(embedder):
     g2.add_entity("Apple")
     g2.add_entity("Beats")
 
-    confidence = match_graphs([g1, g2], embedder)
-    groups, _ = build_match_groups([g1, g2], confidence)
+    _, groups, _ = match_graphs([g1, g2], embedder)
 
     assert groups == [], f"name-only merge: {groups}"
 
@@ -198,8 +191,7 @@ def test_self_loops_and_duplicate_edges_are_harmless(embedder):
     y2 = g2.add_entity("Y")
     g2.add_edge(x2, y2, "acquired")
 
-    confidence = match_graphs([g1, g2], embedder)
-    groups, _ = build_match_groups([g1, g2], confidence)
+    _, groups, _ = match_graphs([g1, g2], embedder)
 
     assert {frozenset(g) for g in groups} == {
         frozenset({x1.id, x2.id}),

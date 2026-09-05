@@ -1,7 +1,7 @@
 """Layer 3 integration tests.
 
 These tests exercise the full matching pipeline: multiple graphs →
-match_graphs → build_match_groups.  They verify end-to-end correctness
+match_graphs.  They verify end-to-end correctness
 on multi-source scenarios that L2 tests don't cover:
 
 - Transitive merging across 3+ sources via union-find
@@ -11,7 +11,7 @@ on multi-source scenarios that L2 tests don't cover:
 """
 
 from worldgraph.graph import Graph
-from worldgraph.match import build_match_groups, match_graphs
+from worldgraph.match import match_graphs
 
 
 # ---------------------------------------------------------------------------
@@ -37,7 +37,7 @@ def test_three_source_with_person_name_variation(embedder):
     structural context for propagation to work.
 
     "Dr. Priya Sharma" / "Priya Sharma" / "Dr. Sharma" — the name
-    similarity alone (~0.79) is below match threshold. Multiple shared
+    similarity alone (~0.79) is below the merge threshold. Multiple shared
     neighbors with identical names provide structural evidence to bridge
     the gap.
 
@@ -47,7 +47,9 @@ def test_three_source_with_person_name_variation(embedder):
     relation maps one source name to three target name variants), so
     we need enough shared neighbors to accumulate sufficient evidence:
     five neighbors × 1/3 weight × ~1.0 confidence = 1.67 strength,
-    giving positive = 1 - exp(-1.67) ≈ 0.81 > 0.8."""
+    positive = 1 - exp(-1.67) ≈ 0.81, discounted by Bayesian shrinkage
+    5/(5+1) and scaled by the (1-seed) headroom → ≈ 0.93, above the
+    0.9 merge threshold."""
     g1 = Graph(id="article-1")
     m1 = g1.add_entity("Meridian Technologies")
     p1 = g1.add_entity("Dr. Priya Sharma")
@@ -94,8 +96,7 @@ def test_three_source_with_person_name_variation(embedder):
     g3.add_edge(m3, dv3, "acquired")
 
     graphs = [g1, g2, g3]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     m_group = _find_group_containing(groups, m1.id)
     assert m_group is not None, "Meridian entities not merged"
@@ -155,8 +156,7 @@ def test_identical_names_different_contexts_no_merge(embedder):
     b2.add_edge(lab_b2, epa_b2, "funded by")
 
     graphs = [a1, a2, b1, b2]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     cluster_a_ids = {jc_a1.id, lab_a1.id, nsf_a1.id, jc_a2.id, lab_a2.id, nsf_a2.id}
     cluster_b_ids = {jc_b1.id, lab_b1.id, epa_b1.id, jc_b2.id, lab_b2.id, epa_b2.id}
@@ -221,8 +221,7 @@ def test_shared_entity_across_clusters(embedder):
     b2.add_edge(m_b2, ev_b2, "CEO is")
 
     graphs = [a1, a2, b1, b2]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     # All four Meridian entities should be in one group
     m_group = _find_group_containing(groups, m_a1.id)
@@ -282,8 +281,7 @@ def test_shared_person_across_clusters(embedder):
     b2.add_edge(ev4, su4, "alumna of")
 
     graphs = [a1, a2, b1, b2]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     # All four Elena Vasquez entities should merge (within + across clusters)
     ev_group = _find_group_containing(groups, ev1.id)
@@ -350,8 +348,7 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
     b2.add_edge(ql_b2, sp_b2, "CEO is")
 
     graphs = [a1, a2, b1, b2]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     cluster_a_ids = {nt_a1.id, dv_a1.id, jc_a1.id, nt_a2.id, dv_a2.id, jc_a2.id}
     cluster_b_ids = {ql_b1.id, cs_b1.id, sp_b1.id, ql_b2.id, cs_b2.id, sp_b2.id}
@@ -406,8 +403,7 @@ def test_shared_employee_bridge_no_company_merge(embedder):
     g2.add_edge(nak2, cloud2, "is chief financial officer of")
 
     graphs = [g1, g2]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     # Cascade and CloudScale are different companies — must stay separate.
     cascade_ids = {cascade1.id, cascade2.id}
@@ -461,8 +457,7 @@ def test_regulator_and_regulated_entity_stay_separate(embedder):
     g2.add_edge(euro2, vantara2, "reported on")
 
     graphs = [g1, g2]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     # DPC and Vantara are fundamentally different entities.
     dpc_ids = {dpc1.id, dpc2.id}
@@ -532,8 +527,7 @@ def test_synonym_inflation_false_merge_via_shared_hub(embedder):
     g4.add_edge(hub4, c2, "purchased")
 
     graphs = [g0, g1, g2, g3, g4]
-    confidence = match_graphs(graphs, embedder)
-    groups, _ = build_match_groups(graphs, confidence)
+    _, groups, _ = match_graphs(graphs, embedder)
 
     # Lightwave and CloudScale are different companies — must stay separate.
     b_ids = {b1.id, b2.id}

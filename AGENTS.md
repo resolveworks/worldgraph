@@ -23,44 +23,39 @@ In the matched output, entities with >1 occurrence are matched entities, edges w
 ## Project Structure
 
 - `worldgraph/` — one module per pipeline stage (`extract.py`, `match.py`), plus `cli.py` for the Click entry point
-- `docs/` — detailed algorithm write-ups referenced from this file
 - `tests/` — pytest suite, layered (see Testing Strategy below)
 
 ## Matching Algorithm
 
 The matching stage implements **similarity propagation** (inspired by PARIS/FLORA) adapted for free-text relation phrases. The design is driven by the literature and validated by automated tests — we don't have real-world ground truth yet, so the tests encode what the algorithm *should* do based on the papers and our understanding of the domain. When a test fails, it's either a bug or a wrong assumption about what the algorithm needs.
 
-See `docs/` for detailed write-ups on each concept referenced below.
-
 ### What's implemented
 
 The core propagation loop (`match.py`):
 
-1. **Name-similarity seeding** — Soft TF-IDF + Jaro-Winkler seeds the confidence dict before iteration starts. This gives propagation initial signal to work with. See [docs/name_similarity.md](docs/name_similarity.md).
+1. **Name-similarity seeding** — Soft TF-IDF + Jaro-Winkler seeds the confidence dict before iteration starts. This gives propagation initial signal to work with.
 
 2. **Relation similarity via sentence embeddings** — relation phrase similarity is thresholded into equivalence classes. "acquired" ↔ "purchased" (above threshold) are treated as equivalent; "acquired" ↔ "located in" (below) are not. The threshold is used consistently for functionality pooling and propagation gating.
 
-3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with equivalent relation phrases pooled. See [docs/functionality.md](docs/functionality.md).
+3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with equivalent relation phrases pooled.
 
 4. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
 
-5. **Damped fixed-point iteration** — `new = (1-d)*old + d*computed` where computed integrates positive and negative evidence around the name-similarity seed. Converges via contraction (see [docs/similarity_flooding.md](docs/similarity_flooding.md)).
+5. **Damped fixed-point iteration** — `new = (1-d)*old + d*computed` where computed integrates positive and negative evidence around the name-similarity seed. Converges via contraction.
 
-6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Final grouping via union-find.
+6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Match groups come from that propagation's union-find: a single merge threshold gated on structural evidence, no post-hoc grouping pass.
 
-7. **Negative evidence** ([docs/negative_evidence.md](docs/negative_evidence.md)) — integrated directly into the single propagation score. Neighbors with confidence < 0.5 contribute negative evidence weighted by forward functionality, pushing the score toward 0. Damped iteration bounds circular reinforcement geometrically.
+7. **Negative evidence** — integrated directly into the single propagation score. Neighbors with confidence < 0.5 contribute negative evidence weighted by forward functionality, pushing the score toward 0. Damped iteration bounds circular reinforcement geometrically.
 
-8. **Progressive merging** ([docs/progressive_merging.md](docs/progressive_merging.md)) — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles.
+8. **Progressive merging** — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles. The in-loop union-find is the sole merge authority: pairs below the merge threshold, or with zero tested neighbors, never merge regardless of name similarity.
 
 ### What's not implemented (yet)
 
-These are documented in `docs/` with design sketches but no code.
-
 - **Local functionality** — FLORA uses per-entity functionality (`1/|targets for this specific source|`), not just global averages. We only compute global.
 
-- **Confidence-weighted union-find** ([docs/multi_graph_alignment.md](docs/multi_graph_alignment.md)) — current union-find enforces blind transitivity. A↔B and B↔C above threshold merges all three regardless of A↔C score. Validating group coherence would catch the worst cascading false merges.
+- **Confidence-weighted union-find** — current union-find enforces blind transitivity. A↔B and B↔C above threshold merges all three regardless of A↔C score. Validating group coherence would catch the worst cascading false merges.
 
-- **Cross-lingual support** ([docs/cross_lingual.md](docs/cross_lingual.md)) — swapping to a multilingual embedding model. The algorithm is language-agnostic by design; only the model choice needs to change.
+- **Cross-lingual support** — swapping to a multilingual embedding model. The algorithm is language-agnostic by design; only the model choice needs to change.
 
 - **Joint relation alignment** — PARIS alternates entity and relation alignment. We pre-compute relation similarity from embeddings and hold it fixed.
 

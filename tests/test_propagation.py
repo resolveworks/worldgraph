@@ -57,7 +57,7 @@ def test_matching_names_and_relations_produce_matches(embedder):
     beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "acquired")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(apple1.id, apple2.id)] > 0.8
     assert confidence[(beats1.id, beats2.id)] > 0.8
@@ -79,7 +79,7 @@ def test_synonym_relations_propagate(embedder):
     beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "purchased")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(apple1.id, apple2.id)] > 0.8
     assert confidence[(beats1.id, beats2.id)] > 0.8
@@ -103,7 +103,7 @@ def test_dissimilar_relations_do_not_propagate(embedder):
     japan = g2.add_entity("Japan")
     g2.add_edge(tokyo, japan, "located in")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches found: {matches}"
@@ -122,7 +122,7 @@ def test_weak_neighbors_do_not_produce_matches(embedder):
     youtube = g2.add_entity("YouTube")
     g2.add_edge(google, youtube, "acquired")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from weak neighbors: {matches}"
@@ -148,7 +148,7 @@ def test_many_weak_paths_do_not_accumulate(embedder):
     g2.add_edge(city, river, "borders")
     g2.add_edge(city, event, "hosts")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     assert matches == [], f"Spurious matches from accumulated weak paths: {matches}"
@@ -181,7 +181,7 @@ def test_incoming_edges_propagate(embedder):
     assert soft_tfidf("VaultWorks", "CloudScale", idf) < 0.1
     assert soft_tfidf("Axiom Corp", "Axiom Corp", idf) == 1.0
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(tv1.id, tv2.id)] > 0, (
         "Incoming-edge path did not propagate anchor confidence to targets"
@@ -208,7 +208,7 @@ def test_outgoing_edges_propagate(embedder):
     idf = build_idf(["Axiom Corp", "Pinnacle Ltd", "DataVault"])
     assert soft_tfidf("Axiom Corp", "Pinnacle Ltd", idf) < 0.1
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(src1.id, src2.id)] > 0, (
         "Outgoing-edge path did not propagate anchor confidence to sources"
@@ -258,7 +258,7 @@ def test_functional_relation_produces_stronger_evidence(embedder):
     dv2a = g2a.add_entity("DataVault")
     g2a.add_edge(m2a, dv2a, "acquired")
 
-    confidence_acq = match_graphs([bg1, bg2, g1a, g2a], embedder)
+    confidence_acq, _, _ = match_graphs([bg1, bg2, g1a, g2a], embedder)
 
     # Test pair with 'invested in' (low inverse functionality)
     g1i = Graph(id="g1i")
@@ -271,7 +271,7 @@ def test_functional_relation_produces_stronger_evidence(embedder):
     dv2i = g2i.add_entity("DataVault")
     g2i.add_edge(m2i, dv2i, "invested in")
 
-    confidence_inv = match_graphs([bg1, bg2, g1i, g2i], embedder)
+    confidence_inv, _, _ = match_graphs([bg1, bg2, g1i, g2i], embedder)
 
     assert confidence_acq[(m1a.id, m2a.id)] > confidence_inv[(m1i.id, m2i.id)], (
         f"Functional relation confidence ({confidence_acq[(m1a.id, m2a.id)]}) should exceed "
@@ -347,7 +347,7 @@ def test_multi_hop_propagation_across_iterations(embedder):
     assert soft_tfidf("Alpha Corp", "Beta Inc", idf) < 0.1
     assert soft_tfidf("Cordovan Industries", "NexGen Holdings", idf) < 0.1
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(mid1.id, mid2.id)] > 0, "mid pair not boosted by anchors"
     assert confidence[(far1.id, far2.id)] > 0, "2-hop propagation failed for far pair"
@@ -374,7 +374,7 @@ def test_two_anchor_chain_propagates_to_far_end(embedder):
     anchors = _THREE_ANCHORS[:2]
     g1, g2, far1, mid1, far2, mid2 = _two_hop_chain_graphs(anchors)
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     assert confidence[(far1.id, far2.id)] > 0, (
         f"weak chain died: far pair at {confidence[(far1.id, far2.id)]}, "
@@ -404,7 +404,7 @@ def test_name_variation_with_structural_reinforcement(embedder):
     g2.add_edge(meridian2, dv2, "purchased")
     g2.add_edge(meridian2, ceo2, "employed")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = set(matches)
@@ -437,7 +437,7 @@ def test_dangling_entities_get_no_boost(embedder):
     g2.add_edge(apple2, beats2, "purchased")
     g2.add_edge(apple2, wind, "hired")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     matched_ids = {entity_id for pair in matches for entity_id in pair}
@@ -464,7 +464,7 @@ def test_bidirectional_edges_accumulate(embedder):
     dv2u = g2u.add_entity("DataVault")
     g2u.add_edge(m2u, dv2u, "acquired")
 
-    confidence_uni = match_graphs([g1u, g2u], embedder)
+    confidence_uni, _, _ = match_graphs([g1u, g2u], embedder)
 
     # Bidirectional
     g1b = Graph(id="g1b")
@@ -479,7 +479,7 @@ def test_bidirectional_edges_accumulate(embedder):
     g2b.add_edge(m2b, dv2b, "acquired")
     g2b.add_edge(dv2b, m2b, "subsidiary of")
 
-    confidence_bi = match_graphs([g1b, g2b], embedder)
+    confidence_bi, _, _ = match_graphs([g1b, g2b], embedder)
 
     assert confidence_bi[(m1b.id, m2b.id)] >= confidence_uni[(m1u.id, m2u.id)], (
         f"Bidirectional ({confidence_bi[(m1b.id, m2b.id)]}) should be >= "
@@ -532,7 +532,7 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     sv_name_sim = soft_tfidf("Dr. Priya Sharma", "Dr. Elena Vasquez", idf)
     assert sv_name_sim < 0.8
 
-    confidence = match_graphs([g1, g2, *bg_graphs], embedder)
+    confidence, _, _ = match_graphs([g1, g2, *bg_graphs], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = set(matches)
@@ -570,7 +570,7 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
     nbr_sim = soft_tfidf("Volta Systems", "Halcyon Genomics", idf)
     assert nbr_sim < 0.5
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     matched_pairs = set(matches)
@@ -602,8 +602,8 @@ def test_simple_graph_stabilizes_well_before_max_iter(embedder):
     beats2 = g2.add_entity("Beats")
     g2.add_edge(apple2, beats2, "acquired")
 
-    conf_10 = match_graphs([g1, g2], embedder, max_iter=10)
-    conf_30 = match_graphs([g1, g2], embedder, max_iter=30)
+    conf_10, _, _ = match_graphs([g1, g2], embedder, max_iter=10)
+    conf_30, _, _ = match_graphs([g1, g2], embedder, max_iter=30)
 
     assert conf_10[(apple1.id, apple2.id)] == conf_30[(apple1.id, apple2.id)]
     assert conf_10[(beats1.id, beats2.id)] == conf_30[(beats1.id, beats2.id)]
@@ -618,8 +618,8 @@ def test_multi_hop_needs_multiple_iterations(embedder):
     far pair at exactly its seed (0.0), while more iterations lift it."""
     g1, g2, far1, mid1, far2, mid2 = _two_hop_chain_graphs(_THREE_ANCHORS)
 
-    conf_1 = match_graphs([g1, g2], embedder, max_iter=1)
-    conf_30 = match_graphs([g1, g2], embedder, max_iter=30)
+    conf_1, _, _ = match_graphs([g1, g2], embedder, max_iter=1)
+    conf_30, _, _ = match_graphs([g1, g2], embedder, max_iter=30)
 
     assert conf_1[(far1.id, far2.id)] == 0.0, (
         "far pair boosted in a single iteration — test scenario is not multi-hop"
@@ -645,7 +645,7 @@ def test_same_graph_entities_never_match(embedder):
     g2.add_entity("Google")
     g2.add_entity("Alphabet")
 
-    confidence = match_graphs([g, g2], embedder)
+    confidence, _, _ = match_graphs([g, g2], embedder)
 
     assert (apple.id, music.id) not in confidence
     assert (music.id, apple.id) not in confidence
@@ -658,7 +658,7 @@ def test_single_graph_produces_no_matches(embedder):
     beats = g.add_entity("Beats")
     g.add_edge(apple, beats, "acquired")
 
-    confidence = match_graphs([g], embedder)
+    confidence, _, _ = match_graphs([g], embedder)
 
     assert confidence == {}
 
@@ -680,8 +680,8 @@ def test_propagation_converges(embedder):
     g2.add_edge(meridian2, dv2, "purchased")
     g2.add_edge(meridian2, ceo2, "employed")
 
-    conf_10 = match_graphs([g1, g2], embedder, max_iter=10)
-    conf_30 = match_graphs([g1, g2], embedder, max_iter=30)
+    conf_10, _, _ = match_graphs([g1, g2], embedder, max_iter=10)
+    conf_30, _, _ = match_graphs([g1, g2], embedder, max_iter=30)
     for pair, val in conf_30.items():
         assert abs(val - conf_10.get(pair, 0.0)) < 1e-9, (
             f"Score changed between max_iter=10 and max_iter=30 for {pair}: "
@@ -715,7 +715,7 @@ def test_multi_label_entity_uses_best_name_pair(embedder):
     dv2 = g2.add_entity("DataVault")
     g2.add_edge(m2, dv2, "purchased")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     # With multi-label, the best name pair is exact match → seed ~1.0
     # Without, if only "Meridian Tech" is stored, seed would be ~0.88
@@ -736,7 +736,7 @@ def test_multi_label_all_names_contribute_to_idf(embedder):
     g2.add_edge(m2, dv2, "purchased")
 
     # Should not raise — multi-label names flow through the pipeline
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
     assert confidence[(m1.id, m2.id)] > 0.8
 
 
@@ -808,13 +808,13 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     assert soft_tfidf("Meridian Tech Corp", "Meridian Corp", idf) < 0.8
 
     # Premise: A+B merge above merge_threshold
-    conf_single = match_graphs(graphs, embedder, merge_threshold=float("inf"))
+    conf_single, _, _ = match_graphs(graphs, embedder, merge_threshold=float("inf"))
     assert conf_single[(ma.id, mb.id)] >= 0.9, (
         f"A-B should merge: {conf_single[(ma.id, mb.id)]:.3f}"
     )
 
     # Without progressive merging (merge_threshold=inf), C sees only pairwise evidence
-    conf_progressive = match_graphs(graphs, embedder)
+    conf_progressive, _, _ = match_graphs(graphs, embedder)
 
     # Progressive merging produces strictly higher confidence for C
     c_single = max(
@@ -890,7 +890,7 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
     idf = build_idf(all_names)
     assert soft_tfidf("Dr. Alice M. Johnson", "A. Johnson", idf) < 0.5
 
-    confidence = match_graphs(graphs, embedder)
+    confidence, _, _ = match_graphs(graphs, embedder)
 
     # CEO pair should be structurally matched despite weak names
     ceo_score = confidence.get(
@@ -922,7 +922,7 @@ def test_predecessor_successor_at_same_company_no_match(embedder):
     Two sources report that David Park holds the CEO role and Sarah Chen
     was named CEO.  Same-name entities (Park₁↔Park₂, Chen₁↔Chen₂,
     Nextera₁↔Nextera₂) should merge.  But the cross-entity pair
-    Park↔Chen should stay below the match threshold.
+    Park↔Chen should stay below the merge threshold.
 
     Regression test: this used to fail because negative evidence from
     Park≠Chen (nc=0) suppressed the Nextera pair below 0.5, cascading
@@ -944,7 +944,7 @@ def test_predecessor_successor_at_same_company_no_match(embedder):
     g2.add_edge(park2, nextera2, "serves as CEO of")
     g2.add_edge(chen2, nextera2, "became CEO of")
 
-    confidence = match_graphs([g1, g2], embedder)
+    confidence, _, _ = match_graphs([g1, g2], embedder)
 
     # Same-name entities should merge despite sharing a company neighbor.
     matches = _select_matches(confidence, threshold=0.8)
@@ -1022,7 +1022,7 @@ def test_shared_event_does_not_merge_different_people(embedder):
     g4.add_edge(sharma4, meridian4, "set to become SVP of Analytics at")
     g4.add_edge(sharma4, summit4, "gave keynote at")
 
-    confidence = match_graphs([g1, g2, g3, g4], embedder)
+    confidence, _, _ = match_graphs([g1, g2, g3, g4], embedder)
 
     matches = _select_matches(confidence, threshold=0.8)
     vasquez_ids = {vasquez1.id, vasquez3.id}
