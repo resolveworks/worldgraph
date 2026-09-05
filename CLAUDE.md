@@ -84,7 +84,6 @@ Session-scoped fixture in `conftest.py`: `embedder` provides a session-scoped `E
 ## Conventions
 
 - **Clean refactors, not patches**: this is an early-stage project with no external users. Every change should produce a pristine new state — never add backward-compatibility shims, preserve stale signatures, or keep dead code around "just in case". Refactor completely: rename freely, change interfaces, delete old code. No technical debt.
-- **CI/GitHub Actions**: when working on an issue (not already on a PR), always create a pull request with `gh pr create` after pushing your branch. Never just post a compare link — open the actual PR.
 - **Pipeline modularity**: each stage should be runnable independently.
 - **Scale-readiness**: the core algorithm must hold up on real, noisy, multilingual, large-scale news data.
 - **Tests before fixes**: when a matching failure is identified, write a failing test (xfail if needed) that captures the specific scenario before changing the algorithm. The test encodes what "correct" means; the fix is just making it pass.
