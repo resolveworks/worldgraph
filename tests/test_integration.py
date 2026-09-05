@@ -385,11 +385,10 @@ def test_shared_employee_bridge_no_company_merge(embedder):
     (Cascade₁↔Cascade₂, CloudScale₁↔CloudScale₂) should work, but the
     companies themselves should not be merged.
 
-    Currently fails because the formula ``computed = seed + pos*(1-seed)
-    - neg*seed`` zeroes out positive evidence when seed=1.0.  The negative
-    evidence from Cascade≠CloudScale (nc=0 → neg) suppresses Nakamura's
-    confidence, which cascades back as negative evidence to the company
-    same-name pairs.
+    Regression test: this used to fail because negative evidence from
+    Cascade≠CloudScale (nc=0) suppressed Nakamura's confidence below
+    0.5, cascading back onto the company same-name pairs.  Per-neighbor
+    best-counterpart evidence fixed the cascade.
 
     Reproduces the Cascade Robotics / CloudScale pattern from real data."""
     g1 = Graph(id="g1")
@@ -434,10 +433,11 @@ def test_regulator_and_regulated_entity_stay_separate(embedder):
     (DPC₁↔DPC₂, Vantara₁↔Vantara₂) should work, but the regulator
     and company should stay separate.
 
-    Currently fails because the negative evidence from DPC≠Vantara
-    (both receive edges from DataWatch/EuroPrivacy via similar "reported
-    on"/"published report on" relations) suppresses the third-party
-    neighbors' confidence, cascading to all same-name pairs.
+    Regression test: this used to fail because negative evidence from
+    DPC≠Vantara (both receive edges from DataWatch/EuroPrivacy via
+    similar "reported on"/"published report on" relations) suppressed
+    the third-party neighbors' confidence, cascading to all same-name
+    pairs.
 
     Reproduces the DPC / Vantara AI pattern from real data."""
     g1 = Graph(id="g1")

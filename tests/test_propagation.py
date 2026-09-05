@@ -7,7 +7,7 @@ Tests verify that:
 - Synonym relations propagate via continuous relation similarity
 - Dissimilar relations, weak neighbors, and many weak paths produce no
   spurious matches (GH issue #1)
-- Incoming edges propagate evidence (not just outgoing)
+- Evidence propagates through both incoming and outgoing edges
 - Functionality weighting affects evidence strength
 - Multi-hop chains require iterative propagation
 - Name variation with structural reinforcement (the core use case)
@@ -15,6 +15,8 @@ Tests verify that:
 - Exponential sum accumulates evidence from multiple paths (bidirectional > unidirectional)
 - Multi-label entities use max similarity across all names during seeding
 """
+
+import pytest
 
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
@@ -153,30 +155,63 @@ def test_many_weak_paths_do_not_accumulate(embedder):
 
 
 # ---------------------------------------------------------------------------
-# Incoming edges
+# Edge direction
 # ---------------------------------------------------------------------------
 
 
 def test_incoming_edges_propagate(embedder):
-    """Structural evidence should propagate through incoming edges, not just
-    outgoing.
+    """Structural evidence must reach entities that only receive edges.
 
-    DataVault has identical names (high name sim). The incoming edge should
-    propagate that confidence to the Meridian pair via exponential sum."""
+    The observed pair (VaultWorks / CloudScale) are the *targets* of
+    "acquired" and share no name tokens — any positive confidence can
+    only arrive through their incoming edges, anchored by the
+    identical-name source pair (Axiom Corp)."""
     g1 = Graph(id="g1")
-    meridian1 = g1.add_entity("Meridian Technologies")
-    dv1 = g1.add_entity("DataVault")
-    g1.add_edge(meridian1, dv1, "acquired")
+    src1 = g1.add_entity("Axiom Corp")
+    tv1 = g1.add_entity("VaultWorks")
+    g1.add_edge(src1, tv1, "acquired")
 
     g2 = Graph(id="g2")
-    meridian2 = g2.add_entity("Meridian Tech")
-    dv2 = g2.add_entity("DataVault")
-    g2.add_edge(meridian2, dv2, "purchased")
+    src2 = g2.add_entity("Axiom Corp")
+    tv2 = g2.add_entity("CloudScale")
+    g2.add_edge(src2, tv2, "acquired")
+
+    # Premises: the observed pair has no name signal; the anchor is maximal
+    idf = build_idf(["Axiom Corp", "VaultWorks", "CloudScale"])
+    assert soft_tfidf("VaultWorks", "CloudScale", idf) < 0.1
+    assert soft_tfidf("Axiom Corp", "Axiom Corp", idf) == 1.0
 
     confidence = match_graphs([g1, g2], embedder)
 
-    assert confidence[(meridian1.id, meridian2.id)] > 0, (
-        "Incoming edge path did not propagate evidence to Meridian pair"
+    assert confidence[(tv1.id, tv2.id)] > 0, (
+        "Incoming-edge path did not propagate anchor confidence to targets"
+    )
+
+
+def test_outgoing_edges_propagate(embedder):
+    """Structural evidence must reach entities that only originate edges.
+
+    Mirror of test_incoming_edges_propagate: the observed pair
+    (Axiom Corp / Pinnacle Ltd) are the *sources* of "acquired" with zero
+    name similarity; the identical-name target pair (DataVault) anchors."""
+    g1 = Graph(id="g1")
+    src1 = g1.add_entity("Axiom Corp")
+    tv1 = g1.add_entity("DataVault")
+    g1.add_edge(src1, tv1, "acquired")
+
+    g2 = Graph(id="g2")
+    src2 = g2.add_entity("Pinnacle Ltd")
+    tv2 = g2.add_entity("DataVault")
+    g2.add_edge(src2, tv2, "acquired")
+
+    # Premise: the observed pair has no name signal
+    idf = build_idf(["Axiom Corp", "Pinnacle Ltd", "DataVault"])
+    assert soft_tfidf("Axiom Corp", "Pinnacle Ltd", idf) < 0.1
+
+    confidence = match_graphs([g1, g2], embedder)
+
+    assert confidence[(src1.id, src2.id)] > 0, (
+        "Outgoing-edge path did not propagate anchor confidence to sources"
     )
 
 
@@ -249,38 +284,101 @@ def test_functional_relation_produces_stronger_evidence(embedder):
 # ---------------------------------------------------------------------------
 
 
-def test_multi_hop_propagation_across_iterations(embedder):
-    """Evidence propagates through a chain: a high-confidence anchor at
-    the end boosts intermediate nodes, which in turn boost further nodes.
+def _two_hop_chain_graphs(
+    anchors: list[tuple[str, str]],
+) -> tuple[Graph, Graph, object, object, object, object]:
+    """Build a two-graph chain with dissimilar far and mid names.
 
-    James Chen pair has identical names → high name sim.
-    Alpha Corp / Beta Inc have very low name similarity — they can only be
-    matched through their shared, confidently-matched neighbor (James Chen).
-    """
+    far --acquired/purchased--> mid, with the mid entity linked to each
+    identical-name (name, relation) anchor.  Returns
+    (g1, g2, far1, mid1, far2, mid2)."""
     g1 = Graph(id="g1")
-    meridian1 = g1.add_entity("Meridian Technologies")
-    alpha = g1.add_entity("Alpha Corp")
-    james1 = g1.add_entity("James Chen")
-    g1.add_edge(meridian1, alpha, "acquired")
-    g1.add_edge(alpha, james1, "founded by")
+    far1 = g1.add_entity("Cordovan Industries")
+    mid1 = g1.add_entity("Alpha Corp")
+    g1.add_edge(far1, mid1, "acquired")
+    for name, rel in anchors:
+        g1.add_edge(mid1, g1.add_entity(name), rel)
 
     g2 = Graph(id="g2")
-    meridian2 = g2.add_entity("Meridian Tech")
-    beta = g2.add_entity("Beta Inc")
-    james2 = g2.add_entity("James Chen")
-    g2.add_edge(meridian2, beta, "purchased")
-    g2.add_edge(beta, james2, "founded by")
+    far2 = g2.add_entity("NexGen Holdings")
+    mid2 = g2.add_entity("Beta Inc")
+    g2.add_edge(far2, mid2, "purchased")
+    for name, rel in anchors:
+        g2.add_edge(mid2, g2.add_entity(name), rel)
+
+    return g1, g2, far1, mid1, far2, mid2
+
+
+_THREE_ANCHORS = [
+    ("James Chen", "founded by"),
+    ("Austin", "based in"),
+    ("DataVault", "partnered with"),
+]
+
+
+def test_multi_hop_propagation_across_iterations(embedder):
+    """Evidence propagates along a chain of dissimilar names.
+
+    Cordovan Industries / NexGen Holdings (far) can only be matched
+    through Alpha Corp / Beta Inc (mid), which is itself matched only
+    through three identical-name anchors (James Chen, Austin, DataVault).
+    Both observed pairs have zero name similarity, so every bit of
+    confidence must arrive structurally.
+
+    Three anchors are required: functionality pools by entity *name*, so
+    the two distinct mid names double each anchor relation's fan-in and
+    halve its inverse functionality.  With only two anchors the mid pair
+    converges below the 0.5 best-counterpart gate and the chain dies
+    (see test_two_anchor_chain_propagates_to_far_end)."""
+    g1, g2, far1, mid1, far2, mid2 = _two_hop_chain_graphs(_THREE_ANCHORS)
+
+    # Premise: mid and far pairs have no name signal
+    idf = build_idf(
+        [
+            "Cordovan Industries",
+            "Alpha Corp",
+            "James Chen",
+            "Austin",
+            "DataVault",
+            "NexGen Holdings",
+            "Beta Inc",
+        ]
+    )
+    assert soft_tfidf("Alpha Corp", "Beta Inc", idf) < 0.1
+    assert soft_tfidf("Cordovan Industries", "NexGen Holdings", idf) < 0.1
 
     confidence = match_graphs([g1, g2], embedder)
 
-    # Alpha Corp / Beta Inc boosted by James Chen chain
-    assert confidence[(alpha.id, beta.id)] > 0, (
-        "Alpha Corp / Beta Inc not boosted despite shared James Chen neighbor"
-    )
+    assert confidence[(mid1.id, mid2.id)] > 0, "mid pair not boosted by anchors"
+    assert confidence[(far1.id, far2.id)] > 0, "2-hop propagation failed for far pair"
+    # Evidence attenuates with distance from the anchors
+    assert confidence[(mid1.id, mid2.id)] > confidence[(far1.id, far2.id)]
 
-    # Meridian pair boosted via the full chain
-    assert confidence[(meridian1.id, meridian2.id)] > 0, (
-        "Multi-hop propagation failed: Meridian pair not boosted after convergence"
+
+@pytest.mark.xfail(
+    reason="per-neighbor best-counterpart evidence gates on confidence "
+    "> 0.5; with two anchors the mid pair converges below 0.5 and the "
+    "far pair never receives positive evidence",
+    strict=True,
+)
+def test_two_anchor_chain_propagates_to_far_end(embedder):
+    """A weaker chain (two anchors) should still propagate some evidence
+    to the far pair — structurally it is the same 2-hop chain as the
+    three-anchor case, only with less supporting evidence at the anchor.
+
+    Currently the far pair stays at exactly its seed (0.0): the mid pair
+    needs confidence > 0.5 before its evidence gates through, and halved
+    inverse functionality keeps it at ~0.4.  Multi-hop propagation
+    through weak intermediates is a desired property the algorithm does
+    not yet have."""
+    anchors = _THREE_ANCHORS[:2]
+    g1, g2, far1, mid1, far2, mid2 = _two_hop_chain_graphs(anchors)
+
+    confidence = match_graphs([g1, g2], embedder)
+
+    assert confidence[(far1.id, far2.id)] > 0, (
+        f"weak chain died: far pair at {confidence[(far1.id, far2.id)]}, "
+        f"mid pair at {confidence[(mid1.id, mid2.id)]}"
     )
 
 
@@ -427,8 +525,6 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
         bg_graphs.append(bg)
 
     # Premise: name similarity alone is below threshold
-    from worldgraph.names import build_idf, soft_tfidf
-
     names = [
         name for g in [g1, g2, *bg_graphs] for n in g.nodes.values() for name in n.names
     ]
@@ -470,8 +566,6 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
     g2.add_edge(lena, halcyon, "is CEO of")
 
     # Premise: neighbor names have no similarity
-    from worldgraph.names import build_idf, soft_tfidf
-
     idf = build_idf(["Volta Systems", "Halcyon Genomics"])
     nbr_sim = soft_tfidf("Volta Systems", "Halcyon Genomics", idf)
     assert nbr_sim < 0.5
@@ -516,27 +610,22 @@ def test_simple_graph_stabilizes_well_before_max_iter(embedder):
 
 
 def test_multi_hop_needs_multiple_iterations(embedder):
-    """A chain graph needs multiple iterations — max_iter=1 should produce
-    lower confidence for the far end than max_iter=30."""
-    g1 = Graph(id="g1")
-    a1 = g1.add_entity("Alpha Corp")
-    b1 = g1.add_entity("James Chen")
-    c1 = g1.add_entity("DataVault")
-    g1.add_edge(a1, b1, "founded by")
-    g1.add_edge(b1, c1, "leads")
+    """One iteration cannot reach the far end of a chain.
 
-    g2 = Graph(id="g2")
-    a2 = g2.add_entity("Alpha Corp")
-    b2 = g2.add_entity("James Chen")
-    c2 = g2.add_entity("DataVault")
-    g2.add_edge(a2, b2, "founded by")
-    g2.add_edge(b2, c2, "leads")
+    Iteration 1 boosts the mid pair from the anchors; only once mid
+    crosses the 0.5 best-counterpart gate can the far pair start
+    accumulating positive evidence.  max_iter=1 must therefore leave the
+    far pair at exactly its seed (0.0), while more iterations lift it."""
+    g1, g2, far1, mid1, far2, mid2 = _two_hop_chain_graphs(_THREE_ANCHORS)
 
     conf_1 = match_graphs([g1, g2], embedder, max_iter=1)
     conf_30 = match_graphs([g1, g2], embedder, max_iter=30)
 
-    # The far-end pair (Alpha/Alpha) should benefit from more iterations
-    assert conf_30[(a1.id, a2.id)] >= conf_1[(a1.id, a2.id)]
+    assert conf_1[(far1.id, far2.id)] == 0.0, (
+        "far pair boosted in a single iteration — test scenario is not multi-hop"
+    )
+    assert conf_30[(far1.id, far2.id)] > conf_1[(far1.id, far2.id)]
+    assert conf_30[(mid1.id, mid2.id)] > conf_1[(mid1.id, mid2.id)]
 
 
 # ---------------------------------------------------------------------------
@@ -714,8 +803,6 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     graphs = [ga, gb, gc]
 
     # Premise: name similarity alone is insufficient
-    from worldgraph.names import build_idf, soft_tfidf
-
     names = [name for g in graphs for n in g.nodes.values() for name in n.names]
     idf = build_idf(names)
     assert soft_tfidf("Meridian Tech Corp", "Meridian Corp", idf) < 0.8
@@ -837,11 +924,10 @@ def test_predecessor_successor_at_same_company_no_match(embedder):
     Nextera₁↔Nextera₂) should merge.  But the cross-entity pair
     Park↔Chen should stay below the match threshold.
 
-    Currently fails because the formula ``computed = seed + pos*(1-seed)
-    - neg*seed`` zeroes out positive evidence when seed=1.0.  The negative
-    evidence from Park≠Chen (nc=0 → neg) suppresses the Nextera pair's
-    confidence below 0.5, which cascades as negative evidence back to
-    the Park and Chen same-name pairs.
+    Regression test: this used to fail because negative evidence from
+    Park≠Chen (nc=0) suppressed the Nextera pair below 0.5, cascading
+    back onto the Park and Chen same-name pairs.  Per-neighbor
+    best-counterpart evidence fixed the cascade.
 
     Reproduces the David Park / Sarah Chen pattern from real data."""
     g1 = Graph(id="g1")

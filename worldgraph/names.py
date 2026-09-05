@@ -64,6 +64,12 @@ def soft_tfidf(
     if not tokens_a or not tokens_b:
         return 0.0
 
+    # Identical token sequences are a perfect match regardless of IDF:
+    # otherwise a label that constitutes the entire corpus has IDF-0
+    # tokens, vanishing L2 norms, and would score 0.0 against itself.
+    if tokens_a == tokens_b:
+        return 1.0
+
     default_idf = max(corpus_idf.values()) if corpus_idf else 1.0
 
     def _idf(token: str) -> float:

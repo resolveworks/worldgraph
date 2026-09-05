@@ -56,6 +56,16 @@ def test_identical_multi_token_strings_return_1():
     ) == pytest.approx(1.0)
 
 
+def test_identical_strings_score_one_even_as_sole_corpus():
+    """Identical labels must score 1.0 even when they are the whole corpus.
+
+    With only "Zed"/"Zed" every token is universal (IDF = 0), so the L2
+    norms vanish and the raw formula returns 0.0 for a string against
+    itself — identity must not depend on corpus composition."""
+    idf = build_idf(["Zed", "Zed"])
+    assert soft_tfidf("Zed", "Zed", idf) == 1.0
+
+
 def test_completely_different_strings_return_0():
     idf = build_idf(["Apple", "Google", "DataVault", "Halcyon"])
     assert soft_tfidf("Apple", "DataVault", idf) == 0.0
