@@ -3,14 +3,18 @@
 from collections.abc import Callable
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from pydantic_ai import Embedder as PydanticAIEmbedder
 
 
 class Embedder:
-    """Wraps a sentence-transformers model with text → unit-vector caching."""
+    """Wraps a pydantic-ai embedding model with text → unit-vector caching.
+
+    The model is a provider-prefixed pydantic-ai string, e.g.
+    ``sentence-transformers:Qwen/Qwen3-Embedding-0.6B``.
+    """
 
     def __init__(self, model_name: str):
-        self.model = SentenceTransformer(model_name)
+        self._embedder = PydanticAIEmbedder(model_name)
         self._cache: dict[str, np.ndarray] = {}
 
     def embed(
@@ -26,7 +30,8 @@ class Embedder:
         texts = [template(k) for k in keys] if template else keys
         missing = [t for t in texts if t not in self._cache]
         if missing:
-            vecs = self.model.encode(missing, normalize_embeddings=True)
-            for t, v in zip(missing, vecs):
-                self._cache[t] = v
+            result = self._embedder.embed_documents_sync(missing)
+            for t, v in zip(missing, result.embeddings):
+                vec = np.asarray(v)
+                self._cache[t] = vec / np.linalg.norm(vec)
         return {k: self._cache[t] for k, t in zip(keys, texts)}
