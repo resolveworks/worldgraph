@@ -14,7 +14,7 @@ The target input is a continuous feed of all major news outlets — not a curate
 2. **Match** — Align entities across graphs using similarity propagation
 
 ```bash
-worldgraph extract articles/*.json -o graphs/    # article JSON → per-article graph JSON
+worldgraph extract articles/*.md -o graphs/      # article text → per-article graph JSON
 worldgraph match graphs/*.json -o matched.json   # per-article graphs → unified matched graph
 ```
 

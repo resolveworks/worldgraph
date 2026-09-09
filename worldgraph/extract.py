@@ -1,4 +1,3 @@
-import json
 import logging
 from pathlib import Path
 
@@ -38,26 +37,20 @@ class Extraction(BaseModel):
     relations: list[Relation]
 
 
-def extract_article(agent: Agent[object, Extraction], article: dict) -> Extraction:
-    """Extract entities and relations from a single article."""
+def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
+    """Extract entities and relations from a single article's text."""
     prompt = f"""Extract all entities and relations from this news article.
 
-Title: {article["title"]}
-Source: {article["source"]}
-Date: {article["date"]}
-
-{article["body"]}"""
+{text}"""
 
     return agent.run_sync(prompt).output
 
 
 def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> None:
-    """Run extraction on all articles, writing one graph JSON per article."""
-    articles = []
-    for f in article_files:
-        with open(f) as fh:
-            articles.append(json.load(fh))
+    """Run extraction on all article text files, writing one graph JSON per article.
 
+    The filename stem is the article id.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     agent = Agent(
         model,
@@ -66,17 +59,17 @@ def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> N
         model_settings={"thinking": "low"},
     )
 
-    for i, article in enumerate(articles, 1):
-        article_id = article["id"]
+    for i, article_file in enumerate(article_files, 1):
+        article_id = article_file.stem
         out_path = output_dir / f"{article_id}.json"
         if out_path.exists():
             click.echo(
-                f"[{i}/{len(articles)}] Skipping (already extracted): {article['title']}"
+                f"[{i}/{len(article_files)}] Skipping (already extracted): {article_file.name}"
             )
             continue
 
-        click.echo(f"[{i}/{len(articles)}] Extracting from: {article['title']}")
-        extraction = extract_article(agent, article)
+        click.echo(f"[{i}/{len(article_files)}] Extracting from: {article_file.name}")
+        extraction = extract_article(agent, article_file.read_text())
 
         # Build graph using shared data model
         graph = Graph(id=article_id)

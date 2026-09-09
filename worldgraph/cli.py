@@ -22,7 +22,7 @@ def cli():
     help="Model to use for extraction, as a provider-prefixed pydantic-ai string.",
 )
 def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
-    """Stage 1: Extract entities and relations from articles."""
+    """Stage 1: Extract entities and relations from article text files (filename stem = article id)."""
     run_extraction(list(articles), output_dir, model)
 
 
