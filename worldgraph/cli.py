@@ -18,8 +18,8 @@ def cli():
 @click.option("-o", "--output-dir", required=True, type=click.Path(path_type=Path))
 @click.option(
     "--model",
-    default="claude-haiku-4-5-20251001",
-    help="Claude model to use for extraction.",
+    default="deepseek:deepseek-v4-flash",
+    help="Model to use for extraction, as a provider-prefixed pydantic-ai string.",
 )
 def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
     """Stage 1: Extract entities and relations from articles."""

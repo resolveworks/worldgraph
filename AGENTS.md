@@ -62,7 +62,7 @@ The core propagation loop (`match.py`):
 ## Tech Stack
 
 - Python 3.12, managed with **uv** (`uv run`, `uv add`, etc.)
-- LLM (Claude API) for entity/relation extraction
+- LLM for entity/relation extraction via pydantic-ai (provider-agnostic model strings, default DeepSeek)
 - Sentence embeddings for relation phrase similarity; Soft TF-IDF + Jaro-Winkler for entity name matching
 - No ML training — fully unsupervised, classical graph methods
 

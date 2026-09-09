@@ -2,10 +2,10 @@ import json
 import logging
 from pathlib import Path
 
-import anthropic
 import click
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from pydantic_ai import Agent
 
 from worldgraph.graph import Graph, save_graph
 
@@ -38,9 +38,7 @@ class Extraction(BaseModel):
     relations: list[Relation]
 
 
-def extract_article(
-    client: anthropic.Anthropic, article: dict, model: str
-) -> Extraction:
+def extract_article(agent: Agent[object, Extraction], article: dict) -> Extraction:
     """Extract entities and relations from a single article."""
     prompt = f"""Extract all entities and relations from this news article.
 
@@ -50,15 +48,7 @@ Date: {article["date"]}
 
 {article["body"]}"""
 
-    response = client.messages.parse(
-        model=model,
-        max_tokens=4096,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": prompt}],
-        output_format=Extraction,
-    )
-
-    return response.parsed_output
+    return agent.run_sync(prompt).output
 
 
 def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> None:
@@ -69,7 +59,12 @@ def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> N
             articles.append(json.load(fh))
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    client = anthropic.Anthropic()
+    agent = Agent(
+        model,
+        instructions=SYSTEM_PROMPT,
+        output_type=Extraction,
+        model_settings={"thinking": "low"},
+    )
 
     for i, article in enumerate(articles, 1):
         article_id = article["id"]
@@ -81,7 +76,7 @@ def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> N
             continue
 
         click.echo(f"[{i}/{len(articles)}] Extracting from: {article['title']}")
-        extraction = extract_article(client, article, model)
+        extraction = extract_article(agent, article)
 
         # Build graph using shared data model
         graph = Graph(id=article_id)
