@@ -16,12 +16,10 @@ cases:
       source: e1
       target: e2
       relation: use
-      temporal: past
     - id: r2
       source: e1
       target: e3
       relation: use
-      temporal: past
   evaluators: []
 - name: unnamed_parties
   inputs: unnamed_parties
@@ -37,7 +35,6 @@ cases:
       source: e1
       target: e2
       relation: be located in
-      temporal: current
   evaluators: []
 - name: media_meta_entities
   inputs: media_meta_entities
@@ -53,7 +50,6 @@ cases:
       source: e1
       target: e2
       relation: close branches in
-      temporal: future
   evaluators: []
 - name: clause_entities
   inputs: clause_entities
@@ -69,7 +65,6 @@ cases:
       source: e1
       target: e2
       relation: dismiss
-      temporal: past
   evaluators: []
 - name: repeated_entities
   inputs: repeated_entities
@@ -87,12 +82,10 @@ cases:
       source: e1
       target: e2
       relation: be located in
-      temporal: current
     - id: r2
       source: e1
       target: e3
       relation: host
-      temporal: future
   evaluators: []
 - name: coordinated_lists
   inputs: coordinated_lists
@@ -116,27 +109,22 @@ cases:
       source: e1
       target: e2
       relation: close stations in
-      temporal: future
     - id: r2
       source: e1
       target: e3
       relation: close stations in
-      temporal: future
     - id: r3
       source: e1
       target: e4
       relation: close stations in
-      temporal: future
     - id: r4
       source: e1
       target: e5
       relation: review routes in
-      temporal: future
     - id: r5
       source: e1
       target: e6
       relation: review routes in
-      temporal: future
   evaluators: []
 - name: temporal_scope
   inputs: temporal_scope
@@ -156,17 +144,14 @@ cases:
       source: e1
       target: e2
       relation: acquire
-      temporal: past
     - id: r2
       source: e1
       target: e4
       relation: be headquartered in
-      temporal: current
     - id: r3
       source: e1
       target: e3
       relation: acquire
-      temporal: future
   evaluators: []
 - name: historical_background
   inputs: historical_background
@@ -190,27 +175,22 @@ cases:
       source: e1
       target: e2
       relation: modernise
-      temporal: future
     - id: r2
       source: e1
       target: e3
       relation: move headquarters to
-      temporal: past
     - id: r3
       source: e4
       target: e2
       relation: build
-      temporal: past
     - id: r4
       source: e5
       target: e2
       relation: build
-      temporal: past
     - id: r5
       source: e6
       target: e5
       relation: acquire
-      temporal: past
   evaluators: []
 - name: denied_allegations
   inputs: denied_allegations
@@ -232,17 +212,14 @@ cases:
       source: e1
       target: e2
       relation: serve in
-      temporal: current
     - id: r2
       source: r1
       target: e5
       relation: role
-      temporal: current
     - id: r3
       source: e3
       target: e4
       relation: build
-      temporal: past
   evaluators: []
 - name: role_qualifiers
   inputs: role_qualifiers
@@ -266,27 +243,22 @@ cases:
       source: e1
       target: e2
       relation: manage
-      temporal: current
     - id: r2
       source: r1
       target: e5
       relation: role
-      temporal: current
     - id: r3
       source: r1
       target: e3
       relation: for
-      temporal: current
     - id: r4
       source: e1
       target: e4
       relation: manage
-      temporal: past
     - id: r5
       source: r4
       target: e6
       relation: role
-      temporal: past
   evaluators: []
 - name: role_qualifiers_paraphrase
   inputs: role_qualifiers_paraphrase
@@ -310,27 +282,22 @@ cases:
       source: e1
       target: e2
       relation: oversee
-      temporal: current
     - id: r2
       source: r1
       target: e5
       relation: role
-      temporal: current
     - id: r3
       source: r1
       target: e3
       relation: for
-      temporal: current
     - id: r4
       source: e1
       target: e4
       relation: lead
-      temporal: past
     - id: r5
       source: r4
       target: e6
       relation: role
-      temporal: past
   evaluators: []
 - name: appositive_roles
   inputs: appositive_roles
@@ -354,32 +321,26 @@ cases:
       source: e1
       target: e2
       relation: visit
-      temporal: future
     - id: r2
       source: e1
       target: e3
       relation: serve in
-      temporal: current
     - id: r3
       source: r2
       target: e5
       relation: role
-      temporal: current
     - id: r4
       source: e4
       target: e3
       relation: serve in
-      temporal: current
     - id: r5
       source: r4
       target: e6
       relation: role
-      temporal: current
     - id: r6
       source: e4
       target: r1
       relation: join
-      temporal: future
   evaluators: []
 - name: appositive_roles_paraphrase
   inputs: appositive_roles_paraphrase
@@ -403,32 +364,26 @@ cases:
       source: e1
       target: e2
       relation: travel to
-      temporal: future
     - id: r2
       source: e1
       target: e3
       relation: serve in
-      temporal: current
     - id: r3
       source: r2
       target: e5
       relation: role
-      temporal: current
     - id: r4
       source: e4
       target: e3
       relation: serve in
-      temporal: current
     - id: r5
       source: r4
       target: e6
       relation: role
-      temporal: current
     - id: r6
       source: e4
       target: r1
       relation: take part in
-      temporal: future
   evaluators: []
 - name: specific_relation_reference
   inputs: specific_relation_reference
@@ -448,17 +403,14 @@ cases:
       source: e1
       target: e2
       relation: visit
-      temporal: past
     - id: r2
       source: e1
       target: e3
       relation: visit
-      temporal: past
     - id: r3
       source: e4
       target: r2
       relation: join
-      temporal: past
   evaluators: []
 - name: relation_to_relation
   inputs: relation_to_relation
@@ -478,17 +430,14 @@ cases:
       source: e1
       target: e2
       relation: close
-      temporal: past
     - id: r2
       source: e3
       target: e4
       relation: suspend services to
-      temporal: past
     - id: r3
       source: r1
       target: r2
       relation: cause
-      temporal: past
   evaluators: []
 - name: nested_relation_qualifiers
   inputs: nested_relation_qualifiers
@@ -508,17 +457,14 @@ cases:
       source: e1
       target: e2
       relation: visit
-      temporal: future
     - id: r2
       source: e3
       target: r1
       relation: join
-      temporal: future
     - id: r3
       source: r2
       target: e4
       relation: on behalf of
-      temporal: future
   evaluators: []
 evaluators: []
 report_evaluators: []

@@ -27,9 +27,9 @@ def test_duplicate_relation_id_raises():
             entities=entities("Alice", "Bob"),
             relations=[
                 Relation(id="r1", source="e1", target="e2",
-                         relation="knows", temporal="current"),
+                         relation="knows"),
                 Relation(id="r1", source="e2", target="e1",
-                         relation="knows", temporal="current"),
+                         relation="knows"),
             ],
         )
 
@@ -42,7 +42,7 @@ def test_entity_relation_id_collision_raises():
             entities=entities("Alice", "Bob"),
             relations=[
                 Relation(id="e1", source="e1", target="e2",
-                         relation="knows", temporal="current"),
+                         relation="knows"),
             ],
         )
 
@@ -55,7 +55,7 @@ def test_unknown_reference_raises():
             entities=entities("Alice", "Bob"),
             relations=[
                 Relation(id="r1", source="e1", target="e99",
-                         relation="knows", temporal="current"),
+                         relation="knows"),
             ],
         )
 
@@ -72,9 +72,9 @@ def qualifier_extraction() -> Extraction:
         entities=entities("Tessa Corin", "Halden Freight", "Vesterby"),
         relations=[
             Relation(id="r2", source="r1", target="e3",
-                     relation="for", temporal="current"),
+                     relation="for"),
             Relation(id="r1", source="e1", target="e2",
-                     relation="manage", temporal="current"),
+                     relation="manage"),
         ],
     )
 

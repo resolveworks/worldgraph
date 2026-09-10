@@ -25,13 +25,13 @@ def hit(output: Extraction, golden: Extraction) -> bool:
 
 
 def extraction(entities, relations) -> Extraction:
-    """Entities by name (ids e1..); relations as (source, target, relation,
-    temporal) with ids r1.. — source and target may reference either."""
+    """Entities by name (ids e1..); relations as (source, target, relation)
+    with ids r1.. — source and target may reference either."""
     return Extraction(
         entities=[Entity(id=f"e{i + 1}", name=n) for i, n in enumerate(entities)],
         relations=[
-            Relation(id=f"r{i + 1}", source=s, target=t, relation=r, temporal=tmp)
-            for i, (s, t, r, tmp) in enumerate(relations)
+            Relation(id=f"r{i + 1}", source=s, target=t, relation=r)
+            for i, (s, t, r) in enumerate(relations)
         ],
     )
 
@@ -39,9 +39,9 @@ def extraction(entities, relations) -> Extraction:
 GOLD = extraction(
     ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
     [
-        ("e1", "e2", "manage", "current"),
-        ("r1", "e3", "for", "current"),
-        ("r1", "e4", "role", "current"),
+        ("e1", "e2", "manage"),
+        ("r1", "e3", "for"),
+        ("r1", "e4", "role"),
     ],
 )
 
@@ -57,15 +57,9 @@ def test_hit_despite_reordered_terms_and_different_ids():
             Entity(id="q3", name="Vesterby"),
         ],
         relations=[
-            Relation(
-                id="s2", source="s1", target="q3", relation="for", temporal="current"
-            ),
-            Relation(
-                id="s3", source="s1", target="q4", relation="role", temporal="current"
-            ),
-            Relation(
-                id="s1", source="q1", target="q2", relation="manage", temporal="current"
-            ),
+            Relation(id="s2", source="s1", target="q3", relation="for"),
+            Relation(id="s3", source="s1", target="q4", relation="role"),
+            Relation(id="s1", source="q1", target="q2", relation="manage"),
         ],
     )
     assert hit(pred, GOLD)
@@ -74,20 +68,20 @@ def test_hit_despite_reordered_terms_and_different_ids():
 def test_missing_qualifier_is_a_miss():
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
-        [("e1", "e2", "manage", "current"), ("r1", "e3", "for", "current")],
+        [("e1", "e2", "manage"), ("r1", "e3", "for")],
     )
     assert not hit(pred, GOLD)
 
 
 def test_wrong_qualifier_attachment_is_a_miss():
-    """Same entities, same phrases, same temporals — but the role and scope
-    qualifiers are attached to each other's values."""
+    """Same entities, same phrases — but the role and scope qualifiers are
+    attached to each other's values."""
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
         [
-            ("e1", "e2", "manage", "current"),
-            ("r1", "e4", "for", "current"),
-            ("r1", "e3", "role", "current"),
+            ("e1", "e2", "manage"),
+            ("r1", "e4", "for"),
+            ("r1", "e3", "role"),
         ],
     )
     assert not hit(pred, GOLD)
@@ -95,23 +89,23 @@ def test_wrong_qualifier_attachment_is_a_miss():
 
 def test_qualifier_on_wrong_relation_occurrence_is_a_miss():
     """Two relations share the phrase 'manage'; the qualifier must land on
-    the past occurrence, not the current one — the phrase alone cannot
-    distinguish them."""
+    the Meridian Rail occurrence, not the Halden Freight one — the phrase
+    alone cannot distinguish them."""
     entities = ["Tessa Corin", "Halden Freight", "Meridian Rail", "operations director"]
     gold = extraction(
         entities,
         [
-            ("e1", "e2", "manage", "current"),
-            ("e1", "e3", "manage", "past"),
-            ("r2", "e4", "role", "past"),
+            ("e1", "e2", "manage"),
+            ("e1", "e3", "manage"),
+            ("r2", "e4", "role"),
         ],
     )
     pred = extraction(
         entities,
         [
-            ("e1", "e2", "manage", "current"),
-            ("e1", "e3", "manage", "past"),
-            ("r1", "e4", "role", "past"),
+            ("e1", "e2", "manage"),
+            ("e1", "e3", "manage"),
+            ("r1", "e4", "role"),
         ],
     )
     assert not hit(pred, gold)
@@ -131,9 +125,9 @@ def test_extra_entity_is_a_miss():
             "Meridian Rail",
         ],
         [
-            ("e1", "e2", "manage", "current"),
-            ("r1", "e3", "for", "current"),
-            ("r1", "e4", "role", "current"),
+            ("e1", "e2", "manage"),
+            ("r1", "e3", "for"),
+            ("r1", "e4", "role"),
         ],
     )
     assert not hit(pred, GOLD)
@@ -149,9 +143,9 @@ def test_duplicate_entity_name_is_a_miss():
             "managing director",
         ],
         [
-            ("e1", "e3", "manage", "current"),
-            ("r1", "e4", "for", "current"),
-            ("r1", "e5", "role", "current"),
+            ("e1", "e3", "manage"),
+            ("r1", "e4", "for"),
+            ("r1", "e5", "role"),
         ],
     )
     assert not hit(pred, GOLD)
@@ -161,10 +155,10 @@ def test_extra_edge_is_a_miss():
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
         [
-            ("e1", "e2", "manage", "current"),
-            ("r1", "e3", "for", "current"),
-            ("r1", "e4", "role", "current"),
-            ("e2", "e3", "be based in", "current"),
+            ("e1", "e2", "manage"),
+            ("r1", "e3", "for"),
+            ("r1", "e4", "role"),
+            ("e2", "e3", "be based in"),
         ],
     )
     assert not hit(pred, GOLD)
@@ -174,21 +168,9 @@ def test_changed_phrase_is_a_miss():
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
         [
-            ("e1", "e2", "run", "current"),
-            ("r1", "e3", "for", "current"),
-            ("r1", "e4", "role", "current"),
-        ],
-    )
-    assert not hit(pred, GOLD)
-
-
-def test_changed_temporal_is_a_miss():
-    pred = extraction(
-        ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
-        [
-            ("e1", "e2", "manage", "past"),
-            ("r1", "e3", "for", "current"),
-            ("r1", "e4", "role", "current"),
+            ("e1", "e2", "run"),
+            ("r1", "e3", "for"),
+            ("r1", "e4", "role"),
         ],
     )
     assert not hit(pred, GOLD)

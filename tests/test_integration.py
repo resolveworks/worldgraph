@@ -57,12 +57,12 @@ def test_three_source_with_person_name_variation(embedder):
     dv1 = g1.add_entity("DataVault Inc")
     nat1 = g1.add_entity("Nature")
     lab1 = g1.add_entity("Stanford AI Lab")
-    g1.add_edge(m1, p1, "hired", "current")
-    g1.add_edge(p1, j1, "collaborates with", "current")
-    g1.add_edge(p1, su1, "alumna of", "current")
-    g1.add_edge(p1, nat1, "published in", "current")
-    g1.add_edge(p1, lab1, "leads", "current")
-    g1.add_edge(m1, dv1, "acquired", "current")
+    g1.add_edge(m1, p1, "hired")
+    g1.add_edge(p1, j1, "collaborates with")
+    g1.add_edge(p1, su1, "alumna of")
+    g1.add_edge(p1, nat1, "published in")
+    g1.add_edge(p1, lab1, "leads")
+    g1.add_edge(m1, dv1, "acquired")
 
     g2 = Graph(id="article-2")
     m2 = g2.add_entity("Meridian Technologies")
@@ -72,12 +72,12 @@ def test_three_source_with_person_name_variation(embedder):
     dv2 = g2.add_entity("DataVault Inc")
     nat2 = g2.add_entity("Nature")
     lab2 = g2.add_entity("Stanford AI Lab")
-    g2.add_edge(m2, p2, "hired", "current")
-    g2.add_edge(p2, j2, "collaborates with", "current")
-    g2.add_edge(p2, su2, "alumna of", "current")
-    g2.add_edge(p2, nat2, "published in", "current")
-    g2.add_edge(p2, lab2, "leads", "current")
-    g2.add_edge(m2, dv2, "acquired", "current")
+    g2.add_edge(m2, p2, "hired")
+    g2.add_edge(p2, j2, "collaborates with")
+    g2.add_edge(p2, su2, "alumna of")
+    g2.add_edge(p2, nat2, "published in")
+    g2.add_edge(p2, lab2, "leads")
+    g2.add_edge(m2, dv2, "acquired")
 
     g3 = Graph(id="article-3")
     m3 = g3.add_entity("Meridian Technologies")
@@ -87,12 +87,12 @@ def test_three_source_with_person_name_variation(embedder):
     dv3 = g3.add_entity("DataVault Inc")
     nat3 = g3.add_entity("Nature")
     lab3 = g3.add_entity("Stanford AI Lab")
-    g3.add_edge(m3, p3, "hired", "current")
-    g3.add_edge(p3, j3, "collaborates with", "current")
-    g3.add_edge(p3, su3, "alumna of", "current")
-    g3.add_edge(p3, nat3, "published in", "current")
-    g3.add_edge(p3, lab3, "leads", "current")
-    g3.add_edge(m3, dv3, "acquired", "current")
+    g3.add_edge(m3, p3, "hired")
+    g3.add_edge(p3, j3, "collaborates with")
+    g3.add_edge(p3, su3, "alumna of")
+    g3.add_edge(p3, nat3, "published in")
+    g3.add_edge(p3, lab3, "leads")
+    g3.add_edge(m3, dv3, "acquired")
 
     graphs = [g1, g2, g3]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -129,30 +129,30 @@ def test_identical_names_different_contexts_no_merge(embedder):
     jc_a1 = a1.add_entity("Dr. James Chen")
     lab_a1 = a1.add_entity("Advanced AI Lab")
     nsf_a1 = a1.add_entity("National Science Foundation")
-    a1.add_edge(jc_a1, lab_a1, "leads", "current")
-    a1.add_edge(lab_a1, nsf_a1, "funded by", "current")
+    a1.add_edge(jc_a1, lab_a1, "leads")
+    a1.add_edge(lab_a1, nsf_a1, "funded by")
 
     a2 = Graph(id="ai-2")
     jc_a2 = a2.add_entity("Dr. James Chen")
     lab_a2 = a2.add_entity("Advanced AI Lab")
     nsf_a2 = a2.add_entity("National Science Foundation")
-    a2.add_edge(jc_a2, lab_a2, "leads", "current")
-    a2.add_edge(lab_a2, nsf_a2, "funded by", "current")
+    a2.add_edge(jc_a2, lab_a2, "leads")
+    a2.add_edge(lab_a2, nsf_a2, "funded by")
 
     # Cluster B: climate research — same name, same structure, different entities
     b1 = Graph(id="climate-1")
     jc_b1 = b1.add_entity("Dr. James Chen")
     lab_b1 = b1.add_entity("Climate Research Lab")
     epa_b1 = b1.add_entity("Environmental Protection Agency")
-    b1.add_edge(jc_b1, lab_b1, "leads", "current")
-    b1.add_edge(lab_b1, epa_b1, "funded by", "current")
+    b1.add_edge(jc_b1, lab_b1, "leads")
+    b1.add_edge(lab_b1, epa_b1, "funded by")
 
     b2 = Graph(id="climate-2")
     jc_b2 = b2.add_entity("Dr. James Chen")
     lab_b2 = b2.add_entity("Climate Research Lab")
     epa_b2 = b2.add_entity("Environmental Protection Agency")
-    b2.add_edge(jc_b2, lab_b2, "leads", "current")
-    b2.add_edge(lab_b2, epa_b2, "funded by", "current")
+    b2.add_edge(jc_b2, lab_b2, "leads")
+    b2.add_edge(lab_b2, epa_b2, "funded by")
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -194,30 +194,30 @@ def test_shared_entity_across_clusters(embedder):
     m_a1 = a1.add_entity("Meridian Technologies")
     dv_a1 = a1.add_entity("DataVault")
     ev_a1 = a1.add_entity("Elena Vasquez")
-    a1.add_edge(m_a1, dv_a1, "acquired", "current")
-    a1.add_edge(m_a1, ev_a1, "CEO is", "current")
+    a1.add_edge(m_a1, dv_a1, "acquired")
+    a1.add_edge(m_a1, ev_a1, "CEO is")
 
     a2 = Graph(id="acq-2")
     m_a2 = a2.add_entity("Meridian Technologies")
     dv_a2 = a2.add_entity("DataVault")
     ev_a2 = a2.add_entity("Elena Vasquez")
-    a2.add_edge(m_a2, dv_a2, "purchased", "current")
-    a2.add_edge(m_a2, ev_a2, "CEO is", "current")
+    a2.add_edge(m_a2, dv_a2, "purchased")
+    a2.add_edge(m_a2, ev_a2, "CEO is")
 
     # Cluster B: FTC investigation (2 sources) — shares Meridian + Elena
     b1 = Graph(id="ftc-1")
     m_b1 = b1.add_entity("Meridian Technologies")
     ftc_b1 = b1.add_entity("Federal Trade Commission")
     ev_b1 = b1.add_entity("Elena Vasquez")
-    b1.add_edge(ftc_b1, m_b1, "investigates", "current")
-    b1.add_edge(m_b1, ev_b1, "CEO is", "current")
+    b1.add_edge(ftc_b1, m_b1, "investigates")
+    b1.add_edge(m_b1, ev_b1, "CEO is")
 
     b2 = Graph(id="ftc-2")
     m_b2 = b2.add_entity("Meridian Technologies")
     ftc_b2 = b2.add_entity("Federal Trade Commission")
     ev_b2 = b2.add_entity("Elena Vasquez")
-    b2.add_edge(ftc_b2, m_b2, "investigates", "current")
-    b2.add_edge(m_b2, ev_b2, "CEO is", "current")
+    b2.add_edge(ftc_b2, m_b2, "investigates")
+    b2.add_edge(m_b2, ev_b2, "CEO is")
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -252,32 +252,32 @@ def test_shared_person_across_clusters(embedder):
     ev1 = a1.add_entity("Elena Vasquez")
     dv1 = a1.add_entity("DataVault Inc")
     su1 = a1.add_entity("Stanford University")
-    a1.add_edge(m1, ev1, "CEO is", "current")
-    a1.add_edge(m1, dv1, "acquired", "current")
-    a1.add_edge(ev1, su1, "alumna of", "current")
+    a1.add_edge(m1, ev1, "CEO is")
+    a1.add_edge(m1, dv1, "acquired")
+    a1.add_edge(ev1, su1, "alumna of")
 
     a2 = Graph(id="hire-2")
     m2 = a2.add_entity("Meridian Technologies")
     ev2 = a2.add_entity("Elena Vasquez")
     dv2 = a2.add_entity("DataVault Inc")
     su2 = a2.add_entity("Stanford University")
-    a2.add_edge(m2, ev2, "CEO is", "current")
-    a2.add_edge(m2, dv2, "acquired", "current")
-    a2.add_edge(ev2, su2, "alumna of", "current")
+    a2.add_edge(m2, ev2, "CEO is")
+    a2.add_edge(m2, dv2, "acquired")
+    a2.add_edge(ev2, su2, "alumna of")
 
     b1 = Graph(id="summit-1")
     ev3 = b1.add_entity("Elena Vasquez")
     summit1 = b1.add_entity("Global Tech Summit")
     su3 = b1.add_entity("Stanford University")
-    b1.add_edge(ev3, summit1, "keynotes", "current")
-    b1.add_edge(ev3, su3, "alumna of", "current")
+    b1.add_edge(ev3, summit1, "keynotes")
+    b1.add_edge(ev3, su3, "alumna of")
 
     b2 = Graph(id="summit-2")
     ev4 = b2.add_entity("Elena Vasquez")
     summit2 = b2.add_entity("Global Tech Summit")
     su4 = b2.add_entity("Stanford University")
-    b2.add_edge(ev4, summit2, "keynotes", "current")
-    b2.add_edge(ev4, su4, "alumna of", "current")
+    b2.add_edge(ev4, summit2, "keynotes")
+    b2.add_edge(ev4, su4, "alumna of")
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -319,32 +319,32 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
     nt_a1 = a1.add_entity("NovaTech")
     dv_a1 = a1.add_entity("DataVault")
     jc_a1 = a1.add_entity("James Chen")
-    a1.add_edge(nt_a1, dv_a1, "acquired", "current")
-    a1.add_edge(nt_a1, jc_a1, "CEO is", "current")
+    a1.add_edge(nt_a1, dv_a1, "acquired")
+    a1.add_edge(nt_a1, jc_a1, "CEO is")
 
     # Cluster A, source 2
     a2 = Graph(id="nova-2")
     nt_a2 = a2.add_entity("NovaTech")
     dv_a2 = a2.add_entity("DataVault")
     jc_a2 = a2.add_entity("James Chen")
-    a2.add_edge(nt_a2, dv_a2, "purchased", "current")
-    a2.add_edge(nt_a2, jc_a2, "CEO is", "current")
+    a2.add_edge(nt_a2, dv_a2, "purchased")
+    a2.add_edge(nt_a2, jc_a2, "CEO is")
 
     # Cluster B, source 1
     b1 = Graph(id="quantum-1")
     ql_b1 = b1.add_entity("Quantum Labs")
     cs_b1 = b1.add_entity("ClearSky")
     sp_b1 = b1.add_entity("Sarah Park")
-    b1.add_edge(ql_b1, cs_b1, "acquired", "current")
-    b1.add_edge(ql_b1, sp_b1, "CEO is", "current")
+    b1.add_edge(ql_b1, cs_b1, "acquired")
+    b1.add_edge(ql_b1, sp_b1, "CEO is")
 
     # Cluster B, source 2
     b2 = Graph(id="quantum-2")
     ql_b2 = b2.add_entity("Quantum Labs")
     cs_b2 = b2.add_entity("ClearSky")
     sp_b2 = b2.add_entity("Sarah Park")
-    b2.add_edge(ql_b2, cs_b2, "purchased", "current")
-    b2.add_edge(ql_b2, sp_b2, "CEO is", "current")
+    b2.add_edge(ql_b2, cs_b2, "purchased")
+    b2.add_edge(ql_b2, sp_b2, "CEO is")
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -391,15 +391,15 @@ def test_shared_employee_bridge_no_company_merge(embedder):
     nak1 = g1.add_entity("Teresa Nakamura")
     cascade1 = g1.add_entity("Cascade Robotics")
     cloud1 = g1.add_entity("CloudScale")
-    g1.add_edge(nak1, cascade1, "is CFO of", "current")
-    g1.add_edge(nak1, cloud1, "was CFO at", "current")
+    g1.add_edge(nak1, cascade1, "is CFO of")
+    g1.add_edge(nak1, cloud1, "was CFO at")
 
     g2 = Graph(id="g2")
     nak2 = g2.add_entity("Teresa Nakamura")
     cascade2 = g2.add_entity("Cascade Robotics")
     cloud2 = g2.add_entity("CloudScale")
-    g2.add_edge(nak2, cascade2, "appointed CFO of", "current")
-    g2.add_edge(nak2, cloud2, "is chief financial officer of", "current")
+    g2.add_edge(nak2, cascade2, "appointed CFO of")
+    g2.add_edge(nak2, cloud2, "is chief financial officer of")
 
     graphs = [g1, g2]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -440,20 +440,20 @@ def test_regulator_and_regulated_entity_stay_separate(embedder):
     vantara1 = g1.add_entity("Vantara AI")
     dw1 = g1.add_entity("DataWatch EU")
     euro1 = g1.add_entity("EuroPrivacy Wire")
-    g1.add_edge(dw1, dpc1, "reported on", "current")
-    g1.add_edge(dw1, vantara1, "reported on", "current")
-    g1.add_edge(euro1, dpc1, "published report on", "current")
-    g1.add_edge(euro1, vantara1, "published report on", "current")
+    g1.add_edge(dw1, dpc1, "reported on")
+    g1.add_edge(dw1, vantara1, "reported on")
+    g1.add_edge(euro1, dpc1, "published report on")
+    g1.add_edge(euro1, vantara1, "published report on")
 
     g2 = Graph(id="g2")
     dpc2 = g2.add_entity("Data Protection Commission")
     vantara2 = g2.add_entity("Vantara AI")
     dw2 = g2.add_entity("DataWatch EU")
     euro2 = g2.add_entity("EuroPrivacy Wire")
-    g2.add_edge(dw2, dpc2, "published report on", "current")
-    g2.add_edge(dw2, vantara2, "published report on", "current")
-    g2.add_edge(euro2, dpc2, "reported on", "current")
-    g2.add_edge(euro2, vantara2, "reported on", "current")
+    g2.add_edge(dw2, dpc2, "published report on")
+    g2.add_edge(dw2, vantara2, "published report on")
+    g2.add_edge(euro2, dpc2, "reported on")
+    g2.add_edge(euro2, vantara2, "reported on")
 
     graphs = [g1, g2]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -501,29 +501,29 @@ def test_synonym_inflation_false_merge_via_shared_hub(embedder):
     g0 = Graph(id="g0")
     hub0 = g0.add_entity("Meridian Technologies")
     loc0 = g0.add_entity("Pittsburgh")
-    g0.add_edge(hub0, loc0, "is based in", "current")
+    g0.add_edge(hub0, loc0, "is based in")
 
     # Target-B articles (2 synonym variants)
     g1 = Graph(id="g1")
     hub1 = g1.add_entity("Meridian Technologies")
     b1 = g1.add_entity("Lightwave Analytics")
-    g1.add_edge(hub1, b1, "acquired", "current")
+    g1.add_edge(hub1, b1, "acquired")
 
     g2 = Graph(id="g2")
     hub2 = g2.add_entity("Meridian Technologies")
     b2 = g2.add_entity("Lightwave Analytics")
-    g2.add_edge(hub2, b2, "purchased", "current")
+    g2.add_edge(hub2, b2, "purchased")
 
     # Target-C articles (2 synonym variants)
     g3 = Graph(id="g3")
     hub3 = g3.add_entity("Meridian Technologies")
     c1 = g3.add_entity("CloudScale")
-    g3.add_edge(hub3, c1, "acquired", "current")
+    g3.add_edge(hub3, c1, "acquired")
 
     g4 = Graph(id="g4")
     hub4 = g4.add_entity("Meridian Technologies")
     c2 = g4.add_entity("CloudScale")
-    g4.add_edge(hub4, c2, "purchased", "current")
+    g4.add_edge(hub4, c2, "purchased")
 
     graphs = [g0, g1, g2, g3, g4]
     _, groups, _ = match_graphs(graphs, embedder)
@@ -541,59 +541,3 @@ def test_synonym_inflation_false_merge_via_shared_hub(embedder):
     assert b_group is not None and b2.id in b_group
     c_group = _find_group_containing(groups, c1.id)
     assert c_group is not None and c2.id in c_group
-
-
-# ---------------------------------------------------------------------------
-# 7. Source-local temporal metadata
-# ---------------------------------------------------------------------------
-
-
-def test_completion_and_announcement_preserve_temporal_metadata(embedder):
-    """A completion and announcement can describe the same matched fact.
-
-    Temporal values are excluded from identity matching, so their difference
-    neither subtracts evidence nor prevents the edge match. The unified graph
-    retains both source-local edges and their original temporal observations.
-    """
-    # Article 1: deal completed
-    g1 = Graph(id="completion")
-    acme1 = g1.add_entity("Acme Corp")
-    gamma1 = g1.add_entity("Gamma AI")
-    ceo1 = g1.add_entity("Sarah Chen")
-    hq1 = g1.add_entity("San Francisco")
-    gamma_hq1 = g1.add_entity("Boston")
-    acquisition1 = g1.add_edge(acme1, gamma1, "acquire", "past")
-    g1.add_edge(ceo1, acme1, "is CEO of", "current")
-    g1.add_edge(acme1, hq1, "headquartered in", "current")
-    g1.add_edge(gamma1, gamma_hq1, "headquartered in", "current")
-
-    # Article 2: deal announced
-    g2 = Graph(id="announcement")
-    acme2 = g2.add_entity("Acme Corp")
-    gamma2 = g2.add_entity("Gamma AI")
-    ceo2 = g2.add_entity("Sarah Chen")
-    hq2 = g2.add_entity("San Francisco")
-    gamma_hq2 = g2.add_entity("Boston")
-    acquisition2 = g2.add_edge(acme2, gamma2, "acquire", "future")
-    g2.add_edge(ceo2, acme2, "is CEO of", "current")
-    g2.add_edge(acme2, hq2, "headquartered in", "current")
-    g2.add_edge(gamma2, gamma_hq2, "headquartered in", "current")
-
-    graphs = [g1, g2]
-    _, groups, unified = match_graphs(graphs, embedder)
-
-    # Acme and Gamma entities merge across articles via shared current structure
-    acme_group = _find_group_containing(groups, acme1.id)
-    assert acme_group is not None and acme2.id in acme_group
-    gamma_group = _find_group_containing(groups, gamma1.id)
-    assert gamma_group is not None and gamma2.id in gamma_group
-
-    acquisition_group = _find_group_containing(groups, acquisition1.id)
-    assert acquisition_group == {acquisition1.id, acquisition2.id}
-
-    assert unified.edges[acquisition1.id] == acquisition1
-    assert unified.edges[acquisition2.id] == acquisition2
-    assert {
-        unified.edges[edge_id].temporal
-        for edge_id in (acquisition1.id, acquisition2.id)
-    } == {"past", "future"}

@@ -14,7 +14,7 @@ def test_save_load_roundtrip_single_graph(tmp_path: Path):
     g = Graph(id="article-1")
     n1 = g.add_entity("Alice")
     n2 = g.add_entity("Bob")
-    g.add_edge(n1, n2, "knows", "current")
+    g.add_edge(n1, n2, "knows")
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -43,7 +43,7 @@ def test_save_load_roundtrip_unified_graph(tmp_path: Path):
     g.nodes["n3"] = Node(id="n3", graph_id="unified", names=["Carol"])
     g.edges["x1"] = Edge(
         id="x1", graph_id="article-1", source="n1", target="n2",
-        relation="knows", temporal="current",
+        relation="knows",
     )
 
     path = tmp_path / "unified.json"
@@ -71,7 +71,7 @@ def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
     g = Graph(id="article-1")
     n1 = g.add_entity(["Meridian Technologies", "Meridian Tech"])
     n2 = g.add_entity("DataVault")
-    g.add_edge(n1, n2, "acquired", "current")
+    g.add_edge(n1, n2, "acquired")
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -87,20 +87,6 @@ def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
     assert loaded.nodes[n2.id].names == ["DataVault"]
 
 
-def test_save_load_roundtrip_temporal(tmp_path: Path):
-    """Edge.temporal survives save/load round-trip."""
-    g = Graph(id="article-1")
-    n1 = g.add_entity("Alice")
-    n2 = g.add_entity("Bob")
-    g.add_edge(n1, n2, "acquire", "past")
-
-    path = tmp_path / "g.json"
-    save_graph(g, path)
-
-    loaded = load_graph(path)
-    assert [(e.relation, e.temporal) for e in loaded.edges.values()] == [("acquire", "past")]
-
-
 def test_save_load_roundtrip_recursive_edges(tmp_path: Path):
     """Edges referencing edges survive save/load round-trip.
 
@@ -113,9 +99,9 @@ def test_save_load_roundtrip_recursive_edges(tmp_path: Path):
     halden = g.add_entity("Halden Freight")
     role = g.add_entity("managing director")
     vesterby = g.add_entity("Vesterby")
-    manage = g.add_edge(corin, halden, "manage", "current")
-    g.add_edge(manage, role, "role", "current")
-    g.add_edge(manage, vesterby, "for", "current")
+    manage = g.add_edge(corin, halden, "manage")
+    g.add_edge(manage, role, "role")
+    g.add_edge(manage, vesterby, "for")
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -144,9 +130,9 @@ def test_forward_edge_references(tmp_path: Path):
         "edges": [
             # x1 references x2, defined after it
             {"id": "x1", "graph_id": "article-1", "source": "x2",
-             "target": "n1", "relation": "denies", "temporal": "current"},
+             "target": "n1", "relation": "denies"},
             {"id": "x2", "graph_id": "article-1", "source": "n1",
-             "target": "n2", "relation": "knows", "temporal": "current"},
+             "target": "n2", "relation": "knows"},
         ],
     }
     path = tmp_path / "g.json"
@@ -181,9 +167,9 @@ def test_load_duplicate_edge_id_raises(tmp_path: Path):
         "nodes": [{"id": "n1", "graph_id": "article-1", "names": ["Alice"]}],
         "edges": [
             {"id": "x1", "graph_id": "article-1", "source": "n1",
-             "target": "n1", "relation": "knows", "temporal": "current"},
+             "target": "n1", "relation": "knows"},
             {"id": "x1", "graph_id": "article-1", "source": "n1",
-             "target": "n1", "relation": "knows", "temporal": "current"},
+             "target": "n1", "relation": "knows"},
         ],
     }
     path = tmp_path / "g.json"
@@ -201,7 +187,7 @@ def test_load_unknown_edge_reference_raises(tmp_path: Path):
         "nodes": [{"id": "n1", "graph_id": "article-1", "names": ["Alice"]}],
         "edges": [
             {"id": "x1", "graph_id": "article-1", "source": "n1",
-             "target": "n999", "relation": "knows", "temporal": "current"},
+             "target": "n999", "relation": "knows"},
         ],
     }
     path = tmp_path / "g.json"
@@ -218,7 +204,7 @@ def test_node_and_edge_ids_must_be_disjoint():
     g.nodes["t1"] = Node(id="t1", graph_id="article-1", names=["Alice"])
     g.edges["t1"] = Edge(
         id="t1", graph_id="article-1", source="t1", target="t1",
-        relation="knows", temporal="current",
+        relation="knows",
     )
 
     with pytest.raises(ValueError, match="disjoint"):
@@ -231,22 +217,7 @@ def test_load_edge_without_id_raises(tmp_path: Path):
         "id": "article-1",
         "nodes": [{"id": "n1", "graph_id": "article-1", "names": ["Alice"]}],
         "edges": [{"graph_id": "article-1", "source": "n1", "target": "n1",
-                   "relation": "knows", "temporal": "current"}],
-    }
-    path = tmp_path / "g.json"
-    path.write_text(json.dumps(data))
-
-    with pytest.raises(KeyError):
-        load_graph(path)
-
-
-def test_load_edge_without_temporal_raises(tmp_path: Path):
-    """Edges lacking 'temporal' are invalid — no fallback."""
-    data = {
-        "id": "article-1",
-        "nodes": [{"id": "n1", "graph_id": "article-1", "names": ["Alice"]}],
-        "edges": [{"id": "x1", "graph_id": "article-1", "source": "n1",
-                   "target": "n1", "relation": "knows"}],
+                   "relation": "knows"}],
     }
     path = tmp_path / "g.json"
     path.write_text(json.dumps(data))

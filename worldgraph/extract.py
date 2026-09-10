@@ -1,7 +1,6 @@
 import os
 import uuid
 from pathlib import Path
-from typing import Literal
 
 import click
 from dotenv import load_dotenv
@@ -22,8 +21,7 @@ Rules:
 - A relation's source and target may each be the id of an entity or of another relation. A qualifier of a fact, such as a role or place, is expressed as a relation whose source or target is the id of the relation it qualifies: if r1 states that Tessa Corin manages Halden Freight, her role is a relation with source r1, target a 'managing director' entity, and relation 'role'.
 - The media is not part of the world graph: the publishing outlet, journalists, photographers, and the act of reporting never appear as entities or relations.
 - A relation phrase contains only the relation itself, never entity names. Entities that a fact refers to are nodes, not phrase content.
-- Write relation phrases in base form without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. Tense is carried by the temporal field, not the phrase.
-- Every relation has a temporal dimension, read from the article's own wording: 'past' for facts presented as completed or no longer true, 'current' for facts stated as true now, 'future' for announced, planned, or expected facts. When the wording does not mark time, the fact is 'current'.
+- Write relation phrases in base form without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. Tense marking is not captured.
 
 Each entity should have a short unique id and the name as it appears in the text. Each relation should have a short unique id, e.g. 'r1', 'r2'."""
 
@@ -33,9 +31,6 @@ class Entity(BaseModel):
         description="Short unique identifier for this entity, e.g. 'e1', 'e2'"
     )
     name: str = Field(description="Entity name as it appears in the article")
-
-
-Temporal = Literal["past", "current", "future"]
 
 
 class Relation(BaseModel):
@@ -50,13 +45,7 @@ class Relation(BaseModel):
     )
     relation: str = Field(
         description="Base-form verb phrase without tense, e.g. 'acquire', 'be headquartered in' — "
-        "never 'acquired', 'will acquire', or 'is headquartered in'. Tense is carried by the temporal field."
-    )
-    temporal: Temporal = Field(
-        description="When the relation holds, read from the article's own wording: "
-        "'past' — presented as completed or no longer true ('acquired', 'former', 'previously'); "
-        "'current' — stated as true now, the default when the wording does not mark time; "
-        "'future' — announced, planned, or expected ('will', 'plans to', 'is expected to')"
+        "never 'acquired', 'will acquire', or 'is headquartered in'"
     )
 
 
@@ -134,7 +123,6 @@ def extraction_to_graph(article_id: str, extraction: Extraction) -> Graph:
             term_ids[rel.source],
             term_ids[rel.target],
             rel.relation,
-            rel.temporal,
             id=edge_ids[rel.id],
         )
 

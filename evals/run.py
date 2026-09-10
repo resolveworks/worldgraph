@@ -31,8 +31,8 @@ def task(stem: str) -> Extraction:
 
 def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple]]:
     """Order- and id-independent form: entity name counts and relation form
-    counts. A relation form is ``(source term, relation, target term,
-    temporal)``; a term is an entity name or, where an endpoint references a
+    counts. A relation form is ``(source term, relation, target term)``;
+    a term is an entity name or, where an endpoint references a
     relation, that relation's own form — so a qualifier is compared against
     the specific relation it qualifies, never its phrase alone.
     """
@@ -51,7 +51,6 @@ def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple]]:
             term(relation.source, stack),
             relation.relation,
             term(relation.target, stack),
-            relation.temporal,
         )
 
     return (
@@ -62,15 +61,15 @@ def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple]]:
 
 def render(term: str | tuple) -> str:
     """Human-readable term: an entity name plain, a relation form as
-    ``source --relation--> target (temporal)`` with nested forms bracketed."""
+    ``source --relation--> target`` with nested forms bracketed."""
     if isinstance(term, str):
         return term
-    source, relation, target, temporal = term
+    source, relation, target = term
 
     def show(t: str | tuple) -> str:
         return t if isinstance(t, str) else f"[{render(t)}]"
 
-    return f"{show(source)} --{relation}--> {show(target)} ({temporal})"
+    return f"{show(source)} --{relation}--> {show(target)}"
 
 
 @dataclass

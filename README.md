@@ -66,8 +66,6 @@ Each article produces one graph. All article graphs are merged into a single uni
 
 **Source independence.** Wire services get rewritten in ways that look superficially independent. True source independence is hard to estimate.
 
-**Temporal dynamics.** Facts change over time. The system doesn't yet handle edges that should be timestamped or expired.
-
 ## References
 
 - Melnik, Garcia-Molina, Rahm. "Similarity Flooding: A Versatile Graph Matching Algorithm." ICDE 2002.

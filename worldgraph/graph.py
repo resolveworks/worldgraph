@@ -27,7 +27,6 @@ class Edge:
     source: str  # Node.id or Edge.id
     target: str  # Node.id or Edge.id
     relation: str
-    temporal: str
 
 
 # Nodes and edges are addressable graph terms sharing one id namespace.
@@ -53,7 +52,6 @@ class Graph:
         source: Term | str,
         target: Term | str,
         relation: str,
-        temporal: str,
         id: str | None = None,
     ) -> Edge:
         """Add a relation edge between two terms — nodes or edges.
@@ -71,7 +69,6 @@ class Graph:
             source=src,
             target=tgt,
             relation=relation,
-            temporal=temporal,
         )
         self.edges[edge.id] = edge
         return edge
@@ -135,7 +132,6 @@ def load_graph(path: Path) -> Graph:
             source=edge_data["source"],
             target=edge_data["target"],
             relation=edge_data["relation"],
-            temporal=edge_data["temporal"],
         )
 
     graph = Graph(id=graph_id, nodes=nodes, edges=edges)
@@ -166,7 +162,6 @@ def save_graph(
                 "source": edge.source,
                 "target": edge.target,
                 "relation": edge.relation,
-                "temporal": edge.temporal,
             }
         )
 

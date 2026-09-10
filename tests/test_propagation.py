@@ -49,12 +49,12 @@ def test_matching_names_and_relations_produce_matches(embedder):
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
-    g1.add_edge(apple1, beats1, "acquired", "current")
+    g1.add_edge(apple1, beats1, "acquired")
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
-    g2.add_edge(apple2, beats2, "acquired", "current")
+    g2.add_edge(apple2, beats2, "acquired")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -71,12 +71,12 @@ def test_synonym_relations_propagate(embedder):
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
-    g1.add_edge(apple1, beats1, "acquired", "current")
+    g1.add_edge(apple1, beats1, "acquired")
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
-    g2.add_edge(apple2, beats2, "purchased", "current")
+    g2.add_edge(apple2, beats2, "purchased")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -95,12 +95,12 @@ def test_dissimilar_relations_do_not_propagate(embedder):
     g1 = Graph(id="g1")
     apple = g1.add_entity("Apple")
     beats = g1.add_entity("Beats")
-    g1.add_edge(apple, beats, "acquired", "current")
+    g1.add_edge(apple, beats, "acquired")
 
     g2 = Graph(id="g2")
     tokyo = g2.add_entity("Tokyo")
     japan = g2.add_entity("Japan")
-    g2.add_edge(tokyo, japan, "located in", "current")
+    g2.add_edge(tokyo, japan, "located in")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -114,12 +114,12 @@ def test_weak_neighbors_do_not_produce_matches(embedder):
     g1 = Graph(id="g1")
     apple = g1.add_entity("Apple")
     beats = g1.add_entity("Beats")
-    g1.add_edge(apple, beats, "acquired", "current")
+    g1.add_edge(apple, beats, "acquired")
 
     g2 = Graph(id="g2")
     google = g2.add_entity("Google")
     youtube = g2.add_entity("YouTube")
-    g2.add_edge(google, youtube, "acquired", "current")
+    g2.add_edge(google, youtube, "acquired")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -134,18 +134,18 @@ def test_many_weak_paths_do_not_accumulate(embedder):
     target = g1.add_entity("Target")
     project = g1.add_entity("Project")
     person = g1.add_entity("Person")
-    g1.add_edge(org, target, "acquired", "current")
-    g1.add_edge(org, project, "funded", "current")
-    g1.add_edge(org, person, "hired", "current")
+    g1.add_edge(org, target, "acquired")
+    g1.add_edge(org, project, "funded")
+    g1.add_edge(org, person, "hired")
 
     g2 = Graph(id="g2")
     city = g2.add_entity("City")
     country = g2.add_entity("Country")
     river = g2.add_entity("River")
     event = g2.add_entity("Event")
-    g2.add_edge(city, country, "located in", "current")
-    g2.add_edge(city, river, "borders", "current")
-    g2.add_edge(city, event, "hosts", "current")
+    g2.add_edge(city, country, "located in")
+    g2.add_edge(city, river, "borders")
+    g2.add_edge(city, event, "hosts")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -168,12 +168,12 @@ def test_incoming_edges_propagate(embedder):
     g1 = Graph(id="g1")
     src1 = g1.add_entity("Axiom Corp")
     tv1 = g1.add_entity("VaultWorks")
-    g1.add_edge(src1, tv1, "acquired", "current")
+    g1.add_edge(src1, tv1, "acquired")
 
     g2 = Graph(id="g2")
     src2 = g2.add_entity("Axiom Corp")
     tv2 = g2.add_entity("CloudScale")
-    g2.add_edge(src2, tv2, "acquired", "current")
+    g2.add_edge(src2, tv2, "acquired")
 
     # Premises: the observed pair has no name signal; the anchor is maximal
     idf = build_idf(["Axiom Corp", "VaultWorks", "CloudScale"])
@@ -196,12 +196,12 @@ def test_outgoing_edges_propagate(embedder):
     g1 = Graph(id="g1")
     src1 = g1.add_entity("Axiom Corp")
     tv1 = g1.add_entity("DataVault")
-    g1.add_edge(src1, tv1, "acquired", "current")
+    g1.add_edge(src1, tv1, "acquired")
 
     g2 = Graph(id="g2")
     src2 = g2.add_entity("Pinnacle Ltd")
     tv2 = g2.add_entity("DataVault")
-    g2.add_edge(src2, tv2, "acquired", "current")
+    g2.add_edge(src2, tv2, "acquired")
 
     # Premise: the observed pair has no name signal
     idf = build_idf(["Axiom Corp", "Pinnacle Ltd", "DataVault"])
@@ -232,8 +232,8 @@ def test_functional_relation_produces_stronger_evidence(embedder):
     bg1_beats = bg1.add_entity("Beats")
     bg1_google = bg1.add_entity("Google")
     bg1_yt = bg1.add_entity("YouTube")
-    bg1.add_edge(bg1_apple, bg1_beats, "acquired", "current")
-    bg1.add_edge(bg1_google, bg1_yt, "acquired", "current")
+    bg1.add_edge(bg1_apple, bg1_beats, "acquired")
+    bg1.add_edge(bg1_google, bg1_yt, "acquired")
 
     # Background: 'invested in' has fan-in
     bg2 = Graph(id="bg2")
@@ -241,21 +241,21 @@ def test_functional_relation_produces_stronger_evidence(embedder):
     bg2_google = bg2.add_entity("Google")
     bg2_ms = bg2.add_entity("Microsoft")
     bg2_dv = bg2.add_entity("DataVault")
-    bg2.add_edge(bg2_apple, bg2_dv, "invested in", "current")
-    bg2.add_edge(bg2_google, bg2_dv, "invested in", "current")
-    bg2.add_edge(bg2_ms, bg2_dv, "invested in", "current")
+    bg2.add_edge(bg2_apple, bg2_dv, "invested in")
+    bg2.add_edge(bg2_google, bg2_dv, "invested in")
+    bg2.add_edge(bg2_ms, bg2_dv, "invested in")
 
     # Test pair with 'acquired' (high inverse functionality)
     # Use dissimilar entity names so only structural evidence matters
     g1a = Graph(id="g1a")
     m1a = g1a.add_entity("Axiom Corp")
     dv1a = g1a.add_entity("DataVault")
-    g1a.add_edge(m1a, dv1a, "acquired", "current")
+    g1a.add_edge(m1a, dv1a, "acquired")
 
     g2a = Graph(id="g2a")
     m2a = g2a.add_entity("Pinnacle Ltd")
     dv2a = g2a.add_entity("DataVault")
-    g2a.add_edge(m2a, dv2a, "acquired", "current")
+    g2a.add_edge(m2a, dv2a, "acquired")
 
     confidence_acq, _, _ = match_graphs([bg1, bg2, g1a, g2a], embedder)
 
@@ -263,12 +263,12 @@ def test_functional_relation_produces_stronger_evidence(embedder):
     g1i = Graph(id="g1i")
     m1i = g1i.add_entity("Axiom Corp")
     dv1i = g1i.add_entity("DataVault")
-    g1i.add_edge(m1i, dv1i, "invested in", "current")
+    g1i.add_edge(m1i, dv1i, "invested in")
 
     g2i = Graph(id="g2i")
     m2i = g2i.add_entity("Pinnacle Ltd")
     dv2i = g2i.add_entity("DataVault")
-    g2i.add_edge(m2i, dv2i, "invested in", "current")
+    g2i.add_edge(m2i, dv2i, "invested in")
 
     confidence_inv, _, _ = match_graphs([bg1, bg2, g1i, g2i], embedder)
 
@@ -294,16 +294,16 @@ def _two_hop_chain_graphs(
     g1 = Graph(id="g1")
     far1 = g1.add_entity("Cordovan Industries")
     mid1 = g1.add_entity("Alpha Corp")
-    g1.add_edge(far1, mid1, "acquired", "current")
+    g1.add_edge(far1, mid1, "acquired")
     for name, rel in anchors:
-        g1.add_edge(mid1, g1.add_entity(name), rel, "current")
+        g1.add_edge(mid1, g1.add_entity(name), rel)
 
     g2 = Graph(id="g2")
     far2 = g2.add_entity("NexGen Holdings")
     mid2 = g2.add_entity("Beta Inc")
-    g2.add_edge(far2, mid2, "purchased", "current")
+    g2.add_edge(far2, mid2, "purchased")
     for name, rel in anchors:
-        g2.add_edge(mid2, g2.add_entity(name), rel, "current")
+        g2.add_edge(mid2, g2.add_entity(name), rel)
 
     return g1, g2, far1, mid1, far2, mid2
 
@@ -393,15 +393,15 @@ def test_name_variation_with_structural_reinforcement(embedder):
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
     ceo1 = g1.add_entity("Elena Vasquez")
-    g1.add_edge(meridian1, dv1, "acquired", "current")
-    g1.add_edge(meridian1, ceo1, "hired", "current")
+    g1.add_edge(meridian1, dv1, "acquired")
+    g1.add_edge(meridian1, ceo1, "hired")
 
     g2 = Graph(id="g2")
     meridian2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault Inc")
     ceo2 = g2.add_entity("Elena Vasquez")
-    g2.add_edge(meridian2, dv2, "purchased", "current")
-    g2.add_edge(meridian2, ceo2, "employed", "current")
+    g2.add_edge(meridian2, dv2, "purchased")
+    g2.add_edge(meridian2, ceo2, "employed")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -412,85 +412,6 @@ def test_name_variation_with_structural_reinforcement(embedder):
         meridian1.id,
     ) in matched_pairs
     assert (dv1.id, dv2.id) in matched_pairs or (dv2.id, dv1.id) in matched_pairs
-
-
-# ---------------------------------------------------------------------------
-# Temporal metadata
-# ---------------------------------------------------------------------------
-
-
-def test_cross_temporal_edge_occurrences_merge(embedder):
-    """Temporal metadata neither contributes to nor vetoes edge identity.
-
-    The matching predicate and endpoints identify these past and future edge
-    occurrences, which remain separate source-local objects in the unified graph.
-    """
-    g1 = Graph(id="g1")
-    acme1 = g1.add_entity("Acme Corp")
-    gamma1 = g1.add_entity("Gamma AI")
-    edge1 = g1.add_edge(acme1, gamma1, "acquire", "past")
-
-    g2 = Graph(id="g2")
-    acme2 = g2.add_entity("Acme Corp")
-    gamma2 = g2.add_entity("Gamma AI")
-    edge2 = g2.add_edge(acme2, gamma2, "acquire", "future")
-
-    _, groups, unified = match_graphs([g1, g2], embedder)
-
-    assert next(g for g in groups if acme1.id in g) == {acme1.id, acme2.id}
-    assert next(g for g in groups if gamma1.id in g) == {gamma1.id, gamma2.id}
-    assert next(g for g in groups if edge1.id in g) == {edge1.id, edge2.id}
-    assert unified.edges[edge1.id] == edge1
-    assert unified.edges[edge2.id] == edge2
-
-
-def test_same_temporal_edge_occurrences_merge(embedder):
-    """Equal temporal metadata remains irrelevant to edge identity."""
-    g1 = Graph(id="g1")
-    acme1 = g1.add_entity("Acme Corp")
-    gamma1 = g1.add_entity("Gamma AI")
-    edge1 = g1.add_edge(acme1, gamma1, "acquire", "past")
-
-    g2 = Graph(id="g2")
-    acme2 = g2.add_entity("Acme Corp")
-    gamma2 = g2.add_entity("Gamma AI")
-    edge2 = g2.add_edge(acme2, gamma2, "acquire", "past")
-
-    _, groups, unified = match_graphs([g1, g2], embedder)
-
-    assert next(g for g in groups if acme1.id in g) == {acme1.id, acme2.id}
-    assert next(g for g in groups if gamma1.id in g) == {gamma1.id, gamma2.id}
-    assert next(g for g in groups if edge1.id in g) == {edge1.id, edge2.id}
-    assert unified.edges[edge1.id] == edge1
-    assert unified.edges[edge2.id] == edge2
-
-
-def test_temporal_metadata_is_excluded_from_edge_identity_confidence(embedder):
-    """Equal and different temporal values produce the same edge confidence.
-
-    Non-identical predicate wording leaves score headroom, so treating matching
-    temporal metadata as ordinary positive evidence would make the scores differ.
-    """
-
-    def confidence_for(right_temporal: str) -> float:
-        left = Graph(id="left")
-        left_source = left.add_entity("Acme Corp")
-        left_target = left.add_entity("Gamma AI")
-        left_edge = left.add_edge(left_source, left_target, "acquire", "past")
-
-        right = Graph(id="right")
-        right_source = right.add_entity("Acme Corp")
-        right_target = right.add_entity("Gamma AI")
-        right_edge = right.add_edge(
-            right_source, right_target, "take control of", right_temporal
-        )
-
-        confidence, _, _ = match_graphs(
-            [left, right], embedder, merge_threshold=float("inf")
-        )
-        return confidence[(left_edge.id, right_edge.id)]
-
-    assert confidence_for("past") == confidence_for("future")
 
 
 # ---------------------------------------------------------------------------
@@ -505,15 +426,15 @@ def test_dangling_entities_get_no_boost(embedder):
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
     solar = g1.add_entity("SolarGrid")
-    g1.add_edge(apple1, beats1, "acquired", "current")
-    g1.add_edge(apple1, solar, "hired", "current")
+    g1.add_edge(apple1, beats1, "acquired")
+    g1.add_edge(apple1, solar, "hired")
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
     wind = g2.add_entity("WindPower")
-    g2.add_edge(apple2, beats2, "purchased", "current")
-    g2.add_edge(apple2, wind, "hired", "current")
+    g2.add_edge(apple2, beats2, "purchased")
+    g2.add_edge(apple2, wind, "hired")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -535,12 +456,12 @@ def test_bidirectional_edges_accumulate(embedder):
     g1u = Graph(id="g1u")
     m1u = g1u.add_entity("Meridian Technologies")
     dv1u = g1u.add_entity("DataVault")
-    g1u.add_edge(m1u, dv1u, "acquired", "current")
+    g1u.add_edge(m1u, dv1u, "acquired")
 
     g2u = Graph(id="g2u")
     m2u = g2u.add_entity("Meridian Tech")
     dv2u = g2u.add_entity("DataVault")
-    g2u.add_edge(m2u, dv2u, "acquired", "current")
+    g2u.add_edge(m2u, dv2u, "acquired")
 
     confidence_uni, _, _ = match_graphs([g1u, g2u], embedder)
 
@@ -548,14 +469,14 @@ def test_bidirectional_edges_accumulate(embedder):
     g1b = Graph(id="g1b")
     m1b = g1b.add_entity("Meridian Technologies")
     dv1b = g1b.add_entity("DataVault")
-    g1b.add_edge(m1b, dv1b, "acquired", "current")
-    g1b.add_edge(dv1b, m1b, "subsidiary of", "current")
+    g1b.add_edge(m1b, dv1b, "acquired")
+    g1b.add_edge(dv1b, m1b, "subsidiary of")
 
     g2b = Graph(id="g2b")
     m2b = g2b.add_entity("Meridian Tech")
     dv2b = g2b.add_entity("DataVault")
-    g2b.add_edge(m2b, dv2b, "acquired", "current")
-    g2b.add_edge(dv2b, m2b, "subsidiary of", "current")
+    g2b.add_edge(m2b, dv2b, "acquired")
+    g2b.add_edge(dv2b, m2b, "subsidiary of")
 
     confidence_bi, _, _ = match_graphs([g1b, g2b], embedder)
 
@@ -580,12 +501,12 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
     g1 = Graph(id="g1")
     sharma = g1.add_entity("Dr. Priya Sharma")
     nova1 = g1.add_entity("NovaTech Labs")
-    g1.add_edge(sharma, nova1, "founded", "current")
+    g1.add_edge(sharma, nova1, "founded")
 
     g2 = Graph(id="g2")
     vasquez = g2.add_entity("Dr. Elena Vasquez")
     nova2 = g2.add_entity("NovaTech Labs")
-    g2.add_edge(vasquez, nova2, "founded", "current")
+    g2.add_edge(vasquez, nova2, "founded")
 
     # Background: establish "founded" as a functional (1:1) relation
     bg_graphs = []
@@ -599,7 +520,7 @@ def test_shared_anchor_does_not_override_name_dissimilarity(embedder):
         bg = Graph(id=f"bg{i}")
         p = bg.add_entity(person)
         o = bg.add_entity(org)
-        bg.add_edge(p, o, "founded", "current")
+        bg.add_edge(p, o, "founded")
         bg_graphs.append(bg)
 
     # Premise: name similarity alone is below threshold
@@ -636,12 +557,12 @@ def test_similar_names_disjoint_neighborhoods_no_match(embedder):
     g1 = Graph(id="g1")
     elena = g1.add_entity("Dr. Elena Vasquez")
     volta = g1.add_entity("Volta Systems")
-    g1.add_edge(elena, volta, "is CEO of", "current")
+    g1.add_edge(elena, volta, "is CEO of")
 
     g2 = Graph(id="g2")
     lena = g2.add_entity("Dr. Lena Vasquez")
     halcyon = g2.add_entity("Halcyon Genomics")
-    g2.add_edge(lena, halcyon, "is CEO of", "current")
+    g2.add_edge(lena, halcyon, "is CEO of")
 
     # Premise: neighbor names have no similarity
     idf = build_idf(["Volta Systems", "Halcyon Genomics"])
@@ -673,12 +594,12 @@ def test_simple_graph_stabilizes_well_before_max_iter(embedder):
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
-    g1.add_edge(apple1, beats1, "acquired", "current")
+    g1.add_edge(apple1, beats1, "acquired")
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
-    g2.add_edge(apple2, beats2, "acquired", "current")
+    g2.add_edge(apple2, beats2, "acquired")
 
     conf_10, _, _ = match_graphs([g1, g2], embedder, max_iter=10)
     conf_30, _, _ = match_graphs([g1, g2], embedder, max_iter=30)
@@ -717,7 +638,7 @@ def test_same_graph_entities_never_match(embedder):
     g = Graph(id="g1")
     apple = g.add_entity("Apple Inc")
     music = g.add_entity("Apple Music")
-    g.add_edge(apple, music, "owns", "current")
+    g.add_edge(apple, music, "owns")
 
     g2 = Graph(id="g2")
     g2.add_entity("Google")
@@ -734,7 +655,7 @@ def test_single_graph_produces_no_matches(embedder):
     g = Graph(id="g1")
     apple = g.add_entity("Apple")
     beats = g.add_entity("Beats")
-    g.add_edge(apple, beats, "acquired", "current")
+    g.add_edge(apple, beats, "acquired")
 
     confidence, _, _ = match_graphs([g], embedder)
 
@@ -748,15 +669,15 @@ def test_propagation_converges(embedder):
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
     ceo1 = g1.add_entity("Elena Vasquez")
-    g1.add_edge(meridian1, dv1, "acquired", "current")
-    g1.add_edge(meridian1, ceo1, "hired", "current")
+    g1.add_edge(meridian1, dv1, "acquired")
+    g1.add_edge(meridian1, ceo1, "hired")
 
     g2 = Graph(id="g2")
     meridian2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault Inc")
     ceo2 = g2.add_entity("Elena Vasquez")
-    g2.add_edge(meridian2, dv2, "purchased", "current")
-    g2.add_edge(meridian2, ceo2, "employed", "current")
+    g2.add_edge(meridian2, dv2, "purchased")
+    g2.add_edge(meridian2, ceo2, "employed")
 
     conf_10, _, _ = match_graphs([g1, g2], embedder, max_iter=10)
     conf_30, _, _ = match_graphs([g1, g2], embedder, max_iter=30)
@@ -786,12 +707,12 @@ def test_multi_label_entity_uses_best_name_pair(embedder):
     g1 = Graph(id="g1")
     m1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault")
-    g1.add_edge(m1, dv1, "acquired", "current")
+    g1.add_edge(m1, dv1, "acquired")
 
     g2 = Graph(id="g2")
     m2 = g2.add_entity(["Meridian Tech", "Meridian Technologies"])
     dv2 = g2.add_entity("DataVault")
-    g2.add_edge(m2, dv2, "purchased", "current")
+    g2.add_edge(m2, dv2, "purchased")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -806,12 +727,12 @@ def test_multi_label_all_names_contribute_to_idf(embedder):
     g1 = Graph(id="g1")
     m1 = g1.add_entity(["Meridian Technologies", "Meridian Tech"])
     dv1 = g1.add_entity("DataVault")
-    g1.add_edge(m1, dv1, "acquired", "current")
+    g1.add_edge(m1, dv1, "acquired")
 
     g2 = Graph(id="g2")
     m2 = g2.add_entity("Meridian Technologies")
     dv2 = g2.add_entity("DataVault")
-    g2.add_edge(m2, dv2, "purchased", "current")
+    g2.add_edge(m2, dv2, "purchased")
 
     # Should not raise — multi-label names flow through the pipeline
     confidence, _, _ = match_graphs([g1, g2], embedder)
@@ -850,10 +771,10 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     ja = ga.add_entity("James Chen")
     su_a = ga.add_entity("Stanford University")
     austin_a = ga.add_entity("Austin")
-    ga.add_edge(ma, dva, "acquired", "current")
-    ga.add_edge(ma, ja, "CEO is", "current")
-    ga.add_edge(ma, su_a, "alumna of", "current")
-    ga.add_edge(ma, austin_a, "headquartered in", "current")
+    ga.add_edge(ma, dva, "acquired")
+    ga.add_edge(ma, ja, "CEO is")
+    ga.add_edge(ma, su_a, "alumna of")
+    ga.add_edge(ma, austin_a, "headquartered in")
 
     # Article B: Meridian Corp with DataVault, James Chen, Stanford, Volta
     gb = Graph(id="b")
@@ -862,10 +783,10 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     jb = gb.add_entity("James Chen")
     su_b = gb.add_entity("Stanford University")
     volta_b = gb.add_entity("Volta Systems")
-    gb.add_edge(mb, dvb, "purchased", "current")
-    gb.add_edge(mb, jb, "CEO is", "current")
-    gb.add_edge(mb, su_b, "alumna of", "current")
-    gb.add_edge(mb, volta_b, "partnered with", "current")
+    gb.add_edge(mb, dvb, "purchased")
+    gb.add_edge(mb, jb, "CEO is")
+    gb.add_edge(mb, su_b, "alumna of")
+    gb.add_edge(mb, volta_b, "partnered with")
 
     # Article C: "Meridian Tech Corp" — moderate name sim, neighbors from
     # both A-unique (Austin) and B-unique (Volta) plus shared (James Chen)
@@ -874,9 +795,9 @@ def test_progressive_merging_enriched_neighborhood(embedder):
     austin_c = gc.add_entity("Austin")
     volta_c = gc.add_entity("Volta Systems")
     jc = gc.add_entity("James Chen")
-    gc.add_edge(mc, austin_c, "headquartered in", "current")
-    gc.add_edge(mc, volta_c, "partnered with", "current")
-    gc.add_edge(mc, jc, "CEO is", "current")
+    gc.add_edge(mc, austin_c, "headquartered in")
+    gc.add_edge(mc, volta_c, "partnered with")
+    gc.add_edge(mc, jc, "CEO is")
 
     graphs = [ga, gb, gc]
 
@@ -933,18 +854,18 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
     dv1 = g1.add_entity("DataVault")
     ceo1 = g1.add_entity("Dr. Alice M. Johnson")
     uni1 = g1.add_entity("Stanford University")
-    g1.add_edge(m1, dv1, "acquired", "current")
-    g1.add_edge(m1, ceo1, "CEO", "current")
-    g1.add_edge(ceo1, uni1, "graduated from", "current")
+    g1.add_edge(m1, dv1, "acquired")
+    g1.add_edge(m1, ceo1, "CEO")
+    g1.add_edge(ceo1, uni1, "graduated from")
 
     g2 = Graph(id="g2")
     m2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault")
     ceo2 = g2.add_entity("A. Johnson")
     uni2 = g2.add_entity("Stanford University")
-    g2.add_edge(m2, dv2, "purchased", "current")
-    g2.add_edge(m2, ceo2, "CEO", "current")
-    g2.add_edge(ceo2, uni2, "graduated from", "current")
+    g2.add_edge(m2, dv2, "purchased")
+    g2.add_edge(m2, ceo2, "CEO")
+    g2.add_edge(ceo2, uni2, "graduated from")
 
     # Background to establish CEO as functional (1:1)
     bg_graphs = []
@@ -958,7 +879,7 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
         bg = Graph(id=f"bg{i}")
         p = bg.add_entity(person)
         o = bg.add_entity(org)
-        bg.add_edge(p, o, "CEO", "current")
+        bg.add_edge(p, o, "CEO")
         bg_graphs.append(bg)
 
     graphs = [g1, g2, *bg_graphs]
@@ -1012,15 +933,15 @@ def test_predecessor_successor_at_same_company_no_match(embedder):
     park1 = g1.add_entity("David Park")
     chen1 = g1.add_entity("Sarah Chen")
     nextera1 = g1.add_entity("Nextera Energy Solutions")
-    g1.add_edge(park1, nextera1, "is CEO of", "current")
-    g1.add_edge(chen1, nextera1, "was named CEO of", "current")
+    g1.add_edge(park1, nextera1, "is CEO of")
+    g1.add_edge(chen1, nextera1, "was named CEO of")
 
     g2 = Graph(id="g2")
     park2 = g2.add_entity("David Park")
     chen2 = g2.add_entity("Sarah Chen")
     nextera2 = g2.add_entity("Nextera Energy Solutions")
-    g2.add_edge(park2, nextera2, "serves as CEO of", "current")
-    g2.add_edge(chen2, nextera2, "became CEO of", "current")
+    g2.add_edge(park2, nextera2, "serves as CEO of")
+    g2.add_edge(chen2, nextera2, "became CEO of")
 
     confidence, _, _ = match_graphs([g1, g2], embedder)
 
@@ -1068,8 +989,8 @@ def test_shared_event_does_not_merge_different_people(embedder):
     vasquez1 = g1.add_entity("Dr. Elena Vasquez")
     volta1 = g1.add_entity("Volta Systems")
     summit1 = g1.add_entity("TechForward Summit")
-    g1.add_edge(vasquez1, volta1, "newly installed as CTO of", "current")
-    g1.add_edge(vasquez1, summit1, "spoke at", "current")
+    g1.add_edge(vasquez1, volta1, "newly installed as CTO of")
+    g1.add_edge(vasquez1, summit1, "spoke at")
 
     # Source 2: Sharma attended "TechForward" (short name → separate entity,
     # "attended" clusters with "spoke at", not "gave keynote at")
@@ -1077,8 +998,8 @@ def test_shared_event_does_not_merge_different_people(embedder):
     sharma2 = g2.add_entity("Dr. Priya Sharma")
     lightwave2 = g2.add_entity("Lightwave Analytics")
     summit2 = g2.add_entity("TechForward")
-    g2.add_edge(sharma2, lightwave2, "is founder of", "current")
-    g2.add_edge(sharma2, summit2, "attended", "current")
+    g2.add_edge(sharma2, lightwave2, "is founder of")
+    g2.add_edge(sharma2, summit2, "attended")
 
     # Source 3: Vasquez gave keynote ("gave keynote at" cluster ≠ "spoke at")
     g3 = Graph(id="g3")
@@ -1086,9 +1007,9 @@ def test_shared_event_does_not_merge_different_people(embedder):
     volta3 = g3.add_entity("Volta Systems")
     ibm3 = g3.add_entity("IBM Research")
     summit3 = g3.add_entity("TechForward Summit")
-    g3.add_edge(vasquez3, volta3, "is CTO of", "current")
-    g3.add_edge(vasquez3, ibm3, "worked at", "current")
-    g3.add_edge(vasquez3, summit3, "gave keynote at", "current")
+    g3.add_edge(vasquez3, volta3, "is CTO of")
+    g3.add_edge(vasquez3, ibm3, "worked at")
+    g3.add_edge(vasquez3, summit3, "gave keynote at")
 
     # Source 4: Sharma gave keynote at "TechForward Summit"
     g4 = Graph(id="g4")
@@ -1096,9 +1017,9 @@ def test_shared_event_does_not_merge_different_people(embedder):
     lightwave4 = g4.add_entity("Lightwave Analytics")
     meridian4 = g4.add_entity("Meridian Technologies")
     summit4 = g4.add_entity("TechForward Summit")
-    g4.add_edge(sharma4, lightwave4, "co-founded", "current")
-    g4.add_edge(sharma4, meridian4, "set to become SVP of Analytics at", "current")
-    g4.add_edge(sharma4, summit4, "gave keynote at", "current")
+    g4.add_edge(sharma4, lightwave4, "co-founded")
+    g4.add_edge(sharma4, meridian4, "set to become SVP of Analytics at")
+    g4.add_edge(sharma4, summit4, "gave keynote at")
 
     confidence, _, _ = match_graphs([g1, g2, g3, g4], embedder)
 
