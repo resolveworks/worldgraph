@@ -105,5 +105,38 @@ cases:
       relation: be building
       temporal: past
   evaluators: []
+- name: temporal_scope
+  inputs: temporal_scope
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Nordwind Shipping
+    - id: e2
+      name: Baltic Freight
+    - id: e3
+      name: Caspian Lines
+    - id: e4
+      name: Gdansk
+    - id: e5
+      name: Ruta Sellen
+    relations:
+    - source: e1
+      target: e2
+      relation: acquire
+      temporal: past
+    - source: e1
+      target: e4
+      relation: be headquartered in
+      temporal: current
+    - source: e5
+      target: e1
+      relation: be chief executive of
+      temporal: current
+    - source: e1
+      target: e3
+      relation: acquire
+      temporal: future
+  evaluators: []
 evaluators: []
 report_evaluators: []
