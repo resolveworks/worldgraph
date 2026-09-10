@@ -2,6 +2,7 @@ from pathlib import Path
 
 import click
 
+from worldgraph.constants import MERGE_THRESHOLD, RELATION_THRESHOLD
 from worldgraph.extract import run_extraction
 from worldgraph.match import run_matching
 
@@ -33,7 +34,7 @@ def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
 @click.option("-o", "--output", required=True, type=click.Path(path_type=Path))
 @click.option(
     "--relation-threshold",
-    default=0.8,
+    default=RELATION_THRESHOLD,
     type=float,
     help="Minimum cosine similarity for two relation phrases to be treated as equivalent.",
 )
@@ -45,7 +46,7 @@ def extract(articles: tuple[Path, ...], output_dir: Path, model: str):
 )
 @click.option(
     "--merge-threshold",
-    default=0.9,
+    default=MERGE_THRESHOLD,
     type=float,
     help="Minimum confidence, backed by structural evidence, to merge two entities.",
 )

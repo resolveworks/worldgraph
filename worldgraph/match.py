@@ -24,7 +24,12 @@ from typing import NamedTuple
 import click
 import numpy as np
 from dotenv import load_dotenv
-from worldgraph.constants import RELATION_TEMPLATE
+
+from worldgraph.constants import (
+    MERGE_THRESHOLD,
+    RELATION_TEMPLATE,
+    RELATION_THRESHOLD,
+)
 from worldgraph.embed import Embedder
 from worldgraph.graph import (
     Graph,
@@ -312,7 +317,7 @@ def propagate_similarity(
     max_iter: int = 30,
     epsilon: float = 1e-4,
     exp_lambda: float = 1.0,
-    merge_threshold: float = 0.9,
+    merge_threshold: float = MERGE_THRESHOLD,
     damping: float = 0.5,
     prior_strength: float = 1.0,
 ) -> tuple[Confidence, list[MatchGroup]]:
@@ -561,7 +566,7 @@ def propagate_similarity(
 def match_graphs(
     graphs: list[Graph],
     embedder: Embedder,
-    rel_cluster_threshold: float = 0.8,
+    rel_cluster_threshold: float = RELATION_THRESHOLD,
     **propagate_kwargs,
 ) -> tuple[Confidence, list[MatchGroup], Graph]:
     """Core matching pipeline: graphs → (confidence, match groups, unified graph).

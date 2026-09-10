@@ -1117,6 +1117,23 @@ wheels = [
 ]
 
 [[package]]
+name = "pydantic-evals"
+version = "2.42.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "logfire-api" },
+    { name = "pydantic" },
+    { name = "pydantic-ai-slim" },
+    { name = "pyyaml" },
+    { name = "rich" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5f/9c/d4ae7d8b2bb980c4c9802cdf62614a8487a96849fc0b8e915ab3248d767a/pydantic_evals-2.42.0.tar.gz", hash = "sha256:40f4af80f7deaa44c49a6e6ae773c8a008b10aaed186a15a24e0d35edca5e54f", size = 88627, upload-time = "2026-09-09T03:48:52.502Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/75/b9/ef0e9de810e16f1f5f68e717c6cf3e7c1e58cedfdefcc98bfff5fa214d46/pydantic_evals-2.42.0-py3-none-any.whl", hash = "sha256:08b88d2ae99d62b43c70c3765a754ff5d689b786fbab66f082870b0fd2b0bcc9", size = 103905, upload-time = "2026-09-09T03:48:45.585Z" },
+]
+
+[[package]]
 name = "pydantic-graph"
 version = "2.42.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1890,6 +1907,7 @@ source = { editable = "." }
 dependencies = [
     { name = "click" },
     { name = "pydantic-ai-slim", extra = ["openai", "sentence-transformers"] },
+    { name = "pydantic-evals" },
     { name = "python-dotenv" },
     { name = "rapidfuzz" },
 ]
@@ -1904,6 +1922,7 @@ dev = [
 requires-dist = [
     { name = "click", specifier = ">=8.3.1" },
     { name = "pydantic-ai-slim", extras = ["openai", "sentence-transformers"], specifier = ">=2.42.0" },
+    { name = "pydantic-evals", specifier = ">=2.42.0" },
     { name = "python-dotenv", specifier = ">=1.2.1" },
     { name = "rapidfuzz", specifier = ">=3.14.3" },
 ]

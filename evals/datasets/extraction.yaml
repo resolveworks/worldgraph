@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=extraction_schema.json
+name: extraction-fixtures
+cases: []
+evaluators: []
+report_evaluators: []
