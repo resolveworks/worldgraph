@@ -10,13 +10,10 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
 from worldgraph.extract import Event, Extraction, build_agent, extract_article
-
-load_dotenv()
 
 FIXTURES = Path(__file__).parent / "fixtures"
 DATASET_PATH = Path(__file__).parent / "datasets" / "extraction.yaml"

@@ -2,13 +2,10 @@ import os
 from pathlib import Path
 
 import click
-from dotenv import load_dotenv
 from pydantic import BaseModel, Field, model_validator
 from pydantic_ai import Agent
 
 from worldgraph.graph import Graph, Role, save_graph
-
-load_dotenv()
 
 SYSTEM_PROMPT = """You are an event extraction system building a graph of world facts from a news article. Entities are things in the world — people, organizations, places, and things. Events are the facts the article asserts: things that happen or hold between participants.
 

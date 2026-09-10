@@ -1,8 +1,4 @@
-from dotenv import load_dotenv
-
 from worldgraph.graph import ROLES, Graph, Node
-
-load_dotenv()
 
 
 def fact(

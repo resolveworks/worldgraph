@@ -4,10 +4,10 @@ Cross-source structural matching for knowledge extraction from news: outlets rep
 
 ## Commands
 
-- Tests: `uv run pytest` — requires `EXTRACTION_MODEL` in `.env` (the suite imports `evals/run.py`, which reads it at import time; no LLM calls are made)
+- Tests: `uv run --env-file .env pytest` — requires `EXTRACTION_MODEL` in `.env` (the suite imports `evals/run.py`, which reads it at import time; no LLM calls are made)
 - Lint / typecheck: `uv run ruff check .` and `uv run pyright`
-- Pipeline: `uv run worldgraph extract articles/*.md -o graphs/`, then `uv run worldgraph match graphs/*.json -o matched.json`
-- Extraction eval (makes LLM calls): `uv run python evals/run.py`
+- Pipeline: `uv run --env-file .env worldgraph extract articles/*.md -o graphs/`, then `uv run worldgraph match graphs/*.json -o matched.json`
+- Extraction eval (makes LLM calls): `uv run --env-file .env python evals/run.py`
 
 ## Why the design is what it is
 
