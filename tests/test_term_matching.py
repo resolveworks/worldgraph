@@ -18,12 +18,12 @@ def test_identical_fact_matches_both_nodes_and_edge(embedder):
     first = Graph(id="article-1")
     acme_1 = first.add_entity("Acme Corp")
     gamma_1 = first.add_entity("Gamma AI")
-    acquisition_1 = first.add_edge(acme_1, gamma_1, "acquired", "past")
+    acquisition_1 = first.add_edge(acme_1, gamma_1, "acquire", "past")
 
     second = Graph(id="article-2")
     acme_2 = second.add_entity("Acme Corp")
     gamma_2 = second.add_entity("Gamma AI")
-    acquisition_2 = second.add_edge(acme_2, gamma_2, "acquired", "past")
+    acquisition_2 = second.add_edge(acme_2, gamma_2, "acquire", "past")
 
     _, groups, unified = match_graphs([first, second], embedder)
 
@@ -38,12 +38,12 @@ def test_synonymous_relation_names_match_when_endpoints_match(embedder):
     first = Graph(id="article-1")
     buyer_1 = first.add_entity("Acme Corp")
     target_1 = first.add_entity("Gamma AI")
-    acquisition = first.add_edge(buyer_1, target_1, "acquired", "past")
+    acquisition = first.add_edge(buyer_1, target_1, "acquire", "past")
 
     second = Graph(id="article-2")
     buyer_2 = second.add_entity("Acme Corp")
     target_2 = second.add_entity("Gamma AI")
-    takeover = second.add_edge(buyer_2, target_2, "took control of", "past")
+    takeover = second.add_edge(buyer_2, target_2, "take control of", "past")
 
     _, groups, _ = match_graphs([first, second], embedder)
 
@@ -59,7 +59,7 @@ def test_same_relation_name_does_not_match_with_wrong_endpoints(
     first = Graph(id="article-1")
     acme_1 = first.add_entity("Acme Corp")
     gamma_1 = first.add_entity("Gamma AI")
-    acquisition_1 = first.add_edge(acme_1, gamma_1, "acquired", "past")
+    acquisition_1 = first.add_edge(acme_1, gamma_1, "acquire", "past")
 
     second = Graph(id="article-2")
     if endpoint_arrangement == "swapped":
@@ -68,7 +68,7 @@ def test_same_relation_name_does_not_match_with_wrong_endpoints(
     else:
         source = second.add_entity("Northstar Labs")
         target = second.add_entity("CloudScale")
-    acquisition_2 = second.add_edge(source, target, "acquired", "past")
+    acquisition_2 = second.add_edge(source, target, "acquire", "past")
 
     _, groups, _ = match_graphs([first, second], embedder)
 
@@ -79,12 +79,12 @@ def test_matched_edge_structure_reinforces_name_variant_node(embedder):
     first = Graph(id="article-1")
     buyer_1 = first.add_entity("Meridian Technologies")
     target_1 = first.add_entity("DataVault")
-    acquisition_1 = first.add_edge(buyer_1, target_1, "acquired", "past")
+    acquisition_1 = first.add_edge(buyer_1, target_1, "acquire", "past")
 
     second = Graph(id="article-2")
     buyer_2 = second.add_entity("Meridian Tech")
     target_2 = second.add_entity("DataVault")
-    acquisition_2 = second.add_edge(buyer_2, target_2, "acquired", "past")
+    acquisition_2 = second.add_edge(buyer_2, target_2, "acquire", "past")
 
     _, groups, _ = match_graphs([first, second], embedder)
 
