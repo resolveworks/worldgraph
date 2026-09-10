@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=extraction_schema.json
 name: extraction-fixtures
 cases:
 - name: self_directed_actions
