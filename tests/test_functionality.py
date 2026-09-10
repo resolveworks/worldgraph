@@ -1,12 +1,10 @@
 """Unit tests for compute_functionality."""
 
 import pytest
-
 from conftest import compute_rel_clusters
 
 from worldgraph.graph import Graph
 from worldgraph.match import compute_functionality
-
 
 # ---------------------------------------------------------------------------
 # Tests
@@ -106,10 +104,12 @@ def test_dissimilar_phrases_do_not_pool(embedder):
     assert func[("acquired", "current")].forward == pytest.approx(1.0)
 
 
-def test_same_phrase_different_temporal_pools_separately(embedder):
-    """'acquire' in different temporal classes pools separately: each
-    (phrase, temporal) pool is 1:1, so both forward functionalities are 1.0
-    (pooled together they would be 0.5)."""
+def test_same_phrase_different_temporal_values_pool_together(embedder):
+    """Temporal metadata does not partition relation functionality.
+
+    Both occurrences belong to one pool, where Apple maps to two targets, so
+    each occurrence receives the same 0.5 forward functionality weight.
+    """
     g = Graph(id="g1")
     apple = g.add_entity("Apple")
     beats = g.add_entity("Beats")
@@ -118,8 +118,8 @@ def test_same_phrase_different_temporal_pools_separately(embedder):
     g.add_edge(apple, shazam, "acquire", "current")
 
     func = compute_functionality([g], compute_rel_clusters([g], embedder))
-    assert func[("acquire", "past")].forward == pytest.approx(1.0)
-    assert func[("acquire", "current")].forward == pytest.approx(1.0)
+    assert func[("acquire", "past")].forward == pytest.approx(0.5)
+    assert func[("acquire", "current")].forward == pytest.approx(0.5)
 
 
 def test_same_entity_name_across_graphs_pools(embedder):
