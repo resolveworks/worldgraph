@@ -1,84 +1,30 @@
 # Worldgraph
 
-## What This Is
+Cross-source structural matching for knowledge extraction from news: outlets report the same facts in different wording; we extract entity–event graphs per article and match their structure across sources, so entities deduplicate and facts confirm by multi-article agreement. Design narrative and literature: `README.md`.
 
-A proof-of-concept for **cross-source structural matching** for knowledge extraction from news articles. See `README.md` for the full proposal.
+## Commands
 
-The core idea: news redundancy is the signal, not noise. Multiple outlets report the same facts with different wording. By extracting small entity-relation subgraphs per article and matching their structure across sources, we can deduplicate entities and validate facts more reliably than string matching alone.
+- Tests: `uv run pytest` — requires `EXTRACTION_MODEL` in `.env` (the suite imports `evals/run.py`, which reads it at import time; no LLM calls are made)
+- Lint / typecheck: `uv run ruff check .` and `uv run pyright`
+- Pipeline: `uv run worldgraph extract articles/*.md -o graphs/`, then `uv run worldgraph match graphs/*.json -o matched.json`
+- Extraction eval (makes LLM calls): `uv run python evals/run.py`
 
-The target input is a continuous feed of all major news outlets — not a curated sample. The PoC uses synthetic test data for controlled evaluation, but algorithmic decisions should hold up at that scale. A PoC that only works on hand-picked articles proves nothing.
+## Why the design is what it is
 
-## Architecture (PoC Pipeline)
+Not derivable from the code — the reasoning behind it:
 
-1. **Extract** — Process each article independently with an LLM to produce entity-relation subgraphs (one JSON per article)
-2. **Match** — Align entities across graphs using similarity propagation
+- **Relations are reified as event nodes** so that events match through the same structural propagation as entities: "acquired" and "purchased" events align because their participants align — event labels are display text and are never compared.
+- **The closed role vocabulary satisfies Similarity Flooding's identical-edge-label assumption by construction**, which is what lets the matcher gate alignment on exact role equality. The set is not arbitrary: it is the top of the intersection of the established inventories (PropBank's arguments/ArgM set, AMR's relations, VerbNet's thematic roles, schema.org Action), trimmed to what news text exercises. Core roles are frame-specific and live in the event label; only the periphery — where those projects converge — became roles.
+- **Consistency beats correctness** in role assignment: what breaks matching is not a philosophically wrong role but two articles assigning *different* roles to the same participant. Every added role is another LLM decision point; the set grows only when a failing test or golden demands a distinction it cannot express. Never extend it casually.
+- **Extraction canonicalization**, pinned by tests and goldens: stative employment is person-anchored (`agent`=employee, `patient`=employer, `capacity`=title) regardless of the article's voice, so "X works at Acme" and "Acme employs X" yield identical structure. Hiring is a different fact — an employer's action — and must never merge with a stative works-at event. Organizations are patients, not locations; facilities and cities are locations/destinations.
 
-```bash
-worldgraph extract articles/*.md -o graphs/      # article text → per-article graph JSON
-worldgraph match graphs/*.json -o matched.json   # per-article graphs → unified matched graph
-```
+## Testing
 
-In the matched output, entities with >1 occurrence are matched entities, edges with >1 article are confirmed facts.
-
-## Project Structure
-
-- `worldgraph/` — one module per pipeline stage (`extract.py`, `match.py`), plus `cli.py` for the Click entry point
-- `tests/` — pytest suite, layered (see Testing Strategy below)
-
-## Matching Algorithm
-
-The matching stage implements **similarity propagation** (inspired by PARIS/FLORA) adapted for free-text relation phrases. The design is driven by the literature and validated by automated tests — we don't have real-world ground truth yet, so the tests encode what the algorithm *should* do based on the papers and our understanding of the domain. When a test fails, it's either a bug or a wrong assumption about what the algorithm needs.
-
-### What's implemented
-
-The core propagation loop (`match.py`):
-
-1. **Name-similarity seeding** — Soft TF-IDF + Jaro-Winkler seeds the confidence dict before iteration starts. This gives propagation initial signal to work with.
-
-2. **Relation similarity via sentence embeddings** — relation phrase similarity is thresholded into equivalence classes. "acquired" ↔ "purchased" (above threshold) are treated as equivalent; "acquired" ↔ "located in" (below) are not. The threshold is used consistently for functionality pooling and propagation gating.
-
-3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with equivalent relation phrases pooled.
-
-4. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
-
-5. **Damped fixed-point iteration** — `new = (1-d)*old + d*computed` where computed integrates positive and negative evidence around the name-similarity seed. Converges via contraction.
-
-6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Match groups come from that propagation's union-find: a single merge threshold gated on structural evidence, no post-hoc grouping pass.
-
-7. **Negative evidence** — integrated directly into the single propagation score. Neighbors with confidence < 0.5 contribute negative evidence weighted by forward functionality, pushing the score toward 0. Damped iteration bounds circular reinforcement geometrically.
-
-8. **Progressive merging** — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles. The in-loop union-find is the sole merge authority: pairs below the merge threshold, or with zero tested neighbors, never merge regardless of name similarity.
-
-### What's not implemented (yet)
-
-- **Local functionality** — FLORA uses per-entity functionality (`1/|targets for this specific source|`), not just global averages. We only compute global.
-
-- **Confidence-weighted union-find** — current union-find enforces blind transitivity. A↔B and B↔C above threshold merges all three regardless of A↔C score. Validating group coherence would catch the worst cascading false merges.
-
-- **Cross-lingual support** — swapping to a multilingual embedding model. The algorithm is language-agnostic by design; only the model choice needs to change.
-
-- **Joint relation alignment** — PARIS alternates entity and relation alignment. We pre-compute relation similarity from embeddings and hold it fixed.
-
-## Tech Stack
-
-- Python 3.12, managed with **uv** (`uv run`, `uv add`, etc.)
-- LLM for entity/relation extraction via pydantic-ai (provider-agnostic model strings, default DeepSeek)
-- Sentence embeddings for relation phrase similarity; Soft TF-IDF + Jaro-Winkler for entity name matching
-- No ML training — fully unsupervised, classical graph methods
-
-## Testing Strategy
-
-One assumption per test, on the smallest input where it's observable. No mocking — real embeddings throughout. A failure at a higher layer should always be explainable by a failure at a lower layer.
-
-Session-scoped fixture in `conftest.py`: `embedder` provides a session-scoped `Embedder` instance. Use `embedder.embed(keys, template=RELATION_TEMPLATE)` for relation embeddings.
-
-- **Layer 1 — Unit**: individual primitives (`compute_functionality`, `UnionFind`)
-- **Layer 2 — Propagation**: structural and functionality effects on similarity scores, convergence guarantees
-- **Layer 3 — Integration**: correct merges, no spurious matches, correct canonical names and confirmed edges
+Tests and eval goldens encode the *expected* model, not current behavior — never tune an assertion to what the code currently returns. Red tests are an accepted state. Goldens double as the annotation guidelines for role assignment. One assumption per test, on the smallest input that shows it; no mocking. When a matching failure is identified, write the failing test before touching the algorithm.
 
 ## Conventions
 
-- **Clean refactors, not patches**: this is an early-stage project with no external users. Every change should produce a pristine new state — never add backward-compatibility shims, preserve stale signatures, or keep dead code around "just in case". Refactor completely: rename freely, change interfaces, delete old code. No technical debt.
-- **Pipeline modularity**: each stage should be runnable independently.
-- **Scale-readiness**: the core algorithm must hold up on real, noisy, multilingual, large-scale news data.
-- **Tests before fixes**: when a matching failure is identified, write a failing test (xfail if needed) that captures the specific scenario before changing the algorithm. The test encodes what "correct" means; the fix is just making it pass.
+- **Clean refactors, not patches**: early-stage project, no external users. No back-compat shims, stale signatures, or dead code — rename and delete freely.
+- **Pipeline modularity**: every stage runnable independently.
+- **Scale-readiness**: decisions must hold up on real, noisy, multilingual, large-scale news feeds.
+- **Docs state only what code can't show**: no regurgitating the codebase in docs or comments. When the algorithm, schema, or vocabulary changes, docs change in the same commit — stale docs are bugs.

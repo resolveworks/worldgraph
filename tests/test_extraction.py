@@ -98,11 +98,12 @@ def test_event_without_participants_raises():
 
 
 def test_role_vocabulary_is_closed():
-    """Roles outside agent/patient are rejected at the schema boundary —
-    the matcher aligns participants by exact role equality, so role
-    consistency is enforced structurally, not by prompt discipline."""
+    """Roles outside the closed nine-role vocabulary are rejected at the
+    schema boundary — the matcher aligns participants by exact role
+    equality, so role consistency is enforced structurally, not by prompt
+    discipline."""
     with pytest.raises(ValidationError):
-        Participant(role="location", ref="e1")
+        Participant(role="co-agent", ref="e1")
 
 
 def test_event_participant_may_reference_another_event():
@@ -135,8 +136,8 @@ def test_event_participant_may_reference_another_event():
 
 
 def qualifier_extraction() -> Extraction:
-    """The Corin example: one manage event whose qualifiers (role, scope)
-    are patients of the event itself."""
+    """The Corin example: one manage event whose qualifiers (title, scope)
+    are participants with their proper roles — capacity and beneficiary."""
     return Extraction(
         entities=entities("Tessa Corin", "Halden Freight", "Vesterby", "managing director"),
         events=[
@@ -146,8 +147,8 @@ def qualifier_extraction() -> Extraction:
                 participants=[
                     Participant(role="agent", ref="e1"),
                     Participant(role="patient", ref="e2"),
-                    Participant(role="patient", ref="e4"),
-                    Participant(role="patient", ref="e3"),
+                    Participant(role="capacity", ref="e4"),
+                    Participant(role="beneficiary", ref="e3"),
                 ],
             ),
         ],
@@ -166,7 +167,7 @@ def test_extraction_to_graph_kinds_and_roles():
     assert events[0].names == ["manage"]
 
     roles = sorted(edge.role for edge in graph.edges.values())
-    assert roles == ["agent", "patient", "patient", "patient"]
+    assert roles == ["agent", "beneficiary", "capacity", "patient"]
     assert all(edge.source == events[0].id for edge in graph.edges.values())
 
 

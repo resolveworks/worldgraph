@@ -17,8 +17,8 @@ Be thorough: capture every asserted event and every participant. Use the exact n
 Rules:
 - Extract only what the article asserts as fact. Denied, disputed, or merely alleged claims are not extracted.
 - Every event has a label and participants. The label is the base-form verb phrase without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. A label contains only the event itself, never entity names. Entities that a fact refers to are nodes, not label content.
-- Each participant has a role: 'agent' for the one doing or bringing about the event, 'patient' for anything else participating — the object acted on, a place, a capacity, a beneficiary. These are the only two roles.
-- Qualifiers of a fact — a role, a place, a scope — are participants of that event, never separate events: if Tessa Corin manages Halden Freight as managing director for Vesterby, that is one 'manage' event with agent Tessa Corin and patients Halden Freight, managing director, and Vesterby.
+- Each participant has a role from this closed set: 'agent' (the one doing or bringing about the event), 'patient' (the thing acted on, changed, or that the event is about), 'recipient' (a person or organization that receives something in a transfer — 'awarded to', 'sent to'), 'beneficiary' (the party something is done for or in the name of — 'for', 'on behalf of'), 'source' (origin of motion or transfer — 'from'), 'destination' (a place that is the endpoint of motion or transfer — 'moved to', 'travelled to'), 'location' (a static place — 'in', 'at'), 'capacity' (the title or role a participant acts in — 'as CEO'), 'instrument' (the tool or means — 'with drones', 'via email'), 'price' (the monetary amount paid, exchanged, fined, or raised — 'for $4 billion', 'fined $2 million'). These are the only roles.
+- Qualifiers of a fact — a title, a place, a scope — are participants of that event with their proper role, never separate events and never label content: if Tessa Corin manages Halden Freight as managing director for Vesterby, that is one 'manage' event with agent Tessa Corin, patient Halden Freight, capacity managing director, and beneficiary Vesterby.
 - A participant may be another event: if someone joins a visit or one event causes another, the participating event is a participant. 'Ivo Brandt joined the visit' is a 'join' event with agent Ivo Brandt and the visit event as patient; 'the closure caused the suspension' is a 'cause' event with the closure event as agent and the suspension event as patient.
 - The media is not part of the world graph: the publishing outlet, journalists, photographers, and the act of reporting never appear as entities or events.
 - An event needs at least one participant. An action with no entity or event participant produces no event.
@@ -35,8 +35,14 @@ class Entity(BaseModel):
 
 class Participant(BaseModel):
     role: Role = Field(
-        description="'agent' for the one doing or bringing about the event; "
-        "'patient' for anything else participating — object, place, capacity, beneficiary"
+        description="One of: 'agent' (doer), 'patient' (thing acted on), "
+        "'recipient' (animate receiver in a transfer), "
+        "'beneficiary' (done for or in the name of), "
+        "'source' (origin of motion/transfer), "
+        "'destination' (place endpoint of motion/transfer), "
+        "'location' (static place), 'capacity' (title or role acted in), "
+        "'instrument' (tool or means), "
+        "'price' (monetary amount paid, exchanged, fined, or raised)"
     )
     ref: str = Field(description="The 'id' of the participating entity or event")
 

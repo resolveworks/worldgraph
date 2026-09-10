@@ -44,8 +44,9 @@ def _merge_scenario() -> list[Graph]:
         acq = g.add_entity(acquirer)
         tgt = g.add_entity(target)
         ceo = g.add_entity("James Chen" if i < 2 else "Sarah Park")
-        fact(g, label, agent=acq, patients=(tgt,))
-        fact(g, "employ as CEO", agent=acq, patients=(ceo,))
+        ceo_title = g.add_entity("CEO")
+        fact(g, label, agent=acq, patient=tgt)
+        fact(g, "employ", agent=ceo, patient=acq, capacity=ceo_title)
         graphs.append(g)
     return graphs
 
@@ -201,7 +202,7 @@ def test_duplicate_edges_are_harmless():
     g2 = Graph(id="g2")
     x2 = g2.add_entity("X")
     y2 = g2.add_entity("Y")
-    event2 = fact(g2, "acquire", agent=x2, patients=(y2,))
+    event2 = fact(g2, "acquire", agent=x2, patient=y2)
 
     _, groups, _ = match_graphs([g1, g2])
 

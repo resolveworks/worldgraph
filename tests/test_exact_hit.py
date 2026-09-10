@@ -43,7 +43,15 @@ def extraction(entities, events) -> Extraction:
 GOLD = extraction(
     ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
     [
-        ("manage", [("agent", "e1"), ("patient", "e2"), ("patient", "e3"), ("patient", "e4")]),
+        (
+            "manage",
+            [
+                ("agent", "e1"),
+                ("patient", "e2"),
+                ("capacity", "e4"),
+                ("beneficiary", "e3"),
+            ],
+        ),
     ],
 )
 
@@ -63,9 +71,9 @@ def test_hit_despite_reordered_terms_and_different_ids():
                 id="s1",
                 label="manage",
                 participants=[
-                    Participant(role="patient", ref="q4"),
-                    Participant(role="patient", ref="q3"),
+                    Participant(role="beneficiary", ref="q3"),
                     Participant(role="patient", ref="q2"),
+                    Participant(role="capacity", ref="q4"),
                     Participant(role="agent", ref="q1"),
                 ],
             ),
@@ -77,7 +85,12 @@ def test_hit_despite_reordered_terms_and_different_ids():
 def test_missing_participant_is_a_miss():
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
-        [("manage", [("agent", "e1"), ("patient", "e2"), ("patient", "e3")])],
+        [
+            (
+                "manage",
+                [("agent", "e1"), ("patient", "e2"), ("capacity", "e4")],
+            )
+        ],
     )
     assert not hit(pred, GOLD)
 
@@ -87,7 +100,17 @@ def test_swapped_roles_are_a_miss():
     are the only structure the matcher sees; getting them wrong is wrong."""
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
-        [("manage", [("agent", "e2"), ("patient", "e1"), ("patient", "e3"), ("patient", "e4")])],
+        [
+            (
+                "manage",
+                [
+                    ("agent", "e2"),
+                    ("patient", "e1"),
+                    ("capacity", "e4"),
+                    ("beneficiary", "e3"),
+                ],
+            )
+        ],
     )
     assert not hit(pred, GOLD)
 
@@ -101,13 +124,19 @@ def test_participant_on_wrong_event_occurrence_is_a_miss():
         entities,
         [
             ("manage", [("agent", "e1"), ("patient", "e2")]),
-            ("manage", [("agent", "e1"), ("patient", "e3"), ("patient", "e4")]),
+            (
+                "manage",
+                [("agent", "e1"), ("patient", "e3"), ("capacity", "e4")],
+            ),
         ],
     )
     pred = extraction(
         entities,
         [
-            ("manage", [("agent", "e1"), ("patient", "e2"), ("patient", "e4")]),
+            (
+                "manage",
+                [("agent", "e1"), ("patient", "e2"), ("capacity", "e4")],
+            ),
             ("manage", [("agent", "e1"), ("patient", "e3")]),
         ],
     )
@@ -150,7 +179,17 @@ def test_extra_entity_is_a_miss():
             "managing director",
             "Meridian Rail",
         ],
-        [("manage", [("agent", "e1"), ("patient", "e2"), ("patient", "e3"), ("patient", "e4")])],
+        [
+            (
+                "manage",
+                [
+                    ("agent", "e1"),
+                    ("patient", "e2"),
+                    ("capacity", "e4"),
+                    ("beneficiary", "e3"),
+                ],
+            )
+        ],
     )
     assert not hit(pred, GOLD)
 
@@ -164,7 +203,17 @@ def test_duplicate_entity_name_is_a_miss():
             "Vesterby",
             "managing director",
         ],
-        [("manage", [("agent", "e1"), ("patient", "e3"), ("patient", "e4"), ("patient", "e5")])],
+        [
+            (
+                "manage",
+                [
+                    ("agent", "e2"),
+                    ("patient", "e3"),
+                    ("capacity", "e5"),
+                    ("beneficiary", "e4"),
+                ],
+            )
+        ],
     )
     assert not hit(pred, GOLD)
 
@@ -173,8 +222,16 @@ def test_extra_event_is_a_miss():
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
         [
-            ("manage", [("agent", "e1"), ("patient", "e2"), ("patient", "e3"), ("patient", "e4")]),
-            ("be based in", [("agent", "e2"), ("patient", "e3")]),
+            (
+                "manage",
+                [
+                    ("agent", "e1"),
+                    ("patient", "e2"),
+                    ("capacity", "e4"),
+                    ("beneficiary", "e3"),
+                ],
+            ),
+            ("be based in", [("patient", "e2"), ("location", "e3")]),
         ],
     )
     assert not hit(pred, GOLD)
@@ -183,6 +240,16 @@ def test_extra_event_is_a_miss():
 def test_changed_label_is_a_miss():
     pred = extraction(
         ["Tessa Corin", "Halden Freight", "Vesterby", "managing director"],
-        [("run", [("agent", "e1"), ("patient", "e2"), ("patient", "e3"), ("patient", "e4")])],
+        [
+            (
+                "run",
+                [
+                    ("agent", "e1"),
+                    ("patient", "e2"),
+                    ("capacity", "e4"),
+                    ("beneficiary", "e3"),
+                ],
+            )
+        ],
     )
     assert not hit(pred, GOLD)

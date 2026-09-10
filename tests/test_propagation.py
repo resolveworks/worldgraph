@@ -1,9 +1,9 @@
 """Layer 2 tests for similarity propagation over entity-event graphs.
 
 Graphs are bipartite: entity nodes connect to event nodes via role edges
-(agent/patient). Entity pairs are seeded by name similarity; event pairs
-start at the neutral prior (0.5) and are lifted or suppressed purely by
-structural evidence. Tests verify that:
+from the closed participant vocabulary. Entity pairs are seeded by name
+similarity; event pairs start at the neutral prior (0.5) and are lifted or
+suppressed purely by structural evidence. Tests verify that:
 
 - Matching names + matching structure produce correct matches
 - Synonym event labels are irrelevant: structure alone merges events
@@ -53,12 +53,12 @@ def test_matching_names_and_structure_produce_matches():
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
-    fact(g1, "acquire", agent=apple1, patients=(beats1,))
+    fact(g1, "acquire", agent=apple1, patient=beats1)
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
-    fact(g2, "acquire", agent=apple2, patients=(beats2,))
+    fact(g2, "acquire", agent=apple2, patient=beats2)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -79,12 +79,12 @@ def test_unrelated_graphs_do_not_match():
     g1 = Graph(id="g1")
     apple = g1.add_entity("Apple")
     beats = g1.add_entity("Beats")
-    fact(g1, "acquire", agent=apple, patients=(beats,))
+    fact(g1, "acquire", agent=apple, patient=beats)
 
     g2 = Graph(id="g2")
     tokyo = g2.add_entity("Tokyo")
     japan = g2.add_entity("Japan")
-    fact(g2, "be located in", agent=tokyo, patients=(japan,))
+    fact(g2, "be located in", patient=tokyo, location=japan)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -98,12 +98,12 @@ def test_weak_neighbors_do_not_produce_matches():
     g1 = Graph(id="g1")
     apple = g1.add_entity("Apple")
     beats = g1.add_entity("Beats")
-    fact(g1, "acquire", agent=apple, patients=(beats,))
+    fact(g1, "acquire", agent=apple, patient=beats)
 
     g2 = Graph(id="g2")
     google = g2.add_entity("Google")
     youtube = g2.add_entity("YouTube")
-    fact(g2, "acquire", agent=google, patients=(youtube,))
+    fact(g2, "acquire", agent=google, patient=youtube)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -118,18 +118,18 @@ def test_many_weak_paths_do_not_accumulate():
     target = g1.add_entity("Target")
     project = g1.add_entity("Project")
     person = g1.add_entity("Person")
-    fact(g1, "acquire", agent=org, patients=(target,))
-    fact(g1, "fund", agent=org, patients=(project,))
-    fact(g1, "hire", agent=org, patients=(person,))
+    fact(g1, "acquire", agent=org, patient=target)
+    fact(g1, "fund", agent=org, patient=project)
+    fact(g1, "hire", agent=org, patient=person)
 
     g2 = Graph(id="g2")
     city = g2.add_entity("City")
     country = g2.add_entity("Country")
     river = g2.add_entity("River")
     venue = g2.add_entity("Venue")
-    fact(g2, "be located in", agent=city, patients=(country,))
-    fact(g2, "border", agent=city, patients=(river,))
-    fact(g2, "host", agent=city, patients=(venue,))
+    fact(g2, "be located in", patient=city, location=country)
+    fact(g2, "border", agent=city, patient=river)
+    fact(g2, "host", agent=city, patient=venue)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -152,7 +152,7 @@ def test_single_shared_participant_does_not_merge_events():
     g2 = Graph(id="g2")
     john2 = g2.add_entity("John")
     car2 = g2.add_entity("car")
-    purchase = fact(g2, "purchase", agent=john2, patients=(car2,))
+    purchase = fact(g2, "purchase", agent=john2, patient=car2)
 
     _, groups, _ = match_graphs([g1, g2])
 
@@ -191,12 +191,12 @@ def test_mismatched_participant_suppresses_event_and_participants():
     g1 = Graph(id="g1")
     john1 = g1.add_entity("John")
     car1 = g1.add_entity("car")
-    purchase1 = fact(g1, "purchase", agent=john1, patients=(car1,))
+    purchase1 = fact(g1, "purchase", agent=john1, patient=car1)
 
     g2 = Graph(id="g2")
     john2 = g2.add_entity("John")
     truck2 = g2.add_entity("truck")
-    purchase2 = fact(g2, "purchase", agent=john2, patients=(truck2,))
+    purchase2 = fact(g2, "purchase", agent=john2, patient=truck2)
 
     confidence, groups, _ = match_graphs([g1, g2])
 
@@ -225,12 +225,12 @@ def test_agent_side_evidence_propagates():
     g1 = Graph(id="g1")
     src1 = g1.add_entity("Axiom Corp")
     tv1 = g1.add_entity("DataVault")
-    fact(g1, "acquire", agent=src1, patients=(tv1,))
+    fact(g1, "acquire", agent=src1, patient=tv1)
 
     g2 = Graph(id="g2")
     src2 = g2.add_entity("Pinnacle Ltd")
     tv2 = g2.add_entity("DataVault")
-    fact(g2, "acquire", agent=src2, patients=(tv2,))
+    fact(g2, "acquire", agent=src2, patient=tv2)
 
     # Premise: the observed pair has no name signal; the anchor is maximal
     idf = build_idf(["Axiom Corp", "Pinnacle Ltd", "DataVault"])
@@ -253,12 +253,12 @@ def test_patient_side_evidence_propagates():
     g1 = Graph(id="g1")
     src1 = g1.add_entity("Axiom Corp")
     tv1 = g1.add_entity("VaultWorks")
-    fact(g1, "acquire", agent=src1, patients=(tv1,))
+    fact(g1, "acquire", agent=src1, patient=tv1)
 
     g2 = Graph(id="g2")
     src2 = g2.add_entity("Axiom Corp")
     tv2 = g2.add_entity("CloudScale")
-    fact(g2, "acquire", agent=src2, patients=(tv2,))
+    fact(g2, "acquire", agent=src2, patient=tv2)
 
     # Premise: the observed pair has no name signal
     idf = build_idf(["Axiom Corp", "VaultWorks", "CloudScale"])
@@ -284,11 +284,11 @@ def test_hub_participant_weakens_evidence():
     a1 = Graph(id="a1")
     acme_a1 = a1.add_entity("Acme Corp")
     gamma_a1 = a1.add_entity("Gamma AI")
-    acq_a = fact(a1, "acquire", agent=acme_a1, patients=(gamma_a1,))
+    acq_a = fact(a1, "acquire", agent=acme_a1, patient=gamma_a1)
     a2 = Graph(id="a2")
     acme_a2 = a2.add_entity("Acme Corp")
     gamma_a2 = a2.add_entity("Gamma AI")
-    acq_b = fact(a2, "purchase", agent=acme_a2, patients=(gamma_a2,))
+    acq_b = fact(a2, "purchase", agent=acme_a2, patient=gamma_a2)
 
     conf_a, _, _ = match_graphs([a1, a2])
 
@@ -297,18 +297,18 @@ def test_hub_participant_weakens_evidence():
     b1 = Graph(id="b1")
     acme_b1 = b1.add_entity("Acme Corp")
     gamma_b1 = b1.add_entity("Gamma AI")
-    acq_c = fact(b1, "acquire", agent=acme_b1, patients=(gamma_b1,))
+    acq_c = fact(b1, "acquire", agent=acme_b1, patient=gamma_b1)
     b2 = Graph(id="b2")
     acme_b2 = b2.add_entity("Acme Corp")
     gamma_b2 = b2.add_entity("Gamma AI")
-    acq_d = fact(b2, "purchase", agent=acme_b2, patients=(gamma_b2,))
+    acq_d = fact(b2, "purchase", agent=acme_b2, patient=gamma_b2)
 
     background = []
     for i in range(6):
         bg = Graph(id=f"bg{i}")
         hub = bg.add_entity("Gamma AI")
         other = bg.add_entity(f"Investor {i}")
-        fact(bg, "invest in", agent=other, patients=(hub,))
+        fact(bg, "invest in", agent=other, patient=hub)
         background.append(bg)
 
     conf_b, _, _ = match_graphs([b1, b2, *background])
@@ -334,16 +334,16 @@ def _two_hop_chain_graphs(
     g1 = Graph(id="g1")
     far1 = g1.add_entity("Cordovan Industries")
     mid1 = g1.add_entity("Alpha Corp")
-    fact(g1, "acquire", agent=mid1, patients=(far1,))
+    fact(g1, "acquire", agent=mid1, patient=far1)
     for name in anchors:
-        fact(g1, "partner with", agent=mid1, patients=(g1.add_entity(name),))
+        fact(g1, "partner with", agent=mid1, patient=g1.add_entity(name))
 
     g2 = Graph(id="g2")
     far2 = g2.add_entity("NexGen Holdings")
     mid2 = g2.add_entity("Beta Inc")
-    fact(g2, "purchase", agent=mid2, patients=(far2,))
+    fact(g2, "purchase", agent=mid2, patient=far2)
     for name in anchors:
-        fact(g2, "collaborate with", agent=mid2, patients=(g2.add_entity(name),))
+        fact(g2, "collaborate with", agent=mid2, patient=g2.add_entity(name))
 
     return g1, g2, far1, mid1, far2, mid2
 
@@ -398,15 +398,15 @@ def test_name_variation_with_structural_reinforcement():
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
     ceo1 = g1.add_entity("Elena Vasquez")
-    fact(g1, "acquire", agent=meridian1, patients=(dv1,))
-    fact(g1, "employ", agent=meridian1, patients=(ceo1,))
+    fact(g1, "acquire", agent=meridian1, patient=dv1)
+    fact(g1, "employ", agent=ceo1, patient=meridian1)
 
     g2 = Graph(id="g2")
     meridian2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault Inc")
     ceo2 = g2.add_entity("Elena Vasquez")
-    fact(g2, "purchase", agent=meridian2, patients=(dv2,))
-    fact(g2, "employ", agent=meridian2, patients=(ceo2,))
+    fact(g2, "purchase", agent=meridian2, patient=dv2)
+    fact(g2, "employ", agent=ceo2, patient=meridian2)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -431,15 +431,15 @@ def test_dangling_entities_get_no_boost():
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
     solar = g1.add_entity("SolarGrid")
-    fact(g1, "acquire", agent=apple1, patients=(beats1,))
-    fact(g1, "hire", agent=apple1, patients=(solar,))
+    fact(g1, "acquire", agent=apple1, patient=beats1)
+    fact(g1, "hire", agent=apple1, patient=solar)
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
     wind = g2.add_entity("WindPower")
-    fact(g2, "purchase", agent=apple2, patients=(beats2,))
-    fact(g2, "hire", agent=apple2, patients=(wind,))
+    fact(g2, "purchase", agent=apple2, patient=beats2)
+    fact(g2, "hire", agent=apple2, patient=wind)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -461,12 +461,12 @@ def test_multiple_matched_events_accumulate():
     g1u = Graph(id="g1u")
     m1u = g1u.add_entity("Meridian Technologies")
     dv1u = g1u.add_entity("DataVault")
-    fact(g1u, "acquire", agent=m1u, patients=(dv1u,))
+    fact(g1u, "acquire", agent=m1u, patient=dv1u)
 
     g2u = Graph(id="g2u")
     m2u = g2u.add_entity("Meridian Tech")
     dv2u = g2u.add_entity("DataVault")
-    fact(g2u, "purchase", agent=m2u, patients=(dv2u,))
+    fact(g2u, "purchase", agent=m2u, patient=dv2u)
 
     confidence_uni, _, _ = match_graphs([g1u, g2u])
 
@@ -475,15 +475,15 @@ def test_multiple_matched_events_accumulate():
     m1b = g1b.add_entity("Meridian Technologies")
     dv1b = g1b.add_entity("DataVault")
     ceo1b = g1b.add_entity("Elena Vasquez")
-    fact(g1b, "acquire", agent=m1b, patients=(dv1b,))
-    fact(g1b, "employ", agent=m1b, patients=(ceo1b,))
+    fact(g1b, "acquire", agent=m1b, patient=dv1b)
+    fact(g1b, "employ", agent=ceo1b, patient=m1b)
 
     g2b = Graph(id="g2b")
     m2b = g2b.add_entity("Meridian Tech")
     dv2b = g2b.add_entity("DataVault")
     ceo2b = g2b.add_entity("Elena Vasquez")
-    fact(g2b, "purchase", agent=m2b, patients=(dv2b,))
-    fact(g2b, "employ", agent=m2b, patients=(ceo2b,))
+    fact(g2b, "purchase", agent=m2b, patient=dv2b)
+    fact(g2b, "employ", agent=ceo2b, patient=m2b)
 
     confidence_bi, _, _ = match_graphs([g1b, g2b])
 
@@ -508,12 +508,12 @@ def test_shared_event_does_not_override_name_dissimilarity():
     g1 = Graph(id="g1")
     sharma = g1.add_entity("Dr. Priya Sharma")
     nova1 = g1.add_entity("NovaTech Labs")
-    fact(g1, "found", agent=sharma, patients=(nova1,))
+    fact(g1, "found", agent=sharma, patient=nova1)
 
     g2 = Graph(id="g2")
     vasquez = g2.add_entity("Dr. Elena Vasquez")
     nova2 = g2.add_entity("NovaTech Labs")
-    fact(g2, "found", agent=vasquez, patients=(nova2,))
+    fact(g2, "found", agent=vasquez, patient=nova2)
 
     # Premise: name similarity alone is below threshold
     idf = build_idf(["Dr. Priya Sharma", "Dr. Elena Vasquez", "NovaTech Labs"])
@@ -534,18 +534,22 @@ def test_shared_event_does_not_override_name_dissimilarity():
 def test_similar_names_disjoint_neighborhoods_no_match():
     """Near-identical names with zero structural overlap should not match.
 
-    Replicates the Elena/Lena Vasquez false merge from real data. Their
-    CEO events share only the (name-mismatched) agent path, and the
-    mismatched company patients suppress the event pair."""
+    Replicates the Elena/Lena Vasquez false merge from real data. Both
+    hold a CEO office, so their employment events share the 'CEO'
+    capacity — but the agents are the near-identical people and the
+    patients pair Volta Systems against Halcyon Genomics, which has no
+    name signal: the mismatched patients suppress the event pairs."""
     g1 = Graph(id="g1")
     elena = g1.add_entity("Dr. Elena Vasquez")
     volta = g1.add_entity("Volta Systems")
-    fact(g1, "be CEO of", agent=elena, patients=(volta,))
+    title1 = g1.add_entity("CEO")
+    fact(g1, "employ", agent=elena, patient=volta, capacity=title1)
 
     g2 = Graph(id="g2")
     lena = g2.add_entity("Dr. Lena Vasquez")
     halcyon = g2.add_entity("Halcyon Genomics")
-    fact(g2, "be CEO of", agent=lena, patients=(halcyon,))
+    title2 = g2.add_entity("CEO")
+    fact(g2, "employ", agent=lena, patient=halcyon, capacity=title2)
 
     # Premise: neighbor names have no similarity
     idf = build_idf(["Volta Systems", "Halcyon Genomics"])
@@ -575,12 +579,12 @@ def test_simple_graph_stabilizes_well_before_max_iter():
     g1 = Graph(id="g1")
     apple1 = g1.add_entity("Apple")
     beats1 = g1.add_entity("Beats")
-    fact(g1, "acquire", agent=apple1, patients=(beats1,))
+    fact(g1, "acquire", agent=apple1, patient=beats1)
 
     g2 = Graph(id="g2")
     apple2 = g2.add_entity("Apple")
     beats2 = g2.add_entity("Beats")
-    fact(g2, "acquire", agent=apple2, patients=(beats2,))
+    fact(g2, "acquire", agent=apple2, patient=beats2)
 
     conf_25, _, _ = match_graphs([g1, g2], max_iter=25)
     conf_30, _, _ = match_graphs([g1, g2], max_iter=30)
@@ -617,15 +621,15 @@ def test_propagation_converges():
     meridian1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault Inc")
     ceo1 = g1.add_entity("Elena Vasquez")
-    fact(g1, "acquire", agent=meridian1, patients=(dv1,))
-    fact(g1, "employ", agent=meridian1, patients=(ceo1,))
+    fact(g1, "acquire", agent=meridian1, patient=dv1)
+    fact(g1, "employ", agent=ceo1, patient=meridian1)
 
     g2 = Graph(id="g2")
     meridian2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault Inc")
     ceo2 = g2.add_entity("Elena Vasquez")
-    fact(g2, "purchase", agent=meridian2, patients=(dv2,))
-    fact(g2, "employ", agent=meridian2, patients=(ceo2,))
+    fact(g2, "purchase", agent=meridian2, patient=dv2)
+    fact(g2, "employ", agent=ceo2, patient=meridian2)
 
     conf_25, _, _ = match_graphs([g1, g2], max_iter=25)
     conf_30, _, _ = match_graphs([g1, g2], max_iter=30)
@@ -647,7 +651,7 @@ def test_same_graph_entities_never_match():
     g = Graph(id="g1")
     apple = g.add_entity("Apple Inc")
     music = g.add_entity("Apple Music")
-    fact(g, "own", agent=apple, patients=(music,))
+    fact(g, "own", agent=apple, patient=music)
 
     g2 = Graph(id="g2")
     g2.add_entity("Google")
@@ -664,7 +668,7 @@ def test_single_graph_produces_no_matches():
     g = Graph(id="g1")
     apple = g.add_entity("Apple")
     beats = g.add_entity("Beats")
-    fact(g, "acquire", agent=apple, patients=(beats,))
+    fact(g, "acquire", agent=apple, patient=beats)
 
     confidence, _, _ = match_graphs([g])
 
@@ -707,12 +711,12 @@ def test_multi_label_entity_uses_best_name_pair():
     g1 = Graph(id="g1")
     m1 = g1.add_entity("Meridian Technologies")
     dv1 = g1.add_entity("DataVault")
-    fact(g1, "acquire", agent=m1, patients=(dv1,))
+    fact(g1, "acquire", agent=m1, patient=dv1)
 
     g2 = Graph(id="g2")
     m2 = g2.add_entity(["Meridian Tech", "Meridian Technologies"])
     dv2 = g2.add_entity("DataVault")
-    fact(g2, "purchase", agent=m2, patients=(dv2,))
+    fact(g2, "purchase", agent=m2, patient=dv2)
 
     confidence, _, _ = match_graphs([g1, g2])
 
@@ -724,12 +728,12 @@ def test_multi_label_all_names_contribute_to_idf():
     g1 = Graph(id="g1")
     m1 = g1.add_entity(["Meridian Technologies", "Meridian Tech"])
     dv1 = g1.add_entity("DataVault")
-    fact(g1, "acquire", agent=m1, patients=(dv1,))
+    fact(g1, "acquire", agent=m1, patient=dv1)
 
     g2 = Graph(id="g2")
     m2 = g2.add_entity("Meridian Technologies")
     dv2 = g2.add_entity("DataVault")
-    fact(g2, "purchase", agent=m2, patients=(dv2,))
+    fact(g2, "purchase", agent=m2, patient=dv2)
 
     confidence, _, _ = match_graphs([g1, g2])
     assert confidence[(m1.id, m2.id)] > 0.8
@@ -761,10 +765,10 @@ def test_progressive_merging_enriched_neighborhood():
     ja = ga.add_entity("James Chen")
     su_a = ga.add_entity("Stanford University")
     austin_a = ga.add_entity("Austin")
-    fact(ga, "acquire", agent=ma, patients=(dva,))
-    fact(ga, "employ", agent=ma, patients=(ja,))
-    fact(ga, "be alumna of", agent=ma, patients=(su_a,))
-    fact(ga, "be headquartered in", agent=ma, patients=(austin_a,))
+    fact(ga, "acquire", agent=ma, patient=dva)
+    fact(ga, "employ", agent=ja, patient=ma)
+    fact(ga, "be alumna of", agent=ma, patient=su_a)
+    fact(ga, "be headquartered in", patient=ma, location=austin_a)
 
     gb = Graph(id="b")
     mb = gb.add_entity("Meridian Corp")
@@ -772,19 +776,19 @@ def test_progressive_merging_enriched_neighborhood():
     jb = gb.add_entity("James Chen")
     su_b = gb.add_entity("Stanford University")
     volta_b = gb.add_entity("Volta Systems")
-    fact(gb, "purchase", agent=mb, patients=(dvb,))
-    fact(gb, "employ", agent=mb, patients=(jb,))
-    fact(gb, "be alumna of", agent=mb, patients=(su_b,))
-    fact(gb, "partner with", agent=mb, patients=(volta_b,))
+    fact(gb, "purchase", agent=mb, patient=dvb)
+    fact(gb, "employ", agent=jb, patient=mb)
+    fact(gb, "be alumna of", agent=mb, patient=su_b)
+    fact(gb, "partner with", agent=mb, patient=volta_b)
 
     gc = Graph(id="c")
     mc = gc.add_entity("Meridian Tech Corp")
     austin_c = gc.add_entity("Austin")
     volta_c = gc.add_entity("Volta Systems")
     jc = gc.add_entity("James Chen")
-    fact(gc, "be headquartered in", agent=mc, patients=(austin_c,))
-    fact(gc, "partner with", agent=mc, patients=(volta_c,))
-    fact(gc, "employ", agent=mc, patients=(jc,))
+    fact(gc, "be headquartered in", patient=mc, location=austin_c)
+    fact(gc, "partner with", agent=mc, patient=volta_c)
+    fact(gc, "employ", agent=jc, patient=mc)
 
     graphs = [ga, gb, gc]
 
@@ -826,9 +830,9 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
     neighbors are structurally matched despite weak name similarity.
 
     "Meridian Technologies" and "Meridian Tech" share two matched events:
-    acquire/purchase of DataVault, and a CEO event whose person names are
-    weak ('Dr. Alice M. Johnson' / 'A. Johnson') but who share a second
-    event (graduated from Stanford University).
+    acquire/purchase of DataVault, and an employment event whose person
+    names are weak ('Dr. Alice M. Johnson' / 'A. Johnson') but who share
+    a second event (graduated from Stanford University).
 
     Propagation discovers the CEO match via Stanford. Even though the CEO
     names are dissimilar, the structural evidence from the shared Stanford
@@ -838,18 +842,20 @@ def test_negative_evidence_does_not_over_penalize_structurally_matched_neighbors
     dv1 = g1.add_entity("DataVault")
     ceo1 = g1.add_entity("Dr. Alice M. Johnson")
     uni1 = g1.add_entity("Stanford University")
-    fact(g1, "acquire", agent=m1, patients=(dv1,))
-    fact(g1, "employ as CEO", agent=m1, patients=(ceo1,))
-    fact(g1, "graduate from", agent=ceo1, patients=(uni1,))
+    title1 = g1.add_entity("CEO")
+    fact(g1, "acquire", agent=m1, patient=dv1)
+    fact(g1, "employ", agent=ceo1, patient=m1, capacity=title1)
+    fact(g1, "graduate from", agent=ceo1, source=uni1)
 
     g2 = Graph(id="g2")
     m2 = g2.add_entity("Meridian Tech")
     dv2 = g2.add_entity("DataVault")
     ceo2 = g2.add_entity("A. Johnson")
     uni2 = g2.add_entity("Stanford University")
-    fact(g2, "purchase", agent=m2, patients=(dv2,))
-    fact(g2, "employ as CEO", agent=m2, patients=(ceo2,))
-    fact(g2, "graduate from", agent=ceo2, patients=(uni2,))
+    title2 = g2.add_entity("CEO")
+    fact(g2, "purchase", agent=m2, patient=dv2)
+    fact(g2, "employ", agent=ceo2, patient=m2, capacity=title2)
+    fact(g2, "graduate from", agent=ceo2, source=uni2)
 
     graphs = [g1, g2]
 
@@ -887,25 +893,30 @@ def test_predecessor_successor_at_same_company_no_match():
     different phrasings should merge same-name entities while keeping the
     predecessor and successor separate.
 
-    Park's CEO event and Chen's named-CEO event share the company patient
-    but have name-mismatched agents — the cross events suppress, so
-    Park↔Chen stays below the merge threshold while the same-name pairs
-    merge. Reproduces the David Park / Sarah Chen pattern from real data."""
+    Park *holding* the office is a stative fact (agent=Park,
+    patient=Nextera); Chen *being named* to it is an appointment action
+    (agent=Nextera, patient=Chen) — different fact types with mirrored
+    roles. The cross pairs suppress, so Park↔Chen stays below the merge
+    threshold while the same-name pairs (people, company, and the CEO
+    title itself, shared by both fact types) merge. Reproduces the David
+    Park / Sarah Chen pattern from real data."""
     g1 = Graph(id="g1")
     park1 = g1.add_entity("David Park")
     chen1 = g1.add_entity("Sarah Chen")
     nextera1 = g1.add_entity("Nextera Energy Solutions")
-    fact(g1, "be CEO of", agent=park1, patients=(nextera1,))
-    fact(g1, "be named CEO of", agent=chen1, patients=(nextera1,))
+    ceo1 = g1.add_entity("CEO")
+    park_office1 = fact(g1, "serve as", agent=park1, patient=nextera1, capacity=ceo1)
+    chen_appointment1 = fact(g1, "name", agent=nextera1, patient=chen1, capacity=ceo1)
 
     g2 = Graph(id="g2")
     park2 = g2.add_entity("David Park")
     chen2 = g2.add_entity("Sarah Chen")
     nextera2 = g2.add_entity("Nextera Energy Solutions")
-    fact(g2, "serve as CEO of", agent=park2, patients=(nextera2,))
-    fact(g2, "become CEO of", agent=chen2, patients=(nextera2,))
+    ceo2 = g2.add_entity("CEO")
+    park_office2 = fact(g2, "work as", agent=park2, patient=nextera2, capacity=ceo2)
+    chen_appointment2 = fact(g2, "appoint", agent=nextera2, patient=chen2, capacity=ceo2)
 
-    confidence, _, _ = match_graphs([g1, g2])
+    confidence, groups, _ = match_graphs([g1, g2])
 
     matches = _select_matches(confidence, threshold=0.8)
     park_ids = {park1.id, park2.id}
@@ -916,12 +927,24 @@ def test_predecessor_successor_at_same_company_no_match():
     assert any(id_a in chen_ids and id_b in chen_ids for id_a, id_b in matches), (
         "Same-name Chen entities should match"
     )
+    assert any({id_a, id_b} == {ceo1.id, ceo2.id} for id_a, id_b in matches), (
+        "Same-name CEO title entities should match via the merged events"
+    )
 
     for id_a, id_b in matches:
         assert not (
             (id_a in park_ids and id_b in chen_ids)
             or (id_a in chen_ids and id_b in park_ids)
         ), "Predecessor and successor CEOs incorrectly matched"
+
+    # Fact types stay distinct: an office-holding state never merges with
+    # an appointment action, whatever structure they share.
+    office_events = {park_office1.id, park_office2.id}
+    appointment_events = {chen_appointment1.id, chen_appointment2.id}
+    for group in groups:
+        assert not (group & office_events and group & appointment_events), (
+            "Stative office-holding event merged with an appointment event"
+        )
 
 
 def test_shared_summit_does_not_merge_different_people():
@@ -938,35 +961,38 @@ def test_shared_summit_does_not_merge_different_people():
     vasquez1 = g1.add_entity("Dr. Elena Vasquez")
     volta1 = g1.add_entity("Volta Systems")
     summit1 = g1.add_entity("TechForward Summit")
-    fact(g1, "be installed as CTO of", agent=vasquez1, patients=(volta1,))
-    fact(g1, "speak at", agent=vasquez1, patients=(summit1,))
+    cto1 = g1.add_entity("CTO")
+    appointment1 = fact(g1, "appoint", agent=volta1, patient=vasquez1, capacity=cto1)
+    fact(g1, "speak at", agent=vasquez1, location=summit1)
 
     g2 = Graph(id="g2")
     sharma2 = g2.add_entity("Dr. Priya Sharma")
     lightwave2 = g2.add_entity("Lightwave Analytics")
     summit2 = g2.add_entity("TechForward")
-    fact(g2, "be founder of", agent=sharma2, patients=(lightwave2,))
-    fact(g2, "attend", agent=sharma2, patients=(summit2,))
+    fact(g2, "be founder of", agent=sharma2, patient=lightwave2)
+    fact(g2, "attend", agent=sharma2, patient=summit2)
 
     g3 = Graph(id="g3")
     vasquez3 = g3.add_entity("Dr. Elena Vasquez")
     volta3 = g3.add_entity("Volta Systems")
     ibm3 = g3.add_entity("IBM Research")
     summit3 = g3.add_entity("TechForward Summit")
-    fact(g3, "be CTO of", agent=vasquez3, patients=(volta3,))
-    fact(g3, "work at", agent=vasquez3, patients=(ibm3,))
-    fact(g3, "give keynote at", agent=vasquez3, patients=(summit3,))
+    cto3 = g3.add_entity("CTO")
+    office3 = fact(g3, "employ", agent=vasquez3, patient=volta3, capacity=cto3)
+    fact(g3, "work at", agent=vasquez3, patient=ibm3)
+    fact(g3, "give keynote at", agent=vasquez3, location=summit3)
 
     g4 = Graph(id="g4")
     sharma4 = g4.add_entity("Dr. Priya Sharma")
     lightwave4 = g4.add_entity("Lightwave Analytics")
     meridian4 = g4.add_entity("Meridian Technologies")
     summit4 = g4.add_entity("TechForward Summit")
-    fact(g4, "co-found", agent=sharma4, patients=(lightwave4,))
-    fact(g4, "become SVP of Analytics at", agent=sharma4, patients=(meridian4,))
-    fact(g4, "give keynote at", agent=sharma4, patients=(summit4,))
+    svp4 = g4.add_entity("SVP of Analytics")
+    fact(g4, "co-found", agent=sharma4, patient=lightwave4)
+    fact(g4, "appoint", agent=meridian4, patient=sharma4, capacity=svp4)
+    fact(g4, "give keynote at", agent=sharma4, location=summit4)
 
-    confidence, _, _ = match_graphs([g1, g2, g3, g4])
+    confidence, groups, _ = match_graphs([g1, g2, g3, g4])
 
     matches = _select_matches(confidence, threshold=0.8)
     vasquez_ids = {vasquez1.id, vasquez3.id}
@@ -976,3 +1002,11 @@ def test_shared_summit_does_not_merge_different_people():
             (id_a in vasquez_ids and id_b in sharma_ids)
             or (id_a in sharma_ids and id_b in vasquez_ids)
         ), "Different people who spoke at same event incorrectly matched"
+
+    # Fact types stay distinct: Vasquez's appointment (g1) and her held
+    # office (g3) are different facts and must not merge, despite sharing
+    # every participant name.
+    for group in groups:
+        assert not {appointment1.id, office3.id} <= group, (
+            "Appointment event merged with a stative office-holding event"
+        )

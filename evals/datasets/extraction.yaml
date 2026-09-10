@@ -40,9 +40,9 @@ cases:
     - id: v1
       label: be located in
       participants:
-      - role: agent
-        ref: e1
       - role: patient
+        ref: e1
+      - role: location
         ref: e2
   evaluators: []
 - name: media_meta_entities
@@ -60,7 +60,7 @@ cases:
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: location
         ref: e2
   evaluators: []
 - name: clause_entities
@@ -96,9 +96,9 @@ cases:
     - id: v1
       label: be located in
       participants:
-      - role: agent
-        ref: e1
       - role: patient
+        ref: e1
+      - role: location
         ref: e2
     - id: v2
       label: host
@@ -131,35 +131,35 @@ cases:
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: location
         ref: e2
     - id: v2
       label: close stations in
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: location
         ref: e3
     - id: v3
       label: close stations in
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: location
         ref: e4
     - id: v4
       label: review routes in
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: location
         ref: e5
     - id: v5
       label: review routes in
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: location
         ref: e6
   evaluators: []
 - name: temporal_scope
@@ -186,9 +186,9 @@ cases:
     - id: v2
       label: be headquartered in
       participants:
-      - role: agent
-        ref: e1
       - role: patient
+        ref: e1
+      - role: location
         ref: e4
     - id: v3
       label: acquire
@@ -228,7 +228,7 @@ cases:
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: destination
         ref: e3
     - id: v3
       label: build
@@ -275,7 +275,7 @@ cases:
         ref: e1
       - role: patient
         ref: e2
-      - role: patient
+      - role: capacity
         ref: e5
     - id: v2
       label: build
@@ -310,9 +310,9 @@ cases:
         ref: e1
       - role: patient
         ref: e2
-      - role: patient
+      - role: capacity
         ref: e5
-      - role: patient
+      - role: beneficiary
         ref: e3
     - id: v2
       label: manage
@@ -321,7 +321,7 @@ cases:
         ref: e1
       - role: patient
         ref: e4
-      - role: patient
+      - role: capacity
         ref: e6
   evaluators: []
 - name: role_qualifiers_paraphrase
@@ -349,9 +349,9 @@ cases:
         ref: e1
       - role: patient
         ref: e2
-      - role: patient
+      - role: capacity
         ref: e5
-      - role: patient
+      - role: beneficiary
         ref: e3
     - id: v2
       label: lead
@@ -360,7 +360,7 @@ cases:
         ref: e1
       - role: patient
         ref: e4
-      - role: patient
+      - role: capacity
         ref: e6
   evaluators: []
 - name: appositive_roles
@@ -395,7 +395,7 @@ cases:
         ref: e1
       - role: patient
         ref: e3
-      - role: patient
+      - role: capacity
         ref: e5
     - id: v3
       label: serve in
@@ -404,7 +404,7 @@ cases:
         ref: e4
       - role: patient
         ref: e3
-      - role: patient
+      - role: capacity
         ref: e6
     - id: v4
       label: join
@@ -437,7 +437,7 @@ cases:
       participants:
       - role: agent
         ref: e1
-      - role: patient
+      - role: destination
         ref: e2
     - id: v2
       label: serve in
@@ -446,7 +446,7 @@ cases:
         ref: e1
       - role: patient
         ref: e3
-      - role: patient
+      - role: capacity
         ref: e5
     - id: v3
       label: serve in
@@ -455,7 +455,7 @@ cases:
         ref: e4
       - role: patient
         ref: e3
-      - role: patient
+      - role: capacity
         ref: e6
     - id: v4
       label: take part in
@@ -527,7 +527,7 @@ cases:
       participants:
       - role: agent
         ref: e3
-      - role: patient
+      - role: destination
         ref: e4
     - id: v3
       label: cause
@@ -565,7 +565,7 @@ cases:
         ref: e3
       - role: patient
         ref: v1
-      - role: patient
+      - role: beneficiary
         ref: e4
   evaluators: []
 evaluators: []

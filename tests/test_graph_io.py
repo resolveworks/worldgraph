@@ -15,7 +15,7 @@ def test_save_load_roundtrip_single_graph(tmp_path: Path):
     g = Graph(id="article-1")
     alice = g.add_entity("Alice")
     bob = g.add_entity("Bob")
-    fact(g, "know", agent=alice, patients=(bob,))
+    fact(g, "know", agent=alice, patient=bob)
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -61,7 +61,7 @@ def test_edge_role_roundtrip(tmp_path: Path):
     g = Graph(id="article-1")
     ivo = g.add_entity("Ivo Brandt")
     visit = fact(g, "visit", agent=ivo)
-    fact(g, "join", agent=ivo, patients=(visit,))
+    fact(g, "join", agent=ivo, patient=visit)
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -107,7 +107,7 @@ def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
     g = Graph(id="article-1")
     n1 = g.add_entity(["Meridian Technologies", "Meridian Tech"])
     n2 = g.add_entity("DataVault")
-    fact(g, "acquire", agent=n1, patients=(n2,))
+    fact(g, "acquire", agent=n1, patient=n2)
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -210,7 +210,7 @@ def test_edge_role_must_be_in_vocabulary():
     alice = g.add_entity("Alice")
     g.nodes["v1"] = Node(id="v1", graph_id="article-1", names=["resign"], kind="event")
     g.edges["x1"] = Edge(
-        id="x1", graph_id="article-1", source="v1", target=alice.id, role="location",
+        id="x1", graph_id="article-1", source="v1", target=alice.id, role="duration",
     )
 
     with pytest.raises(ValueError, match="role"):

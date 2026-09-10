@@ -50,12 +50,12 @@ def test_three_source_with_person_name_variation():
     dv1 = g1.add_entity("DataVault Inc")
     nat1 = g1.add_entity("Nature")
     lab1 = g1.add_entity("Stanford AI Lab")
-    fact(g1, "hire", agent=m1, patients=(p1,))
-    fact(g1, "collaborate with", agent=p1, patients=(j1,))
-    fact(g1, "be alumna of", agent=p1, patients=(su1,))
-    fact(g1, "publish in", agent=p1, patients=(nat1,))
-    fact(g1, "lead", agent=p1, patients=(lab1,))
-    fact(g1, "acquire", agent=m1, patients=(dv1,))
+    fact(g1, "hire", agent=m1, patient=p1)
+    fact(g1, "collaborate with", agent=p1, patient=j1)
+    fact(g1, "be alumna of", agent=p1, patient=su1)
+    fact(g1, "publish in", agent=p1, location=nat1)
+    fact(g1, "lead", agent=p1, patient=lab1)
+    fact(g1, "acquire", agent=m1, patient=dv1)
 
     g2 = Graph(id="article-2")
     m2 = g2.add_entity("Meridian Technologies")
@@ -65,12 +65,12 @@ def test_three_source_with_person_name_variation():
     dv2 = g2.add_entity("DataVault Inc")
     nat2 = g2.add_entity("Nature")
     lab2 = g2.add_entity("Stanford AI Lab")
-    fact(g2, "hire", agent=m2, patients=(p2,))
-    fact(g2, "collaborate with", agent=p2, patients=(j2,))
-    fact(g2, "be alumna of", agent=p2, patients=(su2,))
-    fact(g2, "publish in", agent=p2, patients=(nat2,))
-    fact(g2, "lead", agent=p2, patients=(lab2,))
-    fact(g2, "acquire", agent=m2, patients=(dv2,))
+    fact(g2, "hire", agent=m2, patient=p2)
+    fact(g2, "collaborate with", agent=p2, patient=j2)
+    fact(g2, "be alumna of", agent=p2, patient=su2)
+    fact(g2, "publish in", agent=p2, location=nat2)
+    fact(g2, "lead", agent=p2, patient=lab2)
+    fact(g2, "acquire", agent=m2, patient=dv2)
 
     g3 = Graph(id="article-3")
     m3 = g3.add_entity("Meridian Technologies")
@@ -80,12 +80,12 @@ def test_three_source_with_person_name_variation():
     dv3 = g3.add_entity("DataVault Inc")
     nat3 = g3.add_entity("Nature")
     lab3 = g3.add_entity("Stanford AI Lab")
-    fact(g3, "hire", agent=m3, patients=(p3,))
-    fact(g3, "collaborate with", agent=p3, patients=(j3,))
-    fact(g3, "be alumna of", agent=p3, patients=(su3,))
-    fact(g3, "publish in", agent=p3, patients=(nat3,))
-    fact(g3, "lead", agent=p3, patients=(lab3,))
-    fact(g3, "acquire", agent=m3, patients=(dv3,))
+    fact(g3, "hire", agent=m3, patient=p3)
+    fact(g3, "collaborate with", agent=p3, patient=j3)
+    fact(g3, "be alumna of", agent=p3, patient=su3)
+    fact(g3, "publish in", agent=p3, location=nat3)
+    fact(g3, "lead", agent=p3, patient=lab3)
+    fact(g3, "acquire", agent=m3, patient=dv3)
 
     graphs = [g1, g2, g3]
     _, groups, _ = match_graphs(graphs)
@@ -122,30 +122,30 @@ def test_identical_names_different_contexts_no_merge():
     jc_a1 = a1.add_entity("Dr. James Chen")
     lab_a1 = a1.add_entity("Advanced AI Lab")
     nsf_a1 = a1.add_entity("National Science Foundation")
-    fact(a1, "lead", agent=jc_a1, patients=(lab_a1,))
-    fact(a1, "be funded by", agent=lab_a1, patients=(nsf_a1,))
+    fact(a1, "lead", agent=jc_a1, patient=lab_a1)
+    fact(a1, "fund", agent=nsf_a1, patient=lab_a1)
 
     a2 = Graph(id="ai-2")
     jc_a2 = a2.add_entity("Dr. James Chen")
     lab_a2 = a2.add_entity("Advanced AI Lab")
     nsf_a2 = a2.add_entity("National Science Foundation")
-    fact(a2, "head", agent=jc_a2, patients=(lab_a2,))
-    fact(a2, "be funded by", agent=lab_a2, patients=(nsf_a2,))
+    fact(a2, "head", agent=jc_a2, patient=lab_a2)
+    fact(a2, "fund", agent=nsf_a2, patient=lab_a2)
 
     # Story B: climate research — same name, same structure, different entities
     b1 = Graph(id="climate-1")
     jc_b1 = b1.add_entity("Dr. James Chen")
     lab_b1 = b1.add_entity("Climate Research Lab")
     epa_b1 = b1.add_entity("Environmental Protection Agency")
-    fact(b1, "lead", agent=jc_b1, patients=(lab_b1,))
-    fact(b1, "be funded by", agent=lab_b1, patients=(epa_b1,))
+    fact(b1, "lead", agent=jc_b1, patient=lab_b1)
+    fact(b1, "fund", agent=epa_b1, patient=lab_b1)
 
     b2 = Graph(id="climate-2")
     jc_b2 = b2.add_entity("Dr. James Chen")
     lab_b2 = b2.add_entity("Climate Research Lab")
     epa_b2 = b2.add_entity("Environmental Protection Agency")
-    fact(b2, "head", agent=jc_b2, patients=(lab_b2,))
-    fact(b2, "be funded by", agent=lab_b2, patients=(epa_b2,))
+    fact(b2, "head", agent=jc_b2, patient=lab_b2)
+    fact(b2, "fund", agent=epa_b2, patient=lab_b2)
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs)
@@ -179,37 +179,42 @@ def test_shared_entity_across_clusters():
     Story A: Meridian Technologies acquired DataVault (CEO: Elena Vasquez)
     Story B: Meridian Technologies settles FTC investigation (CEO: Elena Vasquez)
 
-    Meridian and Elena Vasquez are shared with identical names and matched
-    CEO events across both stories. DataVault and FTC should NOT merge."""
+    Meridian, Elena Vasquez, and the CEO title are shared with identical
+    names and matched events across both stories. DataVault and FTC
+    should NOT merge."""
     # Story A: acquisition (2 sources)
     a1 = Graph(id="acq-1")
     m_a1 = a1.add_entity("Meridian Technologies")
     dv_a1 = a1.add_entity("DataVault")
     ev_a1 = a1.add_entity("Elena Vasquez")
-    fact(a1, "acquire", agent=m_a1, patients=(dv_a1,))
-    fact(a1, "employ as CEO", agent=m_a1, patients=(ev_a1,))
+    ceo_a1 = a1.add_entity("CEO")
+    fact(a1, "acquire", agent=m_a1, patient=dv_a1)
+    fact(a1, "employ", agent=ev_a1, patient=m_a1, capacity=ceo_a1)
 
     a2 = Graph(id="acq-2")
     m_a2 = a2.add_entity("Meridian Technologies")
     dv_a2 = a2.add_entity("DataVault")
     ev_a2 = a2.add_entity("Elena Vasquez")
-    fact(a2, "purchase", agent=m_a2, patients=(dv_a2,))
-    fact(a2, "employ as CEO", agent=m_a2, patients=(ev_a2,))
+    ceo_a2 = a2.add_entity("CEO")
+    fact(a2, "purchase", agent=m_a2, patient=dv_a2)
+    fact(a2, "employ", agent=ev_a2, patient=m_a2, capacity=ceo_a2)
 
     # Story B: FTC investigation (2 sources) — shares Meridian + Elena
     b1 = Graph(id="ftc-1")
     m_b1 = b1.add_entity("Meridian Technologies")
     ftc_b1 = b1.add_entity("Federal Trade Commission")
     ev_b1 = b1.add_entity("Elena Vasquez")
-    fact(b1, "investigate", agent=ftc_b1, patients=(m_b1,))
-    fact(b1, "employ as CEO", agent=m_b1, patients=(ev_b1,))
+    ceo_b1 = b1.add_entity("CEO")
+    fact(b1, "investigate", agent=ftc_b1, patient=m_b1)
+    fact(b1, "employ", agent=ev_b1, patient=m_b1, capacity=ceo_b1)
 
     b2 = Graph(id="ftc-2")
     m_b2 = b2.add_entity("Meridian Technologies")
     ftc_b2 = b2.add_entity("Federal Trade Commission")
     ev_b2 = b2.add_entity("Elena Vasquez")
-    fact(b2, "investigate", agent=ftc_b2, patients=(m_b2,))
-    fact(b2, "employ as CEO", agent=m_b2, patients=(ev_b2,))
+    ceo_b2 = b2.add_entity("CEO")
+    fact(b2, "investigate", agent=ftc_b2, patient=m_b2)
+    fact(b2, "employ", agent=ev_b2, patient=m_b2, capacity=ceo_b2)
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs)
@@ -219,6 +224,14 @@ def test_shared_entity_across_clusters():
     assert m_group is not None, "Meridian entities not merged"
     assert {m_a1.id, m_a2.id, m_b1.id, m_b2.id} <= m_group, (
         f"Not all Meridian entities merged across stories: {m_group}"
+    )
+
+    # The CEO title entities should merge too — same name, capacity of
+    # employment events that match both within and across the stories.
+    ceo_group = _find_group_containing(groups, ceo_a1.id)
+    assert ceo_group is not None, "CEO title entities not merged"
+    assert {ceo_a1.id, ceo_a2.id, ceo_b1.id, ceo_b2.id} <= ceo_group, (
+        f"Not all CEO title entities merged across stories: {ceo_group}"
     )
 
     # DataVault should NOT merge with FTC
@@ -243,32 +256,34 @@ def test_shared_person_across_clusters():
     ev1 = a1.add_entity("Elena Vasquez")
     dv1 = a1.add_entity("DataVault Inc")
     su1 = a1.add_entity("Stanford University")
-    fact(a1, "employ as CEO", agent=m1, patients=(ev1,))
-    fact(a1, "acquire", agent=m1, patients=(dv1,))
-    fact(a1, "be alumna of", agent=ev1, patients=(su1,))
+    ceo1 = a1.add_entity("CEO")
+    fact(a1, "employ", agent=ev1, patient=m1, capacity=ceo1)
+    fact(a1, "acquire", agent=m1, patient=dv1)
+    fact(a1, "be alumna of", agent=ev1, patient=su1)
 
     a2 = Graph(id="hire-2")
     m2 = a2.add_entity("Meridian Technologies")
     ev2 = a2.add_entity("Elena Vasquez")
     dv2 = a2.add_entity("DataVault Inc")
     su2 = a2.add_entity("Stanford University")
-    fact(a2, "employ as CEO", agent=m2, patients=(ev2,))
-    fact(a2, "acquire", agent=m2, patients=(dv2,))
-    fact(a2, "be alumna of", agent=ev2, patients=(su2,))
+    ceo2 = a2.add_entity("CEO")
+    fact(a2, "employ", agent=ev2, patient=m2, capacity=ceo2)
+    fact(a2, "acquire", agent=m2, patient=dv2)
+    fact(a2, "be alumna of", agent=ev2, patient=su2)
 
     b1 = Graph(id="summit-1")
     ev3 = b1.add_entity("Elena Vasquez")
     summit1 = b1.add_entity("Global Tech Summit")
     su3 = b1.add_entity("Stanford University")
-    fact(b1, "keynote", agent=ev3, patients=(summit1,))
-    fact(b1, "be alumna of", agent=ev3, patients=(su3,))
+    fact(b1, "keynote", agent=ev3, location=summit1)
+    fact(b1, "be alumna of", agent=ev3, patient=su3)
 
     b2 = Graph(id="summit-2")
     ev4 = b2.add_entity("Elena Vasquez")
     summit2 = b2.add_entity("Global Tech Summit")
     su4 = b2.add_entity("Stanford University")
-    fact(b2, "keynote", agent=ev4, patients=(summit2,))
-    fact(b2, "be alumna of", agent=ev4, patients=(su4,))
+    fact(b2, "keynote", agent=ev4, location=summit2)
+    fact(b2, "be alumna of", agent=ev4, patient=su4)
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs)
@@ -278,6 +293,13 @@ def test_shared_person_across_clusters():
     assert ev_group is not None, "Elena Vasquez entities not merged"
     assert {ev1.id, ev2.id, ev3.id, ev4.id} <= ev_group, (
         "Elena Vasquez not linked across stories"
+    )
+
+    # The CEO title entities merge — same name, capacity of the matched
+    # employment events in story A.
+    ceo_group = _find_group_containing(groups, ceo1.id)
+    assert ceo_group is not None and ceo2.id in ceo_group, (
+        "CEO title entities not merged"
     )
 
     # Meridian and Summit should NOT merge
@@ -303,40 +325,63 @@ def test_progressive_merging_no_cascading_false_merges():
 
     Within-story entities merge across sources (identical names), but
     cross-story entities must not merge even after progressive merging
-    enriches neighborhoods."""
+    enriches neighborhoods — the shared 'CEO' title pairs suppressed
+    events, not matched ones."""
     a1 = Graph(id="nova-1")
     nt_a1 = a1.add_entity("NovaTech")
     dv_a1 = a1.add_entity("DataVault")
     jc_a1 = a1.add_entity("James Chen")
-    fact(a1, "acquire", agent=nt_a1, patients=(dv_a1,))
-    fact(a1, "employ as CEO", agent=nt_a1, patients=(jc_a1,))
+    ceo_a1 = a1.add_entity("CEO")
+    fact(a1, "acquire", agent=nt_a1, patient=dv_a1)
+    fact(a1, "employ", agent=jc_a1, patient=nt_a1, capacity=ceo_a1)
 
     a2 = Graph(id="nova-2")
     nt_a2 = a2.add_entity("NovaTech")
     dv_a2 = a2.add_entity("DataVault")
     jc_a2 = a2.add_entity("James Chen")
-    fact(a2, "purchase", agent=nt_a2, patients=(dv_a2,))
-    fact(a2, "employ as CEO", agent=nt_a2, patients=(jc_a2,))
+    ceo_a2 = a2.add_entity("CEO")
+    fact(a2, "purchase", agent=nt_a2, patient=dv_a2)
+    fact(a2, "employ", agent=jc_a2, patient=nt_a2, capacity=ceo_a2)
 
     b1 = Graph(id="quantum-1")
     ql_b1 = b1.add_entity("Quantum Labs")
     cs_b1 = b1.add_entity("ClearSky")
     sp_b1 = b1.add_entity("Sarah Park")
-    fact(b1, "acquire", agent=ql_b1, patients=(cs_b1,))
-    fact(b1, "employ as CEO", agent=ql_b1, patients=(sp_b1,))
+    ceo_b1 = b1.add_entity("CEO")
+    fact(b1, "acquire", agent=ql_b1, patient=cs_b1)
+    fact(b1, "employ", agent=sp_b1, patient=ql_b1, capacity=ceo_b1)
 
     b2 = Graph(id="quantum-2")
     ql_b2 = b2.add_entity("Quantum Labs")
     cs_b2 = b2.add_entity("ClearSky")
     sp_b2 = b2.add_entity("Sarah Park")
-    fact(b2, "purchase", agent=ql_b2, patients=(cs_b2,))
-    fact(b2, "employ as CEO", agent=ql_b2, patients=(sp_b2,))
+    ceo_b2 = b2.add_entity("CEO")
+    fact(b2, "purchase", agent=ql_b2, patient=cs_b2)
+    fact(b2, "employ", agent=sp_b2, patient=ql_b2, capacity=ceo_b2)
 
     graphs = [a1, a2, b1, b2]
     _, groups, _ = match_graphs(graphs)
 
-    cluster_a_ids = {nt_a1.id, dv_a1.id, jc_a1.id, nt_a2.id, dv_a2.id, jc_a2.id}
-    cluster_b_ids = {ql_b1.id, cs_b1.id, sp_b1.id, ql_b2.id, cs_b2.id, sp_b2.id}
+    cluster_a_ids = {
+        nt_a1.id,
+        dv_a1.id,
+        jc_a1.id,
+        ceo_a1.id,
+        nt_a2.id,
+        dv_a2.id,
+        jc_a2.id,
+        ceo_a2.id,
+    }
+    cluster_b_ids = {
+        ql_b1.id,
+        cs_b1.id,
+        sp_b1.id,
+        ceo_b1.id,
+        ql_b2.id,
+        cs_b2.id,
+        sp_b2.id,
+        ceo_b2.id,
+    }
 
     for group in groups:
         has_a = bool(group & cluster_a_ids)
@@ -364,23 +409,26 @@ def test_shared_employee_bridge_no_company_merge():
 
     Teresa Nakamura was CFO at both Cascade Robotics and CloudScale,
     reported by two sources with different phrasings. The Nakamura pair
-    bridges the companies structurally, but the CFO-event pairs have
-    name-mismatched patients and suppress.
+    bridges the companies structurally, but the cross events pair
+    Cascade against CloudScale and suppress, so the companies — and
+    nothing else — stay apart.
 
     Reproduces the Cascade Robotics / CloudScale pattern from real data."""
     g1 = Graph(id="g1")
     nak1 = g1.add_entity("Teresa Nakamura")
     cascade1 = g1.add_entity("Cascade Robotics")
     cloud1 = g1.add_entity("CloudScale")
-    fact(g1, "be CFO of", agent=nak1, patients=(cascade1,))
-    fact(g1, "be CFO at", agent=nak1, patients=(cloud1,))
+    cfo1 = g1.add_entity("CFO")
+    fact(g1, "employ", agent=nak1, patient=cascade1, capacity=cfo1)
+    fact(g1, "work as", agent=nak1, patient=cloud1, capacity=cfo1)
 
     g2 = Graph(id="g2")
     nak2 = g2.add_entity("Teresa Nakamura")
     cascade2 = g2.add_entity("Cascade Robotics")
     cloud2 = g2.add_entity("CloudScale")
-    fact(g2, "be appointed CFO of", agent=nak2, patients=(cascade2,))
-    fact(g2, "be chief financial officer of", agent=nak2, patients=(cloud2,))
+    cfo2 = g2.add_entity("CFO")
+    fact(g2, "serve as", agent=nak2, patient=cascade2, capacity=cfo2)
+    fact(g2, "employ", agent=nak2, patient=cloud2, capacity=cfo2)
 
     graphs = [g1, g2]
     _, groups, _ = match_graphs(graphs)
@@ -396,6 +444,10 @@ def test_shared_employee_bridge_no_company_merge():
     assert cas_group is not None and cascade2.id in cas_group
     cloud_group = _find_group_containing(groups, cloud1.id)
     assert cloud_group is not None and cloud2.id in cloud_group
+    cfo_group = _find_group_containing(groups, cfo1.id)
+    assert cfo_group is not None and cfo2.id in cfo_group, (
+        "Same-name CFO title entities should merge via the matched events"
+    )
 
 
 def test_regulator_and_regulated_entity_stay_separate():
@@ -404,21 +456,23 @@ def test_regulator_and_regulated_entity_stay_separate():
 
     Two outlets both report on the Data Protection Commission and
     Vantara AI. The outlets are not part of the world graph (extraction
-    drops them), so the scenario reduces to both entities being patients
-    of report events with mismatched agents — the cross pairs suppress.
+    drops them), so the scenario reduces to the DPC fining Vantara and
+    the DPC publishing a report on Vantara — in each pair the two
+    entities sit at opposite ends (agent vs patient), so their pair is
+    never role-aligned and the cross events suppress.
 
     Reproduces the DPC / Vantara AI pattern from real data."""
     g1 = Graph(id="g1")
     dpc1 = g1.add_entity("Data Protection Commission")
     vantara1 = g1.add_entity("Vantara AI")
-    fact(g1, "be fined by", agent=vantara1, patients=(dpc1,))
-    fact(g1, "publish report on", agent=dpc1, patients=(vantara1,))
+    fact(g1, "fine", agent=dpc1, patient=vantara1)
+    fact(g1, "publish report on", agent=dpc1, patient=vantara1)
 
     g2 = Graph(id="g2")
     dpc2 = g2.add_entity("Data Protection Commission")
     vantara2 = g2.add_entity("Vantara AI")
-    fact(g2, "be fined by", agent=vantara2, patients=(dpc2,))
-    fact(g2, "publish report on", agent=dpc2, patients=(vantara2,))
+    fact(g2, "fine", agent=dpc2, patient=vantara2)
+    fact(g2, "publish report on", agent=dpc2, patient=vantara2)
 
     graphs = [g1, g2]
     _, groups, _ = match_graphs(graphs)
@@ -452,29 +506,29 @@ def test_shared_acquirer_does_not_merge_different_targets():
     g0 = Graph(id="g0")
     hub0 = g0.add_entity("Meridian Technologies")
     loc0 = g0.add_entity("Pittsburgh")
-    fact(g0, "be based in", agent=hub0, patients=(loc0,))
+    fact(g0, "be based in", patient=hub0, location=loc0)
 
     # Target-B articles (2 label variants)
     g1 = Graph(id="g1")
     hub1 = g1.add_entity("Meridian Technologies")
     b1 = g1.add_entity("Lightwave Analytics")
-    fact(g1, "acquire", agent=hub1, patients=(b1,))
+    fact(g1, "acquire", agent=hub1, patient=b1)
 
     g2 = Graph(id="g2")
     hub2 = g2.add_entity("Meridian Technologies")
     b2 = g2.add_entity("Lightwave Analytics")
-    fact(g2, "purchase", agent=hub2, patients=(b2,))
+    fact(g2, "purchase", agent=hub2, patient=b2)
 
     # Target-C articles (2 label variants)
     g3 = Graph(id="g3")
     hub3 = g3.add_entity("Meridian Technologies")
     c1 = g3.add_entity("CloudScale")
-    fact(g3, "acquire", agent=hub3, patients=(c1,))
+    fact(g3, "acquire", agent=hub3, patient=c1)
 
     g4 = Graph(id="g4")
     hub4 = g4.add_entity("Meridian Technologies")
     c2 = g4.add_entity("CloudScale")
-    fact(g4, "purchase", agent=hub4, patients=(c2,))
+    fact(g4, "purchase", agent=hub4, patient=c2)
 
     graphs = [g0, g1, g2, g3, g4]
     _, groups, _ = match_graphs(graphs)

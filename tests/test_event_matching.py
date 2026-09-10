@@ -2,7 +2,9 @@
 
 Events are unseeded nodes: their labels are never compared, so event
 matches are decided purely by role-aligned participant structure.
-Qualifiers are patients of the event they qualify; events may participate
+Qualifiers are participants of the event they qualify, with their proper
+role from the closed vocabulary (a title as capacity, a scope party as
+beneficiary, a place as location or destination); events may participate
 in other events (joining a visit, causing a suspension).
 """
 
@@ -35,12 +37,12 @@ def test_identical_facts_match_entities_and_event():
     g1 = Graph(id="article-1")
     acme1 = g1.add_entity("Acme Corp")
     gamma1 = g1.add_entity("Gamma AI")
-    acquisition1 = fact(g1, "acquire", agent=acme1, patients=(gamma1,))
+    acquisition1 = fact(g1, "acquire", agent=acme1, patient=gamma1)
 
     g2 = Graph(id="article-2")
     acme2 = g2.add_entity("Acme Corp")
     gamma2 = g2.add_entity("Gamma AI")
-    acquisition2 = fact(g2, "acquire", agent=acme2, patients=(gamma2,))
+    acquisition2 = fact(g2, "acquire", agent=acme2, patient=gamma2)
 
     _, match_groups, unified = match_graphs([g1, g2])
 
@@ -58,12 +60,12 @@ def test_synonymous_labels_match_when_participants_match():
     g1 = Graph(id="article-1")
     buyer1 = g1.add_entity("Acme Corp")
     target1 = g1.add_entity("Gamma AI")
-    acquisition = fact(g1, "acquire", agent=buyer1, patients=(target1,))
+    acquisition = fact(g1, "acquire", agent=buyer1, patient=target1)
 
     g2 = Graph(id="article-2")
     buyer2 = g2.add_entity("Acme Corp")
     target2 = g2.add_entity("Gamma AI")
-    takeover = fact(g2, "take control of", agent=buyer2, patients=(target2,))
+    takeover = fact(g2, "take control of", agent=buyer2, patient=target2)
 
     _, groups, _ = match_graphs([g1, g2])
 
@@ -81,12 +83,12 @@ def test_swapped_roles_do_not_match():
     g1 = Graph(id="article-1")
     acme1 = g1.add_entity("Acme Corp")
     gamma1 = g1.add_entity("Gamma AI")
-    acquisition1 = fact(g1, "acquire", agent=acme1, patients=(gamma1,))
+    acquisition1 = fact(g1, "acquire", agent=acme1, patient=gamma1)
 
     g2 = Graph(id="article-2")
     gamma2 = g2.add_entity("Gamma AI")
     acme2 = g2.add_entity("Acme Corp")
-    acquisition2 = fact(g2, "acquire", agent=gamma2, patients=(acme2,))
+    acquisition2 = fact(g2, "acquire", agent=gamma2, patient=acme2)
 
     _, groups, _ = match_graphs([g1, g2])
 
@@ -99,12 +101,12 @@ def test_unrelated_participants_do_not_match():
     g1 = Graph(id="article-1")
     acme1 = g1.add_entity("Acme Corp")
     gamma1 = g1.add_entity("Gamma AI")
-    fact(g1, "acquire", agent=acme1, patients=(gamma1,))
+    fact(g1, "acquire", agent=acme1, patient=gamma1)
 
     g2 = Graph(id="article-2")
     north2 = g2.add_entity("Northstar Labs")
     cloud2 = g2.add_entity("CloudScale")
-    fact(g2, "acquire", agent=north2, patients=(cloud2,))
+    fact(g2, "acquire", agent=north2, patient=cloud2)
 
     _, groups, _ = match_graphs([g1, g2])
 
@@ -112,16 +114,21 @@ def test_unrelated_participants_do_not_match():
 
 
 def test_qualified_event_matches_despite_paraphrase():
-    """Qualifiers are patients of the event they qualify. 'manage' with
-    role and scope qualifiers matches its paraphrase 'oversee' because all
-    three participants align."""
+    """Qualifiers are participants with their proper roles. 'manage' with
+    a capacity and a beneficiary qualifier matches its paraphrase
+    'oversee' because all participants align role by role."""
     g1 = Graph(id="article-1")
     tessa1 = g1.add_entity("Tessa Corin")
     halden1 = g1.add_entity("Halden Freight")
     vesterby1 = g1.add_entity("Vesterby")
     director1 = g1.add_entity("managing director")
     manage1 = fact(
-        g1, "manage", agent=tessa1, patients=(halden1, director1, vesterby1)
+        g1,
+        "manage",
+        agent=tessa1,
+        patient=halden1,
+        capacity=director1,
+        beneficiary=vesterby1,
     )
 
     g2 = Graph(id="article-2")
@@ -130,7 +137,12 @@ def test_qualified_event_matches_despite_paraphrase():
     vesterby2 = g2.add_entity("Vesterby")
     director2 = g2.add_entity("managing director")
     manage2 = fact(
-        g2, "oversee", agent=tessa2, patients=(halden2, director2, vesterby2)
+        g2,
+        "oversee",
+        agent=tessa2,
+        patient=halden2,
+        capacity=director2,
+        beneficiary=vesterby2,
     )
 
     _, groups, _ = match_graphs([g1, g2])
@@ -152,15 +164,15 @@ def test_nested_events_match_recursively():
     marisol1 = g1.add_entity("Marisol Vaneck")
     vesterby1 = g1.add_entity("Vesterby")
     ivo1 = g1.add_entity("Ivo Brandt")
-    visit1 = fact(g1, "visit", agent=marisol1, patients=(vesterby1,))
-    participation1 = fact(g1, "join", agent=ivo1, patients=(visit1,))
+    visit1 = fact(g1, "visit", agent=marisol1, destination=vesterby1)
+    participation1 = fact(g1, "join", agent=ivo1, patient=visit1)
 
     g2 = Graph(id="article-2")
     marisol2 = g2.add_entity("Marisol Vaneck")
     vesterby2 = g2.add_entity("Vesterby")
     ivo2 = g2.add_entity("Ivo Brandt")
-    visit2 = fact(g2, "travel to", agent=marisol2, patients=(vesterby2,))
-    participation2 = fact(g2, "take part in", agent=ivo2, patients=(visit2,))
+    visit2 = fact(g2, "travel to", agent=marisol2, destination=vesterby2)
+    participation2 = fact(g2, "take part in", agent=ivo2, patient=visit2)
 
     _, groups, unified = match_graphs([g1, g2])
 
@@ -183,18 +195,18 @@ def test_causation_between_events_matches_on_both_levels():
     station1 = g1.add_entity("Vesterby Power Station")
     meridian1 = g1.add_entity("Meridian Rail")
     kalden1 = g1.add_entity("Kalden")
-    closure1 = fact(g1, "close", agent=halden1, patients=(station1,))
-    suspension1 = fact(g1, "suspend services to", agent=meridian1, patients=(kalden1,))
-    cause1 = fact(g1, "cause", agent=closure1, patients=(suspension1,))
+    closure1 = fact(g1, "close", agent=halden1, patient=station1)
+    suspension1 = fact(g1, "suspend services to", agent=meridian1, destination=kalden1)
+    cause1 = fact(g1, "cause", agent=closure1, patient=suspension1)
 
     g2 = Graph(id="article-2")
     halden2 = g2.add_entity("Halden Energy")
     station2 = g2.add_entity("Vesterby Power Station")
     meridian2 = g2.add_entity("Meridian Rail")
     kalden2 = g2.add_entity("Kalden")
-    closure2 = fact(g2, "shut down", agent=halden2, patients=(station2,))
-    suspension2 = fact(g2, "halt services to", agent=meridian2, patients=(kalden2,))
-    cause2 = fact(g2, "result in", agent=closure2, patients=(suspension2,))
+    closure2 = fact(g2, "shut down", agent=halden2, patient=station2)
+    suspension2 = fact(g2, "halt services to", agent=meridian2, destination=kalden2)
+    cause2 = fact(g2, "result in", agent=closure2, patient=suspension2)
 
     _, groups, _ = match_graphs([g1, g2])
 
@@ -209,22 +221,25 @@ def test_causation_between_events_matches_on_both_levels():
     )
 
 
-def test_qualifier_selects_the_corresponding_event_occurrence():
-    """Two purchase events with the same participants in one article: the
-    qualified occurrence matches the qualified event in the other article,
-    and the unqualified occurrence stays unmatched."""
+def test_partial_mention_joins_the_fully_reported_event():
+    """A bare mention of an event matches its fully reported occurrence:
+    a role present on only one side contributes no evidence — partial
+    extraction is the norm, so one acquisition reported three times (twice
+    with the price, once in passing) is one event with three occurrences."""
     g1 = Graph(id="article-1")
     acme1 = g1.add_entity("Acme Corp")
     datavault1 = g1.add_entity("DataVault")
     price1 = g1.add_entity("$4 billion")
-    purchase1 = fact(g1, "acquire", agent=acme1, patients=(datavault1, price1))
+    purchase1 = fact(g1, "acquire", agent=acme1, patient=datavault1, price=price1)
 
     g2 = Graph(id="article-2")
     acme2 = g2.add_entity("Acme Corp")
     datavault2 = g2.add_entity("DataVault")
     price2 = g2.add_entity("$4 billion")
-    qualified_purchase2 = fact(g2, "purchase", agent=acme2, patients=(datavault2, price2))
-    other_purchase2 = fact(g2, "purchase", agent=acme2, patients=(datavault2,))
+    qualified_purchase2 = fact(
+        g2, "purchase", agent=acme2, patient=datavault2, price=price2
+    )
+    other_purchase2 = fact(g2, "purchase", agent=acme2, patient=datavault2)
 
     _, groups, unified = match_graphs([g1, g2])
 
@@ -232,10 +247,32 @@ def test_qualifier_selects_the_corresponding_event_occurrence():
         (acme1, acme2),
         (datavault1, datavault2),
         (price1, price2),
-        (purchase1, qualified_purchase2),
+        (purchase1, qualified_purchase2, other_purchase2),
     )
-    assert all(other_purchase2.id not in group for group in groups)
     _assert_original_occurrences(unified, g1, g2)
+
+
+def test_conflicting_qualifier_rejects_the_occurrence_match():
+    """The qualifier selects: identical participants with a conflicting
+    price are different occurrences. Same-role participants that mismatch
+    contribute negative evidence, so the events do not merge."""
+    g1 = Graph(id="article-1")
+    acme1 = g1.add_entity("Acme Corp")
+    datavault1 = g1.add_entity("DataVault")
+    price1 = g1.add_entity("$4 billion")
+    purchase1 = fact(g1, "acquire", agent=acme1, patient=datavault1, price=price1)
+
+    g2 = Graph(id="article-2")
+    acme2 = g2.add_entity("Acme Corp")
+    datavault2 = g2.add_entity("DataVault")
+    price2 = g2.add_entity("$600 million")
+    purchase2 = fact(g2, "purchase", agent=acme2, patient=datavault2, price=price2)
+
+    _, groups, _ = match_graphs([g1, g2])
+
+    assert all(
+        purchase1.id not in group or purchase2.id not in group for group in groups
+    )
 
 
 def test_matched_event_reinforces_name_variant_entity():
@@ -244,12 +281,12 @@ def test_matched_event_reinforces_name_variant_entity():
     g1 = Graph(id="article-1")
     buyer1 = g1.add_entity("Meridian Technologies")
     target1 = g1.add_entity("DataVault")
-    acquisition = fact(g1, "acquire", agent=buyer1, patients=(target1,))
+    acquisition = fact(g1, "acquire", agent=buyer1, patient=target1)
 
     g2 = Graph(id="article-2")
     buyer2 = g2.add_entity("Meridian Tech")
     target2 = g2.add_entity("DataVault")
-    purchase = fact(g2, "purchase", agent=buyer2, patients=(target2,))
+    purchase = fact(g2, "purchase", agent=buyer2, patient=target2)
 
     _, groups, _ = match_graphs([g1, g2])
 

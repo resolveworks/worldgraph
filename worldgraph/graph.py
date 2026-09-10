@@ -13,12 +13,29 @@ import json
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal
+from typing import Literal, get_args
 
 NodeKind = Literal["entity", "event"]
 
-Role = Literal["agent", "patient"]
-ROLES: frozenset[str] = frozenset({"agent", "patient"})
+# The participant-role vocabulary. Core roles are frame-specific — the event
+# label carries the frame — but the periphery is where the established
+# inventories (PropBank's numbered arguments and ArgM modifiers, AMR's
+# relations, VerbNet's thematic roles, schema.org Action) converge, and this
+# closed set is taken from the top of that intersection, trimmed to what
+# news text actually exercises.
+Role = Literal[
+    "agent",  # ARG0 — the one doing or bringing about the event
+    "patient",  # ARG1 — the thing acted on, changed, or held
+    "recipient",  # animate receiver in a transfer ('awarded to', 'sent to')
+    "beneficiary",  # party the event is done for or in the name of ('for', 'on behalf of')
+    "source",  # origin of motion or transfer ('from')
+    "destination",  # place that is the endpoint of motion or transfer ('moved to')
+    "location",  # static place of the event ('in', 'at')
+    "capacity",  # title or role a participant acts in ('as CEO')
+    "instrument",  # tool or means ('with drones', 'via')
+    "price",  # monetary amount paid, exchanged, fined, or raised (VerbNet Asset) ('for $4 billion')
+]
+ROLES: frozenset[str] = frozenset(get_args(Role))
 
 
 @dataclass

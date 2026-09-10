@@ -4,65 +4,43 @@ A proof-of-concept for knowledge extraction from news articles using cross-sourc
 
 ## The Core Idea
 
-News is redundant by nature — multiple outlets report the same events independently, using different wording but describing the same entities and relationships. Worldgraph treats this redundancy as signal: facts reported across multiple independent sources are more likely to be true, and entities that appear in the same relational neighborhood across sources are likely the same entity.
+News is redundant by nature — multiple outlets report the same events independently, using different wording but describing the same entities and facts. Worldgraph treats this redundancy as signal: facts reported across multiple independent sources are more likely to be true, and entities that appear in the same structural neighborhood across sources are likely the same entity.
 
 ## How It Works
 
 ### 1. Extract
 
-Each article is processed independently by an LLM to produce a small subgraph of entity-relation triples:
+Each article is processed independently by an LLM into a small graph of **entities** (people, organizations, places, things) and **events** (the facts the article asserts). An event is a reified fact — a node connected to its participants by roles:
 
 ```
-[Sarah Chen] —appointed as→ [CEO] —of→ [Nextera Inc]
-[David Park] —resigned from→ [CEO] —of→ [Nextera Inc]
+Sarah Chen works at Nextera as CEO
+
+        ┌──────────┐
+        │ work at  │          event node — label is display text,
+        └──────────┘          never used for matching
+        │     │     │
+     agent  patient capacity
+        │     │     │
+  Sarah Chen  Nextera  CEO
 ```
 
-Another article covering the same event produces a structurally similar subgraph with different wording. The extraction doesn't need to be perfect — noise gets filtered in the next stage.
+A second article covering the same fact — "Nextera employs Sarah Chen as chief executive" — produces the same structure with different labels. Extraction conventions pin one canonical shape per fact type (employment is person-anchored: `agent` is always the employee), so voice and perspective differences come out structurally identical.
 
 ### 2. Match
 
-Entity pairs across graphs are compared using **PARIS-style similarity propagation** (Suchanek et al., 2011), adapted for free-text relation phrases:
+Entity pairs are **seeded from name similarity** (Soft TF-IDF + Jaro-Winkler); events carry no comparable names and start at a neutral prior. From there, **PARIS-style similarity propagation** decides everything structurally: a pair's confidence grows when its role-identical neighbors also match, weighted by per-role **functionality** — a role that nearly always maps a participant to a single event carries more evidence than a promiscuous one. Evidence from multiple paths aggregates as an exponential sum, rewarding breadth over any single strong path, while neighbors that fail to corroborate contribute negative evidence. The iteration is damped to a fixed point, and merges commit progressively through a single union-find gated on structural corroboration: names alone never merge anything, and pairs with no structurally tested neighbors never merge. Entities with no credible match are left dangling (following FLORA).
 
-- Entity-entity confidence is **seeded from name similarity** (Soft TF-IDF + Jaro-Winkler) before propagation begins. This gives the iteration loop initial signal to work with — structurally connected neighbors that share similar names start with nonzero scores, which then propagate outward.
-- Each iteration: propagate — a pair's score increases if their neighbors also score highly, weighted by relation phrase similarity and relation functionality (rare/specific relations carry more signal than generic ones). Neighbor pairs with zero confidence are skipped.
-- Evidence from multiple paths is aggregated with an exponential sum: `1 - exp(-λ × Σ strengths)`. This naturally rewards breadth — a single strong path is heavily discounted (~0.63), while multiple paths accumulate proportionally.
-- Repeat until scores converge; pairs whose score crosses the merge threshold — and that have at least one structurally tested neighbor — are merged
+## Design Rationale
 
-Relations are compared via sentence embedding similarity — "acquired", "bought", "completed the purchase of" all cluster together without requiring a predefined schema. The standard Similarity Flooding algorithm (Melnik et al., 2002) requires identical edge labels to propagate similarity; we replace that binary gate with continuous relation-phrase similarity.
+**Why reified events.** Making the fact itself a node lets events match through exactly the same mechanism as entities — participant structure. Paraphrase tolerance therefore lives where the evidence is (the participants), and the wording of the relation never has to be compared at all.
 
-Entities with no credible match in another graph are simply left unmerged (dangling entities, following FLORA, Peng et al., 2025).
-
-### 3. Score (planned)
-
-Once matching is battle-tested, a scoring stage will rank each deduplicated fact by cross-source agreement — entities with multiple occurrences are matched entities, edges confirmed by multiple independent articles are higher-confidence facts. Provenance tracking through the pipeline makes this possible: every merged entity and edge retains its source articles.
-
-## Algorithm Design
-
-### The circularity problem
-
-Entity resolution is inherently circular: to know if two entities are the same you need to know if they have the same relations to the same other entities — but resolving *those* entities has the same problem. Hard early decisions cascade: one wrong merge combines relationship sets and can trigger further wrong merges.
-
-Similarity propagation dissolves this by keeping decisions soft for as long as possible. Scores iterate toward a fixpoint; only pairs that are very confident (merge threshold 0.9) *and* structurally corroborated are committed during propagation (progressive merging), and damped iteration bounds any circular reinforcement geometrically. Name similarity alone never merges anything — a pair with no tested neighbors stays unmerged no matter how similar the names.
-
-### Relation functionality
-
-Not all relations carry equal evidence. "Is headquartered in" connects many companies to a few cities — knowing two entities share that relation weakly implies identity. "Signed a definitive merger agreement with" is rare and specific — two entities sharing that relation are almost certainly the same pair.
-
-This is PARIS's *functionality* concept: a relation's weight is proportional to how often it maps a subject to a unique object. We approximate this with inverse average degree of the relation in the graph.
-
-### Free-text relations
-
-Standard methods (SF, PARIS, FLORA) assume relations come from a controlled vocabulary. We have free-text extraction, so every relation phrase is potentially unique. We handle this by pre-computing pairwise sentence-embedding similarity for all relation phrases and gating propagation paths on a cosine threshold — "acquired" and "purchased" pass (~0.85), "acquired" and "located in" don't. This replaces the exact-label-match gate in standard SF with a fuzzy one, but it's still a binary gate, not a continuous weight.
-
-### N-graph alignment
-
-Each article produces one graph. All article graphs are merged into a single unified graph, and propagation runs once over all cross-graph entity pairs simultaneously. Matches are merged transitively via the union-find maintained during propagation — there is no second, post-hoc grouping pass.
+**Why a closed role vocabulary.** The matcher gates alignment on exact role equality — the assumption Similarity Flooding makes about edge labels. That only works if the vocabulary is closed and assigned consistently, so it is enforced in the schema, not just the prompt. The set is taken from the top of the intersection of the established inventories — PropBank, AMR, VerbNet, schema.org Action — where decades of independent annotation converge. Core roles (who bought, who was sold) are frame-specific and stay in the event label; only the universal periphery (places, capacities, beneficiaries, instruments) became roles. Consistency beats correctness: a philosophically wrong role assigned identically by every article matches perfectly; two defensible but different assignments never match.
 
 ## Open Problems
 
-**Common structural templates.** Acquisitions, appointments, and earnings reports all produce similar subgraph shapes. Two unrelated acquisition events will have similar topology. The defense is that entity names from unrelated events won't match, so propagation between those graphs won't fire — but this relies on named entities being sufficiently distinct.
+**Common structural templates.** Acquisitions, appointments, and earnings reports all produce similar subgraph shapes, so unrelated events can look alike topologically. The defense is that named entities from unrelated events don't match, so propagation between those graphs never fires — but this relies on names being sufficiently distinct.
 
-**Relation granularity.** "Acquired" vs. "announced plans to acquire" involves different levels of commitment. Embedding similarity doesn't distinguish these, and functionality weighting won't help either.
+**Commitment granularity.** "Acquired" and "announced plans to acquire" differ only in the event label, which is never matched. Two articles at different commitment levels with identical participants will structurally confirm each other.
 
 **Source independence.** Wire services get rewritten in ways that look superficially independent. True source independence is hard to estimate.
 
