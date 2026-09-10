@@ -28,5 +28,9 @@ dev = [
     "pytest>=9.0.2",
 ]
 
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+
 [tool.ruff]
 target-version = "py312"
