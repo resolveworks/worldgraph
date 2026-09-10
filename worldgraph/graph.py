@@ -18,6 +18,7 @@ class Edge:
     source: str  # node id
     target: str  # node id
     relation: str
+    temporal: str
 
 
 @dataclass
@@ -34,9 +35,11 @@ class Graph:
         self.nodes[entity.id] = entity
         return entity
 
-    def add_edge(self, source: Node, target: Node, relation: str) -> None:
+    def add_edge(self, source: Node, target: Node, relation: str, temporal: str) -> None:
         """Add a relation edge between two existing nodes."""
-        self.edges.append(Edge(source=source.id, target=target.id, relation=relation))
+        self.edges.append(
+            Edge(source=source.id, target=target.id, relation=relation, temporal=temporal)
+        )
 
 
 def load_graph(path: Path) -> Graph:
@@ -62,6 +65,7 @@ def load_graph(path: Path) -> Graph:
                 source=edge_data["source"],
                 target=edge_data["target"],
                 relation=edge_data["relation"],
+                temporal=edge_data["temporal"],
             )
         )
 
@@ -87,6 +91,7 @@ def save_graph(
                 "source": edge.source,
                 "target": edge.target,
                 "relation": edge.relation,
+                "temporal": edge.temporal,
             }
         )
 

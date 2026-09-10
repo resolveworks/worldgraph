@@ -45,8 +45,8 @@ def _merge_scenario() -> list[Graph]:
         acq = g.add_entity(acquirer)
         tgt = g.add_entity(target)
         ceo = g.add_entity("James Chen" if i < 2 else "Sarah Park")
-        g.add_edge(acq, tgt, rel)
-        g.add_edge(acq, ceo, "CEO is")
+        g.add_edge(acq, tgt, rel, "current")
+        g.add_edge(acq, ceo, "CEO is", "current")
         graphs.append(g)
     return graphs
 
@@ -182,14 +182,14 @@ def test_self_loops_and_duplicate_edges_are_harmless(embedder):
     g1 = Graph(id="g1")
     x1 = g1.add_entity("X")
     y1 = g1.add_entity("Y")
-    g1.add_edge(x1, x1, "acquired")  # self-loop
-    g1.add_edge(x1, y1, "acquired")
-    g1.add_edge(x1, y1, "acquired")  # duplicate
+    g1.add_edge(x1, x1, "acquired", "current")  # self-loop
+    g1.add_edge(x1, y1, "acquired", "current")
+    g1.add_edge(x1, y1, "acquired", "current")  # duplicate
 
     g2 = Graph(id="g2")
     x2 = g2.add_entity("X")
     y2 = g2.add_entity("Y")
-    g2.add_edge(x2, y2, "acquired")
+    g2.add_edge(x2, y2, "acquired", "current")
 
     _, groups, _ = match_graphs([g1, g2], embedder)
 

@@ -28,15 +28,18 @@ def task(stem: str) -> Extraction:
     return extract_article(build_agent(MODEL), (FIXTURES / f"{stem}.md").read_text())
 
 
-def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple[str, str, str]]]:
+def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple[str, str, str, str]]]:
     """Order- and id-independent form: entity name counts and
-    (source, relation, target) name-triple counts."""
+    (source, relation, target, temporal) name-tuple counts."""
     names = {e.id: e.name for e in ext.entities}
     if len(names) != len(ext.entities):
         raise ValueError(f"duplicate entity ids: {ext.entities!r}")
     return (
         Counter(e.name for e in ext.entities),
-        Counter((names[r.source], r.relation, names[r.target]) for r in ext.relations),
+        Counter(
+            (names[r.source], r.relation, names[r.target], r.temporal)
+            for r in ext.relations
+        ),
     )
 
 
