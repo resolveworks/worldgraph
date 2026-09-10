@@ -69,5 +69,6 @@ def test_duplicate_entity_is_a_miss():
     pred = extraction(["Acme Corp", "Gamma AI", "Gamma AI"], [(1, 2, "acquired", "past")])
     assert not hit(pred, GOLD)
 
+
 def test_different_temporal_is_a_miss():
     assert not hit(extraction(["Acme Corp", "Gamma AI"], [(1, 2, "acquired", "future")]), GOLD)
