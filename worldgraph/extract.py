@@ -37,6 +37,16 @@ class Extraction(BaseModel):
     relations: list[Relation]
 
 
+def build_agent(model: str) -> Agent[object, Extraction]:
+    """Single source of truth for the extraction agent — used by the pipeline and the eval harness."""
+    return Agent(
+        model,
+        instructions=SYSTEM_PROMPT,
+        output_type=Extraction,
+        model_settings={"thinking": "low"},
+    )
+
+
 def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
     """Extract entities and relations from a single article's text."""
     prompt = f"""Extract all entities and relations from this news article.
@@ -52,12 +62,7 @@ def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> N
     The filename stem is the article id.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    agent = Agent(
-        model,
-        instructions=SYSTEM_PROMPT,
-        output_type=Extraction,
-        model_settings={"thinking": "low"},
-    )
+    agent = build_agent(model)
 
     for i, article_file in enumerate(article_files, 1):
         article_id = article_file.stem
