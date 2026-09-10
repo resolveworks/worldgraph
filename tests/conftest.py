@@ -15,7 +15,9 @@ def compute_rel_clusters(
     graphs: list[Graph], embedder: Embedder, threshold: float = 0.8
 ) -> dict[str, int]:
     """Collect all unique relations from graphs and return cluster assignments."""
-    relations = sorted({edge.relation for graph in graphs for edge in graph.edges})
+    relations = sorted(
+        {edge.relation for graph in graphs for edge in graph.edges.values()}
+    )
     embeddings = embedder.embed(relations, template=RELATION_TEMPLATE)
     rel_sim = build_rel_sim(set(relations), embeddings)
     return build_rel_clusters(rel_sim, threshold)

@@ -590,7 +590,7 @@ def test_completion_and_announcement_articles_keep_temporal_edges(embedder):
     # The unified graph contains two acquire edges with distinct temporal values
     acq_edges = [
         edge
-        for edge in unified.edges
+        for edge in unified.edges.values()
         if edge.relation == "acquire"
         and {edge.source, edge.target} in ({acme1.id, gamma1.id}, {acme2.id, gamma2.id})
     ]

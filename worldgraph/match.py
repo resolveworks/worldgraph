@@ -120,7 +120,7 @@ def compute_functionality(
     # Collect all (source_name, target_name) pairs per (relation cluster, temporal).
     pool_pairs: dict[tuple[int, str], list[tuple[str, str]]] = defaultdict(list)
     for graph in graphs:
-        for edge in graph.edges:
+        for edge in graph.edges.values():
             cid = rel_clusters.get(edge.relation, -1)
             source_name = graph.nodes[edge.source].names[0]
             target_name = graph.nodes[edge.target].names[0]
@@ -146,7 +146,7 @@ def compute_functionality(
     observed = {
         (edge.relation, edge.temporal)
         for graph in graphs
-        for edge in graph.edges
+        for edge in graph.edges.values()
     }
     return {
         (rel, temporal): pool_func[
@@ -170,7 +170,7 @@ def build_unified_graph(graphs: list[Graph]) -> Graph:
     unified = Graph(id="unified")
     for graph in graphs:
         unified.nodes.update(graph.nodes)
-        unified.edges.extend(graph.edges)
+        unified.edges.update(graph.edges)
     return unified
 
 
@@ -247,7 +247,7 @@ def _build_adjacency(
     """
     default = Functionality(1.0, 1.0)
     adjacency: dict[str, list[Neighbor]] = defaultdict(list)
-    for edge in graph.edges:
+    for edge in graph.edges.values():
         func = functionality.get((edge.relation, edge.temporal), default)
         src, tgt = edge.source, edge.target
         if src == tgt:
@@ -606,7 +606,9 @@ def match_graphs(
     all_names = [
         name for graph in graphs for node in graph.nodes.values() for name in node.names
     ]
-    all_relations = sorted({edge.relation for graph in graphs for edge in graph.edges})
+    all_relations = sorted(
+        {edge.relation for graph in graphs for edge in graph.edges.values()}
+    )
 
     idf = build_idf(all_names)
     relation_embeddings = embedder.embed(all_relations, template=RELATION_TEMPLATE)
