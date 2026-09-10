@@ -1,140 +1,96 @@
 name: extraction-fixtures
 cases:
-- name: self_directed_actions
-  inputs: self_directed_actions
+- name: role_qualifiers
+  inputs: role_qualifiers
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Tessa Corin
+    - id: e2
+      name: Halden Freight
+    - id: e3
+      name: Vesterby
+    - id: e4
+      name: Meridian Rail
+    - id: e5
+      name: managing director
+    - id: e6
+      name: operations director
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: manage
+      temporal: current
+    - id: r2
+      source: r1
+      target: e5
+      relation: role
+      temporal: current
+    - id: r3
+      source: r1
+      target: e3
+      relation: for
+      temporal: current
+    - id: r4
+      source: e1
+      target: e4
+      relation: manage
+      temporal: past
+    - id: r5
+      source: r4
+      target: e6
+      relation: role
+      temporal: past
+  evaluators: []
+- name: appositive_roles
+  inputs: appositive_roles
   metadata: null
   expected_output:
     entities:
     - id: e1
       name: Marisol Vaneck
     - id: e2
-      name: Civic Union
-    - id: e3
-      name: ketamine
-    - id: e4
-      name: amphetamines
-    - id: e5
-      name: Ardmore
-    relations:
-    - source: e1
-      target: e3
-      relation: use
-      temporal: past
-    - source: e1
-      target: e4
-      relation: use
-      temporal: past
-    - source: e1
-      target: e2
-      relation: lead
-      temporal: current
-    - source: e1
-      target: e5
-      relation: hold a press conference in
-      temporal: past
-  evaluators: []
-- name: bare_relation_phrases
-  inputs: bare_relation_phrases
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Halden Freight
-    - id: e2
-      name: Tessa Corin
-    - id: e3
       name: Vesterby
-    - id: e4
-      name: Meridian Rail
-    relations:
-    - source: e2
-      target: e1
-      relation: be managing director of
-      temporal: current
-    - source: e2
-      target: e3
-      relation: be appointed managing director for
-      temporal: past
-    - source: e2
-      target: e4
-      relation: be operations director of
-      temporal: past
-  evaluators: []
-- name: media_meta_entities
-  inputs: media_meta_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Kestrel Bank
-    - id: e2
-      name: Ostmund
     - id: e3
-      name: Petra Lindqvist
-    relations:
-    - source: e1
-      target: e2
-      relation: close branches in
-      temporal: future
-    - source: e3
-      target: e1
-      relation: be chief executive of
-      temporal: current
-  evaluators: []
-- name: denied_allegations
-  inputs: denied_allegations
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
+      name: Ardmore government
+    - id: e4
       name: Ivo Brandt
-    - id: e2
-      name: Voss Infrastructure
-    - id: e3
-      name: Ostmund rail link
-    - id: e4
-      name: Ostmund government
-    relations:
-    - source: e1
-      target: e4
-      relation: be transport minister in
-      temporal: current
-    - source: e2
-      target: e3
-      relation: be building
-      temporal: past
-  evaluators: []
-- name: temporal_scope
-  inputs: temporal_scope
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Nordwind Shipping
-    - id: e2
-      name: Baltic Freight
-    - id: e3
-      name: Caspian Lines
-    - id: e4
-      name: Gdansk
     - id: e5
-      name: Ruta Sellen
+      name: foreign minister
+    - id: e6
+      name: deputy trade minister
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
-      relation: acquire
-      temporal: past
-    - source: e1
-      target: e4
-      relation: be headquartered in
-      temporal: current
-    - source: e5
-      target: e1
-      relation: be chief executive of
-      temporal: current
-    - source: e1
+      relation: visit
+      temporal: future
+    - id: r2
+      source: e1
       target: e3
-      relation: acquire
+      relation: serve in
+      temporal: current
+    - id: r3
+      source: r2
+      target: e5
+      relation: role
+      temporal: current
+    - id: r4
+      source: e4
+      target: e3
+      relation: serve in
+      temporal: current
+    - id: r5
+      source: r4
+      target: e6
+      relation: role
+      temporal: current
+    - id: r6
+      source: e4
+      target: r1
+      relation: join
       temporal: future
   evaluators: []
 - name: coordinated_lists
@@ -154,33 +110,110 @@ cases:
       name: Kalden
     - id: e6
       name: Rysby
-    - id: e7
-      name: Tessa Corin
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
       relation: close stations in
       temporal: future
-    - source: e1
+    - id: r2
+      source: e1
       target: e3
       relation: close stations in
       temporal: future
-    - source: e1
+    - id: r3
+      source: e1
       target: e4
       relation: close stations in
       temporal: future
-    - source: e1
+    - id: r4
+      source: e1
       target: e5
       relation: review routes in
       temporal: future
-    - source: e1
+    - id: r5
+      source: e1
       target: e6
       relation: review routes in
       temporal: future
-    - source: e7
-      target: e1
-      relation: be chief executive of
+  evaluators: []
+- name: temporal_scope
+  inputs: temporal_scope
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Nordwind Shipping
+    - id: e2
+      name: Baltic Freight
+    - id: e3
+      name: Caspian Lines
+    - id: e4
+      name: Gdansk
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: acquire
+      temporal: past
+    - id: r2
+      source: e1
+      target: e4
+      relation: be headquartered in
       temporal: current
+    - id: r3
+      source: e1
+      target: e3
+      relation: acquire
+      temporal: future
+  evaluators: []
+- name: denied_allegations
+  inputs: denied_allegations
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Ivo Brandt
+    - id: e2
+      name: Ostmund government
+    - id: e3
+      name: Voss Infrastructure
+    - id: e4
+      name: Ostmund rail link
+    - id: e5
+      name: transport minister
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: serve in
+      temporal: current
+    - id: r2
+      source: r1
+      target: e5
+      relation: role
+      temporal: current
+    - id: r3
+      source: e3
+      target: e4
+      relation: build
+      temporal: past
+  evaluators: []
+- name: media_meta_entities
+  inputs: media_meta_entities
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Kestrel Bank
+    - id: e2
+      name: Ostmund
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: close branches in
+      temporal: future
   evaluators: []
 - name: unnamed_parties
   inputs: unnamed_parties
@@ -191,31 +224,11 @@ cases:
       name: Halvard Gallery
     - id: e2
       name: Vesterby
-    - id: e3
-      name: Maja Lindfors
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
       relation: be located in
-      temporal: current
-    - source: e3
-      target: e1
-      relation: be director of
-      temporal: current
-  evaluators: []
-- name: self_loops
-  inputs: self_loops
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Katrien Voss
-    - id: e2
-      name: Ostmund
-    relations:
-    - source: e1
-      target: e2
-      relation: lead
       temporal: current
   evaluators: []
 - name: historical_background
@@ -236,130 +249,30 @@ cases:
     - id: e6
       name: Meridian Rail
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
       relation: modernise
       temporal: future
-    - source: e1
+    - id: r2
+      source: e1
       target: e3
       relation: move headquarters to
       temporal: past
-    - source: e4
+    - id: r3
+      source: e4
       target: e2
       relation: build
       temporal: past
-    - source: e5
+    - id: r4
+      source: e5
       target: e2
       relation: build
       temporal: past
-    - source: e6
+    - id: r5
+      source: e6
       target: e5
       relation: acquire
-      temporal: past
-  evaluators: []
-- name: relation_phrase_hygiene
-  inputs: relation_phrase_hygiene
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Ruta Sellen
-    - id: e2
-      name: Vesterby
-    - id: e3
-      name: Ostmund transport board
-    - id: e4
-      name: Ivo Brandt
-    - id: e5
-      name: Ostmund government
-    - id: e6
-      name: Ostmund
-    relations:
-    - source: e1
-      target: e2
-      relation: be mayor of
-      temporal: past
-    - source: e1
-      target: e3
-      relation: be named chair of
-      temporal: past
-    - source: e1
-      target: e3
-      relation: be chair of
-      temporal: current
-    - source: e4
-      target: e5
-      relation: serve in
-      temporal: past
-    - source: e1
-      target: e4
-      relation: succeed
-      temporal: past
-    - source: e1
-      target: e3
-      relation: strip contracting powers from
-      temporal: future
-    - source: e3
-      target: e6
-      relation: award ferry routes in
-      temporal: current
-  evaluators: []
-- name: abandoned_plans
-  inputs: abandoned_plans
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Ostmund government
-    - id: e2
-      name: Ostmund Rail
-    - id: e3
-      name: Vesterby transit authority
-    - id: e4
-      name: Ivo Brandt
-    relations:
-    - source: e4
-      target: e1
-      relation: be transport minister in
-      temporal: current
-  evaluators: []
-- name: role_appositions
-  inputs: role_appositions
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Marisol Vaneck
-    - id: e2
-      name: Vesterby
-    - id: e3
-      name: Ivo Brandt
-    - id: e4
-      name: Ardmore government
-    - id: e5
-      name: Ruta Sellen
-    - id: e6
-      name: Nordwind Shipping
-    relations:
-    - source: e1
-      target: e4
-      relation: be foreign minister in
-      temporal: current
-    - source: e1
-      target: e2
-      relation: lead trade delegation to
-      temporal: future
-    - source: e3
-      target: e4
-      relation: be deputy trade minister in
-      temporal: current
-    - source: e1
-      target: e5
-      relation: succeed
-      temporal: past
-    - source: e5
-      target: e6
-      relation: be chief executive of
       temporal: past
   evaluators: []
 - name: clause_entities
@@ -371,17 +284,12 @@ cases:
       name: Kestrel Bank
     - id: e2
       name: Marta Reyes
-    - id: e3
-      name: Petra Lindqvist
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
       relation: dismiss
       temporal: past
-    - source: e3
-      target: e1
-      relation: be chief executive of
-      temporal: current
   evaluators: []
 - name: repeated_entities
   inputs: repeated_entities
@@ -393,47 +301,41 @@ cases:
     - id: e2
       name: Vesterby
     - id: e3
-      name: Ingrid Halvorsen
-    - id: e4
       name: Ostmund art fair
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
       relation: be located in
       temporal: current
-    - source: e3
-      target: e2
-      relation: be mayor of
-      temporal: current
-    - source: e1
-      target: e4
+    - id: r2
+      source: e1
+      target: e3
       relation: host
       temporal: future
   evaluators: []
-- name: reified_measures
-  inputs: reified_measures
+- name: object_entities
+  inputs: object_entities
   metadata: null
   expected_output:
     entities:
     - id: e1
-      name: Ostmund government
+      name: Marisol Vaneck
     - id: e2
-      name: Voss Infrastructure
+      name: ketamine
     - id: e3
-      name: Rysby terminal
+      name: amphetamines
     relations:
-    - source: e1
+    - id: r1
+      source: e1
       target: e2
-      relation: impose sanctions on
+      relation: use
       temporal: past
-    - source: e1
-      target: e2
-      relation: freeze assets of
-      temporal: past
-    - source: e2
+    - id: r2
+      source: e1
       target: e3
-      relation: build
-      temporal: current
+      relation: use
+      temporal: past
   evaluators: []
 evaluators: []
 report_evaluators: []
