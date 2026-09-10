@@ -1,5 +1,98 @@
 # yaml-language-server: $schema=extraction_schema.json
 name: extraction-fixtures
-cases: []
+cases:
+- name: self_directed_actions
+  inputs: self_directed_actions
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Marisol Vaneck
+    - id: e2
+      name: Civic Union
+    - id: e3
+      name: ketamine
+    - id: e4
+      name: amphetamines
+    - id: e5
+      name: Ardmore
+    relations:
+    - source: e1
+      target: e3
+      relation: used
+    - source: e1
+      target: e4
+      relation: used
+    - source: e1
+      target: e2
+      relation: has led
+    - source: e1
+      target: e5
+      relation: held a press conference in
+  evaluators: []
+- name: bare_relation_phrases
+  inputs: bare_relation_phrases
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Halden Freight
+    - id: e2
+      name: Tessa Corin
+    - id: e3
+      name: Vesterby
+    - id: e4
+      name: Meridian Rail
+    relations:
+    - source: e2
+      target: e1
+      relation: is managing director of
+    - source: e2
+      target: e3
+      relation: was appointed managing director for
+    - source: e2
+      target: e4
+      relation: was operations director of
+  evaluators: []
+- name: media_meta_entities
+  inputs: media_meta_entities
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Kestrel Bank
+    - id: e2
+      name: Ostmund
+    - id: e3
+      name: Petra Lindqvist
+    relations:
+    - source: e1
+      target: e2
+      relation: will close branches in
+    - source: e3
+      target: e1
+      relation: is chief executive of
+  evaluators: []
+- name: denied_allegations
+  inputs: denied_allegations
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Ivo Brandt
+    - id: e2
+      name: Voss Infrastructure
+    - id: e3
+      name: Ostmund rail link
+    - id: e4
+      name: Ostmund government
+    relations:
+    - source: e1
+      target: e4
+      relation: is transport minister in
+    - source: e2
+      target: e3
+      relation: is building
+  evaluators: []
 evaluators: []
 report_evaluators: []
