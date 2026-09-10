@@ -107,7 +107,7 @@ def test_dissimilar_phrases_do_not_pool(embedder):
 
 
 def test_same_phrase_different_temporal_pools_separately(embedder):
-    """"acquire" in different temporal classes pools separately: each
+    """'acquire' in different temporal classes pools separately: each
     (phrase, temporal) pool is 1:1, so both forward functionalities are 1.0
     (pooled together they would be 0.5)."""
     g = Graph(id="g1")

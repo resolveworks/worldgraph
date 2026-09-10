@@ -113,7 +113,7 @@ def compute_functionality(
 
     Entity names (not IDs) are used so that the same entity mentioned across
     multiple graphs pools its statistics.  Edges whose relation phrases belong
-    to the same cluster are pooled together.
+    to the same cluster and temporal class are pooled together.
 
     Returns dict from (phrase, temporal) to Functionality(forward, inverse).
     """
