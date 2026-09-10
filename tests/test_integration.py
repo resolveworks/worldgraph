@@ -544,16 +544,16 @@ def test_synonym_inflation_false_merge_via_shared_hub(embedder):
 
 
 # ---------------------------------------------------------------------------
-# 7. Temporal dimension
+# 7. Source-local temporal metadata
 # ---------------------------------------------------------------------------
 
 
-def test_completion_and_announcement_articles_keep_temporal_edges(embedder):
+def test_completion_and_announcement_preserve_temporal_metadata(embedder):
     """A completion and announcement can describe the same matched fact.
 
-    Their temporal values disagree and add no matching support, but agreement
-    on the other edge features is enough to match them. The unified graph
-    retains both source-local edges and temporal observations.
+    Temporal values are excluded from identity matching, so their difference
+    neither subtracts evidence nor prevents the edge match. The unified graph
+    retains both source-local edges and their original temporal observations.
     """
     # Article 1: deal completed
     g1 = Graph(id="completion")

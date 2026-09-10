@@ -415,15 +415,15 @@ def test_name_variation_with_structural_reinforcement(embedder):
 
 
 # ---------------------------------------------------------------------------
-# Temporal evidence
+# Temporal metadata
 # ---------------------------------------------------------------------------
 
 
-def test_cross_temporal_terms_can_merge(embedder):
-    """Temporal disagreement supplies no support but is not an identity gate.
+def test_cross_temporal_edge_occurrences_merge(embedder):
+    """Temporal metadata neither contributes to nor vetoes edge identity.
 
-    Agreement on the predicate and both endpoints is sufficient for these
-    otherwise-identical past and future edge occurrences to match.
+    The matching predicate and endpoints identify these past and future edge
+    occurrences, which remain separate source-local objects in the unified graph.
     """
     g1 = Graph(id="g1")
     acme1 = g1.add_entity("Acme Corp")
@@ -435,15 +435,17 @@ def test_cross_temporal_terms_can_merge(embedder):
     gamma2 = g2.add_entity("Gamma AI")
     edge2 = g2.add_edge(acme2, gamma2, "acquire", "future")
 
-    _, groups, _ = match_graphs([g1, g2], embedder)
+    _, groups, unified = match_graphs([g1, g2], embedder)
 
     assert next(g for g in groups if acme1.id in g) == {acme1.id, acme2.id}
     assert next(g for g in groups if gamma1.id in g) == {gamma1.id, gamma2.id}
     assert next(g for g in groups if edge1.id in g) == {edge1.id, edge2.id}
+    assert unified.edges[edge1.id] == edge1
+    assert unified.edges[edge2.id] == edge2
 
 
-def test_same_temporal_terms_merge(embedder):
-    """Temporal agreement supports matching both endpoint nodes and the edge."""
+def test_same_temporal_edge_occurrences_merge(embedder):
+    """Equal temporal metadata remains irrelevant to edge identity."""
     g1 = Graph(id="g1")
     acme1 = g1.add_entity("Acme Corp")
     gamma1 = g1.add_entity("Gamma AI")
@@ -454,11 +456,41 @@ def test_same_temporal_terms_merge(embedder):
     gamma2 = g2.add_entity("Gamma AI")
     edge2 = g2.add_edge(acme2, gamma2, "acquire", "past")
 
-    _, groups, _ = match_graphs([g1, g2], embedder)
+    _, groups, unified = match_graphs([g1, g2], embedder)
 
     assert next(g for g in groups if acme1.id in g) == {acme1.id, acme2.id}
     assert next(g for g in groups if gamma1.id in g) == {gamma1.id, gamma2.id}
     assert next(g for g in groups if edge1.id in g) == {edge1.id, edge2.id}
+    assert unified.edges[edge1.id] == edge1
+    assert unified.edges[edge2.id] == edge2
+
+
+def test_temporal_metadata_is_excluded_from_edge_identity_confidence(embedder):
+    """Equal and different temporal values produce the same edge confidence.
+
+    Non-identical predicate wording leaves score headroom, so treating matching
+    temporal metadata as ordinary positive evidence would make the scores differ.
+    """
+
+    def confidence_for(right_temporal: str) -> float:
+        left = Graph(id="left")
+        left_source = left.add_entity("Acme Corp")
+        left_target = left.add_entity("Gamma AI")
+        left_edge = left.add_edge(left_source, left_target, "acquire", "past")
+
+        right = Graph(id="right")
+        right_source = right.add_entity("Acme Corp")
+        right_target = right.add_entity("Gamma AI")
+        right_edge = right.add_edge(
+            right_source, right_target, "take control of", right_temporal
+        )
+
+        confidence, _, _ = match_graphs(
+            [left, right], embedder, merge_threshold=float("inf")
+        )
+        return confidence[(left_edge.id, right_edge.id)]
+
+    assert confidence_for("past") == confidence_for("future")
 
 
 # ---------------------------------------------------------------------------

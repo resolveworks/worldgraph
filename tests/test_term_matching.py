@@ -93,11 +93,11 @@ def test_matched_edge_structure_reinforces_name_variant_node(embedder):
     _assert_grouped_pair(groups, buyer_1.id, buyer_2.id)
 
 
-def test_temporal_disagreement_does_not_veto_edge_match(embedder):
-    """Matching endpoints and predicate can outweigh temporal disagreement.
+def test_temporal_metadata_does_not_affect_edge_match(embedder):
+    """Temporal values are source-local metadata, not edge identity features.
 
-    The differing temporal values provide no agreement, but remain source-local
-    observations on the two matched edge occurrences in the unified graph.
+    The matching predicate and endpoints identify these occurrences while each
+    unified Edge retains its original temporal observation.
     """
     first = Graph(id="completion")
     acme_1 = first.add_entity("Acme Corp")
