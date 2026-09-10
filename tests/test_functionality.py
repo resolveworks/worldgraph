@@ -24,7 +24,7 @@ def test_one_to_one_functionality_is_1(embedder):
     g.add_edge(google, youtube, "acquired", "current")
 
     func = compute_functionality([g], compute_rel_clusters([g], embedder))
-    assert func["acquired"].forward == pytest.approx(1.0)
+    assert func[("acquired", "current")].forward == pytest.approx(1.0)
 
 
 def test_fan_out_lowers_functionality(embedder):
@@ -37,7 +37,7 @@ def test_fan_out_lowers_functionality(embedder):
     g.add_edge(apple, shazam, "acquired", "current")
 
     func = compute_functionality([g], compute_rel_clusters([g], embedder))
-    assert func["acquired"].forward == pytest.approx(0.5)
+    assert func[("acquired", "current")].forward == pytest.approx(0.5)
 
 
 def test_one_to_one_inv_functionality_is_1(embedder):
@@ -51,7 +51,7 @@ def test_one_to_one_inv_functionality_is_1(embedder):
     g.add_edge(google, youtube, "acquired", "current")
 
     func = compute_functionality([g], compute_rel_clusters([g], embedder))
-    assert func["acquired"].inverse == pytest.approx(1.0)
+    assert func[("acquired", "current")].inverse == pytest.approx(1.0)
 
 
 def test_fan_in_lowers_inv_functionality(embedder):
@@ -64,7 +64,7 @@ def test_fan_in_lowers_inv_functionality(embedder):
     g.add_edge(google, beats, "acquired", "current")
 
     func = compute_functionality([g], compute_rel_clusters([g], embedder))
-    assert func["acquired"].inverse == pytest.approx(0.5)
+    assert func[("acquired", "current")].inverse == pytest.approx(0.5)
 
 
 def test_similar_phrases_pool_edges(embedder):
@@ -84,7 +84,7 @@ def test_similar_phrases_pool_edges(embedder):
     g2.add_edge(apple2, shazam, "bought", "current")
 
     func = compute_functionality([g1, g2], compute_rel_clusters([g1, g2], embedder))
-    assert func["acquired"].forward < 1.0
+    assert func[("acquired", "current")].forward < 1.0
 
 
 def test_dissimilar_phrases_do_not_pool(embedder):
@@ -103,7 +103,23 @@ def test_dissimilar_phrases_do_not_pool(embedder):
     g2.add_edge(apple2, us, "located in", "current")
 
     func = compute_functionality([g1, g2], compute_rel_clusters([g1, g2], embedder))
-    assert func["acquired"].forward == pytest.approx(1.0)
+    assert func[("acquired", "current")].forward == pytest.approx(1.0)
+
+
+def test_same_phrase_different_temporal_pools_separately(embedder):
+    """'acquire' in different temporal classes pools separately: each
+    (phrase, temporal) pool is 1:1, so both forward functionalities are 1.0
+    (pooled together they would be 0.5)."""
+    g = Graph(id="g1")
+    apple = g.add_entity("Apple")
+    beats = g.add_entity("Beats")
+    shazam = g.add_entity("Shazam")
+    g.add_edge(apple, beats, "acquire", "past")
+    g.add_edge(apple, shazam, "acquire", "current")
+
+    func = compute_functionality([g], compute_rel_clusters([g], embedder))
+    assert func[("acquire", "past")].forward == pytest.approx(1.0)
+    assert func[("acquire", "current")].forward == pytest.approx(1.0)
 
 
 def test_same_entity_name_across_graphs_pools(embedder):
@@ -121,4 +137,4 @@ def test_same_entity_name_across_graphs_pools(embedder):
 
     func = compute_functionality([g1, g2], compute_rel_clusters([g1, g2], embedder))
     # Apple→{Beats, Shazam}: avg_out_degree = 2 → functionality = 0.5
-    assert func["acquired"].forward == pytest.approx(0.5)
+    assert func[("acquired", "current")].forward == pytest.approx(0.5)

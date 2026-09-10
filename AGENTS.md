@@ -39,15 +39,17 @@ The core propagation loop (`match.py`):
 
 3. **Functionality weighting** — global forward and inverse functionality (1/avg_degree), with equivalent relation phrases pooled.
 
-4. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
+4. **Temporal dimension** — relations carry past/current/future from extraction; relation equivalence requires the same temporal class (relation cluster + temporal), so cross-temporal edges contribute no evidence.
 
-5. **Damped fixed-point iteration** — `new = (1-d)*old + d*computed` where computed integrates positive and negative evidence around the name-similarity seed. Converges via contraction.
+5. **Exponential sum aggregation** — `1 - exp(-λ × Σ strengths)` where each path contributes `min(func_a, func_b) × neighbor_confidence`. Rewards breadth over single strong paths.
 
-6. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Match groups come from that propagation's union-find: a single merge threshold gated on structural evidence, no post-hoc grouping pass.
+6. **Damped fixed-point iteration** — `new = (1-d)*old + d*computed` where computed integrates positive and negative evidence around the name-similarity seed. Converges via contraction.
 
-7. **Negative evidence** — integrated directly into the single propagation score. Neighbors with confidence < 0.5 contribute negative evidence weighted by forward functionality, pushing the score toward 0. Damped iteration bounds circular reinforcement geometrically.
+7. **Unified N-graph matching** — all article graphs merged into one, propagation runs once over all cross-graph pairs. Match groups come from that propagation's union-find: a single merge threshold gated on structural evidence, no post-hoc grouping pass.
 
-8. **Progressive merging** — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles. The in-loop union-find is the sole merge authority: pairs below the merge threshold, or with zero tested neighbors, never merge regardless of name similarity.
+8. **Negative evidence** — integrated directly into the single propagation score. Neighbors with confidence < 0.5 contribute negative evidence weighted by forward functionality, pushing the score toward 0. Damped iteration bounds circular reinforcement geometrically.
+
+9. **Progressive merging** — high-confidence merges are committed inline during the single propagation loop. Canonical adjacency is updated incrementally on merge (O(degree) per merge), avoiding full adjacency rebuilds. Enriched neighborhoods compound structural evidence across merge cycles. The in-loop union-find is the sole merge authority: pairs below the merge threshold, or with zero tested neighbors, never merge regardless of name similarity.
 
 ### What's not implemented (yet)
 
