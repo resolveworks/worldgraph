@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 
 import click
@@ -62,13 +63,13 @@ def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
     return agent.run_sync(prompt).output
 
 
-def run_extraction(article_files: list[Path], output_dir: Path, model: str) -> None:
+def run_extraction(article_files: list[Path], output_dir: Path) -> None:
     """Run extraction on all article text files, writing one graph JSON per article.
 
     The filename stem is the article id.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
-    agent = build_agent(model)
+    agent = build_agent(os.environ["EXTRACTION_MODEL"])
 
     for i, article_file in enumerate(article_files, 1):
         article_id = article_file.stem

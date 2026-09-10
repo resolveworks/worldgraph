@@ -7,6 +7,7 @@ asserts an exact hit on the hand-labeled golden extraction.
 
 from collections import Counter
 from dataclasses import dataclass
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -20,7 +21,7 @@ load_dotenv()
 FIXTURES = Path(__file__).parent / "fixtures"
 DATASET_PATH = Path(__file__).parent / "datasets" / "extraction.yaml"
 
-MODEL = "deepseek:deepseek-v4-flash"  # keep in sync with worldgraph/cli.py default
+MODEL = os.environ["EXTRACTION_MODEL"]
 
 
 def task(stem: str) -> Extraction:
