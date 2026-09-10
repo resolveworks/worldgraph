@@ -3,6 +3,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from worldgraph.graph import Graph, Node, Edge, load_graph, save_graph
 
 
@@ -11,7 +13,7 @@ def test_save_load_roundtrip_single_graph(tmp_path: Path):
     g = Graph(id="article-1")
     n1 = g.add_entity("Alice")
     n2 = g.add_entity("Bob")
-    g.add_edge(n1, n2, "knows")
+    g.add_edge(n1, n2, "knows", "current")
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -34,7 +36,7 @@ def test_save_load_roundtrip_unified_graph(tmp_path: Path):
     g.nodes["n1"] = Node(id="n1", graph_id="article-1", names=["Alice"])
     g.nodes["n2"] = Node(id="n2", graph_id="article-2", names=["Bob"])
     g.nodes["n3"] = Node(id="n3", graph_id="unified", names=["Carol"])
-    g.edges.append(Edge(source="n1", target="n2", relation="knows"))
+    g.edges.append(Edge(source="n1", target="n2", relation="knows", temporal="current"))
 
     path = tmp_path / "unified.json"
     save_graph(g, path)
@@ -59,7 +61,7 @@ def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
     g = Graph(id="article-1")
     n1 = g.add_entity(["Meridian Technologies", "Meridian Tech"])
     n2 = g.add_entity("DataVault")
-    g.add_edge(n1, n2, "acquired")
+    g.add_edge(n1, n2, "acquired", "current")
 
     path = tmp_path / "g.json"
     save_graph(g, path)
@@ -73,3 +75,31 @@ def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
     loaded = load_graph(path)
     assert loaded.nodes[n1.id].names == ["Meridian Technologies", "Meridian Tech"]
     assert loaded.nodes[n2.id].names == ["DataVault"]
+
+
+def test_save_load_roundtrip_temporal(tmp_path: Path):
+    """Edge.temporal survives save/load round-trip."""
+    g = Graph(id="article-1")
+    n1 = g.add_entity("Alice")
+    n2 = g.add_entity("Bob")
+    g.add_edge(n1, n2, "acquire", "past")
+
+    path = tmp_path / "g.json"
+    save_graph(g, path)
+
+    loaded = load_graph(path)
+    assert [(e.relation, e.temporal) for e in loaded.edges] == [("acquire", "past")]
+
+
+def test_load_edge_without_temporal_raises(tmp_path: Path):
+    """Edges lacking 'temporal' are invalid — no fallback."""
+    data = {
+        "id": "article-1",
+        "nodes": [{"id": "n1", "graph_id": "article-1", "names": ["Alice"]}],
+        "edges": [{"source": "n1", "target": "n1", "relation": "knows"}],
+    }
+    path = tmp_path / "g.json"
+    path.write_text(json.dumps(data))
+
+    with pytest.raises(KeyError):
+        load_graph(path)

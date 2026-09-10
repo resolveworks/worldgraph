@@ -28,21 +28,22 @@ def extraction(entities, relations) -> Extraction:
     return Extraction(
         entities=[Entity(id=f"e{i+1}", name=n) for i, n in enumerate(entities)],
         relations=[
-            Relation(source=f"e{s}", target=f"e{t}", relation=r) for s, t, r in relations
+            Relation(source=f"e{s}", target=f"e{t}", relation=r, temporal=tmp)
+            for s, t, r, tmp in relations
         ],
     )
 
 
 GOLD = extraction(
     ["Acme Corp", "Gamma AI"],
-    [(1, 2, "acquired")],
+    [(1, 2, "acquired", "past")],
 )
 
 
 def test_exact_hit_despite_reordered_entities_and_different_ids():
     pred = Extraction(
         entities=[Entity(id="z9", name="Gamma AI"), Entity(id="z8", name="Acme Corp")],
-        relations=[Relation(source="z8", target="z9", relation="acquired")],
+        relations=[Relation(source="z8", target="z9", relation="acquired", temporal="past")],
     )
     assert hit(pred, GOLD)
 
@@ -52,18 +53,21 @@ def test_missing_entity_is_a_miss():
 
 
 def test_extra_entity_is_a_miss():
-    assert not hit(extraction(["Acme Corp", "Gamma AI", "Delta Labs"], [(1, 2, "acquired")]), GOLD)
+    assert not hit(extraction(["Acme Corp", "Gamma AI", "Delta Labs"], [(1, 2, "acquired", "past")]), GOLD)
 
 
 def test_paraphrased_relation_is_a_miss():
-    assert not hit(extraction(["Acme Corp", "Gamma AI"], [(1, 2, "purchased")]), GOLD)
+    assert not hit(extraction(["Acme Corp", "Gamma AI"], [(1, 2, "purchased", "past")]), GOLD)
 
 
 def test_extra_edge_is_a_miss():
-    pred = extraction(["Acme Corp", "Gamma AI"], [(1, 2, "acquired"), (2, 2, "acquired")])
+    pred = extraction(["Acme Corp", "Gamma AI"], [(1, 2, "acquired", "past"), (2, 2, "acquired", "past")])
     assert not hit(pred, GOLD)
 
 
 def test_duplicate_entity_is_a_miss():
-    pred = extraction(["Acme Corp", "Gamma AI", "Gamma AI"], [(1, 2, "acquired")])
+    pred = extraction(["Acme Corp", "Gamma AI", "Gamma AI"], [(1, 2, "acquired", "past")])
     assert not hit(pred, GOLD)
+
+def test_different_temporal_is_a_miss():
+    assert not hit(extraction(["Acme Corp", "Gamma AI"], [(1, 2, "acquired", "future")]), GOLD)

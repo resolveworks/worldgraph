@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+from typing import Literal
 
 import click
 from dotenv import load_dotenv
@@ -22,6 +23,8 @@ Rules:
 - Every relation connects two distinct entities. If an action's object is a thing in the world, make it an entity and connect it ("used ecstasy" becomes a "used" relation to the entity "ecstasy"). An action with no entity object produces no relation.
 - The media is not part of the world graph: the publishing outlet, journalists, photographers, and the act of reporting never appear as entities or relations.
 - A relation phrase contains only the relation itself, never entity names. Entities that a fact refers to are nodes, not phrase content.
+- Write relation phrases in base form without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. Tense is carried by the temporal field, not the phrase.
+- Every relation has a temporal dimension, read from the article's own wording: 'past' for facts presented as completed or no longer true, 'current' for facts stated as true now, 'future' for announced, planned, or expected facts. When the wording does not mark time, the fact is 'current'.
 
 Each entity should have a short unique id and the name as it appears in the text."""
 
@@ -33,10 +36,22 @@ class Entity(BaseModel):
     name: str = Field(description="Entity name as it appears in the article")
 
 
+Temporal = Literal["past", "current", "future"]
+
+
 class Relation(BaseModel):
     source: str = Field(description="The 'id' of the source entity")
     target: str = Field(description="The 'id' of the target entity")
-    relation: str = Field(description="Concise verb phrase describing the relation")
+    relation: str = Field(
+        description="Base-form verb phrase without tense, e.g. 'acquire', 'be headquartered in' — "
+        "never 'acquired', 'will acquire', or 'is headquartered in'. Tense is carried by the temporal field."
+    )
+    temporal: Temporal = Field(
+        description="When the relation holds, read from the article's own wording: "
+        "'past' — presented as completed or no longer true ('acquired', 'former', 'previously'); "
+        "'current' — stated as true now, the default when the wording does not mark time; "
+        "'future' — announced, planned, or expected ('will', 'plans to', 'is expected to')"
+    )
 
 
 class Extraction(BaseModel):
@@ -102,7 +117,9 @@ def run_extraction(article_files: list[Path], output_dir: Path) -> None:
                     ", ".join(repr(getattr(rel, k)) for k in bad),
                 )
                 continue
-            graph.add_edge(entity_map[rel.source], entity_map[rel.target], rel.relation)
+            graph.add_edge(
+                entity_map[rel.source], entity_map[rel.target], rel.relation, rel.temporal
+            )
 
         save_graph(graph, out_path)
 

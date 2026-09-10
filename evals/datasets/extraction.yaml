@@ -19,16 +19,20 @@ cases:
     relations:
     - source: e1
       target: e3
-      relation: used
+      relation: use
+      temporal: past
     - source: e1
       target: e4
-      relation: used
+      relation: use
+      temporal: past
     - source: e1
       target: e2
-      relation: has led
+      relation: lead
+      temporal: current
     - source: e1
       target: e5
-      relation: held a press conference in
+      relation: hold a press conference in
+      temporal: past
   evaluators: []
 - name: bare_relation_phrases
   inputs: bare_relation_phrases
@@ -46,13 +50,16 @@ cases:
     relations:
     - source: e2
       target: e1
-      relation: is managing director of
+      relation: be managing director of
+      temporal: current
     - source: e2
       target: e3
-      relation: was appointed managing director for
+      relation: be appointed managing director for
+      temporal: past
     - source: e2
       target: e4
-      relation: was operations director of
+      relation: be operations director of
+      temporal: past
   evaluators: []
 - name: media_meta_entities
   inputs: media_meta_entities
@@ -68,10 +75,12 @@ cases:
     relations:
     - source: e1
       target: e2
-      relation: will close branches in
+      relation: close branches in
+      temporal: future
     - source: e3
       target: e1
-      relation: is chief executive of
+      relation: be chief executive of
+      temporal: current
   evaluators: []
 - name: denied_allegations
   inputs: denied_allegations
@@ -89,10 +98,12 @@ cases:
     relations:
     - source: e1
       target: e4
-      relation: is transport minister in
+      relation: be transport minister in
+      temporal: current
     - source: e2
       target: e3
-      relation: is building
+      relation: be building
+      temporal: past
   evaluators: []
 evaluators: []
 report_evaluators: []
