@@ -1,96 +1,97 @@
 name: extraction-fixtures
 cases:
-- name: role_qualifiers
-  inputs: role_qualifiers
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Tessa Corin
-    - id: e2
-      name: Halden Freight
-    - id: e3
-      name: Vesterby
-    - id: e4
-      name: Meridian Rail
-    - id: e5
-      name: managing director
-    - id: e6
-      name: operations director
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: manage
-      temporal: current
-    - id: r2
-      source: r1
-      target: e5
-      relation: role
-      temporal: current
-    - id: r3
-      source: r1
-      target: e3
-      relation: for
-      temporal: current
-    - id: r4
-      source: e1
-      target: e4
-      relation: manage
-      temporal: past
-    - id: r5
-      source: r4
-      target: e6
-      relation: role
-      temporal: past
-  evaluators: []
-- name: appositive_roles
-  inputs: appositive_roles
+- name: object_entities
+  inputs: object_entities
   metadata: null
   expected_output:
     entities:
     - id: e1
       name: Marisol Vaneck
     - id: e2
-      name: Vesterby
+      name: ketamine
     - id: e3
-      name: Ardmore government
-    - id: e4
-      name: Ivo Brandt
-    - id: e5
-      name: foreign minister
-    - id: e6
-      name: deputy trade minister
+      name: amphetamines
     relations:
     - id: r1
       source: e1
       target: e2
-      relation: visit
-      temporal: future
+      relation: use
+      temporal: past
     - id: r2
       source: e1
       target: e3
-      relation: serve in
+      relation: use
+      temporal: past
+  evaluators: []
+- name: unnamed_parties
+  inputs: unnamed_parties
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Halvard Gallery
+    - id: e2
+      name: Vesterby
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: be located in
       temporal: current
-    - id: r3
-      source: r2
-      target: e5
-      relation: role
+  evaluators: []
+- name: media_meta_entities
+  inputs: media_meta_entities
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Kestrel Bank
+    - id: e2
+      name: Ostmund
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: close branches in
+      temporal: future
+  evaluators: []
+- name: clause_entities
+  inputs: clause_entities
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Kestrel Bank
+    - id: e2
+      name: Marta Reyes
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: dismiss
+      temporal: past
+  evaluators: []
+- name: repeated_entities
+  inputs: repeated_entities
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Halvard Gallery
+    - id: e2
+      name: Vesterby
+    - id: e3
+      name: Ostmund art fair
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: be located in
       temporal: current
-    - id: r4
-      source: e4
+    - id: r2
+      source: e1
       target: e3
-      relation: serve in
-      temporal: current
-    - id: r5
-      source: r4
-      target: e6
-      relation: role
-      temporal: current
-    - id: r6
-      source: e4
-      target: r1
-      relation: join
+      relation: host
       temporal: future
   evaluators: []
 - name: coordinated_lists
@@ -167,70 +168,6 @@ cases:
       relation: acquire
       temporal: future
   evaluators: []
-- name: denied_allegations
-  inputs: denied_allegations
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Ivo Brandt
-    - id: e2
-      name: Ostmund government
-    - id: e3
-      name: Voss Infrastructure
-    - id: e4
-      name: Ostmund rail link
-    - id: e5
-      name: transport minister
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: serve in
-      temporal: current
-    - id: r2
-      source: r1
-      target: e5
-      relation: role
-      temporal: current
-    - id: r3
-      source: e3
-      target: e4
-      relation: build
-      temporal: past
-  evaluators: []
-- name: media_meta_entities
-  inputs: media_meta_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Kestrel Bank
-    - id: e2
-      name: Ostmund
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: close branches in
-      temporal: future
-  evaluators: []
-- name: unnamed_parties
-  inputs: unnamed_parties
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Halvard Gallery
-    - id: e2
-      name: Vesterby
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: be located in
-      temporal: current
-  evaluators: []
 - name: historical_background
   inputs: historical_background
   metadata: null
@@ -275,67 +212,313 @@ cases:
       relation: acquire
       temporal: past
   evaluators: []
-- name: clause_entities
-  inputs: clause_entities
+- name: denied_allegations
+  inputs: denied_allegations
   metadata: null
   expected_output:
     entities:
     - id: e1
-      name: Kestrel Bank
+      name: Ivo Brandt
     - id: e2
-      name: Marta Reyes
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: dismiss
-      temporal: past
-  evaluators: []
-- name: repeated_entities
-  inputs: repeated_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Halvard Gallery
-    - id: e2
-      name: Vesterby
+      name: Ostmund government
     - id: e3
-      name: Ostmund art fair
+      name: Voss Infrastructure
+    - id: e4
+      name: Ostmund rail link
+    - id: e5
+      name: transport minister
     relations:
     - id: r1
       source: e1
       target: e2
-      relation: be located in
+      relation: serve in
       temporal: current
     - id: r2
-      source: e1
-      target: e3
-      relation: host
-      temporal: future
+      source: r1
+      target: e5
+      relation: role
+      temporal: current
+    - id: r3
+      source: e3
+      target: e4
+      relation: build
+      temporal: past
   evaluators: []
-- name: object_entities
-  inputs: object_entities
+- name: role_qualifiers
+  inputs: role_qualifiers
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Tessa Corin
+    - id: e2
+      name: Halden Freight
+    - id: e3
+      name: Vesterby
+    - id: e4
+      name: Meridian Rail
+    - id: e5
+      name: managing director
+    - id: e6
+      name: operations director
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: manage
+      temporal: current
+    - id: r2
+      source: r1
+      target: e5
+      relation: role
+      temporal: current
+    - id: r3
+      source: r1
+      target: e3
+      relation: for
+      temporal: current
+    - id: r4
+      source: e1
+      target: e4
+      relation: manage
+      temporal: past
+    - id: r5
+      source: r4
+      target: e6
+      relation: role
+      temporal: past
+  evaluators: []
+- name: role_qualifiers_paraphrase
+  inputs: role_qualifiers_paraphrase
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Tessa Corin
+    - id: e2
+      name: Halden Freight
+    - id: e3
+      name: Vesterby
+    - id: e4
+      name: Meridian Rail
+    - id: e5
+      name: managing director
+    - id: e6
+      name: operations director
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: oversee
+      temporal: current
+    - id: r2
+      source: r1
+      target: e5
+      relation: role
+      temporal: current
+    - id: r3
+      source: r1
+      target: e3
+      relation: for
+      temporal: current
+    - id: r4
+      source: e1
+      target: e4
+      relation: lead
+      temporal: past
+    - id: r5
+      source: r4
+      target: e6
+      relation: role
+      temporal: past
+  evaluators: []
+- name: appositive_roles
+  inputs: appositive_roles
   metadata: null
   expected_output:
     entities:
     - id: e1
       name: Marisol Vaneck
     - id: e2
-      name: ketamine
+      name: Vesterby
     - id: e3
-      name: amphetamines
+      name: Ardmore government
+    - id: e4
+      name: Ivo Brandt
+    - id: e5
+      name: foreign minister
+    - id: e6
+      name: deputy trade minister
     relations:
     - id: r1
       source: e1
       target: e2
-      relation: use
+      relation: visit
+      temporal: future
+    - id: r2
+      source: e1
+      target: e3
+      relation: serve in
+      temporal: current
+    - id: r3
+      source: r2
+      target: e5
+      relation: role
+      temporal: current
+    - id: r4
+      source: e4
+      target: e3
+      relation: serve in
+      temporal: current
+    - id: r5
+      source: r4
+      target: e6
+      relation: role
+      temporal: current
+    - id: r6
+      source: e4
+      target: r1
+      relation: join
+      temporal: future
+  evaluators: []
+- name: appositive_roles_paraphrase
+  inputs: appositive_roles_paraphrase
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Marisol Vaneck
+    - id: e2
+      name: Vesterby
+    - id: e3
+      name: Ardmore government
+    - id: e4
+      name: Ivo Brandt
+    - id: e5
+      name: foreign minister
+    - id: e6
+      name: deputy trade minister
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: travel to
+      temporal: future
+    - id: r2
+      source: e1
+      target: e3
+      relation: serve in
+      temporal: current
+    - id: r3
+      source: r2
+      target: e5
+      relation: role
+      temporal: current
+    - id: r4
+      source: e4
+      target: e3
+      relation: serve in
+      temporal: current
+    - id: r5
+      source: r4
+      target: e6
+      relation: role
+      temporal: current
+    - id: r6
+      source: e4
+      target: r1
+      relation: take part in
+      temporal: future
+  evaluators: []
+- name: specific_relation_reference
+  inputs: specific_relation_reference
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Marisol Vaneck
+    - id: e2
+      name: Vesterby
+    - id: e3
+      name: Kalden
+    - id: e4
+      name: Ivo Brandt
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: visit
       temporal: past
     - id: r2
       source: e1
       target: e3
-      relation: use
+      relation: visit
       temporal: past
+    - id: r3
+      source: e4
+      target: r2
+      relation: join
+      temporal: past
+  evaluators: []
+- name: relation_to_relation
+  inputs: relation_to_relation
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Halden Energy
+    - id: e2
+      name: Vesterby Power Station
+    - id: e3
+      name: Meridian Rail
+    - id: e4
+      name: Kalden
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: close
+      temporal: past
+    - id: r2
+      source: e3
+      target: e4
+      relation: suspend services to
+      temporal: past
+    - id: r3
+      source: r1
+      target: r2
+      relation: cause
+      temporal: past
+  evaluators: []
+- name: nested_relation_qualifiers
+  inputs: nested_relation_qualifiers
+  metadata: null
+  expected_output:
+    entities:
+    - id: e1
+      name: Lena Orvik
+    - id: e2
+      name: Torshavn
+    - id: e3
+      name: Pavel Rusk
+    - id: e4
+      name: Norvale Council
+    relations:
+    - id: r1
+      source: e1
+      target: e2
+      relation: visit
+      temporal: future
+    - id: r2
+      source: e3
+      target: r1
+      relation: join
+      temporal: future
+    - id: r3
+      source: r2
+      target: e4
+      relation: on behalf of
+      temporal: future
   evaluators: []
 evaluators: []
 report_evaluators: []
