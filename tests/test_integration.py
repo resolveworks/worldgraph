@@ -13,7 +13,6 @@ on multi-source scenarios that L2 tests don't cover:
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -550,10 +549,12 @@ def test_synonym_inflation_false_merge_via_shared_hub(embedder):
 
 
 def test_completion_and_announcement_articles_keep_temporal_edges(embedder):
-    """A completion article (past) and an announcement article (future) about
-    the same deal: entities merge via shared current-temporal structure, and
-    the unified graph keeps TWO acquire edges with distinct temporal values
-    rather than conflating them."""
+    """A completion and announcement can describe the same matched fact.
+
+    Their temporal values disagree and add no matching support, but agreement
+    on the other edge features is enough to match them. The unified graph
+    retains both source-local edges and temporal observations.
+    """
     # Article 1: deal completed
     g1 = Graph(id="completion")
     acme1 = g1.add_entity("Acme Corp")
@@ -561,7 +562,7 @@ def test_completion_and_announcement_articles_keep_temporal_edges(embedder):
     ceo1 = g1.add_entity("Sarah Chen")
     hq1 = g1.add_entity("San Francisco")
     gamma_hq1 = g1.add_entity("Boston")
-    g1.add_edge(acme1, gamma1, "acquire", "past")
+    acquisition1 = g1.add_edge(acme1, gamma1, "acquire", "past")
     g1.add_edge(ceo1, acme1, "is CEO of", "current")
     g1.add_edge(acme1, hq1, "headquartered in", "current")
     g1.add_edge(gamma1, gamma_hq1, "headquartered in", "current")
@@ -573,7 +574,7 @@ def test_completion_and_announcement_articles_keep_temporal_edges(embedder):
     ceo2 = g2.add_entity("Sarah Chen")
     hq2 = g2.add_entity("San Francisco")
     gamma_hq2 = g2.add_entity("Boston")
-    g2.add_edge(acme2, gamma2, "acquire", "future")
+    acquisition2 = g2.add_edge(acme2, gamma2, "acquire", "future")
     g2.add_edge(ceo2, acme2, "is CEO of", "current")
     g2.add_edge(acme2, hq2, "headquartered in", "current")
     g2.add_edge(gamma2, gamma_hq2, "headquartered in", "current")
@@ -587,12 +588,12 @@ def test_completion_and_announcement_articles_keep_temporal_edges(embedder):
     gamma_group = _find_group_containing(groups, gamma1.id)
     assert gamma_group is not None and gamma2.id in gamma_group
 
-    # The unified graph contains two acquire edges with distinct temporal values
-    acq_edges = [
-        edge
-        for edge in unified.edges.values()
-        if edge.relation == "acquire"
-        and {edge.source, edge.target} in ({acme1.id, gamma1.id}, {acme2.id, gamma2.id})
-    ]
-    temporals = {edge.temporal for edge in acq_edges}
-    assert temporals == {"past", "future"}
+    acquisition_group = _find_group_containing(groups, acquisition1.id)
+    assert acquisition_group == {acquisition1.id, acquisition2.id}
+
+    assert unified.edges[acquisition1.id] == acquisition1
+    assert unified.edges[acquisition2.id] == acquisition2
+    assert {
+        unified.edges[edge_id].temporal
+        for edge_id in (acquisition1.id, acquisition2.id)
+    } == {"past", "future"}

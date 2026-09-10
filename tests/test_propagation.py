@@ -22,7 +22,6 @@ from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
 from worldgraph.names import build_idf, soft_tfidf
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -416,52 +415,50 @@ def test_name_variation_with_structural_reinforcement(embedder):
 
 
 # ---------------------------------------------------------------------------
-# Temporal gating
+# Temporal evidence
 # ---------------------------------------------------------------------------
 
 
-def test_cross_temporal_edges_do_not_merge(embedder):
-    """Same entity names and same relation phrase, but the connecting edge
-    is 'past' in one graph and 'future' in the other → no merge.
+def test_cross_temporal_terms_can_merge(embedder):
+    """Temporal disagreement supplies no support but is not an identity gate.
 
-    With temporal gating, counterpart candidates must match on temporal,
-    so zero neighbors are tested and merging requires structural evidence."""
+    Agreement on the predicate and both endpoints is sufficient for these
+    otherwise-identical past and future edge occurrences to match.
+    """
     g1 = Graph(id="g1")
     acme1 = g1.add_entity("Acme Corp")
     gamma1 = g1.add_entity("Gamma AI")
-    g1.add_edge(acme1, gamma1, "acquire", "past")
+    edge1 = g1.add_edge(acme1, gamma1, "acquire", "past")
 
     g2 = Graph(id="g2")
     acme2 = g2.add_entity("Acme Corp")
     gamma2 = g2.add_entity("Gamma AI")
-    g2.add_edge(acme2, gamma2, "acquire", "future")
+    edge2 = g2.add_edge(acme2, gamma2, "acquire", "future")
 
     _, groups, _ = match_graphs([g1, g2], embedder)
 
-    for group in groups:
-        assert not ({acme1.id, acme2.id} <= group), "Cross-temporal edge merged"
-        assert not ({gamma1.id, gamma2.id} <= group), "Cross-temporal edge merged"
+    assert next(g for g in groups if acme1.id in g) == {acme1.id, acme2.id}
+    assert next(g for g in groups if gamma1.id in g) == {gamma1.id, gamma2.id}
+    assert next(g for g in groups if edge1.id in g) == {edge1.id, edge2.id}
 
 
-def test_same_temporal_edges_merge(embedder):
-    """Regression twin of test_cross_temporal_edges_do_not_merge: same
-    setup with the same temporal class on both sides → merges."""
+def test_same_temporal_terms_merge(embedder):
+    """Temporal agreement supports matching both endpoint nodes and the edge."""
     g1 = Graph(id="g1")
     acme1 = g1.add_entity("Acme Corp")
     gamma1 = g1.add_entity("Gamma AI")
-    g1.add_edge(acme1, gamma1, "acquire", "past")
+    edge1 = g1.add_edge(acme1, gamma1, "acquire", "past")
 
     g2 = Graph(id="g2")
     acme2 = g2.add_entity("Acme Corp")
     gamma2 = g2.add_entity("Gamma AI")
-    g2.add_edge(acme2, gamma2, "acquire", "past")
+    edge2 = g2.add_edge(acme2, gamma2, "acquire", "past")
 
     _, groups, _ = match_graphs([g1, g2], embedder)
 
-    acme_group = next(g for g in groups if acme1.id in g)
-    gamma_group = next(g for g in groups if gamma1.id in g)
-    assert acme2.id in acme_group
-    assert gamma2.id in gamma_group
+    assert next(g for g in groups if acme1.id in g) == {acme1.id, acme2.id}
+    assert next(g for g in groups if gamma1.id in g) == {gamma1.id, gamma2.id}
+    assert next(g for g in groups if edge1.id in g) == {edge1.id, edge2.id}
 
 
 # ---------------------------------------------------------------------------
