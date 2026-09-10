@@ -1,9 +1,24 @@
-"""Shared graph data structures and I/O."""
+"""Shared graph data structures and I/O.
+
+A graph is bipartite: **entity** nodes (things in the world) and **event**
+nodes (facts asserted by the article), connected by participation edges.
+An edge's source is always an event node; its target is a participant —
+an entity or another event (joining a visit, causing a suspension). The
+edge label is a role from a closed vocabulary: the matcher aligns
+participants by exact role equality, so the vocabulary is enforced here,
+at the data-structure boundary.
+"""
 
 import json
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
+
+NodeKind = Literal["entity", "event"]
+
+Role = Literal["agent", "patient"]
+ROLES: frozenset[str] = frozenset({"agent", "patient"})
 
 
 @dataclass
@@ -11,26 +26,22 @@ class Node:
     id: str
     graph_id: str
     names: list[str]
+    kind: NodeKind
 
 
 @dataclass
 class Edge:
-    """A relation occurrence — a first-class graph term.
+    """A participation: an event node connected to one of its participants.
 
-    ``source``/``target`` reference a node id or another edge id, so
-    qualifiers of a fact (role, scope, attribution, modality, nested
-    claims) are themselves edges attached to the edge they qualify.
+    ``source`` is the event node id, ``target`` the participant node id
+    (an entity or another event), ``role`` the participant's role.
     """
 
     id: str
     graph_id: str  # id of the article graph this edge was extracted from
-    source: str  # Node.id or Edge.id
-    target: str  # Node.id or Edge.id
-    relation: str
-
-
-# Nodes and edges are addressable graph terms sharing one id namespace.
-Term = Node | Edge
+    source: str  # Node.id of kind "event"
+    target: str  # Node.id of any kind
+    role: str
 
 
 @dataclass
@@ -43,61 +54,67 @@ class Graph:
         """Add an entity node with the given name(s)."""
         if isinstance(names, str):
             names = [names]
-        entity = Node(id=str(uuid.uuid4()), graph_id=self.id, names=names)
+        entity = Node(id=str(uuid.uuid4()), graph_id=self.id, names=names, kind="entity")
         self.nodes[entity.id] = entity
         return entity
 
+    def add_event(self, label: str) -> Node:
+        """Add an event node. The label names the node for output and
+        display; it is never used for matching."""
+        event = Node(id=str(uuid.uuid4()), graph_id=self.id, names=[label], kind="event")
+        self.nodes[event.id] = event
+        return event
+
     def add_edge(
         self,
-        source: Term | str,
-        target: Term | str,
-        relation: str,
+        source: Node | str,
+        target: Node | str,
+        role: Role,
         id: str | None = None,
     ) -> Edge:
-        """Add a relation edge between two terms — nodes or edges.
+        """Add a participation edge from an event node to a participant.
 
-        Endpoints may be given as term objects or as ids.  Ids (and the
-        optional explicit edge ``id``) exist for forward references: an
-        edge can reference an edge that is added later.  Call
-        ``validate()`` once construction is complete.
+        Endpoints may be given as node objects or as ids.  Ids (and the
+        optional explicit edge ``id``) exist for construction flexibility;
+        ``validate()`` checks all invariants once construction is complete.
         """
-        src = source.id if isinstance(source, (Node, Edge)) else source
-        tgt = target.id if isinstance(target, (Node, Edge)) else target
+        src = source.id if isinstance(source, Node) else source
+        tgt = target.id if isinstance(target, Node) else target
+        if isinstance(source, Node) and source.kind != "event":
+            raise ValueError(
+                f"edge source must be an event node, got kind {source.kind!r}"
+            )
         edge = Edge(
             id=id if id is not None else str(uuid.uuid4()),
             graph_id=self.id,
             source=src,
             target=tgt,
-            relation=relation,
+            role=role,
         )
         self.edges[edge.id] = edge
         return edge
 
-    def resolve(self, term_id: str) -> Term:
-        """Look up a graph term by id — a node or an edge."""
-        if term_id in self.nodes:
-            return self.nodes[term_id]
-        if term_id in self.edges:
-            return self.edges[term_id]
-        raise ValueError(f"unknown term id: {term_id!r}")
-
     def validate(self) -> None:
         """Check the structural invariants.
 
-        Node and edge ids must be disjoint (they share one reference
-        namespace), and every edge endpoint must resolve to a term of
-        this graph. Nesting depth is not limited.
+        Every edge endpoint must resolve to a node of this graph, the edge
+        source must be an event node, no event may participate in itself,
+        and the role must be in the closed vocabulary.
         """
-        shared = sorted(self.nodes.keys() & self.edges.keys())
-        if shared:
-            raise ValueError(f"node and edge ids must be disjoint, shared: {shared}")
         for edge in self.edges.values():
-            for role, endpoint in (("source", edge.source), ("target", edge.target)):
-                if endpoint not in self.nodes and endpoint not in self.edges:
+            for endpoint in (edge.source, edge.target):
+                if endpoint not in self.nodes:
                     raise ValueError(
-                        f"edge {edge.id!r} {role} references unknown term id: "
-                        f"{endpoint!r}"
+                        f"edge {edge.id!r} references unknown node id: {endpoint!r}"
                     )
+            if self.nodes[edge.source].kind != "event":
+                raise ValueError(
+                    f"edge {edge.id!r} source is not an event node: {edge.source!r}"
+                )
+            if edge.source == edge.target:
+                raise ValueError(f"event participates in itself: {edge.source!r}")
+            if edge.role not in ROLES:
+                raise ValueError(f"edge {edge.id!r} has unknown role: {edge.role!r}")
 
 
 def load_graph(path: Path) -> Graph:
@@ -119,6 +136,7 @@ def load_graph(path: Path) -> Graph:
             id=node_id,
             graph_id=node_data["graph_id"],
             names=node_data["names"],
+            kind=node_data["kind"],
         )
 
     edges: dict[str, Edge] = {}
@@ -131,7 +149,7 @@ def load_graph(path: Path) -> Graph:
             graph_id=edge_data["graph_id"],
             source=edge_data["source"],
             target=edge_data["target"],
-            relation=edge_data["relation"],
+            role=edge_data["role"],
         )
 
     graph = Graph(id=graph_id, nodes=nodes, edges=edges)
@@ -150,7 +168,12 @@ def save_graph(
     nodes_out = []
     for node in graph.nodes.values():
         nodes_out.append(
-            {"id": node.id, "graph_id": node.graph_id, "names": node.names}
+            {
+                "id": node.id,
+                "graph_id": node.graph_id,
+                "names": node.names,
+                "kind": node.kind,
+            }
         )
 
     edges_out = []
@@ -161,7 +184,7 @@ def save_graph(
                 "graph_id": edge.graph_id,
                 "source": edge.source,
                 "target": edge.target,
-                "relation": edge.relation,
+                "role": edge.role,
             }
         )
 

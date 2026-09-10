@@ -1,13 +1,13 @@
 """Project-wide constants."""
 
-RELATION_TEMPLATE = "A {} B".format
+# Confidence at which propagation commits a merge, gated on structural
+# evidence. Events reach this bar from the neutral prior on participant
+# structure alone; entities from their name seed plus matched events.
+MERGE_THRESHOLD = 0.7
 
-# Minimum cosine similarity for two relation phrases (embedded) to be
-# treated as equivalent — used for clustering, functionality pooling,
-# and propagation gating.
-RELATION_THRESHOLD = 0.8
-
-# Confidence at which the pipeline commits an entity merge seeded by
-# name similarity. Also used as the entity name-match cutoff in the
-# extraction eval harness.
-MERGE_THRESHOLD = 0.9
+# Prior confidence for event pairs. Events carry no name similarity — their
+# labels are never compared — so they start at maximum uncertainty and are
+# lifted or suppressed purely by structural evidence. 0.5 is the neutral
+# point of the evidence rule: an unlifted event counterpart contributes
+# neither positive nor negative evidence.
+EVENT_PRIOR = 0.5

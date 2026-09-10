@@ -1,5 +1,4 @@
 import os
-import uuid
 from pathlib import Path
 
 import click
@@ -7,23 +6,24 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field, model_validator
 from pydantic_ai import Agent
 
-from worldgraph.graph import Graph, save_graph
+from worldgraph.graph import Graph, Role, save_graph
 
 load_dotenv()
 
-SYSTEM_PROMPT = """You are an entity-relation extraction system building a graph of world facts from a news article. Entities are things in the world — people, organizations, places, and things — and relations are facts the article asserts between two distinct entities or relations.
+SYSTEM_PROMPT = """You are an event extraction system building a graph of world facts from a news article. Entities are things in the world — people, organizations, places, and things. Events are the facts the article asserts: things that happen or hold between participants.
 
-Be thorough: capture every entity and every asserted fact. Use the exact names as they appear in the text.
+Be thorough: capture every asserted event and every participant. Use the exact names as they appear in the text.
 
 Rules:
 - Extract only what the article asserts as fact. Denied, disputed, or merely alleged claims are not extracted.
-- Every relation connects two distinct entities or relations. If an action's object is a thing in the world, make it an entity and connect it ("used ecstasy" becomes a "used" relation to the entity "ecstasy"). An action with no entity object produces no relation.
-- A relation's source and target may each be the id of an entity or of another relation. A qualifier of a fact, such as a role or place, is expressed as a relation whose source or target is the id of the relation it qualifies: if r1 states that Tessa Corin manages Halden Freight, her role is a relation with source r1, target a 'managing director' entity, and relation 'role'.
-- The media is not part of the world graph: the publishing outlet, journalists, photographers, and the act of reporting never appear as entities or relations.
-- A relation phrase contains only the relation itself, never entity names. Entities that a fact refers to are nodes, not phrase content.
-- Write relation phrases in base form without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. Tense marking is not captured.
+- Every event has a label and participants. The label is the base-form verb phrase without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. A label contains only the event itself, never entity names. Entities that a fact refers to are nodes, not label content.
+- Each participant has a role: 'agent' for the one doing or bringing about the event, 'patient' for anything else participating — the object acted on, a place, a capacity, a beneficiary. These are the only two roles.
+- Qualifiers of a fact — a role, a place, a scope — are participants of that event, never separate events: if Tessa Corin manages Halden Freight as managing director for Vesterby, that is one 'manage' event with agent Tessa Corin and patients Halden Freight, managing director, and Vesterby.
+- A participant may be another event: if someone joins a visit or one event causes another, the participating event is a participant. 'Ivo Brandt joined the visit' is a 'join' event with agent Ivo Brandt and the visit event as patient; 'the closure caused the suspension' is a 'cause' event with the closure event as agent and the suspension event as patient.
+- The media is not part of the world graph: the publishing outlet, journalists, photographers, and the act of reporting never appear as entities or events.
+- An event needs at least one participant. An action with no entity or event participant produces no event.
 
-Each entity should have a short unique id and the name as it appears in the text. Each relation should have a short unique id, e.g. 'r1', 'r2'."""
+Each entity should have a short unique id, e.g. 'e1', 'e2', and the name as it appears in the text. Each event should have a short unique id, e.g. 'v1', 'v2'."""
 
 
 class Entity(BaseModel):
@@ -33,55 +33,65 @@ class Entity(BaseModel):
     name: str = Field(description="Entity name as it appears in the article")
 
 
-class Relation(BaseModel):
+class Participant(BaseModel):
+    role: Role = Field(
+        description="'agent' for the one doing or bringing about the event; "
+        "'patient' for anything else participating — object, place, capacity, beneficiary"
+    )
+    ref: str = Field(description="The 'id' of the participating entity or event")
+
+
+class Event(BaseModel):
     id: str = Field(
-        description="Short unique identifier for this relation, e.g. 'r1', 'r2'"
+        description="Short unique identifier for this event, e.g. 'v1', 'v2'"
     )
-    source: str = Field(
-        description="The 'id' of the source entity or source relation"
-    )
-    target: str = Field(
-        description="The 'id' of the target entity or target relation"
-    )
-    relation: str = Field(
+    label: str = Field(
         description="Base-form verb phrase without tense, e.g. 'acquire', 'be headquartered in' — "
         "never 'acquired', 'will acquire', or 'is headquartered in'"
     )
+    participants: list[Participant] = Field(min_length=1)
 
 
 class Extraction(BaseModel):
     entities: list[Entity]
-    relations: list[Relation]
+    events: list[Event]
 
     @model_validator(mode="after")
     def _validate_ids(self) -> "Extraction":
-        """Entity and relation ids are globally unique and live in one shared
-        reference namespace; every relation endpoint must resolve to an entity
-        or a relation of this extraction. Forward references between
-        relations are valid.
+        """Entity and event ids are globally unique and live in one shared
+        reference namespace; every participant must resolve to an entity or
+        an event of this extraction, and no event may participate in itself.
+        Forward references between events are valid.
         """
         entity_ids = [entity.id for entity in self.entities]
-        relation_ids = [relation.id for relation in self.relations]
+        event_ids = [event.id for event in self.events]
         if len(set(entity_ids)) != len(entity_ids):
             raise ValueError(f"duplicate entity ids: {sorted(entity_ids)}")
-        if len(set(relation_ids)) != len(relation_ids):
-            raise ValueError(f"duplicate relation ids: {sorted(relation_ids)}")
-        shared = sorted(set(entity_ids) & set(relation_ids))
+        if len(set(event_ids)) != len(event_ids):
+            raise ValueError(f"duplicate event ids: {sorted(event_ids)}")
+        shared = sorted(set(entity_ids) & set(event_ids))
         if shared:
             raise ValueError(
-                f"entity and relation ids must be disjoint, shared: {shared}"
+                f"entity and event ids must be disjoint, shared: {shared}"
             )
-        known = set(entity_ids) | set(relation_ids)
+        known = set(entity_ids) | set(event_ids)
         unknown = sorted(
             {
-                ref
-                for relation in self.relations
-                for ref in (relation.source, relation.target)
-                if ref not in known
+                participant.ref
+                for event in self.events
+                for participant in event.participants
+                if participant.ref not in known
             }
         )
         if unknown:
-            raise ValueError(f"relations reference unknown ids: {unknown}")
+            raise ValueError(f"participants reference unknown ids: {unknown}")
+        self_refs = sorted(
+            event.id
+            for event in self.events
+            if any(participant.ref == event.id for participant in event.participants)
+        )
+        if self_refs:
+            raise ValueError(f"events participating in itself: {self_refs}")
         return self
 
 
@@ -96,8 +106,8 @@ def build_agent(model: str) -> Agent[object, Extraction]:
 
 
 def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
-    """Extract entities and relations from a single article's text."""
-    prompt = f"""Extract all entities and relations from this news article.
+    """Extract entities and events from a single article's text."""
+    prompt = f"""Extract all entities and events from this news article.
 
 {text}"""
 
@@ -105,26 +115,23 @@ def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
 
 
 def extraction_to_graph(article_id: str, extraction: Extraction) -> Graph:
-    """Convert an extraction into a runtime graph, preserving every entity and
-    relation id and every relation-to-relation reference.
-
-    Runtime edge ids are pre-allocated so edge endpoints resolve regardless
-    of relation order, including forward references.
+    """Convert an extraction into a runtime graph: entities become entity
+    nodes, events become event nodes named by their label, and participants
+    become role edges from the event node to the participant node.
     """
     graph = Graph(id=article_id)
-    term_ids: dict[str, str] = {}
+    node_ids: dict[str, str] = {}
     for entity in extraction.entities:
-        term_ids[entity.id] = graph.add_entity(entity.name).id
-
-    edge_ids = {rel.id: str(uuid.uuid4()) for rel in extraction.relations}
-    term_ids.update(edge_ids)
-    for rel in extraction.relations:
-        graph.add_edge(
-            term_ids[rel.source],
-            term_ids[rel.target],
-            rel.relation,
-            id=edge_ids[rel.id],
-        )
+        node_ids[entity.id] = graph.add_entity(entity.name).id
+    for event in extraction.events:
+        node_ids[event.id] = graph.add_event(event.label).id
+    for event in extraction.events:
+        for participant in event.participants:
+            graph.add_edge(
+                node_ids[event.id],
+                node_ids[participant.ref],
+                participant.role,
+            )
 
     graph.validate()
     return graph

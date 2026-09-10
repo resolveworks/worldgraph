@@ -5,16 +5,16 @@ The task runs the production extraction path on each article; the evaluator
 asserts an exact hit on the hand-labeled golden extraction.
 """
 
+import os
 from collections import Counter
 from dataclasses import dataclass
-import os
 from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
-from worldgraph.extract import Extraction, Relation, build_agent, extract_article
+from worldgraph.extract import Event, Extraction, build_agent, extract_article
 
 load_dotenv()
 
@@ -30,52 +30,56 @@ def task(stem: str) -> Extraction:
 
 
 def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple]]:
-    """Order- and id-independent form: entity name counts and relation form
-    counts. A relation form is ``(source term, relation, target term)``;
-    a term is an entity name or, where an endpoint references a
-    relation, that relation's own form — so a qualifier is compared against
-    the specific relation it qualifies, never its phrase alone.
+    """Order- and id-independent form: entity name counts and event form
+    counts. An event form is ``(label, ((role, term), ...))`` with
+    participants sorted; a term is an entity name or, where a participant
+    references an event, that event's own form — so a nested participation
+    is compared against the specific event it references, never its label
+    alone.
     """
     names = {entity.id: entity.name for entity in ext.entities}
-    relations = {relation.id: relation for relation in ext.relations}
+    events = {event.id: event for event in ext.events}
 
     def term(ref: str, stack: tuple[str, ...]) -> str | tuple:
         if ref in names:
             return names[ref]
         if ref in stack:
-            raise ValueError(f"cyclic relation references: {ref!r} in {stack + (ref,)}")
-        return form(relations[ref], stack + (ref,))
+            raise ValueError(f"cyclic event references: {ref!r} in {stack + (ref,)}")
+        return form(events[ref], stack + (ref,))
 
-    def form(relation: Relation, stack: tuple[str, ...]) -> tuple:
-        return (
-            term(relation.source, stack),
-            relation.relation,
-            term(relation.target, stack),
+    def form(event: Event, stack: tuple[str, ...]) -> tuple:
+        participants = tuple(
+            sorted(
+                ((p.role, term(p.ref, stack)) for p in event.participants),
+                key=repr,
+            )
         )
+        return (event.label, participants)
 
     return (
         Counter(names.values()),
-        Counter(form(relation, ()) for relation in ext.relations),
+        Counter(form(event, ()) for event in ext.events),
     )
 
 
 def render(term: str | tuple) -> str:
-    """Human-readable term: an entity name plain, a relation form as
-    ``source --relation--> target`` with nested forms bracketed."""
+    """Human-readable term: an entity name plain, an event form as
+    ``label(role=term, ...)`` with nested forms bracketed."""
     if isinstance(term, str):
         return term
-    source, relation, target = term
+    label, participants = term
 
     def show(t: str | tuple) -> str:
         return t if isinstance(t, str) else f"[{render(t)}]"
 
-    return f"{show(source)} --{relation}--> {show(target)}"
+    inner = ", ".join(f"{role}={show(t)}" for role, t in participants)
+    return f"{label}({inner})"
 
 
 @dataclass
 class ExactHit(Evaluator[Extraction, Extraction, object]):
     """Pass iff the extraction is an exact hit on the golden — same entities,
-    same facts with their qualifier structure, no extras, no paraphrases."""
+    same events with their participant structure, no extras, no paraphrases."""
 
     def evaluate(self, ctx: EvaluatorContext[Extraction, Extraction, object]) -> bool:
         assert ctx.expected_output is not None
@@ -102,8 +106,8 @@ def main() -> None:
             "+:",
             sorted((pred_names - gold_names).elements()) or "·",
         )
-        print("  relations -:", *(missing or ["·"]), sep="\n    ")
-        print("  relations +:", *(extra or ["·"]), sep="\n    ")
+        print("  events    -:", *(missing or ["·"]), sep="\n    ")
+        print("  events    +:", *(extra or ["·"]), sep="\n    ")
 
 
 if __name__ == "__main__":

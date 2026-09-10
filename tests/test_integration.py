@@ -1,14 +1,17 @@
 """Layer 3 integration tests.
 
 These tests exercise the full matching pipeline: multiple graphs →
-match_graphs.  They verify end-to-end correctness
-on multi-source scenarios that L2 tests don't cover:
+match_graphs.  They verify end-to-end correctness on multi-source
+scenarios that L2 tests don't cover:
 
 - Transitive merging across 3+ sources via union-find
-- Cross-cluster isolation (independent events don't merge, even with
+- Cross-cluster isolation (independent stories don't merge, even with
   identical entity names or isomorphic structure)
-- Cross-event entity linking (shared entity across clusters)
+- Cross-story entity linking (shared entity across clusters)
+- Progressive merging does not cause cascading false merges
 """
+
+from conftest import fact
 
 from worldgraph.graph import Graph
 from worldgraph.match import match_graphs
@@ -31,24 +34,14 @@ def _find_group_containing(groups: list[set[str]], entity_id: str) -> set[str] |
 # ---------------------------------------------------------------------------
 
 
-def test_three_source_with_person_name_variation(embedder):
+def test_three_source_with_person_name_variation():
     """Three sources with person name variations, each with enough
     structural context for propagation to work.
 
-    "Dr. Priya Sharma" / "Priya Sharma" / "Dr. Sharma" — the name
-    similarity alone (~0.79) is below the merge threshold. Multiple shared
-    neighbors with identical names provide structural evidence to bridge
-    the gap.
-
-    With gated relation similarity (threshold-based, not continuous),
-    each propagation path contributes ``min(func_a, func_b) × conf``.
-    Three name variants reduce all functionality weights to 1/3 (each
-    relation maps one source name to three target name variants), so
-    we need enough shared neighbors to accumulate sufficient evidence:
-    five neighbors × 1/3 weight × ~1.0 confidence = 1.67 strength,
-    positive = 1 - exp(-1.67) ≈ 0.81, discounted by Bayesian shrinkage
-    5/(5+1) and scaled by the (1-seed) headroom → ≈ 0.93, above the
-    0.9 merge threshold."""
+    "Dr. Priya Sharma" / "Priya Sharma" / "Dr. Sharma" — name similarity
+    alone (~0.79) is below the merge threshold. Shared matched events
+    (identical-name participants on both sides) provide the structural
+    evidence to bridge the gap."""
     g1 = Graph(id="article-1")
     m1 = g1.add_entity("Meridian Technologies")
     p1 = g1.add_entity("Dr. Priya Sharma")
@@ -57,12 +50,12 @@ def test_three_source_with_person_name_variation(embedder):
     dv1 = g1.add_entity("DataVault Inc")
     nat1 = g1.add_entity("Nature")
     lab1 = g1.add_entity("Stanford AI Lab")
-    g1.add_edge(m1, p1, "hired")
-    g1.add_edge(p1, j1, "collaborates with")
-    g1.add_edge(p1, su1, "alumna of")
-    g1.add_edge(p1, nat1, "published in")
-    g1.add_edge(p1, lab1, "leads")
-    g1.add_edge(m1, dv1, "acquired")
+    fact(g1, "hire", agent=m1, patients=(p1,))
+    fact(g1, "collaborate with", agent=p1, patients=(j1,))
+    fact(g1, "be alumna of", agent=p1, patients=(su1,))
+    fact(g1, "publish in", agent=p1, patients=(nat1,))
+    fact(g1, "lead", agent=p1, patients=(lab1,))
+    fact(g1, "acquire", agent=m1, patients=(dv1,))
 
     g2 = Graph(id="article-2")
     m2 = g2.add_entity("Meridian Technologies")
@@ -72,12 +65,12 @@ def test_three_source_with_person_name_variation(embedder):
     dv2 = g2.add_entity("DataVault Inc")
     nat2 = g2.add_entity("Nature")
     lab2 = g2.add_entity("Stanford AI Lab")
-    g2.add_edge(m2, p2, "hired")
-    g2.add_edge(p2, j2, "collaborates with")
-    g2.add_edge(p2, su2, "alumna of")
-    g2.add_edge(p2, nat2, "published in")
-    g2.add_edge(p2, lab2, "leads")
-    g2.add_edge(m2, dv2, "acquired")
+    fact(g2, "hire", agent=m2, patients=(p2,))
+    fact(g2, "collaborate with", agent=p2, patients=(j2,))
+    fact(g2, "be alumna of", agent=p2, patients=(su2,))
+    fact(g2, "publish in", agent=p2, patients=(nat2,))
+    fact(g2, "lead", agent=p2, patients=(lab2,))
+    fact(g2, "acquire", agent=m2, patients=(dv2,))
 
     g3 = Graph(id="article-3")
     m3 = g3.add_entity("Meridian Technologies")
@@ -87,22 +80,22 @@ def test_three_source_with_person_name_variation(embedder):
     dv3 = g3.add_entity("DataVault Inc")
     nat3 = g3.add_entity("Nature")
     lab3 = g3.add_entity("Stanford AI Lab")
-    g3.add_edge(m3, p3, "hired")
-    g3.add_edge(p3, j3, "collaborates with")
-    g3.add_edge(p3, su3, "alumna of")
-    g3.add_edge(p3, nat3, "published in")
-    g3.add_edge(p3, lab3, "leads")
-    g3.add_edge(m3, dv3, "acquired")
+    fact(g3, "hire", agent=m3, patients=(p3,))
+    fact(g3, "collaborate with", agent=p3, patients=(j3,))
+    fact(g3, "be alumna of", agent=p3, patients=(su3,))
+    fact(g3, "publish in", agent=p3, patients=(nat3,))
+    fact(g3, "lead", agent=p3, patients=(lab3,))
+    fact(g3, "acquire", agent=m3, patients=(dv3,))
 
     graphs = [g1, g2, g3]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
     m_group = _find_group_containing(groups, m1.id)
     assert m_group is not None, "Meridian entities not merged"
     assert m2.id in m_group and m3.id in m_group
 
     # p1-p2 and p1-p3 should each merge (name sim ~0.79 + structural
-    # evidence from 5 shared neighbors). p2-p3 may not merge directly
+    # evidence from shared matched events). p2-p3 may not merge directly
     # (name sim ~0.39) but union-find transitivity through p1 links all three.
     p_group = _find_group_containing(groups, p1.id)
     assert p_group is not None, "Sharma entities not merged"
@@ -114,48 +107,48 @@ def test_three_source_with_person_name_variation(embedder):
 # ---------------------------------------------------------------------------
 
 
-def test_identical_names_different_contexts_no_merge(embedder):
-    """Two different people with identical names in unrelated clusters.
+def test_identical_names_different_contexts_no_merge():
+    """Two different people with identical names in unrelated stories.
 
-    Cluster A: Dr. James Chen leads Advanced AI Lab, funded by NSF
-    Cluster B: Dr. James Chen leads Climate Research Lab, funded by EPA
+    Story A: Dr. James Chen leads Advanced AI Lab, funded by NSF
+    Story B: Dr. James Chen leads Climate Research Lab, funded by EPA
 
-    Name similarity is 1.0 and both have the same relation ("leads"),
-    same structure shape, and similar funder relation. But the actual
-    neighbors are completely different — negative structural evidence
-    should prevent merging the two James Chens."""
-    # Cluster A: AI research
+    Name similarity is 1.0 and both stories have the same event shape.
+    But the participating entities are completely different — the event
+    pairs suppress each other, and the negative evidence prevents merging
+    the two James Chens."""
+    # Story A: AI research
     a1 = Graph(id="ai-1")
     jc_a1 = a1.add_entity("Dr. James Chen")
     lab_a1 = a1.add_entity("Advanced AI Lab")
     nsf_a1 = a1.add_entity("National Science Foundation")
-    a1.add_edge(jc_a1, lab_a1, "leads")
-    a1.add_edge(lab_a1, nsf_a1, "funded by")
+    fact(a1, "lead", agent=jc_a1, patients=(lab_a1,))
+    fact(a1, "be funded by", agent=lab_a1, patients=(nsf_a1,))
 
     a2 = Graph(id="ai-2")
     jc_a2 = a2.add_entity("Dr. James Chen")
     lab_a2 = a2.add_entity("Advanced AI Lab")
     nsf_a2 = a2.add_entity("National Science Foundation")
-    a2.add_edge(jc_a2, lab_a2, "leads")
-    a2.add_edge(lab_a2, nsf_a2, "funded by")
+    fact(a2, "head", agent=jc_a2, patients=(lab_a2,))
+    fact(a2, "be funded by", agent=lab_a2, patients=(nsf_a2,))
 
-    # Cluster B: climate research — same name, same structure, different entities
+    # Story B: climate research — same name, same structure, different entities
     b1 = Graph(id="climate-1")
     jc_b1 = b1.add_entity("Dr. James Chen")
     lab_b1 = b1.add_entity("Climate Research Lab")
     epa_b1 = b1.add_entity("Environmental Protection Agency")
-    b1.add_edge(jc_b1, lab_b1, "leads")
-    b1.add_edge(lab_b1, epa_b1, "funded by")
+    fact(b1, "lead", agent=jc_b1, patients=(lab_b1,))
+    fact(b1, "be funded by", agent=lab_b1, patients=(epa_b1,))
 
     b2 = Graph(id="climate-2")
     jc_b2 = b2.add_entity("Dr. James Chen")
     lab_b2 = b2.add_entity("Climate Research Lab")
     epa_b2 = b2.add_entity("Environmental Protection Agency")
-    b2.add_edge(jc_b2, lab_b2, "leads")
-    b2.add_edge(lab_b2, epa_b2, "funded by")
+    fact(b2, "head", agent=jc_b2, patients=(lab_b2,))
+    fact(b2, "be funded by", agent=lab_b2, patients=(epa_b2,))
 
     graphs = [a1, a2, b1, b2]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
     cluster_a_ids = {jc_a1.id, lab_a1.id, nsf_a1.id, jc_a2.id, lab_a2.id, nsf_a2.id}
     cluster_b_ids = {jc_b1.id, lab_b1.id, epa_b1.id, jc_b2.id, lab_b2.id, epa_b2.id}
@@ -175,58 +168,57 @@ def test_identical_names_different_contexts_no_merge(embedder):
 
 
 # ---------------------------------------------------------------------------
-# 3. Cross-event entity linking
+# 3. Cross-story entity linking
 # ---------------------------------------------------------------------------
 
 
-def test_shared_entity_across_clusters(embedder):
-    """An entity appearing in two independent event clusters should be
-    linked across them, while event-specific entities stay isolated.
+def test_shared_entity_across_clusters():
+    """An entity appearing in two independent stories should be linked
+    across them, while story-specific entities stay isolated.
 
-    Cluster A: Meridian Technologies acquired DataVault (CEO: Elena Vasquez)
-    Cluster B: Meridian Technologies settles FTC investigation (CEO: Elena Vasquez)
+    Story A: Meridian Technologies acquired DataVault (CEO: Elena Vasquez)
+    Story B: Meridian Technologies settles FTC investigation (CEO: Elena Vasquez)
 
-    Meridian and Elena Vasquez are the shared entities — they appear with
-    identical names and shared structural context (the CEO relation) across
-    both clusters. DataVault and FTC should NOT merge."""
-    # Cluster A: acquisition (2 sources)
+    Meridian and Elena Vasquez are shared with identical names and matched
+    CEO events across both stories. DataVault and FTC should NOT merge."""
+    # Story A: acquisition (2 sources)
     a1 = Graph(id="acq-1")
     m_a1 = a1.add_entity("Meridian Technologies")
     dv_a1 = a1.add_entity("DataVault")
     ev_a1 = a1.add_entity("Elena Vasquez")
-    a1.add_edge(m_a1, dv_a1, "acquired")
-    a1.add_edge(m_a1, ev_a1, "CEO is")
+    fact(a1, "acquire", agent=m_a1, patients=(dv_a1,))
+    fact(a1, "employ as CEO", agent=m_a1, patients=(ev_a1,))
 
     a2 = Graph(id="acq-2")
     m_a2 = a2.add_entity("Meridian Technologies")
     dv_a2 = a2.add_entity("DataVault")
     ev_a2 = a2.add_entity("Elena Vasquez")
-    a2.add_edge(m_a2, dv_a2, "purchased")
-    a2.add_edge(m_a2, ev_a2, "CEO is")
+    fact(a2, "purchase", agent=m_a2, patients=(dv_a2,))
+    fact(a2, "employ as CEO", agent=m_a2, patients=(ev_a2,))
 
-    # Cluster B: FTC investigation (2 sources) — shares Meridian + Elena
+    # Story B: FTC investigation (2 sources) — shares Meridian + Elena
     b1 = Graph(id="ftc-1")
     m_b1 = b1.add_entity("Meridian Technologies")
     ftc_b1 = b1.add_entity("Federal Trade Commission")
     ev_b1 = b1.add_entity("Elena Vasquez")
-    b1.add_edge(ftc_b1, m_b1, "investigates")
-    b1.add_edge(m_b1, ev_b1, "CEO is")
+    fact(b1, "investigate", agent=ftc_b1, patients=(m_b1,))
+    fact(b1, "employ as CEO", agent=m_b1, patients=(ev_b1,))
 
     b2 = Graph(id="ftc-2")
     m_b2 = b2.add_entity("Meridian Technologies")
     ftc_b2 = b2.add_entity("Federal Trade Commission")
     ev_b2 = b2.add_entity("Elena Vasquez")
-    b2.add_edge(ftc_b2, m_b2, "investigates")
-    b2.add_edge(m_b2, ev_b2, "CEO is")
+    fact(b2, "investigate", agent=ftc_b2, patients=(m_b2,))
+    fact(b2, "employ as CEO", agent=m_b2, patients=(ev_b2,))
 
     graphs = [a1, a2, b1, b2]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
     # All four Meridian entities should be in one group
     m_group = _find_group_containing(groups, m_a1.id)
     assert m_group is not None, "Meridian entities not merged"
     assert {m_a1.id, m_a2.id, m_b1.id, m_b2.id} <= m_group, (
-        f"Not all Meridian entities merged across clusters: {m_group}"
+        f"Not all Meridian entities merged across stories: {m_group}"
     )
 
     # DataVault should NOT merge with FTC
@@ -238,55 +230,54 @@ def test_shared_entity_across_clusters(embedder):
         )
 
 
-def test_shared_person_across_clusters(embedder):
-    """A person entity shared across two event clusters, linked by
-    identical names AND shared structural context (Stanford University).
+def test_shared_person_across_clusters():
+    """A person entity shared across two stories, linked by identical
+    names AND matched alumna events (Stanford University).
 
-    Cluster A: Elena Vasquez is CEO of Meridian Technologies, alumna of Stanford
-    Cluster B: Elena Vasquez keynotes Global Tech Summit, alumna of Stanford
+    Story A: Elena Vasquez is CEO of Meridian Technologies, alumna of Stanford
+    Story B: Elena Vasquez keynotes Global Tech Summit, alumna of Stanford
 
-    The shared "Stanford University" neighbor provides structural evidence
-    for cross-cluster Elena linking. Meridian and Summit should NOT merge."""
+    Meridian and Summit should NOT merge."""
     a1 = Graph(id="hire-1")
     m1 = a1.add_entity("Meridian Technologies")
     ev1 = a1.add_entity("Elena Vasquez")
     dv1 = a1.add_entity("DataVault Inc")
     su1 = a1.add_entity("Stanford University")
-    a1.add_edge(m1, ev1, "CEO is")
-    a1.add_edge(m1, dv1, "acquired")
-    a1.add_edge(ev1, su1, "alumna of")
+    fact(a1, "employ as CEO", agent=m1, patients=(ev1,))
+    fact(a1, "acquire", agent=m1, patients=(dv1,))
+    fact(a1, "be alumna of", agent=ev1, patients=(su1,))
 
     a2 = Graph(id="hire-2")
     m2 = a2.add_entity("Meridian Technologies")
     ev2 = a2.add_entity("Elena Vasquez")
     dv2 = a2.add_entity("DataVault Inc")
     su2 = a2.add_entity("Stanford University")
-    a2.add_edge(m2, ev2, "CEO is")
-    a2.add_edge(m2, dv2, "acquired")
-    a2.add_edge(ev2, su2, "alumna of")
+    fact(a2, "employ as CEO", agent=m2, patients=(ev2,))
+    fact(a2, "acquire", agent=m2, patients=(dv2,))
+    fact(a2, "be alumna of", agent=ev2, patients=(su2,))
 
     b1 = Graph(id="summit-1")
     ev3 = b1.add_entity("Elena Vasquez")
     summit1 = b1.add_entity("Global Tech Summit")
     su3 = b1.add_entity("Stanford University")
-    b1.add_edge(ev3, summit1, "keynotes")
-    b1.add_edge(ev3, su3, "alumna of")
+    fact(b1, "keynote", agent=ev3, patients=(summit1,))
+    fact(b1, "be alumna of", agent=ev3, patients=(su3,))
 
     b2 = Graph(id="summit-2")
     ev4 = b2.add_entity("Elena Vasquez")
     summit2 = b2.add_entity("Global Tech Summit")
     su4 = b2.add_entity("Stanford University")
-    b2.add_edge(ev4, summit2, "keynotes")
-    b2.add_edge(ev4, su4, "alumna of")
+    fact(b2, "keynote", agent=ev4, patients=(summit2,))
+    fact(b2, "be alumna of", agent=ev4, patients=(su4,))
 
     graphs = [a1, a2, b1, b2]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
-    # All four Elena Vasquez entities should merge (within + across clusters)
+    # All four Elena Vasquez entities should merge (within + across stories)
     ev_group = _find_group_containing(groups, ev1.id)
     assert ev_group is not None, "Elena Vasquez entities not merged"
     assert {ev1.id, ev2.id, ev3.id, ev4.id} <= ev_group, (
-        "Elena Vasquez not linked across clusters"
+        "Elena Vasquez not linked across stories"
     )
 
     # Meridian and Summit should NOT merge
@@ -303,51 +294,46 @@ def test_shared_person_across_clusters(embedder):
 # ---------------------------------------------------------------------------
 
 
-def test_progressive_merging_no_cascading_false_merges(embedder):
-    """Two unrelated clusters with similar structure should stay separate
-    even with progressive merging enabled.
+def test_progressive_merging_no_cascading_false_merges():
+    """Two unrelated stories with isomorphic structure should stay
+    separate even with progressive merging enabled.
 
-    Cluster A: NovaTech acquired DataVault (CEO: James Chen)
-    Cluster B: Quantum Labs acquired ClearSky (CEO: Sarah Park)
+    Story A: NovaTech acquired DataVault (CEO: James Chen)
+    Story B: Quantum Labs acquired ClearSky (CEO: Sarah Park)
 
-    Both clusters have isomorphic structure (acquirer → target, acquirer
-    → CEO), but all entity names differ.  Within-cluster entities merge
-    across sources (identical names), but cross-cluster entities must
-    not merge even after progressive merging enriches neighborhoods."""
-    # Cluster A, source 1
+    Within-story entities merge across sources (identical names), but
+    cross-story entities must not merge even after progressive merging
+    enriches neighborhoods."""
     a1 = Graph(id="nova-1")
     nt_a1 = a1.add_entity("NovaTech")
     dv_a1 = a1.add_entity("DataVault")
     jc_a1 = a1.add_entity("James Chen")
-    a1.add_edge(nt_a1, dv_a1, "acquired")
-    a1.add_edge(nt_a1, jc_a1, "CEO is")
+    fact(a1, "acquire", agent=nt_a1, patients=(dv_a1,))
+    fact(a1, "employ as CEO", agent=nt_a1, patients=(jc_a1,))
 
-    # Cluster A, source 2
     a2 = Graph(id="nova-2")
     nt_a2 = a2.add_entity("NovaTech")
     dv_a2 = a2.add_entity("DataVault")
     jc_a2 = a2.add_entity("James Chen")
-    a2.add_edge(nt_a2, dv_a2, "purchased")
-    a2.add_edge(nt_a2, jc_a2, "CEO is")
+    fact(a2, "purchase", agent=nt_a2, patients=(dv_a2,))
+    fact(a2, "employ as CEO", agent=nt_a2, patients=(jc_a2,))
 
-    # Cluster B, source 1
     b1 = Graph(id="quantum-1")
     ql_b1 = b1.add_entity("Quantum Labs")
     cs_b1 = b1.add_entity("ClearSky")
     sp_b1 = b1.add_entity("Sarah Park")
-    b1.add_edge(ql_b1, cs_b1, "acquired")
-    b1.add_edge(ql_b1, sp_b1, "CEO is")
+    fact(b1, "acquire", agent=ql_b1, patients=(cs_b1,))
+    fact(b1, "employ as CEO", agent=ql_b1, patients=(sp_b1,))
 
-    # Cluster B, source 2
     b2 = Graph(id="quantum-2")
     ql_b2 = b2.add_entity("Quantum Labs")
     cs_b2 = b2.add_entity("ClearSky")
     sp_b2 = b2.add_entity("Sarah Park")
-    b2.add_edge(ql_b2, cs_b2, "purchased")
-    b2.add_edge(ql_b2, sp_b2, "CEO is")
+    fact(b2, "purchase", agent=ql_b2, patients=(cs_b2,))
+    fact(b2, "employ as CEO", agent=ql_b2, patients=(sp_b2,))
 
     graphs = [a1, a2, b1, b2]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
     cluster_a_ids = {nt_a1.id, dv_a1.id, jc_a1.id, nt_a2.id, dv_a2.id, jc_a2.id}
     cluster_b_ids = {ql_b1.id, cs_b1.id, sp_b1.id, ql_b2.id, cs_b2.id, sp_b2.id}
@@ -367,44 +353,38 @@ def test_progressive_merging_no_cascading_false_merges(embedder):
 
 
 # ---------------------------------------------------------------------------
-# 5. Synonym relation inflation (false merges from real data)
+# 5. False-merge regressions from real data
 # ---------------------------------------------------------------------------
 
 
-def test_shared_employee_bridge_no_company_merge(embedder):
+def test_shared_employee_bridge_no_company_merge():
     """A person who held the same role at two different companies should
-    not cause those companies to be placed in the same match group, and
-    same-name company entities should still merge.
+    not cause those companies to merge, and same-name company entities
+    should still merge.
 
     Teresa Nakamura was CFO at both Cascade Robotics and CloudScale,
-    reported by two sources with different phrasings.  Same-name merges
-    (Cascade₁↔Cascade₂, CloudScale₁↔CloudScale₂) should work, but the
-    companies themselves should not be merged.
-
-    Regression test: this used to fail because negative evidence from
-    Cascade≠CloudScale (nc=0) suppressed Nakamura's confidence below
-    0.5, cascading back onto the company same-name pairs.  Per-neighbor
-    best-counterpart evidence fixed the cascade.
+    reported by two sources with different phrasings. The Nakamura pair
+    bridges the companies structurally, but the CFO-event pairs have
+    name-mismatched patients and suppress.
 
     Reproduces the Cascade Robotics / CloudScale pattern from real data."""
     g1 = Graph(id="g1")
     nak1 = g1.add_entity("Teresa Nakamura")
     cascade1 = g1.add_entity("Cascade Robotics")
     cloud1 = g1.add_entity("CloudScale")
-    g1.add_edge(nak1, cascade1, "is CFO of")
-    g1.add_edge(nak1, cloud1, "was CFO at")
+    fact(g1, "be CFO of", agent=nak1, patients=(cascade1,))
+    fact(g1, "be CFO at", agent=nak1, patients=(cloud1,))
 
     g2 = Graph(id="g2")
     nak2 = g2.add_entity("Teresa Nakamura")
     cascade2 = g2.add_entity("Cascade Robotics")
     cloud2 = g2.add_entity("CloudScale")
-    g2.add_edge(nak2, cascade2, "appointed CFO of")
-    g2.add_edge(nak2, cloud2, "is chief financial officer of")
+    fact(g2, "be appointed CFO of", agent=nak2, patients=(cascade2,))
+    fact(g2, "be chief financial officer of", agent=nak2, patients=(cloud2,))
 
     graphs = [g1, g2]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
-    # Cascade and CloudScale are different companies — must stay separate.
     cascade_ids = {cascade1.id, cascade2.id}
     cloud_ids = {cloud1.id, cloud2.id}
     for group in groups:
@@ -412,53 +392,37 @@ def test_shared_employee_bridge_no_company_merge(embedder):
             f"Companies falsely merged via shared employee bridge: {group}"
         )
 
-    # Same-name merges within each company should still work.
     cas_group = _find_group_containing(groups, cascade1.id)
     assert cas_group is not None and cascade2.id in cas_group
     cloud_group = _find_group_containing(groups, cloud1.id)
     assert cloud_group is not None and cloud2.id in cloud_group
 
 
-def test_regulator_and_regulated_entity_stay_separate(embedder):
+def test_regulator_and_regulated_entity_stay_separate():
     """A regulatory body and the entity it regulates should not merge,
     and same-name entities should still merge across sources.
 
-    Two news outlets (DataWatch EU, EuroPrivacy Wire) both report on
-    the Data Protection Commission and Vantara AI.  Same-name merges
-    (DPC₁↔DPC₂, Vantara₁↔Vantara₂) should work, but the regulator
-    and company should stay separate.
-
-    Regression test: this used to fail because negative evidence from
-    DPC≠Vantara (both receive edges from DataWatch/EuroPrivacy via
-    similar "reported on"/"published report on" relations) suppressed
-    the third-party neighbors' confidence, cascading to all same-name
-    pairs.
+    Two outlets both report on the Data Protection Commission and
+    Vantara AI. The outlets are not part of the world graph (extraction
+    drops them), so the scenario reduces to both entities being patients
+    of report events with mismatched agents — the cross pairs suppress.
 
     Reproduces the DPC / Vantara AI pattern from real data."""
     g1 = Graph(id="g1")
     dpc1 = g1.add_entity("Data Protection Commission")
     vantara1 = g1.add_entity("Vantara AI")
-    dw1 = g1.add_entity("DataWatch EU")
-    euro1 = g1.add_entity("EuroPrivacy Wire")
-    g1.add_edge(dw1, dpc1, "reported on")
-    g1.add_edge(dw1, vantara1, "reported on")
-    g1.add_edge(euro1, dpc1, "published report on")
-    g1.add_edge(euro1, vantara1, "published report on")
+    fact(g1, "be fined by", agent=vantara1, patients=(dpc1,))
+    fact(g1, "publish report on", agent=dpc1, patients=(vantara1,))
 
     g2 = Graph(id="g2")
     dpc2 = g2.add_entity("Data Protection Commission")
     vantara2 = g2.add_entity("Vantara AI")
-    dw2 = g2.add_entity("DataWatch EU")
-    euro2 = g2.add_entity("EuroPrivacy Wire")
-    g2.add_edge(dw2, dpc2, "published report on")
-    g2.add_edge(dw2, vantara2, "published report on")
-    g2.add_edge(euro2, dpc2, "reported on")
-    g2.add_edge(euro2, vantara2, "reported on")
+    fact(g2, "be fined by", agent=vantara2, patients=(dpc2,))
+    fact(g2, "publish report on", agent=dpc2, patients=(vantara2,))
 
     graphs = [g1, g2]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
-    # DPC and Vantara are fundamentally different entities.
     dpc_ids = {dpc1.id, dpc2.id}
     vantara_ids = {vantara1.id, vantara2.id}
     for group in groups:
@@ -466,74 +430,60 @@ def test_regulator_and_regulated_entity_stay_separate(embedder):
             f"Regulator and regulated entity incorrectly merged: {group}"
         )
 
-    # Same-name merges should still work.
     dpc_group = _find_group_containing(groups, dpc1.id)
     assert dpc_group is not None and dpc2.id in dpc_group
     vantara_group = _find_group_containing(groups, vantara1.id)
     assert vantara_group is not None and vantara2.id in vantara_group
 
 
-# ---------------------------------------------------------------------------
-# 6. Synonym relation inflation (false cross-entity merge)
-# ---------------------------------------------------------------------------
-
-
-def test_synonym_inflation_false_merge_via_shared_hub(embedder):
+def test_shared_acquirer_does_not_merge_different_targets():
     """Two different acquisition targets should not merge just because
     they were acquired by the same company, even when multiple sources
-    report the acquisitions with synonym relation phrases.
+    report the acquisitions with different event labels.
 
     A neutral article (hub only, no targets) lets the hub entity merge
-    across all articles via progressive merging, bypassing the negative-
-    evidence cascade that would otherwise suppress same-name merges.
-
-    After the hub fully merges, each target has two adjacency entries to
-    the canonical hub ("acquired" + "purchased").  The 2×2=4 combinations
-    each contribute min(pos_weight) to pos_strength via the unconditional
-    ra==rb path, inflating a single structural path to pos_agg ≈ 0.87.
-    With a single relation variant the same path gives ≈ 0.39.
+    across all articles via progressive merging. After the hub merges,
+    each target's only structural connection is the shared acquirer
+    event — a single path, which never crosses the merge bar.
 
     Reproduces the Lightwave Analytics / CloudScale false merge pattern
     from real data (both acquired by Meridian Technologies)."""
-    # Neutral article: hub entity with an unrelated edge.
-    # This lets the hub merge with all other hub instances without
-    # encountering cross-target negative evidence.
+    # Neutral article: hub entity with an unrelated event.
     g0 = Graph(id="g0")
     hub0 = g0.add_entity("Meridian Technologies")
     loc0 = g0.add_entity("Pittsburgh")
-    g0.add_edge(hub0, loc0, "is based in")
+    fact(g0, "be based in", agent=hub0, patients=(loc0,))
 
-    # Target-B articles (2 synonym variants)
+    # Target-B articles (2 label variants)
     g1 = Graph(id="g1")
     hub1 = g1.add_entity("Meridian Technologies")
     b1 = g1.add_entity("Lightwave Analytics")
-    g1.add_edge(hub1, b1, "acquired")
+    fact(g1, "acquire", agent=hub1, patients=(b1,))
 
     g2 = Graph(id="g2")
     hub2 = g2.add_entity("Meridian Technologies")
     b2 = g2.add_entity("Lightwave Analytics")
-    g2.add_edge(hub2, b2, "purchased")
+    fact(g2, "purchase", agent=hub2, patients=(b2,))
 
-    # Target-C articles (2 synonym variants)
+    # Target-C articles (2 label variants)
     g3 = Graph(id="g3")
     hub3 = g3.add_entity("Meridian Technologies")
     c1 = g3.add_entity("CloudScale")
-    g3.add_edge(hub3, c1, "acquired")
+    fact(g3, "acquire", agent=hub3, patients=(c1,))
 
     g4 = Graph(id="g4")
     hub4 = g4.add_entity("Meridian Technologies")
     c2 = g4.add_entity("CloudScale")
-    g4.add_edge(hub4, c2, "purchased")
+    fact(g4, "purchase", agent=hub4, patients=(c2,))
 
     graphs = [g0, g1, g2, g3, g4]
-    _, groups, _ = match_graphs(graphs, embedder)
+    _, groups, _ = match_graphs(graphs)
 
-    # Lightwave and CloudScale are different companies — must stay separate.
     b_ids = {b1.id, b2.id}
     c_ids = {c1.id, c2.id}
     for group in groups:
         assert not (group & b_ids and group & c_ids), (
-            f"Acquisition targets falsely merged via synonym inflation: {group}"
+            f"Acquisition targets falsely merged via shared acquirer: {group}"
         )
 
     # Same-name merges should work (the neutral article enables this).

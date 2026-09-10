@@ -11,15 +11,21 @@ cases:
       name: ketamine
     - id: e3
       name: amphetamines
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: use
-    - id: r2
-      source: e1
-      target: e3
-      relation: use
+    events:
+    - id: v1
+      label: use
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: use
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
   evaluators: []
 - name: unnamed_parties
   inputs: unnamed_parties
@@ -30,11 +36,14 @@ cases:
       name: Halvard Gallery
     - id: e2
       name: Vesterby
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: be located in
+    events:
+    - id: v1
+      label: be located in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
   evaluators: []
 - name: media_meta_entities
   inputs: media_meta_entities
@@ -45,11 +54,14 @@ cases:
       name: Kestrel Bank
     - id: e2
       name: Ostmund
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: close branches in
+    events:
+    - id: v1
+      label: close branches in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
   evaluators: []
 - name: clause_entities
   inputs: clause_entities
@@ -60,11 +72,14 @@ cases:
       name: Kestrel Bank
     - id: e2
       name: Marta Reyes
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: dismiss
+    events:
+    - id: v1
+      label: dismiss
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
   evaluators: []
 - name: repeated_entities
   inputs: repeated_entities
@@ -77,15 +92,21 @@ cases:
       name: Vesterby
     - id: e3
       name: Ostmund art fair
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: be located in
-    - id: r2
-      source: e1
-      target: e3
-      relation: host
+    events:
+    - id: v1
+      label: be located in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: host
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
   evaluators: []
 - name: coordinated_lists
   inputs: coordinated_lists
@@ -104,27 +125,42 @@ cases:
       name: Kalden
     - id: e6
       name: Rysby
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: close stations in
-    - id: r2
-      source: e1
-      target: e3
-      relation: close stations in
-    - id: r3
-      source: e1
-      target: e4
-      relation: close stations in
-    - id: r4
-      source: e1
-      target: e5
-      relation: review routes in
-    - id: r5
-      source: e1
-      target: e6
-      relation: review routes in
+    events:
+    - id: v1
+      label: close stations in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: close stations in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
+    - id: v3
+      label: close stations in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e4
+    - id: v4
+      label: review routes in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e5
+    - id: v5
+      label: review routes in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e6
   evaluators: []
 - name: temporal_scope
   inputs: temporal_scope
@@ -139,19 +175,28 @@ cases:
       name: Caspian Lines
     - id: e4
       name: Gdansk
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: acquire
-    - id: r2
-      source: e1
-      target: e4
-      relation: be headquartered in
-    - id: r3
-      source: e1
-      target: e3
-      relation: acquire
+    events:
+    - id: v1
+      label: acquire
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: be headquartered in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e4
+    - id: v3
+      label: acquire
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
   evaluators: []
 - name: historical_background
   inputs: historical_background
@@ -170,27 +215,42 @@ cases:
       name: Ostmund Lines
     - id: e6
       name: Meridian Rail
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: modernise
-    - id: r2
-      source: e1
-      target: e3
-      relation: move headquarters to
-    - id: r3
-      source: e4
-      target: e2
-      relation: build
-    - id: r4
-      source: e5
-      target: e2
-      relation: build
-    - id: r5
-      source: e6
-      target: e5
-      relation: acquire
+    events:
+    - id: v1
+      label: modernise
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: move headquarters to
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
+    - id: v3
+      label: build
+      participants:
+      - role: agent
+        ref: e4
+      - role: patient
+        ref: e2
+    - id: v4
+      label: build
+      participants:
+      - role: agent
+        ref: e5
+      - role: patient
+        ref: e2
+    - id: v5
+      label: acquire
+      participants:
+      - role: agent
+        ref: e6
+      - role: patient
+        ref: e5
   evaluators: []
 - name: denied_allegations
   inputs: denied_allegations
@@ -207,19 +267,23 @@ cases:
       name: Ostmund rail link
     - id: e5
       name: transport minister
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: serve in
-    - id: r2
-      source: r1
-      target: e5
-      relation: role
-    - id: r3
-      source: e3
-      target: e4
-      relation: build
+    events:
+    - id: v1
+      label: serve in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+      - role: patient
+        ref: e5
+    - id: v2
+      label: build
+      participants:
+      - role: agent
+        ref: e3
+      - role: patient
+        ref: e4
   evaluators: []
 - name: role_qualifiers
   inputs: role_qualifiers
@@ -238,27 +302,27 @@ cases:
       name: managing director
     - id: e6
       name: operations director
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: manage
-    - id: r2
-      source: r1
-      target: e5
-      relation: role
-    - id: r3
-      source: r1
-      target: e3
-      relation: for
-    - id: r4
-      source: e1
-      target: e4
-      relation: manage
-    - id: r5
-      source: r4
-      target: e6
-      relation: role
+    events:
+    - id: v1
+      label: manage
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+      - role: patient
+        ref: e5
+      - role: patient
+        ref: e3
+    - id: v2
+      label: manage
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e4
+      - role: patient
+        ref: e6
   evaluators: []
 - name: role_qualifiers_paraphrase
   inputs: role_qualifiers_paraphrase
@@ -277,27 +341,27 @@ cases:
       name: managing director
     - id: e6
       name: operations director
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: oversee
-    - id: r2
-      source: r1
-      target: e5
-      relation: role
-    - id: r3
-      source: r1
-      target: e3
-      relation: for
-    - id: r4
-      source: e1
-      target: e4
-      relation: lead
-    - id: r5
-      source: r4
-      target: e6
-      relation: role
+    events:
+    - id: v1
+      label: oversee
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+      - role: patient
+        ref: e5
+      - role: patient
+        ref: e3
+    - id: v2
+      label: lead
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e4
+      - role: patient
+        ref: e6
   evaluators: []
 - name: appositive_roles
   inputs: appositive_roles
@@ -316,31 +380,39 @@ cases:
       name: foreign minister
     - id: e6
       name: deputy trade minister
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: visit
-    - id: r2
-      source: e1
-      target: e3
-      relation: serve in
-    - id: r3
-      source: r2
-      target: e5
-      relation: role
-    - id: r4
-      source: e4
-      target: e3
-      relation: serve in
-    - id: r5
-      source: r4
-      target: e6
-      relation: role
-    - id: r6
-      source: e4
-      target: r1
-      relation: join
+    events:
+    - id: v1
+      label: visit
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: serve in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
+      - role: patient
+        ref: e5
+    - id: v3
+      label: serve in
+      participants:
+      - role: agent
+        ref: e4
+      - role: patient
+        ref: e3
+      - role: patient
+        ref: e6
+    - id: v4
+      label: join
+      participants:
+      - role: agent
+        ref: e4
+      - role: patient
+        ref: v1
   evaluators: []
 - name: appositive_roles_paraphrase
   inputs: appositive_roles_paraphrase
@@ -359,31 +431,39 @@ cases:
       name: foreign minister
     - id: e6
       name: deputy trade minister
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: travel to
-    - id: r2
-      source: e1
-      target: e3
-      relation: serve in
-    - id: r3
-      source: r2
-      target: e5
-      relation: role
-    - id: r4
-      source: e4
-      target: e3
-      relation: serve in
-    - id: r5
-      source: r4
-      target: e6
-      relation: role
-    - id: r6
-      source: e4
-      target: r1
-      relation: take part in
+    events:
+    - id: v1
+      label: travel to
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: serve in
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
+      - role: patient
+        ref: e5
+    - id: v3
+      label: serve in
+      participants:
+      - role: agent
+        ref: e4
+      - role: patient
+        ref: e3
+      - role: patient
+        ref: e6
+    - id: v4
+      label: take part in
+      participants:
+      - role: agent
+        ref: e4
+      - role: patient
+        ref: v1
   evaluators: []
 - name: specific_relation_reference
   inputs: specific_relation_reference
@@ -398,19 +478,28 @@ cases:
       name: Kalden
     - id: e4
       name: Ivo Brandt
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: visit
-    - id: r2
-      source: e1
-      target: e3
-      relation: visit
-    - id: r3
-      source: e4
-      target: r2
-      relation: join
+    events:
+    - id: v1
+      label: visit
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: visit
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e3
+    - id: v3
+      label: join
+      participants:
+      - role: agent
+        ref: e4
+      - role: patient
+        ref: v2
   evaluators: []
 - name: relation_to_relation
   inputs: relation_to_relation
@@ -425,19 +514,28 @@ cases:
       name: Meridian Rail
     - id: e4
       name: Kalden
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: close
-    - id: r2
-      source: e3
-      target: e4
-      relation: suspend services to
-    - id: r3
-      source: r1
-      target: r2
-      relation: cause
+    events:
+    - id: v1
+      label: close
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: suspend services to
+      participants:
+      - role: agent
+        ref: e3
+      - role: patient
+        ref: e4
+    - id: v3
+      label: cause
+      participants:
+      - role: agent
+        ref: v1
+      - role: patient
+        ref: v2
   evaluators: []
 - name: nested_relation_qualifiers
   inputs: nested_relation_qualifiers
@@ -452,19 +550,23 @@ cases:
       name: Pavel Rusk
     - id: e4
       name: Norvale Council
-    relations:
-    - id: r1
-      source: e1
-      target: e2
-      relation: visit
-    - id: r2
-      source: e3
-      target: r1
-      relation: join
-    - id: r3
-      source: r2
-      target: e4
-      relation: on behalf of
+    events:
+    - id: v1
+      label: visit
+      participants:
+      - role: agent
+        ref: e1
+      - role: patient
+        ref: e2
+    - id: v2
+      label: join
+      participants:
+      - role: agent
+        ref: e3
+      - role: patient
+        ref: v1
+      - role: patient
+        ref: e4
   evaluators: []
 evaluators: []
 report_evaluators: []
