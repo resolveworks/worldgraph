@@ -58,6 +58,7 @@ class Neighbor(NamedTuple):
 
     entity_id: str
     relation: str
+    temporal: str
     pos_weight: float
     neg_weight: float
 
@@ -114,20 +115,21 @@ def compute_functionality(
     multiple graphs pools its statistics.  Edges whose relation phrases belong
     to the same cluster are pooled together.
 
-    Returns dict from phrase to Functionality(forward, inverse).
+    Returns dict from (phrase, temporal) to Functionality(forward, inverse).
     """
-    # Collect all (source_name, target_name) pairs per relation cluster.
-    cluster_pairs: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    # Collect all (source_name, target_name) pairs per (relation cluster, temporal).
+    pool_pairs: dict[tuple[int, str], list[tuple[str, str]]] = defaultdict(list)
     for graph in graphs:
         for edge in graph.edges:
             cid = rel_clusters.get(edge.relation, -1)
             source_name = graph.nodes[edge.source].names[0]
             target_name = graph.nodes[edge.target].names[0]
-            cluster_pairs[cid].append((source_name, target_name))
+            pool_pairs[(cid, edge.temporal)].append((source_name, target_name))
 
-    # Compute functionality per cluster, then map back to each phrase.
-    cluster_func: dict[int, Functionality] = {}
-    for cid, pairs in cluster_pairs.items():
+    # Compute functionality per (cluster, temporal) pool, then map back to
+    # each (phrase, temporal).
+    pool_func: dict[tuple[int, str], Functionality] = {}
+    for pool, pairs in pool_pairs.items():
         targets_per_source: dict[str, set[str]] = defaultdict(set)
         sources_per_target: dict[str, set[str]] = defaultdict(set)
         for source_name, target_name in pairs:
@@ -139,11 +141,18 @@ def compute_functionality(
         avg_in_degree = sum(
             len(sources) for sources in sources_per_target.values()
         ) / len(sources_per_target)
-        cluster_func[cid] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
+        pool_func[pool] = Functionality(1.0 / avg_out_degree, 1.0 / avg_in_degree)
 
+    observed = {
+        (edge.relation, edge.temporal)
+        for graph in graphs
+        for edge in graph.edges
+    }
     return {
-        rel: cluster_func.get(cid, Functionality(1.0, 1.0))
-        for rel, cid in rel_clusters.items()
+        (rel, temporal): pool_func[
+            (rel_clusters.get(rel, -1), temporal)
+        ]
+        for (rel, temporal) in observed
     }
 
 
@@ -210,15 +219,15 @@ def _dedup_neighbors(
     neighbors: list[Neighbor],
     rel_clusters: dict[str, int],
 ) -> list[Neighbor]:
-    """Deduplicate neighbor entries by (neighbor_id, relation cluster).
+    """Deduplicate neighbor entries by (neighbor_id, relation cluster, temporal).
 
-    Entries to the same neighbor via equivalent relations represent the
-    same structural evidence.  Keeps the max-weight entry per
-    (neighbor, cluster) group.
+    Entries to the same neighbor via equivalent relations in the same
+    temporal class represent the same structural evidence.  Keeps the
+    max-weight entry per (neighbor, cluster, temporal) group.
     """
-    best: dict[tuple[str, int], Neighbor] = {}
+    best: dict[tuple[str, int, str], Neighbor] = {}
     for nbr in neighbors:
-        key = (nbr.entity_id, rel_clusters.get(nbr.relation, -1))
+        key = (nbr.entity_id, rel_clusters.get(nbr.relation, -1), nbr.temporal)
         prev = best.get(key)
         if prev is None or nbr.pos_weight > prev.pos_weight:
             best[key] = nbr
@@ -227,30 +236,38 @@ def _dedup_neighbors(
 
 def _build_adjacency(
     graph: Graph,
-    functionality: dict[str, Functionality],
+    functionality: dict[tuple[str, str], Functionality],
     rel_clusters: dict[str, int],
 ) -> dict[str, list[Neighbor]]:
     """Build the initial canonical adjacency from graph edges.
 
     Each edge contributes two entries (one per endpoint).  Entries to the
-    same neighbor via equivalent relations are deduplicated by relation
-    cluster to prevent inflated evidence.
+    same neighbor via equivalent relations in the same temporal class are
+    deduplicated by (relation cluster, temporal) to prevent inflated evidence.
     """
     default = Functionality(1.0, 1.0)
     adjacency: dict[str, list[Neighbor]] = defaultdict(list)
     for edge in graph.edges:
-        func = functionality.get(edge.relation, default)
+        func = functionality.get((edge.relation, edge.temporal), default)
         src, tgt = edge.source, edge.target
         if src == tgt:
             continue
         adjacency[src].append(
             Neighbor(
-                tgt, edge.relation, pos_weight=func.inverse, neg_weight=func.forward
+                tgt,
+                edge.relation,
+                edge.temporal,
+                pos_weight=func.inverse,
+                neg_weight=func.forward,
             )
         )
         adjacency[tgt].append(
             Neighbor(
-                src, edge.relation, pos_weight=func.forward, neg_weight=func.inverse
+                src,
+                edge.relation,
+                edge.temporal,
+                pos_weight=func.forward,
+                neg_weight=func.inverse,
             )
         )
     return {
@@ -313,7 +330,7 @@ def propagate_similarity(
     graph: Graph,
     idf: dict[str, float],
     rel_clusters: dict[str, int],
-    functionality: dict[str, Functionality],
+    functionality: dict[tuple[str, str], Functionality],
     max_iter: int = 30,
     epsilon: float = 1e-4,
     exp_lambda: float = 1.0,
@@ -406,6 +423,8 @@ def propagate_similarity(
             for nbr_t in nbrs_tgt:
                 if rel_clusters.get(nbr_t.relation, -2) != cluster_s:
                     continue
+                if nbr_t.temporal != nbr_s.temporal:
+                    continue
                 rt = uf.find(nbr_t.entity_id)
                 if rt == tgt or rt == src:
                     continue
@@ -494,6 +513,7 @@ def propagate_similarity(
                     Neighbor(
                         uf.find(nbr.entity_id),
                         nbr.relation,
+                        nbr.temporal,
                         nbr.pos_weight,
                         nbr.neg_weight,
                     )
