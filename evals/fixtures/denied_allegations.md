@@ -4,4 +4,4 @@ Transport minister Ivo Brandt on Friday denied claims, first reported by the Cal
 
 "I have never taken a penny from anyone," Brandt said in a statement.
 
-Brandt has served in the Ostmund government since 2021.
+Brandt has served in the Ostmund government as transport minister since 2021.

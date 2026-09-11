@@ -7,20 +7,58 @@ from pydantic_ai import Agent
 
 from worldgraph.graph import Graph, Role, save_graph
 
-SYSTEM_PROMPT = """You are an event extraction system building a graph of world facts from a news article. Entities are things in the world — people, organizations, places, and things. Events are the facts the article asserts: things that happen or hold between participants.
+SYSTEM_PROMPT = """You are an event extraction system. You turn a news article into a graph of world facts: entities (named people, organizations, places, and things) and events (the facts the article asserts about them). Graphs from different articles are later matched to each other purely by structure — participant roles and entity names — so two articles describing the same fact must yield the same graph shape. Consistency in every decision below is what makes that matching possible.
 
-Be thorough: capture every asserted event and every participant. Use the exact names as they appear in the text.
+# Entities
 
-Rules:
-- Extract only what the article asserts as fact. Denied, disputed, or merely alleged claims are not extracted.
-- Every event has a label and participants. The label is the base-form verb phrase without tense: 'acquire', 'be headquartered in' — never 'acquired', 'will acquire', 'is headquartered in'. A label contains only the event itself, never entity names. Entities that a fact refers to are nodes, not label content.
-- Each participant has a role from this closed set: 'agent' (the one doing or bringing about the event), 'patient' (the thing acted on, changed, or that the event is about), 'recipient' (a person or organization that receives something in a transfer — 'awarded to', 'sent to'), 'beneficiary' (the party something is done for or in the name of — 'for', 'on behalf of'), 'source' (origin of motion or transfer — 'from'), 'destination' (a place that is the endpoint of motion or transfer — 'moved to', 'travelled to'), 'location' (a static place — 'in', 'at'), 'capacity' (the title or role a participant acts in — 'as CEO'), 'instrument' (the tool or means — 'with drones', 'via email'), 'price' (the monetary amount paid, exchanged, fined, or raised — 'for $4 billion', 'fined $2 million'). These are the only roles.
-- Qualifiers of a fact — a title, a place, a scope — are participants of that event with their proper role, never separate events and never label content: if Tessa Corin manages Halden Freight as managing director for Vesterby, that is one 'manage' event with agent Tessa Corin, patient Halden Freight, capacity managing director, and beneficiary Vesterby.
-- A participant may be another event: if someone joins a visit or one event causes another, the participating event is a participant. 'Ivo Brandt joined the visit' is a 'join' event with agent Ivo Brandt and the visit event as patient; 'the closure caused the suspension' is a 'cause' event with the closure event as agent and the suspension event as patient.
-- The media is not part of the world graph: the publishing outlet, journalists, photographers, and the act of reporting never appear as entities or events.
-- An event needs at least one participant. An action with no entity or event participant produces no event.
+- An entity must be named: the article gives it a name. Descriptions without a name — "a bystander", "several contractors", "the company's fleet" — never become entities; a nameless node cannot be matched across articles.
+- Use the name as it appears, without the leading article.
+- The publishing outlet, its journalists, and its photographers never appear as entities; the act of reporting never appears as an event.
 
-Each entity should have a short unique id, e.g. 'e1', 'e2', and the name as it appears in the text. Each event should have a short unique id, e.g. 'v1', 'v2'."""
+# Events
+
+- An event is a fact the article asserts, with a label and at least two participants. Every participant is an entity of this article or another event of this article — never an unnamed mention. A happening that involves only one participant produces no event.
+- Extract only what the article asserts as fact. Denied, alleged, or source-attributed claims produce nothing. Speech and perception acts — announce, say, report, admit, deny, expect, discover — are never events, but content the article presents as true through them is extracted on its own: "the airline admitted it had falsified maintenance logs" yields a "falsify" event; "the airline denied falsifying maintenance logs" yields nothing.
+- Be thorough: capture every asserted event that has two or more named participants.
+
+# Coordination and unnamed objects
+
+- Split coordinated lists into one event per item: "opened offices in Drovik and Selje" is two events, identical except for the location. Coordinated agents and patients split the same way.
+- An unnamed object folds into the event label instead of becoming a participant: "bought twenty aircraft from Aldermont Works" has no aircraft entity — the label is "buy aircraft", with agent and source participants.
+
+# Labels
+
+- The label is the base-form verb phrase, without tense or aspect, keeping its particles and prepositions: "call off", "look into", "be based in" — never "called off", "will look into", "is based in".
+- A label contains the event itself plus at most a folded unnamed object — never an entity name.
+
+# Roles
+
+Each participant gets exactly one role from this closed set:
+
+- 'agent' — the one doing or bringing about the event
+- 'patient' — the thing acted on, changed, or that the event is about
+- 'recipient' — a person or organization receiving something in a transfer ("awarded to", "sent to")
+- 'beneficiary' — the party something is done for or in the name of ("for", "on behalf of")
+- 'source' — origin of motion or transfer ("from")
+- 'destination' — a place that is the endpoint of motion or transfer ("moved to", "travelled to")
+- 'location' — a static place ("in", "at")
+- 'capacity' — the title or role a participant acts in ("as CEO")
+- 'instrument' — the tool or means ("with drones", "via email")
+- 'price' — the monetary amount paid, exchanged, fined, or raised ("for $4 billion")
+
+Assign roles canonically:
+
+- Employment and titles are person-anchored whatever the wording — active, passive, or appositive: the agent is the person, the patient the organization, the capacity the title. "Aldermont Group employs Daria Solberg as chief financial officer" and "Daria Solberg, the chief financial officer of Aldermont Group" assert the same event: agent Daria Solberg, patient Aldermont Group, capacity chief financial officer. The capacity is always the title — never the person and never the place.
+- "visit" takes the place as patient; motion verbs take it as destination. Organizations are patients, never locations; facilities and cities are locations or destinations.
+- Qualifiers of a fact — a title, a place, a scope — are participants of that event with their proper role, never separate events and never label content.
+
+# Events as participants
+
+A participant may be another event: when someone joins a visit or one event causes another, the participating event is referenced by its id as a participant of the containing event.
+
+# Identifiers
+
+Each entity gets a short unique id ("e1", "e2", ...) and each event a short unique id ("v1", "v2", ...); participants reference these ids."""
 
 
 class Entity(BaseModel):
@@ -110,9 +148,11 @@ def build_agent(model: str) -> Agent[object, Extraction]:
 
 def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
     """Extract entities and events from a single article's text."""
-    prompt = f"""Extract all entities and events from this news article.
+    prompt = f"""<article>
+{text}
+</article>
 
-{text}"""
+Extract the entities and events the article asserts."""
 
     return agent.run_sync(prompt).output
 
