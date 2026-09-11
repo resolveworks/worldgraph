@@ -1,235 +1,288 @@
-"""Tests for graph save/load round-trip: provenance, node kinds, multi-label
-names, role edges, and validation of the event-source invariant."""
+"""Tests for graph save/load round-trip and structural validation of the
+term model: nesting, cycles, forward references, and the single id
+namespace."""
 
 import json
 from pathlib import Path
 
 import pytest
-from conftest import fact
 
-from worldgraph.graph import Edge, Graph, Node, load_graph, save_graph
+from worldgraph.graph import Entity, Graph, Statement, load_graph, save_graph
 
 
-def test_save_load_roundtrip_single_graph(tmp_path: Path):
-    """Single-article graph: graph_id is always serialized per node and edge."""
+def jane_graph() -> Graph:
+    """The design example: Jane works at Supercorp as CEO, with the title
+    as a statement about the work statement."""
     g = Graph(id="article-1")
-    alice = g.add_entity("Alice")
-    bob = g.add_entity("Bob")
-    fact(g, "know", agent=alice, patient=bob)
+    jane = g.add_entity("Jane")
+    supercorp = g.add_entity("Supercorp")
+    ceo = g.add_entity("CEO")
+    work = g.add_statement(jane, "work at", supercorp)
+    g.add_statement(work, "as", ceo)
+    return g
 
+
+def test_roundtrip_preserves_structure_and_provenance(tmp_path: Path):
+    """Terms, their references, and per-term provenance survive save/load."""
+    g = jane_graph()
     path = tmp_path / "g.json"
     save_graph(g, path)
 
-    with open(path) as f:
-        data = json.load(f)
-    for node_data in data["nodes"]:
-        assert node_data["graph_id"] == "article-1"
-    for edge_data in data["edges"]:
-        assert edge_data["graph_id"] == "article-1"
-
     loaded = load_graph(path)
-    for node in loaded.nodes.values():
-        assert node.graph_id == "article-1"
-    for edge in loaded.edges.values():
-        assert edge.graph_id == "article-1"
-
-
-def test_node_kind_roundtrip(tmp_path: Path):
-    """Entity/event kinds and the event label survive save/load."""
-    g = Graph(id="article-1")
-    alice = g.add_entity("Alice")
-    event = fact(g, "resign", agent=alice)
-
-    path = tmp_path / "g.json"
-    save_graph(g, path)
+    assert loaded.id == "article-1"
+    assert loaded.terms == g.terms
+    assert all(term.graph_id == "article-1" for term in loaded.terms.values())
 
     with open(path) as f:
         data = json.load(f)
-    kinds = {n["id"]: n["kind"] for n in data["nodes"]}
-    assert kinds[alice.id] == "entity"
-    assert kinds[event.id] == "event"
-
-    loaded = load_graph(path)
-    assert loaded.nodes[alice.id].kind == "entity"
-    assert loaded.nodes[event.id].kind == "event"
-    assert loaded.nodes[event.id].names == ["resign"]
+    for term_data in data["terms"]:
+        assert term_data["graph_id"] == "article-1"
 
 
-def test_edge_role_roundtrip(tmp_path: Path):
-    """Edges serialize their role, and event-to-event participation
-    (join targeting the visit event) survives the round-trip."""
-    g = Graph(id="article-1")
-    ivo = g.add_entity("Ivo Brandt")
-    visit = fact(g, "visit", agent=ivo)
-    fact(g, "join", agent=ivo, patient=visit)
-
-    path = tmp_path / "g.json"
-    save_graph(g, path)
-    loaded = load_graph(path)
-
-    roles = sorted(edge.role for edge in loaded.edges.values())
-    assert roles == ["agent", "agent", "patient"]
-    join = loaded.nodes[next(n.id for n in g.nodes.values() if n.names == ["join"])]
-    join_patient = next(
-        e for e in loaded.edges.values() if e.source == join.id and e.role == "patient"
-    )
-    assert loaded.nodes[join_patient.target].names == ["visit"]
-
-
-def test_save_load_roundtrip_unified_graph(tmp_path: Path):
-    """Unified graph with terms from different source graphs preserves graph_id."""
-    g = Graph(id="unified")
-    g.nodes["n1"] = Node(id="n1", graph_id="article-1", names=["Alice"], kind="entity")
-    g.nodes["n2"] = Node(id="n2", graph_id="article-2", names=["Bob"], kind="entity")
-    g.nodes["n3"] = Node(id="n3", graph_id="article-1", names=["know"], kind="event")
-    g.edges["x1"] = Edge(
-        id="x1", graph_id="article-1", source="n3", target="n2", role="patient",
-    )
-
-    path = tmp_path / "unified.json"
-    save_graph(g, path)
-
-    with open(path) as f:
-        data = json.load(f)
-    nodes_by_id = {n["id"]: n for n in data["nodes"]}
-    assert nodes_by_id["n1"]["graph_id"] == "article-1"
-    assert nodes_by_id["n2"]["graph_id"] == "article-2"
-    assert data["edges"][0]["graph_id"] == "article-1"
-
-    loaded = load_graph(path)
-    assert loaded.nodes["n1"].graph_id == "article-1"
-    assert loaded.nodes["n2"].graph_id == "article-2"
-    assert loaded.edges["x1"].graph_id == "article-1"
-
-
-def test_save_load_roundtrip_multi_label_names(tmp_path: Path):
+def test_roundtrip_multi_name_entity(tmp_path: Path):
     """Entities with multiple names survive save/load round-trip."""
     g = Graph(id="article-1")
-    n1 = g.add_entity(["Meridian Technologies", "Meridian Tech"])
-    n2 = g.add_entity("DataVault")
-    fact(g, "acquire", agent=n1, patient=n2)
+    meridian = g.add_entity(["Meridian Technologies", "Meridian Tech"])
+    datavault = g.add_entity("DataVault")
+    g.add_statement(meridian, "acquire", datavault)
 
     path = tmp_path / "g.json"
     save_graph(g, path)
 
-    with open(path) as f:
-        data = json.load(f)
-    node_by_id = {n["id"]: n for n in data["nodes"]}
-    assert node_by_id[n1.id]["names"] == ["Meridian Technologies", "Meridian Tech"]
-    assert node_by_id[n2.id]["names"] == ["DataVault"]
-
     loaded = load_graph(path)
-    assert loaded.nodes[n1.id].names == ["Meridian Technologies", "Meridian Tech"]
-    assert loaded.nodes[n2.id].names == ["DataVault"]
+    loaded_meridian = loaded.terms[meridian.id]
+    assert isinstance(loaded_meridian, Entity)
+    assert loaded_meridian.names == ["Meridian Technologies", "Meridian Tech"]
 
 
-def test_load_duplicate_node_id_raises(tmp_path: Path):
-    """Duplicate node ids are invalid — no silent overwrite."""
-    data = {
-        "id": "article-1",
-        "nodes": [
-            {"id": "n1", "graph_id": "article-1", "names": ["Alice"], "kind": "entity"},
-            {"id": "n1", "graph_id": "article-1", "names": ["Alice again"], "kind": "entity"},
-        ],
-        "edges": [],
-    }
+def test_roundtrip_nested_statements(tmp_path: Path):
+    """A statement about a statement (a qualifier) round-trips with its
+    endpoints intact."""
+    g = jane_graph()
     path = tmp_path / "g.json"
-    path.write_text(json.dumps(data))
+    save_graph(g, path)
+    loaded = load_graph(path)
 
-    with pytest.raises(ValueError, match="duplicate node id"):
-        load_graph(path)
-
-
-def test_load_duplicate_edge_id_raises(tmp_path: Path):
-    """Duplicate edge ids are invalid — no silent overwrite."""
-    data = {
-        "id": "article-1",
-        "nodes": [
-            {"id": "n1", "graph_id": "article-1", "names": ["Alice"], "kind": "entity"},
-            {"id": "v1", "graph_id": "article-1", "names": ["resign"], "kind": "event"},
-        ],
-        "edges": [
-            {"id": "x1", "graph_id": "article-1", "source": "v1", "target": "n1",
-             "role": "agent"},
-            {"id": "x1", "graph_id": "article-1", "source": "v1", "target": "n1",
-             "role": "agent"},
-        ],
-    }
-    path = tmp_path / "g.json"
-    path.write_text(json.dumps(data))
-
-    with pytest.raises(ValueError, match="duplicate edge id"):
-        load_graph(path)
+    as_statement = next(
+        t
+        for t in loaded.terms.values()
+        if isinstance(t, Statement) and t.predicate == "as"
+    )
+    work = loaded.resolve(as_statement.subject)
+    assert isinstance(work, Statement)
+    assert work.predicate == "work at"
+    ceo = loaded.resolve(as_statement.object)
+    assert isinstance(ceo, Entity)
+    assert ceo.names == ["CEO"]
 
 
-def test_load_unknown_edge_reference_raises(tmp_path: Path):
-    """Edge endpoints must resolve to a node — invalid references are
-    rejected, never dropped or repaired."""
-    data = {
-        "id": "article-1",
-        "nodes": [
-            {"id": "v1", "graph_id": "article-1", "names": ["resign"], "kind": "event"},
-        ],
-        "edges": [
-            {"id": "x1", "graph_id": "article-1", "source": "v1", "target": "n999",
-             "role": "agent"},
-        ],
-    }
-    path = tmp_path / "g.json"
-    path.write_text(json.dumps(data))
-
-    with pytest.raises(ValueError, match="unknown node id"):
-        load_graph(path)
-
-
-def test_edge_source_must_be_an_event():
-    """Edges express participation: their source is always an event node.
-    An entity-sourced edge is invalid state and throws."""
+def test_cycle_is_valid_and_roundtrips(tmp_path: Path):
+    """Two statements about each other form a cycle — valid, and the
+    references survive save/load."""
     g = Graph(id="article-1")
-    alice = g.add_entity("Alice")
-    bob = g.add_entity("Bob")
-    g.nodes["v1"] = Node(id="v1", graph_id="article-1", names=["know"], kind="event")
-    g.edges["x1"] = Edge(
-        id="x1", graph_id="article-1", source=alice.id, target=bob.id, role="agent",
-    )
+    a = g.add_entity("A")
+    g.add_statement(a, "say", "t2", id="t1")
+    g.add_statement("t1", "contradict", a, id="t2")
+    g.validate()
 
-    with pytest.raises(ValueError, match="event"):
-        g.validate()
+    path = tmp_path / "g.json"
+    save_graph(g, path)
+    loaded = load_graph(path)
 
-    del g.edges["x1"]
-    g.edges["x2"] = Edge(
-        id="x2", graph_id="article-1", source="v1", target="v1", role="agent",
-    )
-    with pytest.raises(ValueError, match="itself"):
-        g.validate()
+    s1 = loaded.resolve("t1")
+    s2 = loaded.resolve("t2")
+    assert isinstance(s1, Statement)
+    assert isinstance(s2, Statement)
+    assert s1.object == "t2"
+    assert s2.subject == "t1"
 
 
-def test_edge_role_must_be_in_vocabulary():
-    """A role outside the closed vocabulary is invalid state."""
+def test_forward_reference_is_valid():
+    """A statement may reference a term id added later — validation is
+    deferred until construction is complete."""
     g = Graph(id="article-1")
-    alice = g.add_entity("Alice")
-    g.nodes["v1"] = Node(id="v1", graph_id="article-1", names=["resign"], kind="event")
-    g.edges["x1"] = Edge(
-        id="x1", graph_id="article-1", source="v1", target=alice.id, role="duration",
-    )
+    jane = g.add_entity("Jane")
+    g.add_statement(jane, "work at", "e-supercorp")
+    g.add_entity("Supercorp", id="e-supercorp")
+    g.validate()  # does not raise
 
-    with pytest.raises(ValueError, match="role"):
+
+def test_add_statement_accepts_terms_and_ids():
+    """Endpoints may be term objects or raw ids; both yield the same
+    stored references."""
+    g = Graph(id="article-1")
+    a = g.add_entity("A")
+    by_object = g.add_statement(a, "know", "b-id")
+    b = g.add_entity("B", id="b-id")
+    by_object_and_term = g.add_statement(a, "know", b)
+
+    assert by_object.object == "b-id"
+    assert by_object_and_term.object == b.id
+
+
+def test_resolve_returns_term_and_raises_on_unknown():
+    g = jane_graph()
+    work = next(
+        t for t in g.terms.values() if isinstance(t, Statement)
+    )
+    jane = g.resolve(work.subject)
+    assert isinstance(jane, Entity)
+    assert jane.names == ["Jane"]
+
+    with pytest.raises(ValueError, match="unknown term id"):
+        g.resolve("no-such-term")
+
+
+def test_duplicate_term_id_raises():
+    """Terms share one id namespace — an entity and a statement cannot
+    take the same id, nor can two entities."""
+    g = Graph(id="article-1")
+    g.add_entity("A", id="t1")
+    with pytest.raises(ValueError, match="duplicate term id"):
+        g.add_entity("B", id="t1")
+    with pytest.raises(ValueError, match="duplicate term id"):
+        g.add_statement("t1", "know", "t1", id="t1")
+
+
+def test_validate_unknown_reference_raises():
+    """Statement endpoints must resolve to terms of this graph — invalid
+    references are rejected, never dropped or repaired."""
+    g = Graph(id="article-1")
+    a = g.add_entity("A")
+    g.add_statement(a, "know", "ghost")
+
+    with pytest.raises(ValueError, match="unknown term id"):
         g.validate()
 
 
-def test_load_edge_without_id_raises(tmp_path: Path):
-    """Edges lacking an 'id' are invalid — no fallback."""
+def test_validate_direct_self_participation_raises():
+    """A statement cannot be its own subject or object; indirect cycles
+    remain valid."""
+    g = Graph(id="article-1")
+    a = g.add_entity("A")
+    g.add_statement(a, "know", "t1", id="t1")
+    with pytest.raises(ValueError, match="participates in itself"):
+        g.validate()
+
+    g2 = Graph(id="article-1")
+    a2 = g2.add_entity("A")
+    g2.add_statement("t1", "know", a2, id="t1")
+    with pytest.raises(ValueError, match="participates in itself"):
+        g2.validate()
+
+
+def test_save_validates_first(tmp_path: Path):
+    """save_graph refuses to write an invalid graph."""
+    g = Graph(id="article-1")
+    a = g.add_entity("A")
+    g.add_statement(a, "know", "ghost")
+
+    with pytest.raises(ValueError, match="unknown term id"):
+        save_graph(g, tmp_path / "g.json")
+    assert not (tmp_path / "g.json").exists()
+
+
+def test_load_duplicate_term_id_raises(tmp_path: Path):
+    """Duplicate term ids are invalid — no silent overwrite."""
     data = {
         "id": "article-1",
-        "nodes": [
-            {"id": "n1", "graph_id": "article-1", "names": ["Alice"], "kind": "entity"},
-            {"id": "v1", "graph_id": "article-1", "names": ["know"], "kind": "event"},
+        "terms": [
+            {"type": "entity", "id": "t1", "graph_id": "article-1", "names": ["Alice"]},
+            {"type": "entity", "id": "t1", "graph_id": "article-1", "names": ["Bob"]},
         ],
-        "edges": [{"graph_id": "article-1", "source": "v1", "target": "n1",
-                   "role": "agent"}],
+        "matches": [],
+    }
+    path = tmp_path / "g.json"
+    path.write_text(json.dumps(data))
+
+    with pytest.raises(ValueError, match="duplicate term id"):
+        load_graph(path)
+
+
+def test_load_unknown_reference_raises(tmp_path: Path):
+    data = {
+        "id": "article-1",
+        "terms": [
+            {
+                "type": "statement",
+                "id": "s1",
+                "graph_id": "article-1",
+                "subject": "t999",
+                "predicate": "know",
+                "object": "t998",
+            },
+        ],
+        "matches": [],
+    }
+    path = tmp_path / "g.json"
+    path.write_text(json.dumps(data))
+
+    with pytest.raises(ValueError, match="unknown term id"):
+        load_graph(path)
+
+
+def test_load_unknown_field_raises(tmp_path: Path):
+    """Unknown fields — top-level or on a term — are invalid state."""
+    base = {
+        "id": "article-1",
+        "terms": [
+            {
+                "type": "entity",
+                "id": "t1",
+                "graph_id": "article-1",
+                "names": ["Alice"],
+                "role": "agent",
+            },
+        ],
+        "matches": [],
+    }
+    path = tmp_path / "g.json"
+    path.write_text(json.dumps(base))
+    with pytest.raises(ValueError, match="unknown fields"):
+        load_graph(path)
+
+    top_level = {"id": "article-1", "terms": [], "matches": [], "edges": []}
+    path.write_text(json.dumps(top_level))
+    with pytest.raises(ValueError, match="unknown graph fields"):
+        load_graph(path)
+
+
+def test_load_unknown_term_type_raises(tmp_path: Path):
+    data = {
+        "id": "article-1",
+        "terms": [{"type": "event", "id": "t1", "graph_id": "article-1", "names": ["x"]}],
+        "matches": [],
+    }
+    path = tmp_path / "g.json"
+    path.write_text(json.dumps(data))
+
+    with pytest.raises(ValueError, match="unknown term type"):
+        load_graph(path)
+
+
+def test_load_missing_field_raises(tmp_path: Path):
+    """A term lacking a required field is invalid — no fallback."""
+    data = {
+        "id": "article-1",
+        "terms": [
+            {"type": "statement", "id": "s1", "graph_id": "article-1", "predicate": "know"},
+        ],
+        "matches": [],
     }
     path = tmp_path / "g.json"
     path.write_text(json.dumps(data))
 
     with pytest.raises(KeyError):
         load_graph(path)
+
+
+def test_matches_roundtrip(tmp_path: Path):
+    """Optional match groups are written through to the output file."""
+    g = jane_graph()
+    path = tmp_path / "g.json"
+    jane = next(t.id for t in g.terms.values() if isinstance(t, Entity))
+    save_graph(g, path, matches=[[jane]])
+
+    with open(path) as f:
+        data = json.load(f)
+    assert data["matches"] == [[jane]]

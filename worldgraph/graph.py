@@ -1,175 +1,170 @@
-"""Shared graph data structures and I/O.
+"""Shared term-graph data structures and I/O.
 
-A graph is bipartite: **entity** nodes (things in the world) and **event**
-nodes (facts asserted by the article), connected by participation edges.
-An edge's source is always an event node; its target is a participant —
-an entity or another event (joining a visit, causing a suspension). The
-edge label is a role from a closed vocabulary: the matcher aligns
-participants by exact role equality, so the vocabulary is enforced here,
-at the data-structure boundary.
+A graph is a set of **terms**: an entity (a named thing in the world) or
+a statement (a fact the article asserts). A statement is a triple —
+subject term, predicate phrase, object term — and since statements are
+terms, a statement may be about a statement: qualifiers, attribution,
+and claims-about-claims all take the same nested shape (RDF-star). The
+direction of a fact lives in subject/object position only; there are no
+roles, no node kinds, and no controlled vocabularies. Terms share one id
+namespace per graph.
 """
 
 import json
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal, get_args
-
-NodeKind = Literal["entity", "event"]
-
-# The participant-role vocabulary. Core roles are frame-specific — the event
-# label carries the frame — but the periphery is where the established
-# inventories (PropBank's numbered arguments and ArgM modifiers, AMR's
-# relations, VerbNet's thematic roles, schema.org Action) converge, and this
-# closed set is taken from the top of that intersection, trimmed to what
-# news text actually exercises.
-Role = Literal[
-    "agent",  # ARG0 — the one doing or bringing about the event
-    "patient",  # ARG1 — the thing acted on, changed, or held
-    "recipient",  # animate receiver in a transfer ('awarded to', 'sent to')
-    "beneficiary",  # party the event is done for or in the name of ('for', 'on behalf of')
-    "source",  # origin of motion or transfer ('from')
-    "destination",  # place that is the endpoint of motion or transfer ('moved to')
-    "location",  # static place of the event ('in', 'at')
-    "capacity",  # title or role a participant acts in ('as CEO')
-    "instrument",  # tool or means ('with drones', 'via')
-    "price",  # monetary amount paid, exchanged, fined, or raised (VerbNet Asset) ('for $4 billion')
-]
-ROLES: frozenset[str] = frozenset(get_args(Role))
+from typing import TypeVar
 
 
 @dataclass
-class Node:
+class Entity:
     id: str
-    graph_id: str
+    graph_id: str  # id of the article graph this term was extracted from
     names: list[str]
-    kind: NodeKind
 
 
 @dataclass
-class Edge:
-    """A participation: an event node connected to one of its participants.
-
-    ``source`` is the event node id, ``target`` the participant node id
-    (an entity or another event), ``role`` the participant's role.
-    """
+class Statement:
+    """An asserted fact: ``subject`` and ``object`` reference term ids of
+    this graph (either may be another statement), and ``predicate`` is a
+    short verb phrase in active voice — the subject is the one who brings
+    the fact about."""
 
     id: str
-    graph_id: str  # id of the article graph this edge was extracted from
-    source: str  # Node.id of kind "event"
-    target: str  # Node.id of any kind
-    role: str
+    graph_id: str  # id of the article graph this term was extracted from
+    subject: str  # term id
+    predicate: str
+    object: str  # term id
+
+
+Term = Entity | Statement
+
+T = TypeVar("T", bound=Term)
 
 
 @dataclass
 class Graph:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    nodes: dict[str, Node] = field(default_factory=dict)
-    edges: dict[str, Edge] = field(default_factory=dict)
+    terms: dict[str, Term] = field(default_factory=dict)
 
-    def add_entity(self, names: str | list[str]) -> Node:
-        """Add an entity node with the given name(s)."""
+    def add_entity(self, names: str | list[str], id: str | None = None) -> Entity:
+        """Add an entity term with the given name(s)."""
         if isinstance(names, str):
             names = [names]
-        entity = Node(id=str(uuid.uuid4()), graph_id=self.id, names=names, kind="entity")
-        self.nodes[entity.id] = entity
-        return entity
-
-    def add_event(self, label: str) -> Node:
-        """Add an event node. The label names the node for output and
-        display; it is never used for matching."""
-        event = Node(id=str(uuid.uuid4()), graph_id=self.id, names=[label], kind="event")
-        self.nodes[event.id] = event
-        return event
-
-    def add_edge(
-        self,
-        source: Node | str,
-        target: Node | str,
-        role: Role,
-        id: str | None = None,
-    ) -> Edge:
-        """Add a participation edge from an event node to a participant.
-
-        Endpoints may be given as node objects or as ids.  Ids (and the
-        optional explicit edge ``id``) exist for construction flexibility;
-        ``validate()`` checks all invariants once construction is complete.
-        """
-        src = source.id if isinstance(source, Node) else source
-        tgt = target.id if isinstance(target, Node) else target
-        if isinstance(source, Node) and source.kind != "event":
-            raise ValueError(
-                f"edge source must be an event node, got kind {source.kind!r}"
-            )
-        edge = Edge(
+        entity = Entity(
             id=id if id is not None else str(uuid.uuid4()),
             graph_id=self.id,
-            source=src,
-            target=tgt,
-            role=role,
+            names=names,
         )
-        self.edges[edge.id] = edge
-        return edge
+        return self._insert(entity)
+
+    def add_statement(
+        self,
+        subject: Term | str,
+        predicate: str,
+        object: Term | str,
+        id: str | None = None,
+    ) -> Statement:
+        """Add a statement term. Endpoints may be given as term objects or
+        as ids. Ids (and the optional explicit term ``id``) exist for
+        construction flexibility — forward references to terms not yet
+        added are fine; ``validate()`` checks resolvability once
+        construction is complete."""
+        statement = Statement(
+            id=id if id is not None else str(uuid.uuid4()),
+            graph_id=self.id,
+            subject=subject.id if isinstance(subject, (Entity, Statement)) else subject,
+            predicate=predicate,
+            object=object.id if isinstance(object, (Entity, Statement)) else object,
+        )
+        return self._insert(statement)
+
+    def resolve(self, term_id: str) -> Term:
+        """Return the term with the given id."""
+        try:
+            return self.terms[term_id]
+        except KeyError:
+            raise ValueError(f"unknown term id: {term_id!r}") from None
+
+    def _insert(self, term: T) -> T:
+        if term.id in self.terms:
+            raise ValueError(f"duplicate term id: {term.id!r}")
+        self.terms[term.id] = term
+        return term
 
     def validate(self) -> None:
         """Check the structural invariants.
 
-        Every edge endpoint must resolve to a node of this graph, the edge
-        source must be an event node, no event may participate in itself,
-        and the role must be in the closed vocabulary.
+        Every statement endpoint must resolve to a term of this graph, and
+        no statement may directly participate in itself. Cycles and
+        forward references are valid.
         """
-        for edge in self.edges.values():
-            for endpoint in (edge.source, edge.target):
-                if endpoint not in self.nodes:
+        for term in self.terms.values():
+            if not isinstance(term, Statement):
+                continue
+            for endpoint in (term.subject, term.object):
+                if endpoint not in self.terms:
                     raise ValueError(
-                        f"edge {edge.id!r} references unknown node id: {endpoint!r}"
+                        f"statement {term.id!r} references unknown term id: {endpoint!r}"
                     )
-            if self.nodes[edge.source].kind != "event":
-                raise ValueError(
-                    f"edge {edge.id!r} source is not an event node: {edge.source!r}"
-                )
-            if edge.source == edge.target:
-                raise ValueError(f"event participates in itself: {edge.source!r}")
-            if edge.role not in ROLES:
-                raise ValueError(f"edge {edge.id!r} has unknown role: {edge.role!r}")
+                if endpoint == term.id:
+                    raise ValueError(
+                        f"statement participates in itself: {term.id!r}"
+                    )
+
+
+_ENTITY_FIELDS = frozenset({"type", "id", "graph_id", "names"})
+_STATEMENT_FIELDS = frozenset({"type", "id", "graph_id", "subject", "predicate", "object"})
+
+
+def _check_fields(term_data: dict, expected: frozenset[str]) -> None:
+    unknown = sorted(set(term_data) - expected)
+    if unknown:
+        raise ValueError(
+            f"unknown fields on {term_data.get('type')!r} term: {unknown}"
+        )
 
 
 def load_graph(path: Path) -> Graph:
     """Load a single graph JSON file.
 
-    Raises on duplicate node/edge ids and on edge references that do not
-    resolve — invalid state is never silently repaired.
+    Raises on duplicate term ids, unresolvable statement references, and
+    unknown fields — invalid state is never silently repaired.
     """
     with open(path) as f:
         data = json.load(f)
 
-    graph_id = data["id"]
-    nodes: dict[str, Node] = {}
-    for node_data in data["nodes"]:
-        node_id = node_data["id"]
-        if node_id in nodes:
-            raise ValueError(f"duplicate node id: {node_id!r}")
-        nodes[node_id] = Node(
-            id=node_id,
-            graph_id=node_data["graph_id"],
-            names=node_data["names"],
-            kind=node_data["kind"],
-        )
+    unknown = sorted(set(data) - {"id", "terms", "matches"})
+    if unknown:
+        raise ValueError(f"unknown graph fields: {unknown}")
 
-    edges: dict[str, Edge] = {}
-    for edge_data in data["edges"]:
-        edge_id = edge_data["id"]
-        if edge_id in edges:
-            raise ValueError(f"duplicate edge id: {edge_id!r}")
-        edges[edge_id] = Edge(
-            id=edge_id,
-            graph_id=edge_data["graph_id"],
-            source=edge_data["source"],
-            target=edge_data["target"],
-            role=edge_data["role"],
-        )
+    terms: dict[str, Term] = {}
+    for term_data in data["terms"]:
+        term_type = term_data.get("type")
+        if term_type == "entity":
+            _check_fields(term_data, _ENTITY_FIELDS)
+            term: Term = Entity(
+                id=term_data["id"],
+                graph_id=term_data["graph_id"],
+                names=term_data["names"],
+            )
+        elif term_type == "statement":
+            _check_fields(term_data, _STATEMENT_FIELDS)
+            term = Statement(
+                id=term_data["id"],
+                graph_id=term_data["graph_id"],
+                subject=term_data["subject"],
+                predicate=term_data["predicate"],
+                object=term_data["object"],
+            )
+        else:
+            raise ValueError(f"unknown term type: {term_type!r}")
+        if term.id in terms:
+            raise ValueError(f"duplicate term id: {term.id!r}")
+        terms[term.id] = term
 
-    graph = Graph(id=graph_id, nodes=nodes, edges=edges)
+    graph = Graph(id=data["id"], terms=terms)
     graph.validate()
     return graph
 
@@ -182,33 +177,32 @@ def save_graph(
     """Write graph to JSON, with optional match groups. Validates first."""
     graph.validate()
 
-    nodes_out = []
-    for node in graph.nodes.values():
-        nodes_out.append(
-            {
-                "id": node.id,
-                "graph_id": node.graph_id,
-                "names": node.names,
-                "kind": node.kind,
-            }
-        )
-
-    edges_out = []
-    for edge in graph.edges.values():
-        edges_out.append(
-            {
-                "id": edge.id,
-                "graph_id": edge.graph_id,
-                "source": edge.source,
-                "target": edge.target,
-                "role": edge.role,
-            }
-        )
+    terms_out = []
+    for term in graph.terms.values():
+        if isinstance(term, Entity):
+            terms_out.append(
+                {
+                    "type": "entity",
+                    "id": term.id,
+                    "graph_id": term.graph_id,
+                    "names": term.names,
+                }
+            )
+        else:
+            terms_out.append(
+                {
+                    "type": "statement",
+                    "id": term.id,
+                    "graph_id": term.graph_id,
+                    "subject": term.subject,
+                    "predicate": term.predicate,
+                    "object": term.object,
+                }
+            )
 
     output = {
         "id": graph.id,
-        "nodes": nodes_out,
-        "edges": edges_out,
+        "terms": terms_out,
         "matches": matches or [],
     }
 

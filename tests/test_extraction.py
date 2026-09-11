@@ -1,133 +1,106 @@
-"""Tests for the extraction schema: unique ids, valid participant
-references, the closed role vocabulary, and conversion to a runtime graph.
-Event participants may reference entities or events, including forward
-references between events."""
+"""Tests for the extraction schema: one id namespace across entities and
+statements, reference resolvability, no direct self-reference, and
+conversion to a runtime term graph. Forward references between
+statements are valid; statements may be about statements."""
 
 import pytest
 from pydantic import ValidationError
 
 from worldgraph.extract import (
-    Entity,
-    Event,
+    EntityRef,
     Extraction,
-    Participant,
+    StatementModel,
     extraction_to_graph,
 )
+from worldgraph.graph import Entity, Statement
 
 
-def entities(*names: str) -> list[Entity]:
-    return [Entity(id=f"e{i + 1}", name=name) for i, name in enumerate(names)]
+def entities(*names: str) -> list[EntityRef]:
+    return [EntityRef(id=f"e{i + 1}", name=name) for i, name in enumerate(names)]
 
 
 def test_duplicate_entity_id_raises():
-    with pytest.raises(ValidationError, match="duplicate entity ids"):
+    with pytest.raises(ValidationError, match="duplicate term ids"):
         Extraction(
-            entities=[Entity(id="e1", name="Alice"), Entity(id="e1", name="Bob")],
-            events=[],
+            entities=[EntityRef(id="e1", name="Alice"), EntityRef(id="e1", name="Bob")],
+            statements=[],
         )
 
 
-def test_duplicate_event_id_raises():
-    with pytest.raises(ValidationError, match="duplicate event ids"):
+def test_duplicate_statement_id_raises():
+    with pytest.raises(ValidationError, match="duplicate term ids"):
         Extraction(
             entities=entities("Alice", "Bob"),
-            events=[
-                Event(
-                    id="v1",
-                    label="know",
-                    participants=[Participant(role="agent", ref="e1")],
-                ),
-                Event(
-                    id="v1",
-                    label="meet",
-                    participants=[Participant(role="agent", ref="e2")],
-                ),
+            statements=[
+                StatementModel(id="s1", subject="e1", predicate="know", object="e2"),
+                StatementModel(id="s1", subject="e2", predicate="know", object="e1"),
             ],
         )
 
 
-def test_entity_event_id_collision_raises():
-    """Entities and events share one reference namespace — a collision
-    would make participant references ambiguous."""
-    with pytest.raises(ValidationError, match="disjoint"):
+def test_entity_statement_id_collision_raises():
+    """Entities and statements share one id namespace — a collision would
+    make references ambiguous."""
+    with pytest.raises(ValidationError, match="duplicate term ids"):
         Extraction(
             entities=entities("Alice"),
-            events=[
-                Event(
-                    id="e1",
-                    label="resign",
-                    participants=[Participant(role="agent", ref="e1")],
-                ),
+            statements=[
+                StatementModel(id="e1", subject="e1", predicate="resign from", object="e1"),
             ],
         )
 
 
-def test_unknown_participant_reference_raises():
-    """References that resolve to neither an entity nor an event are
+def test_unknown_reference_raises():
+    """References that resolve to neither an entity nor a statement are
     rejected — never dropped or patched."""
     with pytest.raises(ValidationError, match="unknown ids"):
         Extraction(
             entities=entities("Alice"),
-            events=[
-                Event(
-                    id="v1",
-                    label="resign",
-                    participants=[Participant(role="agent", ref="e99")],
-                ),
+            statements=[
+                StatementModel(id="s1", subject="e1", predicate="know", object="e99"),
             ],
         )
 
 
-def test_event_cannot_participate_in_itself():
-    with pytest.raises(ValidationError, match="itself"):
+def test_statement_cannot_reference_itself():
+    with pytest.raises(ValidationError, match="themselves"):
         Extraction(
             entities=entities("Alice"),
-            events=[
-                Event(
-                    id="v1",
-                    label="cause",
-                    participants=[Participant(role="agent", ref="v1")],
-                ),
+            statements=[
+                StatementModel(id="s1", subject="s1", predicate="deny", object="e1"),
+            ],
+        )
+    with pytest.raises(ValidationError, match="themselves"):
+        Extraction(
+            entities=entities("Alice"),
+            statements=[
+                StatementModel(id="s1", subject="e1", predicate="deny", object="s1"),
             ],
         )
 
 
-def test_event_without_participants_raises():
-    with pytest.raises(ValidationError):
-        Extraction(entities=entities("Alice"), events=[Event(id="v1", label="resign", participants=[])])
-
-
-def test_role_vocabulary_is_closed():
-    """Roles outside the closed nine-role vocabulary are rejected at the
-    schema boundary — the matcher aligns participants by exact role
-    equality, so role consistency is enforced structurally, not by prompt
-    discipline."""
-    with pytest.raises(ValidationError):
-        Participant(role="co-agent", ref="e1")
-
-
-def test_event_participant_may_reference_another_event():
-    """Events participate in other events: joining a visit, causing a
-    suspension. Forward references between events are valid."""
+def test_statement_about_statement_is_valid():
+    """The design example: a qualifier is a statement about a statement."""
     ext = Extraction(
-        entities=entities("Ivo Brandt"),
-        events=[
-            Event(
-                id="v2",
-                label="join",
-                participants=[
-                    Participant(role="agent", ref="e1"),
-                    Participant(role="patient", ref="v1"),
-                ],
-            ),
-            Event(
-                id="v1",
-                label="visit",
-                participants=[Participant(role="agent", ref="e1")],
-            ),
+        entities=entities("Jane", "Supercorp", "CEO"),
+        statements=[
+            StatementModel(id="s1", subject="e1", predicate="work at", object="e2"),
+            StatementModel(id="s2", subject="s1", predicate="as", object="e3"),
         ],
     )
-    assert ext.events[0].participants[1].ref == "v1"
+    assert ext.statements[1].subject == "s1"
+
+
+def test_forward_reference_is_valid():
+    """A statement may be listed before the statement it references."""
+    ext = Extraction(
+        entities=entities("Ivo Brandt"),
+        statements=[
+            StatementModel(id="s2", subject="s1", predicate="join", object="e1"),
+            StatementModel(id="s1", subject="e1", predicate="visit", object="e1"),
+        ],
+    )
+    assert ext.statements[0].subject == "s1"
 
 
 # ---------------------------------------------------------------------------
@@ -135,84 +108,71 @@ def test_event_participant_may_reference_another_event():
 # ---------------------------------------------------------------------------
 
 
-def qualifier_extraction() -> Extraction:
-    """The Corin example: one manage event whose qualifiers (title, scope)
-    are participants with their proper roles — capacity and beneficiary."""
+def jane_extraction() -> Extraction:
     return Extraction(
-        entities=entities("Tessa Corin", "Halden Freight", "Vesterby", "managing director"),
-        events=[
-            Event(
-                id="v1",
-                label="manage",
-                participants=[
-                    Participant(role="agent", ref="e1"),
-                    Participant(role="patient", ref="e2"),
-                    Participant(role="capacity", ref="e4"),
-                    Participant(role="beneficiary", ref="e3"),
-                ],
-            ),
+        entities=entities("Jane", "Supercorp", "CEO"),
+        statements=[
+            StatementModel(id="s1", subject="e1", predicate="work at", object="e2"),
+            StatementModel(id="s2", subject="s1", predicate="as", object="e3"),
         ],
     )
 
 
-def test_extraction_to_graph_kinds_and_roles():
-    """Entities become entity nodes, events become event nodes named by
-    their label, and participants become role edges from the event."""
-    graph = extraction_to_graph("article-1", qualifier_extraction())
+def test_extraction_to_graph_structure():
+    """Entities become entity terms, statements become statement terms,
+    and nesting survives: the 'as' statement is about the 'work at'
+    statement."""
+    graph = extraction_to_graph("article-1", jane_extraction())
 
-    entities = [n for n in graph.nodes.values() if n.kind == "entity"]
-    events = [n for n in graph.nodes.values() if n.kind == "event"]
-    assert len(entities) == 4
-    assert len(events) == 1
-    assert events[0].names == ["manage"]
+    entity_terms = [t for t in graph.terms.values() if isinstance(t, Entity)]
+    statement_terms = [t for t in graph.terms.values() if isinstance(t, Statement)]
+    assert len(entity_terms) == 3
+    assert len(statement_terms) == 2
 
-    roles = sorted(edge.role for edge in graph.edges.values())
-    assert roles == ["agent", "beneficiary", "capacity", "patient"]
-    assert all(edge.source == events[0].id for edge in graph.edges.values())
+    as_statement = next(t for t in statement_terms if t.predicate == "as")
+    work = graph.resolve(as_statement.subject)
+    assert isinstance(work, Statement)
+    assert work.predicate == "work at"
+    jane = graph.resolve(work.subject)
+    supercorp = graph.resolve(work.object)
+    ceo = graph.resolve(as_statement.object)
+    assert isinstance(jane, Entity)
+    assert isinstance(supercorp, Entity)
+    assert isinstance(ceo, Entity)
+    assert jane.names == ["Jane"]
+    assert supercorp.names == ["Supercorp"]
+    assert ceo.names == ["CEO"]
 
 
-def test_extraction_to_graph_event_references():
-    """An event participating in another event produces an edge between
-    the two event nodes."""
+def test_extraction_to_graph_provenance():
+    """Every term carries the article graph id as provenance."""
+    graph = extraction_to_graph("article-1", jane_extraction())
+
+    assert graph.id == "article-1"
+    assert all(term.graph_id == "article-1" for term in graph.terms.values())
+
+
+def test_extraction_to_graph_order_independent():
+    """Runtime ids are pre-allocated, so statements listed before the
+    terms they reference still convert and validate."""
     ext = Extraction(
         entities=entities("Ivo Brandt"),
-        events=[
-            Event(
-                id="v1",
-                label="visit",
-                participants=[Participant(role="agent", ref="e1")],
-            ),
-            Event(
-                id="v2",
-                label="join",
-                participants=[
-                    Participant(role="agent", ref="e1"),
-                    Participant(role="patient", ref="v1"),
-                ],
-            ),
+        statements=[
+            StatementModel(id="s2", subject="s1", predicate="join", object="e1"),
+            StatementModel(id="s1", subject="e1", predicate="visit", object="e1"),
         ],
     )
     graph = extraction_to_graph("article-1", ext)
 
-    visit = next(n for n in graph.nodes.values() if n.names == ["visit"])
-    join = next(n for n in graph.nodes.values() if n.names == ["join"])
-    join_patient = next(
-        e for e in graph.edges.values() if e.source == join.id and e.role == "patient"
-    )
-    assert join_patient.target == visit.id
+    visit = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicate == "visit")
+    join = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicate == "join")
+    assert join.subject == visit.id
 
 
-def test_extraction_to_graph_provenance():
-    """Every node and edge carries the article graph id as provenance."""
-    graph = extraction_to_graph("article-1", qualifier_extraction())
+def test_extraction_to_graph_unique_runtime_ids():
+    """Extraction-local ids ('e1', 's1') never collide at runtime — every
+    term gets its own runtime id."""
+    graph = extraction_to_graph("article-1", jane_extraction())
 
-    assert all(node.graph_id == "article-1" for node in graph.nodes.values())
-    assert all(edge.graph_id == "article-1" for edge in graph.edges.values())
-
-
-def test_extraction_to_graph_unique_node_ids():
-    """Entities and events map to distinct runtime ids — extraction-local
-    ids ('e1', 'v1') never collide at runtime."""
-    graph = extraction_to_graph("article-1", qualifier_extraction())
-
-    assert len(graph.nodes) == 5  # 4 entities + 1 event
+    assert len(graph.terms) == 5
+    assert len(graph.terms) == len({term.id for term in graph.terms.values()})

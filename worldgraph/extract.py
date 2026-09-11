@@ -1,138 +1,75 @@
 import os
+import uuid
 from pathlib import Path
 
 import click
 from pydantic import BaseModel, Field, model_validator
 from pydantic_ai import Agent
 
-from worldgraph.graph import Graph, Role, save_graph
+from worldgraph.graph import Graph, save_graph
 
-SYSTEM_PROMPT = """You are an event extraction system. You turn a news article into a graph of world facts: entities (named people, organizations, places, and things) and events (the facts the article asserts about them). Graphs from different articles are later matched to each other purely by structure — participant roles and entity names — so two articles describing the same fact must yield the same graph shape. Consistency in every decision below is what makes that matching possible.
-
-# Entities
-
-- An entity must be named: the article gives it a name. Descriptions without a name — "a bystander", "several contractors", "the company's fleet" — never become entities; a nameless node cannot be matched across articles.
-- Use the name as it appears, without the leading article.
-- The publishing outlet, its journalists, and its photographers never appear as entities; the act of reporting never appears as an event.
-
-# Events
-
-- An event is a fact the article asserts, with a label and at least two participants. Every participant is an entity of this article or another event of this article — never an unnamed mention. A happening that involves only one participant produces no event.
-- Extract only what the article asserts as fact. Denied, alleged, or source-attributed claims produce nothing. Speech and perception acts — announce, say, report, admit, deny, expect, discover — are never events, but content the article presents as true through them is extracted on its own: "the airline admitted it had falsified maintenance logs" yields a "falsify" event; "the airline denied falsifying maintenance logs" yields nothing.
-- Be thorough: capture every asserted event that has two or more named participants.
-
-# Coordination and unnamed objects
-
-- Split coordinated lists into one event per item: "opened offices in Drovik and Selje" is two events, identical except for the location. Coordinated agents and patients split the same way.
-- An unnamed object folds into the event label instead of becoming a participant: "bought twenty aircraft from Aldermont Works" has no aircraft entity — the label is "buy aircraft", with agent and source participants.
-
-# Labels
-
-- The label is the base-form verb phrase, without tense or aspect, keeping its particles and prepositions: "call off", "look into", "be based in" — never "called off", "will look into", "is based in".
-- A label contains the event itself plus at most a folded unnamed object — never an entity name.
-
-# Roles
-
-Each participant gets exactly one role from this closed set:
-
-- 'agent' — the one doing or bringing about the event
-- 'patient' — the thing acted on, changed, or that the event is about
-- 'recipient' — a person or organization receiving something in a transfer ("awarded to", "sent to")
-- 'beneficiary' — the party something is done for or in the name of ("for", "on behalf of")
-- 'source' — origin of motion or transfer ("from")
-- 'destination' — a place that is the endpoint of motion or transfer ("moved to", "travelled to")
-- 'location' — a static place ("in", "at")
-- 'capacity' — the title or role a participant acts in ("as CEO")
-- 'instrument' — the tool or means ("with drones", "via email")
-- 'price' — the monetary amount paid, exchanged, fined, or raised ("for $4 billion")
-
-Assign roles canonically:
-
-- Employment and titles are person-anchored whatever the wording — active, passive, or appositive: the agent is the person, the patient the organization, the capacity the title. "Aldermont Group employs Daria Solberg as chief financial officer" and "Daria Solberg, the chief financial officer of Aldermont Group" assert the same event: agent Daria Solberg, patient Aldermont Group, capacity chief financial officer. The capacity is always the title — never the person and never the place.
-- "visit" takes the place as patient; motion verbs take it as destination. Organizations are patients, never locations; facilities and cities are locations or destinations.
-- Qualifiers of a fact — a title, a place, a scope — are participants of that event with their proper role, never separate events and never label content.
-
-# Events as participants
-
-A participant may be another event: when someone joins a visit or one event causes another, the participating event is referenced by its id as a participant of the containing event.
-
-# Identifiers
-
-Each entity gets a short unique id ("e1", "e2", ...) and each event a short unique id ("v1", "v2", ...); participants reference these ids."""
+SYSTEM_PROMPT = """You extract world facts from a news article as a graph of terms. A term is an entity or a statement. Entities are named things in the world — people, organizations, places, things. Use the exact name as it appears in the text, without a leading article; unnamed mentions ('two intruders', 'a cleaner') never become entities. A statement is a triple: subject, predicate, object. Subject and object are ids of entities or of other statements. The predicate is a short verb phrase in active voice, and the subject is the one who brings the fact about: 'Acme acquired Beta', never the passive with swapped participants. Capture every fact the article asserts. Qualifiers of a fact — a title, a place, a price, a scope — are statements about that statement: a 'work at' fact with subject Jane and object Supercorp gets a second statement (that fact, 'as', CEO). Claims about claims are statements too, and you never judge their truth: a denial is (denier, 'denies', the denied statement); an allegation is (alleged-claimant, 'alleges', the claimed statement). Resolve pronouns to the entity they refer to. The media is not part of the world: the outlet, journalists, photographers, and the act of reporting never appear as terms. Entities get short unique ids like 'e1', 'e2'; statements like 's1', 's2'."""
 
 
-class Entity(BaseModel):
+class EntityRef(BaseModel):
     id: str = Field(
         description="Short unique identifier for this entity, e.g. 'e1', 'e2'"
     )
     name: str = Field(description="Entity name as it appears in the article")
 
 
-class Participant(BaseModel):
-    role: Role = Field(
-        description="One of: 'agent' (doer), 'patient' (thing acted on), "
-        "'recipient' (animate receiver in a transfer), "
-        "'beneficiary' (done for or in the name of), "
-        "'source' (origin of motion/transfer), "
-        "'destination' (place endpoint of motion/transfer), "
-        "'location' (static place), 'capacity' (title or role acted in), "
-        "'instrument' (tool or means), "
-        "'price' (monetary amount paid, exchanged, fined, or raised)"
-    )
-    ref: str = Field(description="The 'id' of the participating entity or event")
-
-
-class Event(BaseModel):
+class StatementModel(BaseModel):
     id: str = Field(
-        description="Short unique identifier for this event, e.g. 'v1', 'v2'"
+        description="Short unique identifier for this statement, e.g. 's1', 's2'"
     )
-    label: str = Field(
-        description="Base-form verb phrase without tense, e.g. 'acquire', 'be headquartered in' — "
-        "never 'acquired', 'will acquire', or 'is headquartered in'"
+    subject: str = Field(
+        description="The id of the entity or statement this statement is about "
+        "— the one who brings the fact about"
     )
-    participants: list[Participant] = Field(min_length=1)
+    predicate: str = Field(
+        description="Short verb phrase in active voice, e.g. 'acquire', 'work at', 'deny'"
+    )
+    object: str = Field(
+        description="The id of the entity or statement the fact is directed at"
+    )
 
 
 class Extraction(BaseModel):
-    entities: list[Entity]
-    events: list[Event]
+    entities: list[EntityRef]
+    statements: list[StatementModel]
 
     @model_validator(mode="after")
     def _validate_ids(self) -> "Extraction":
-        """Entity and event ids are globally unique and live in one shared
-        reference namespace; every participant must resolve to an entity or
-        an event of this extraction, and no event may participate in itself.
-        Forward references between events are valid.
+        """Entity and statement ids share one namespace and must be
+        globally unique; every statement endpoint must resolve to an
+        entity or statement of this extraction, and no statement may
+        reference itself directly. Forward references between statements
+        are valid.
         """
         entity_ids = [entity.id for entity in self.entities]
-        event_ids = [event.id for event in self.events]
-        if len(set(entity_ids)) != len(entity_ids):
-            raise ValueError(f"duplicate entity ids: {sorted(entity_ids)}")
-        if len(set(event_ids)) != len(event_ids):
-            raise ValueError(f"duplicate event ids: {sorted(event_ids)}")
-        shared = sorted(set(entity_ids) & set(event_ids))
-        if shared:
-            raise ValueError(
-                f"entity and event ids must be disjoint, shared: {shared}"
-            )
-        known = set(entity_ids) | set(event_ids)
+        statement_ids = [statement.id for statement in self.statements]
+        all_ids = entity_ids + statement_ids
+        duplicates = sorted({term_id for term_id in all_ids if all_ids.count(term_id) > 1})
+        if duplicates:
+            raise ValueError(f"duplicate term ids: {duplicates}")
+        known = set(all_ids)
         unknown = sorted(
             {
-                participant.ref
-                for event in self.events
-                for participant in event.participants
-                if participant.ref not in known
+                endpoint
+                for statement in self.statements
+                for endpoint in (statement.subject, statement.object)
+                if endpoint not in known
             }
         )
         if unknown:
-            raise ValueError(f"participants reference unknown ids: {unknown}")
+            raise ValueError(f"statements reference unknown ids: {unknown}")
         self_refs = sorted(
-            event.id
-            for event in self.events
-            if any(participant.ref == event.id for participant in event.participants)
+            statement.id
+            for statement in self.statements
+            if statement.subject == statement.id or statement.object == statement.id
         )
         if self_refs:
-            raise ValueError(f"events participating in itself: {self_refs}")
+            raise ValueError(f"statements referencing themselves: {self_refs}")
         return self
 
 
@@ -147,34 +84,34 @@ def build_agent(model: str) -> Agent[object, Extraction]:
 
 
 def extract_article(agent: Agent[object, Extraction], text: str) -> Extraction:
-    """Extract entities and events from a single article's text."""
+    """Extract entities and statements from a single article's text."""
     prompt = f"""<article>
 {text}
 </article>
 
-Extract the entities and events the article asserts."""
+Extract the entities and statements the article asserts."""
 
     return agent.run_sync(prompt).output
 
 
 def extraction_to_graph(article_id: str, extraction: Extraction) -> Graph:
-    """Convert an extraction into a runtime graph: entities become entity
-    nodes, events become event nodes named by their label, and participants
-    become role edges from the event node to the participant node.
-    """
+    """Convert an extraction into a runtime graph: entities and statements
+    become terms. Runtime ids are pre-allocated for every extraction term
+    so statement endpoints resolve regardless of listing order."""
     graph = Graph(id=article_id)
-    node_ids: dict[str, str] = {}
+    runtime_id = {
+        term.id: str(uuid.uuid4())
+        for term in (extraction.entities + extraction.statements)
+    }
     for entity in extraction.entities:
-        node_ids[entity.id] = graph.add_entity(entity.name).id
-    for event in extraction.events:
-        node_ids[event.id] = graph.add_event(event.label).id
-    for event in extraction.events:
-        for participant in event.participants:
-            graph.add_edge(
-                node_ids[event.id],
-                node_ids[participant.ref],
-                participant.role,
-            )
+        graph.add_entity(entity.name, id=runtime_id[entity.id])
+    for statement in extraction.statements:
+        graph.add_statement(
+            runtime_id[statement.subject],
+            statement.predicate,
+            runtime_id[statement.object],
+            id=runtime_id[statement.id],
+        )
 
     graph.validate()
     return graph
