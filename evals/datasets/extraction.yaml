@@ -1,0 +1,223 @@
+# Expected extractions, one case per fixture article. Entities are exact
+# names; facts are recursive subject/predicate/object surface forms in the
+# expected convention: short active-voice base-form predicates, qualifiers
+# as statements about the statement they qualify, pronouns resolved.
+# Goldens encode the expected model, not current extractor output.
+name: extraction-fixtures
+cases:
+- name: role_qualifiers
+  inputs:
+    article: role_qualifiers
+    expected:
+      entities:
+      - Tessa Corin
+      - Halden Freight
+      - Vesterby
+      - Meridian Rail
+      - managing director
+      - operations director
+      facts:
+      - subject: Tessa Corin
+        predicate: manage
+        object: Halden Freight
+      - subject:
+          subject: Tessa Corin
+          predicate: manage
+          object: Halden Freight
+        predicate: as
+        object: managing director
+      - subject:
+          subject: Tessa Corin
+          predicate: manage
+          object: Halden Freight
+        predicate: for
+        object: Vesterby
+      - subject: Tessa Corin
+        predicate: manage
+        object: Meridian Rail
+      - subject:
+          subject: Tessa Corin
+          predicate: manage
+          object: Meridian Rail
+        predicate: as
+        object: operations director
+- name: role_qualifiers_paraphrase
+  inputs:
+    article: role_qualifiers_paraphrase
+    expected:
+      entities:
+      - Tessa Corin
+      - Halden Freight
+      - Vesterby
+      - Meridian Rail
+      - managing director
+      - operations director
+      facts:
+      - subject: Tessa Corin
+        predicate: oversee
+        object: Halden Freight
+      - subject:
+          subject: Tessa Corin
+          predicate: oversee
+          object: Halden Freight
+        predicate: as
+        object: managing director
+      - subject:
+          subject: Tessa Corin
+          predicate: oversee
+          object: Halden Freight
+        predicate: for
+        object: Vesterby
+      - subject: Tessa Corin
+        predicate: lead
+        object: Meridian Rail
+      - subject:
+          subject: Tessa Corin
+          predicate: lead
+          object: Meridian Rail
+        predicate: as
+        object: operations director
+- name: appositive_roles
+  inputs:
+    article: appositive_roles
+    expected:
+      entities:
+      - Marisol Vaneck
+      - Ardmore government
+      - Vesterby
+      - foreign minister
+      - Ivo Brandt
+      - deputy trade minister
+      facts:
+      - subject: Marisol Vaneck
+        predicate: visit
+        object: Vesterby
+      - subject: Marisol Vaneck
+        predicate: serve in
+        object: Ardmore government
+      - subject:
+          subject: Marisol Vaneck
+          predicate: serve in
+          object: Ardmore government
+        predicate: as
+        object: foreign minister
+      - subject: Ivo Brandt
+        predicate: serve in
+        object: Ardmore government
+      - subject:
+          subject: Ivo Brandt
+          predicate: serve in
+          object: Ardmore government
+        predicate: as
+        object: deputy trade minister
+      - subject: Ivo Brandt
+        predicate: join
+        object:
+          subject: Marisol Vaneck
+          predicate: visit
+          object: Vesterby
+- name: appositive_roles_paraphrase
+  inputs:
+    article: appositive_roles_paraphrase
+    expected:
+      entities:
+      - Marisol Vaneck
+      - Ardmore government
+      - Vesterby
+      - foreign minister
+      - Ivo Brandt
+      - deputy trade minister
+      facts:
+      - subject: Marisol Vaneck
+        predicate: travel to
+        object: Vesterby
+      - subject: Marisol Vaneck
+        predicate: serve in
+        object: Ardmore government
+      - subject:
+          subject: Marisol Vaneck
+          predicate: serve in
+          object: Ardmore government
+        predicate: as
+        object: foreign minister
+      - subject: Ivo Brandt
+        predicate: serve in
+        object: Ardmore government
+      - subject:
+          subject: Ivo Brandt
+          predicate: serve in
+          object: Ardmore government
+        predicate: as
+        object: deputy trade minister
+      - subject: Ivo Brandt
+        predicate: take part in
+        object:
+          subject: Marisol Vaneck
+          predicate: travel to
+          object: Vesterby
+- name: direction_flip
+  inputs:
+    article: direction_flip
+    expected:
+      entities:
+      - Grellmark Council
+      - Harwick district
+      - provincial charter
+      facts:
+      - subject: Grellmark Council
+        predicate: govern
+        object: Harwick district
+      - subject:
+          subject: Grellmark Council
+          predicate: govern
+          object: Harwick district
+        predicate: under
+        object: provincial charter
+- name: direction_flip_reversed
+  inputs:
+    article: direction_flip_reversed
+    expected:
+      entities:
+      - Harwick district
+      - Grellmark Council
+      - new charter
+      facts:
+      - subject: Harwick district
+        predicate: govern
+        object: Grellmark Council
+      - subject:
+          subject: Harwick district
+          predicate: govern
+          object: Grellmark Council
+        predicate: under
+        object: new charter
+- name: qualifier_disagreement
+  inputs:
+    article: qualifier_disagreement
+    expected:
+      entities:
+      - Solberg Energy
+      - Malmen
+      - Norrfield wind farm
+      facts:
+      - subject: Solberg Energy
+        predicate: be headquartered in
+        object: Malmen
+      - subject: Solberg Energy
+        predicate: run
+        object: Norrfield wind farm
+- name: qualifier_disagreement_variant
+  inputs:
+    article: qualifier_disagreement_variant
+    expected:
+      entities:
+      - Solberg Energy
+      - Rydal
+      - Norrfield wind farm
+      facts:
+      - subject: Solberg Energy
+        predicate: be headquartered in
+        object: Rydal
+      - subject: Solberg Energy
+        predicate: operate
+        object: Norrfield wind farm

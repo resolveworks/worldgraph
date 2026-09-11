@@ -1,48 +1,45 @@
-"""Cross-article merge eval: pydantic-evals dataset runner over article pairs.
+"""Extraction eval harness: pydantic-evals dataset runner over article fixtures.
 
-Cases in ``datasets/merges.yaml`` pair two fixture articles and state merge
-expectations against the matcher's union-find output. A term is located in
-its article's graph by surface form — an entity by name, a statement by
-subject name, predicate, and object name, nested the same way when an
-endpoint is itself a statement. The suite judges the product, not the
-extraction: an expectation whose term cannot be located fails its
-assertion with an ``extraction miss`` reason — the miss is a finding, not
-a crash — and matching failures carry the groups the terms landed in.
+Cases in ``datasets/extraction.yaml`` name fixture stems under ``fixtures/``
+with a hand-authored expected extraction: entities by name, facts as
+recursive triples — subject name or nested fact, predicate, object name or
+nested fact. The task runs the production extraction path; the evaluator
+scores entity and fact precision/recall against the golden (exact surface
+match; term ids are never compared) with one assertion per expected
+entity and fact, and the harness prints each case's misses (expected, not
+extracted) and extras (extracted, not expected). The matcher is
+deterministic and covered by unit tests — this suite judges only the
+extraction.
 """
 
 from __future__ import annotations
 
 import os
-from collections.abc import Callable
 from dataclasses import dataclass
-from functools import partial
 from pathlib import Path
 
 from pydantic import BaseModel
 from pydantic_evals import Dataset
-from pydantic_evals.evaluators import EvaluationReason, Evaluator, EvaluatorContext
+from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
-from worldgraph.embed import Embedder
 from worldgraph.extract import build_agent, extract_article, extraction_to_graph
 from worldgraph.graph import Entity, Graph, Statement, Term
-from worldgraph.match import MatchGroup, Qid, match_graphs
-from worldgraph.priors import make_predicate_prior
 
 FIXTURES = Path(__file__).parent / "fixtures"
-DATASET_PATH = Path(__file__).parent / "datasets" / "merges.yaml"
+DATASET_PATH = Path(__file__).parent / "datasets" / "extraction.yaml"
 
 MODEL = os.environ["EXTRACTION_MODEL"]
 
 
 # ---------------------------------------------------------------------------
-# Case schema
+# Golden schema
 # ---------------------------------------------------------------------------
 
 
 class FactRef(BaseModel, extra="forbid"):
-    """A statement located by surface form: ``predicate`` plus each
-    endpoint's surface form — an entity name, or the referenced
-    statement's own ``FactRef`` when the endpoint nests."""
+    """A fact located by surface form: ``predicate`` plus each endpoint's
+    surface form — an entity name, or the referenced fact's own
+    ``FactRef`` when the endpoint nests."""
 
     subject: str | FactRef
     predicate: str
@@ -52,51 +49,39 @@ class FactRef(BaseModel, extra="forbid"):
 Ref = str | FactRef
 
 
-class Expectation(BaseModel, extra="forbid"):
-    """A pair of terms — ``a`` in article A, ``b`` in article B — that
-    must (or must not) share a union-find group after matching."""
+class ExpectedExtraction(BaseModel, extra="forbid"):
+    """The golden: every entity the article names and every fact it
+    asserts, in the expected extraction convention (short active-voice
+    base-form predicates; qualifiers as statements about the statement
+    they qualify)."""
 
-    a: Ref
-    b: Ref
+    entities: list[str]
+    facts: list[FactRef]
 
 
-class MergeCase(BaseModel, extra="forbid"):
-    article_a: str  # fixture stem
-    article_b: str  # fixture stem
-    expected_merges: list[Expectation]
-    expected_non_merges: list[Expectation]
+class ExtractionCase(BaseModel, extra="forbid"):
+    """One article under test: the fixture stem and its golden."""
+
+    article: str
+    expected: ExpectedExtraction
 
 
 # ---------------------------------------------------------------------------
-# Task: the production pipeline over an article pair
+# Task: the production extraction path on one article
 # ---------------------------------------------------------------------------
 
 
-@dataclass
-class MatchOutput:
-    graphs: dict[str, Graph]  # fixture stem → extracted graph
-    groups: list[MatchGroup]  # union-find groups from the matcher
-
-
-def run_case(case: MergeCase, embedder: Embedder) -> MatchOutput:
-    """Extract both articles and match them — the production path end to
-    end, with the real predicate prior."""
-    agent = build_agent(MODEL)
-    graphs = {
-        stem: extraction_to_graph(
-            stem, extract_article(agent, (FIXTURES / f"{stem}.md").read_text())
-        )
-        for stem in (case.article_a, case.article_b)
-    }
-    prior = make_predicate_prior(list(graphs.values()), embedder=embedder)
-    _confidence, groups, _merged = match_graphs(
-        list(graphs.values()), predicate_prior=prior
+def task(case: ExtractionCase) -> Graph:
+    return extraction_to_graph(
+        case.article,
+        extract_article(
+            build_agent(MODEL), (FIXTURES / f"{case.article}.md").read_text()
+        ),
     )
-    return MatchOutput(graphs=graphs, groups=groups)
 
 
 # ---------------------------------------------------------------------------
-# Locating terms by surface form
+# Surface-form comparison
 # ---------------------------------------------------------------------------
 
 
@@ -111,19 +96,9 @@ def _matches(graph: Graph, term: Term, ref: Ref) -> bool:
     )
 
 
-def locate(graph: Graph, ref: Ref) -> list[Term]:
-    """All terms of *graph* whose surface form matches *ref*."""
-    return [term for term in graph.terms.values() if _matches(graph, term, ref)]
-
-
-# ---------------------------------------------------------------------------
-# Rendering
-# ---------------------------------------------------------------------------
-
-
 def render(ref: Ref) -> str:
-    """Compact surface form: names plain, statements as
-    ``subject —predicate→ object`` with nested statements bracketed."""
+    """Compact surface form: names plain, facts as
+    ``subject —predicate→ object`` with nested facts bracketed."""
     if isinstance(ref, str):
         return ref
 
@@ -137,117 +112,137 @@ def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -
     """Render an extracted term the same way; ``stack`` breaks reference
     cycles, which valid graphs may contain."""
     if isinstance(term, Entity):
-        return term.names[0]
+        return " | ".join(term.names)
     if term.id in stack:
         return "⟲"
+
     inner = frozenset({*stack, term.id})
-    return (
-        f"{render_term(graph, graph.terms[term.subject], inner)}"
-        f" —{term.predicate}→ "
-        f"{render_term(graph, graph.terms[term.object], inner)}"
-    )
 
-
-# ---------------------------------------------------------------------------
-# Evaluator: one assertion per expectation
-# ---------------------------------------------------------------------------
-
-
-def _describe(out: MatchOutput, group_of: dict[Qid, MatchGroup], qid: Qid) -> str:
-    """Where one located term ended up: its label, article, and group."""
-    graph = out.graphs[qid[0]]
-    term = graph.terms[qid[1]]
-    where = f"{render_term(graph, term)} ({qid[0]})"
-    group = group_of.get(qid)
-    if group is None:
-        return f"{where} is a singleton"
-    peers = ", ".join(
-        sorted(
-            render_term(out.graphs[m[0]], out.graphs[m[0]].terms[m[1]])
-            for m in group
-            if m != qid
+    def endpoint(term_id: str) -> str:
+        rendered = render_term(graph, graph.terms[term_id], inner)
+        return (
+            f"[{rendered}]"
+            if isinstance(graph.terms[term_id], Statement)
+            else rendered
         )
-    )
-    return f"{where} groups with {peers}"
+
+    return f"{endpoint(term.subject)} —{term.predicate}→ {endpoint(term.object)}"
 
 
 @dataclass
-class MergeExpectations(Evaluator[MergeCase, MatchOutput, object]):
-    """Turn each expectation into one named assertion.
+class Comparison:
+    """Precision/recall over entities and facts, plus both diff
+    directions: misses (expected, not extracted) and extras (extracted,
+    not expected)."""
 
-    A merge passes when some located instance of ``a`` shares a group
-    with some located instance of ``b``; a non-merge passes when no
-    located pair shares one. An unlocatable ref fails with an
-    ``extraction miss`` reason — a distinct, reportable outcome.
-    """
+    missed_entities: list[str]
+    extra_entities: list[str]
+    missed_facts: list[FactRef]
+    extra_facts: list[str]  # rendered surface forms
+    entity_precision: float
+    entity_recall: float
+    fact_precision: float
+    fact_recall: float
+
+    def clean(self) -> bool:
+        return not (
+            self.missed_entities
+            or self.extra_entities
+            or self.missed_facts
+            or self.extra_facts
+        )
+
+
+def compare(graph: Graph, expected: ExpectedExtraction) -> Comparison:
+    entities = [t for t in graph.terms.values() if isinstance(t, Entity)]
+    statements = [t for t in graph.terms.values() if isinstance(t, Statement)]
+
+    missed_entities = [
+        name
+        for name in expected.entities
+        if not any(name in entity.names for entity in entities)
+    ]
+    extra_entities = [
+        render_term(graph, entity)
+        for entity in entities
+        if not any(name in expected.entities for name in entity.names)
+    ]
+    missed_facts = [
+        fact
+        for fact in expected.facts
+        if not any(_matches(graph, statement, fact) for statement in statements)
+    ]
+    extra_facts = [
+        render_term(graph, statement)
+        for statement in statements
+        if not any(_matches(graph, statement, fact) for fact in expected.facts)
+    ]
+
+    def ratio(part: int, whole: int) -> float:
+        return part / whole if whole else 1.0
+
+    return Comparison(
+        missed_entities=missed_entities,
+        extra_entities=extra_entities,
+        missed_facts=missed_facts,
+        extra_facts=extra_facts,
+        entity_precision=ratio(len(entities) - len(extra_entities), len(entities)),
+        entity_recall=ratio(len(expected.entities) - len(missed_entities), len(expected.entities)),
+        fact_precision=ratio(len(statements) - len(extra_facts), len(statements)),
+        fact_recall=ratio(len(expected.facts) - len(missed_facts), len(expected.facts)),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Evaluator
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ExtractionHit(Evaluator[ExtractionCase, Graph, object]):
+    """One assertion per expected entity and fact (recall granularity),
+    plus entity and fact precision/recall as scores."""
 
     def evaluate(
-        self, ctx: EvaluatorContext[MergeCase, MatchOutput, object]
-    ) -> dict[str, EvaluationReason]:
-        out = ctx.output
-        case = ctx.inputs
-        group_of: dict[Qid, MatchGroup] = {
-            member: group for group in out.groups for member in group
+        self, ctx: EvaluatorContext[ExtractionCase, Graph, object]
+    ) -> dict[str, bool | float]:
+        expected = ctx.inputs.expected
+        result = compare(ctx.output, expected)
+        return {
+            **{
+                f"entity: {name}": name not in result.missed_entities
+                for name in expected.entities
+            },
+            **{
+                f"fact: {render(fact)}": fact not in result.missed_facts
+                for fact in expected.facts
+            },
+            "entity_precision": round(result.entity_precision, 3),
+            "entity_recall": round(result.entity_recall, 3),
+            "fact_precision": round(result.fact_precision, 3),
+            "fact_recall": round(result.fact_recall, 3),
         }
-
-        def judge(exp: Expectation, *, must_share: bool) -> EvaluationReason:
-            graph_a = out.graphs[case.article_a]
-            graph_b = out.graphs[case.article_b]
-            found_a = [(case.article_a, term.id) for term in locate(graph_a, exp.a)]
-            found_b = [(case.article_b, term.id) for term in locate(graph_b, exp.b)]
-            if not found_a:
-                return EvaluationReason(
-                    value=False,
-                    reason=f"extraction miss: {render(exp.a)} not found"
-                    f" in {case.article_a}",
-                )
-            if not found_b:
-                return EvaluationReason(
-                    value=False,
-                    reason=f"extraction miss: {render(exp.b)} not found"
-                    f" in {case.article_b}",
-                )
-            sharing = [
-                (qa, qb)
-                for qa in found_a
-                for qb in found_b
-                if (group := group_of.get(qa)) is not None
-                and group is group_of.get(qb)
-            ]
-            if bool(sharing) == must_share:
-                return EvaluationReason(value=True)
-            verb = "never merged" if must_share else "merged"
-            detail = "; ".join(_describe(out, group_of, q) for q in found_a + found_b)
-            return EvaluationReason(
-                value=False,
-                reason=f"{render(exp.a)} and {render(exp.b)} {verb} — {detail}",
-            )
-
-        assertions = {
-            f"merge: {render(exp.a)} ↔ {render(exp.b)}": judge(exp, must_share=True)
-            for exp in case.expected_merges
-        }
-        assertions.update(
-            {
-                f"distinct: {render(exp.a)} ≠ {render(exp.b)}": judge(
-                    exp, must_share=False
-                )
-                for exp in case.expected_non_merges
-            }
-        )
-        return assertions
 
 
 def main() -> None:
-    # One embedder and sequential cases: concurrent loads of the embedding
-    # model in one process are not thread-safe.
-    task: Callable[[MergeCase], MatchOutput] = partial(
-        run_case, embedder=Embedder(os.environ["EMBEDDING_MODEL"])
-    )
-    dataset = Dataset[MergeCase, MatchOutput, object].from_file(DATASET_PATH)
-    dataset.evaluators.append(MergeExpectations())
-    report = dataset.evaluate_sync(task, max_concurrency=1)
-    report.print(include_reasons=True)
+    dataset = Dataset[ExtractionCase, Graph, object].from_file(DATASET_PATH)
+    dataset.evaluators.append(ExtractionHit())
+    report = dataset.evaluate_sync(task)
+    report.print()
+
+    for case in report.cases:
+        result = compare(case.output, case.inputs.expected)
+        if result.clean():
+            continue
+        print(f"\n{case.name}:")
+        print("  entities -:", *(result.missed_entities or ["·"]), sep="\n    ")
+        print("  entities +:", *(result.extra_entities or ["·"]), sep="\n    ")
+        print(
+            "  facts    -:",
+            *([render(fact) for fact in result.missed_facts] or ["·"]),
+            sep="\n    ",
+        )
+        print("  facts    +:", *(result.extra_facts or ["·"]), sep="\n    ")
 
 
 if __name__ == "__main__":
