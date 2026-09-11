@@ -20,21 +20,16 @@ expected:
   statements:
   - id: halden_oversight
     subject: tessa_corin
-    predicate: oversee
     object: halden_freight
   - id: halden_role
     subject: halden_oversight
-    predicate: as
     object: managing_director
   - id: halden_scope
     subject: halden_oversight
-    predicate: for
     object: vesterby
   - id: meridian_leadership
     subject: tessa_corin
-    predicate: lead
     object: meridian_rail
   - id: meridian_role
     subject: meridian_leadership
-    predicate: as
     object: operations_director

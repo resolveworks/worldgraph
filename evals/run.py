@@ -4,9 +4,13 @@ Each file under ``cases/`` contains an article and its expected term graph;
 the filename is the case name. The golden is a ``Graph`` whose local ids
 express term identity and shared references only: comparison finds the
 largest structurally consistent mapping to the extracted graph, so ids are
-never compared. The evaluator scores entity and statement precision/recall
-and prints misses and extras in both directions. The matcher is deterministic
-and covered by unit tests — this suite judges only extraction.
+never compared. The golden pins the term-graph *shape* — which terms exist,
+which are entities and which statements, and how statements nest through
+subject and object; a statement carries no predicate, and its id doubles as
+its display label. Predicate wording is the matcher prior's job, not the
+extractor's. The evaluator scores entity and statement precision/recall and
+prints misses and extras in both directions. The matcher is deterministic and
+covered by unit tests — this suite judges only extraction.
 """
 
 from __future__ import annotations
@@ -39,9 +43,10 @@ class ExpectedEntity(BaseModel, extra="forbid"):
 
 
 class ExpectedStatement(BaseModel, extra="forbid"):
+    """A golden statement: shape only. ``id`` doubles as the display label."""
+
     id: str
     subject: str
-    predicate: str
     object: str
 
 
@@ -58,7 +63,7 @@ class ExpectedExtraction(BaseModel, extra="forbid"):
         for statement in self.statements:
             graph.add_statement(
                 statement.subject,
-                statement.predicate,
+                statement.id,
                 statement.object,
                 id=statement.id,
             )
@@ -126,7 +131,7 @@ def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -
 def _compatible(golden: Term, extracted: Term) -> bool:
     if isinstance(golden, Entity):
         return isinstance(extracted, Entity) and golden.names[0] in extracted.names
-    return isinstance(extracted, Statement) and golden.predicates[0] in extracted.predicates
+    return isinstance(extracted, Statement)
 
 
 def _extend_mapping(
@@ -237,14 +242,6 @@ class Comparison:
     fact_precision: float
     fact_recall: float
 
-    def clean(self) -> bool:
-        return not (
-            self.missed_entities
-            or self.extra_entities
-            or self.missed_facts
-            or self.extra_facts
-        )
-
 
 def compare(graph: Graph, golden: Graph) -> Comparison:
     mapping = _best_mapping(graph, golden)
@@ -336,13 +333,18 @@ def main() -> None:
     for case in report.cases:
         golden = case.inputs.expected.to_graph()
         result = compare(case.output, golden)
-        if result.clean():
+        diffs = (
+            ("entities -", result.missed_entities),
+            ("entities +", result.extra_entities),
+            ("facts    -", result.missed_facts),
+            ("facts    +", result.extra_facts),
+        )
+        if not any(entries for _, entries in diffs):
             continue
         print(f"\n{case.name}:")
-        print("  entities -:", *(result.missed_entities or ["·"]), sep="\n    ")
-        print("  entities +:", *(result.extra_entities or ["·"]), sep="\n    ")
-        print("  facts    -:", *(result.missed_facts or ["·"]), sep="\n    ")
-        print("  facts    +:", *(result.extra_facts or ["·"]), sep="\n    ")
+        for label, entries in diffs:
+            if entries:
+                print(f"  {label}:", *entries, sep="\n    ")
 
 
 if __name__ == "__main__":

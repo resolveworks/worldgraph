@@ -24,37 +24,28 @@ expected:
   statements:
   - id: visit
     subject: marisol_vaneck
-    predicate: visit
     object: vesterby
   - id: visit_time
     subject: visit
-    predicate: in
     object: next_month
   - id: announcement
     subject: ardmore_government
-    predicate: announce
     object: visit
   - id: announcement_time
     subject: announcement
-    predicate: "on"
     object: tuesday
   - id: marisol_service
     subject: marisol_vaneck
-    predicate: serve in
     object: ardmore_government
   - id: marisol_role
     subject: marisol_service
-    predicate: as
     object: foreign_minister
   - id: ivo_service
     subject: ivo_brandt
-    predicate: serve in
     object: ardmore_government
   - id: ivo_role
     subject: ivo_service
-    predicate: as
     object: deputy_trade_minister
   - id: participation
     subject: ivo_brandt
-    predicate: join
     object: visit

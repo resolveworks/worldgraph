@@ -12,9 +12,7 @@ expected:
   statements:
   - id: concealment
     subject: kestrel_bank
-    predicate: hide
     object: losses
   - id: denial
     subject: minister
-    predicate: deny
     object: concealment

@@ -12,9 +12,7 @@ expected:
   statements:
   - id: employment
     subject: jane_okafor
-    predicate: work at
     object: supercorp
   - id: role
     subject: employment
-    predicate: as
     object: chief_reporter

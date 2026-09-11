@@ -10,5 +10,4 @@ expected:
   statements:
   - id: dismissal
     subject: kestrel_bank
-    predicate: dismiss
     object: marta_reyes
