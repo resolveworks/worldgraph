@@ -36,7 +36,7 @@ def _graph(*predicates: str) -> Graph:
 
 def _statements(graph: Graph) -> dict[str, Statement]:
     return {
-        term.predicate: term
+        term.predicates[0]: term
         for term in graph.terms.values()
         if isinstance(term, Statement)
     }
@@ -67,7 +67,7 @@ def test_identical_predicates_short_circuit_to_one():
     assert len(embedder.calls) == calls_before
 
     def _unknown(id_: str) -> Statement:
-        return Statement(id=id_, graph_id="g", subject="s", predicate="merged", object="o")
+        return Statement(id=id_, graph_id="g", subject="s", predicates=["merged"], object="o")
 
     assert prior(_unknown("u1"), _unknown("u2")) == 1.0
     assert len(embedder.calls) == calls_before
@@ -114,7 +114,7 @@ def test_unknown_predicate_at_call_time_is_neutral():
         [_graph("acquired", "purchased")],
     )
     s = _statements(_graph("acquired", "purchased"))
-    unknown = Statement(id="u", graph_id="g", subject="s", predicate="rumored about", object="o")
+    unknown = Statement(id="u", graph_id="g", subject="s", predicates=["rumored about"], object="o")
 
     assert prior(unknown, s["acquired"]) == 0.5
     assert prior(s["purchased"], unknown) == 0.5

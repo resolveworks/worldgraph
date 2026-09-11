@@ -55,9 +55,11 @@ def make_predicate_prior(
     """Build a statement-pair prior from predicate embeddings.
 
     Distinct predicates across *graphs* are embedded once, framed; the
-    returned closure only does arithmetic on the cached unit vectors.
-    Identical predicate strings short-circuit to 1.0 without a lookup,
-    and a predicate unseen at build time scores the neutral 0.5.
+    returned closure only does arithmetic on the cached unit vectors. A
+    pair scores the max over the cross-product of the two statements'
+    ``predicates``; sharing any identical predicate string
+    short-circuits to 1.0 without a lookup, and predicates unseen at
+    build time score the neutral 0.5.
 
     ``embedder=None`` builds the real one from ``EMBEDDING_MODEL``.
     """
@@ -66,21 +68,26 @@ def make_predicate_prior(
 
     predicates = sorted(
         {
-            term.predicate
+            predicate
             for graph in graphs
             for term in graph.terms.values()
             if isinstance(term, Statement)
+            for predicate in term.predicates
         }
     )
     vectors = embedder.embed(predicates, template=_FRAME)
 
     def prior(a: Statement, b: Statement) -> float:
-        if a.predicate == b.predicate:
+        if set(a.predicates) & set(b.predicates):
             return 1.0
-        va = vectors.get(a.predicate)
-        vb = vectors.get(b.predicate)
-        if va is None or vb is None:
-            return _NEUTRAL_PRIOR
-        return _to_prior(float(np.dot(va, vb)))
+        best = _NEUTRAL_PRIOR
+        for pa in a.predicates:
+            for pb in b.predicates:
+                va = vectors.get(pa)
+                vb = vectors.get(pb)
+                if va is None or vb is None:
+                    continue
+                best = max(best, _to_prior(float(np.dot(va, vb))))
+        return best
 
     return prior

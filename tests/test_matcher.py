@@ -127,7 +127,7 @@ def test_paraphrase_merges_with_high_prior():
     acquire2 = g2.add_statement(acme2, "purchase", beta2)
 
     def acquire_purchase_prior(a: Statement, b: Statement) -> float:
-        if {a.predicate, b.predicate} == {"acquire", "purchase"}:
+        if {*a.predicates, *b.predicates} == {"acquire", "purchase"}:
             return 0.9
         return NEUTRAL_PRIOR
 

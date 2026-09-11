@@ -27,14 +27,16 @@ class Entity:
 @dataclass
 class Statement:
     """An asserted fact: ``subject`` and ``object`` reference term ids of
-    this graph (either may be another statement), and ``predicate`` is a
-    short verb phrase in active voice — the subject is the one who brings
-    the fact about."""
+    this graph (either may be another statement), and ``predicates`` are
+    the attested wordings of the fact — short verb phrases in active
+    voice, the subject the one who brings the fact about. Mirrors
+    ``Entity.names``: the first is the primary wording, the rest are
+    aliases carried over from merged counterparts. Never empty."""
 
     id: str
     graph_id: str  # id of the article graph this term was extracted from
     subject: str  # term id
-    predicate: str
+    predicates: list[str]
     object: str  # term id
 
 
@@ -62,20 +64,23 @@ class Graph:
     def add_statement(
         self,
         subject: Term | str,
-        predicate: str,
+        predicate: str | list[str],
         object: Term | str,
         id: str | None = None,
     ) -> Statement:
-        """Add a statement term. Endpoints may be given as term objects or
+        """Add a statement term with the given predicate wording(s).
+        Endpoints may be given as term objects or
         as ids. Ids (and the optional explicit term ``id``) exist for
         construction flexibility — forward references to terms not yet
         added are fine; ``validate()`` checks resolvability once
         construction is complete."""
+        if isinstance(predicate, str):
+            predicate = [predicate]
         statement = Statement(
             id=id if id is not None else str(uuid.uuid4()),
             graph_id=self.id,
             subject=subject.id if isinstance(subject, (Entity, Statement)) else subject,
-            predicate=predicate,
+            predicates=predicate,
             object=object.id if isinstance(object, (Entity, Statement)) else object,
         )
         return self._insert(statement)
@@ -96,13 +101,16 @@ class Graph:
     def validate(self) -> None:
         """Check the structural invariants.
 
-        Every statement endpoint must resolve to a term of this graph, and
+        Every statement must carry at least one predicate wording, every
+        statement endpoint must resolve to a term of this graph, and
         no statement may directly participate in itself. Cycles and
         forward references are valid.
         """
         for term in self.terms.values():
             if not isinstance(term, Statement):
                 continue
+            if not term.predicates:
+                raise ValueError(f"statement {term.id!r} has no predicates")
             for endpoint in (term.subject, term.object):
                 if endpoint not in self.terms:
                     raise ValueError(
@@ -115,7 +123,9 @@ class Graph:
 
 
 _ENTITY_FIELDS = frozenset({"type", "id", "graph_id", "names"})
-_STATEMENT_FIELDS = frozenset({"type", "id", "graph_id", "subject", "predicate", "object"})
+_STATEMENT_FIELDS = frozenset(
+    {"type", "id", "graph_id", "subject", "predicates", "object"}
+)
 
 
 def _check_fields(term_data: dict, expected: frozenset[str]) -> None:
@@ -155,7 +165,7 @@ def load_graph(path: Path) -> Graph:
                 id=term_data["id"],
                 graph_id=term_data["graph_id"],
                 subject=term_data["subject"],
-                predicate=term_data["predicate"],
+                predicates=term_data["predicates"],
                 object=term_data["object"],
             )
         else:
@@ -195,7 +205,7 @@ def save_graph(
                     "id": term.id,
                     "graph_id": term.graph_id,
                     "subject": term.subject,
-                    "predicate": term.predicate,
+                    "predicates": term.predicates,
                     "object": term.object,
                 }
             )

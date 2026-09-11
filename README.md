@@ -43,7 +43,7 @@ Evidence is weighted by per-slot **functionality**: a participant that appears i
 
 ### 3. Output
 
-The pipeline emits the merged canonical graph: one term per match group — entities carry the union of their members' names as aliases, statements appear once with their endpoints remapped — plus the match groups themselves, as ids into the original article graphs. JSON I/O is strict: duplicate ids, unresolvable references, and unknown fields raise; invalid structure is never silently repaired.
+The pipeline emits the merged canonical graph: one term per match group — entities carry the union of their members' names as aliases, statements carry the union of their members' predicate wordings with endpoints remapped — plus the match groups themselves, as ids into the original article graphs. JSON I/O is strict: duplicate ids, unresolvable references, and unknown fields raise; invalid structure is never silently repaired.
 
 ## Design Rationale
 
