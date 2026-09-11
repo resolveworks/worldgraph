@@ -3,24 +3,23 @@
 Embeds each distinct predicate once at build time and returns a pairwise
 callable mapping a statement pair to a prior in [0.5, 1.0]: neutral 0.5
 when the embedding signal is absent, rising with cosine similarity above
-a baseline, 1.0 for identical predicates. The prior proposes only —
-structural matching disposes — so it is a smooth score: no clustering,
+a baseline, 1.0 for identical predicates.
+
+The prior is a **proposal strength**, not a classification score. The
+consumer is a matcher that structurally disposes of false proposals, so
+a lifted unrelated pair costs one vetoed proposal, while a missed
+paraphrase falls back to neutral-prior structural matching. Separating
+paraphrase from unrelated is therefore not a design requirement — the
+prior needs only to rank sensibly and stay smooth: no clustering,
 thresholds, or equivalence classes.
 
-Constants were calibrated on a 30-predicate news-relation set (paraphrase
-groups vs unrelated groups, ~330 pairs) embedded with
-sentence-transformers:Qwen/Qwen3-Embedding-0.6B under the frame below:
-paraphrase pairs score >= 0.81, unrelated pairs median 0.74 (p90 0.82).
-
-- ``_FRAME``: short verb phrases embed unstably in isolation; generic
-  company/startup filler grounds the phrase in a news-sentence reading.
-  The old two-letter frame ("A {} B") left the distributions overlapping
-  (AUC 0.85 vs 0.99 for the sentence frame) because Qwen3-Embedding
-  compresses cosines on near-skeletal strings.
-- ``_BASELINE_COSINE`` = 0.75: the cosine at or below which the embedding
-  signal is treated as absent — above the unrelated-pair mass, below the
-  paraphrase floor. Above it, cosine is affinely rescaled from
-  [_BASELINE_COSINE, 1.0] onto [0.5, 1.0] and capped at 1.0.
+Measured distribution under the frame below with
+sentence-transformers:Qwen/Qwen3-Embedding-0.6B (~30 news predicates,
+~330 pairs): paraphrase pairs 0.60–0.93 (median 0.80), unrelated pairs
+0.49–0.85 (median 0.68), AUC 0.85. ``_BASELINE_COSINE`` sits just under
+the unrelated median: at or below it the embedding carries no usable
+signal and the prior stays neutral; above it, cosine is affinely
+rescaled from [_BASELINE_COSINE, 1.0] onto [0.5, 1.0] and capped at 1.0.
 """
 
 import os
@@ -31,12 +30,13 @@ import numpy as np
 from worldgraph.embed import Embedder
 from worldgraph.graph import Graph, Statement
 
-# Short verb phrases embed unstably in isolation; generic company/startup
-# filler grounds them in a news-sentence reading (see module docstring).
-_FRAME = "The company {} the startup".format
+# Short verb phrases embed unstably in isolation; a minimal frame anchors
+# them in a subject-object context. The frame is part of the metric, not
+# domain knowledge — filler words must not bias predicates toward a domain.
+_FRAME = "A {} B".format
 
 _NEUTRAL_PRIOR = 0.5
-_BASELINE_COSINE = 0.75
+_BASELINE_COSINE = 0.65
 
 
 def _to_prior(cosine: float) -> float:

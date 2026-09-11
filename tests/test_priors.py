@@ -9,7 +9,7 @@ from worldgraph.embed import Embedder
 from worldgraph.graph import Graph, Statement
 from worldgraph.priors import make_predicate_prior
 
-_frame = "The company {} the startup".format
+_frame = "A {} B".format
 
 
 class StubEmbedder(Embedder):
@@ -77,9 +77,9 @@ def test_monotone_above_baseline():
     prior, _ = _make(
         {
             "acquired": np.array([1.0, 0.0]),
-            "bought out": np.array([0.8, 0.6]),
-            "invested in": np.array([0.9, np.sqrt(1.0 - 0.81)]),
-            "partnered with": np.array([0.95, np.sqrt(1.0 - 0.9025)]),
+            "bought out": np.array([0.72, np.sqrt(1.0 - 0.72**2)]),
+            "invested in": np.array([0.86, np.sqrt(1.0 - 0.86**2)]),
+            "partnered with": np.array([0.93, np.sqrt(1.0 - 0.93**2)]),
         },
         [_graph("acquired", "bought out", "invested in", "partnered with")],
     )
@@ -87,7 +87,7 @@ def test_monotone_above_baseline():
 
     scores = [prior(s["acquired"], s[p]) for p in ("bought out", "invested in", "partnered with")]
     assert scores == sorted(scores)
-    # Affine map from [0.75, 1.0] onto [0.5, 1.0]: cosine 0.8 -> 0.6, 0.9 -> 0.8, 0.95 -> 0.9.
+    # Affine map from [0.65, 1.0] onto [0.5, 1.0]: cosine 0.72 -> 0.6, 0.86 -> 0.8, 0.93 -> 0.9.
     assert scores[0] == pytest.approx(0.6)
     assert scores[1] == pytest.approx(0.8)
     assert scores[2] == pytest.approx(0.9)
@@ -98,7 +98,7 @@ def test_at_or_below_baseline_is_neutral():
         {
             "acquired": np.array([1.0, 0.0]),
             "located in": np.array([0.0, 1.0]),  # orthogonal, cosine 0
-            "filed for": np.array([0.75, np.sqrt(1.0 - 0.5625)]),  # cosine exactly at baseline
+            "filed for": np.array([0.65, np.sqrt(1.0 - 0.65**2)]),  # cosine exactly at baseline
         },
         [_graph("acquired", "located in", "filed for")],
     )
