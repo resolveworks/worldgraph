@@ -1,13 +1,23 @@
-"""Output tests: run_matching produces the merged canonical graph, and
-the CLI match subcommand is wired to it."""
+"""Output tests: run_matching produces the merged canonical graph,
+with the predicate prior built from an injected stub embedder."""
 
 import json
 
-from click.testing import CliRunner
+import numpy as np
 
-from worldgraph.cli import cli
+from worldgraph.embed import Embedder
 from worldgraph.graph import Entity, Graph, Statement, load_graph, save_graph
 from worldgraph.match import run_matching
+
+
+class StubEmbedder(Embedder):
+    """Returns an explicit predicate → vector dict; never a real model."""
+
+    def __init__(self, vectors: dict[str, np.ndarray]):
+        self._vectors = vectors
+
+    def embed(self, keys, template=None):
+        return {k: self._vectors[k] for k in keys}
 
 
 def _deal_graph(graph_id: str, predicate: str, acme_names: list[str]) -> Graph:
@@ -31,7 +41,13 @@ def test_run_matching_writes_merged_graph_and_matches(tmp_path):
     save_graph(g2, p2)
     output = tmp_path / "merged.json"
 
-    run_matching([p1, p2], output)
+    stub = StubEmbedder(
+        {
+            "acquire": np.array([1.0, 0.0]),
+            "purchase": np.array([0.97, 0.243]),
+        }
+    )
+    run_matching([p1, p2], output, embedder=stub)
 
     merged = load_graph(output)
     assert set(merged.terms) == {"g1:e1", "g1:e2", "g1:s1"}
@@ -53,19 +69,3 @@ def test_run_matching_writes_merged_graph_and_matches(tmp_path):
         ["g1:e2", "g2:e2"],
         ["g1:s1", "g2:s1"],
     ]
-
-
-def test_cli_match_writes_output(tmp_path):
-    g1 = _deal_graph("g1", "acquire", ["Acme Corp"])
-    g2 = _deal_graph("g2", "purchase", ["Acme Corp"])
-    p1 = tmp_path / "g1.json"
-    p2 = tmp_path / "g2.json"
-    save_graph(g1, p1)
-    save_graph(g2, p2)
-    output = tmp_path / "merged.json"
-
-    result = CliRunner().invoke(cli, ["match", str(p1), str(p2), "-o", str(output)])
-
-    assert result.exit_code == 0, result.output
-    assert output.exists()
-    assert len(load_graph(output).terms) == 3

@@ -39,6 +39,7 @@ from typing import NamedTuple
 import click
 
 from worldgraph.constants import MERGE_THRESHOLD, NEUTRAL_PRIOR
+from worldgraph.embed import Embedder
 from worldgraph.graph import (
     Entity,
     Graph,
@@ -48,6 +49,7 @@ from worldgraph.graph import (
     save_graph,
 )
 from worldgraph.names import build_idf, soft_tfidf
+from worldgraph.priors import make_predicate_prior
 
 # Term ids live in one namespace per article graph, so the matcher keys
 # terms by (graph_id, term_id).
@@ -663,10 +665,16 @@ def run_matching(
     merge_threshold: float = MERGE_THRESHOLD,
     max_iter: int = 30,
     epsilon: float = 1e-4,
-    predicate_prior: PredicatePrior | None = None,
+    embedder: Embedder | None = None,
 ) -> None:
     """Load graphs, run matching pipeline, save the merged graph with
-    match groups."""
+    match groups.
+
+    Statement pairs seed from a predicate prior built from *embedder*;
+    ``None`` builds the real one from ``EMBEDDING_MODEL`` (raises if
+    unset). The seam for tests and experiments is an injected embedder —
+    the pipeline always runs with priors.
+    """
     graphs = [load_graph(path) for path in graph_files]
     terms = qualified_terms(graphs)
     click.echo(f"Loaded {len(graphs)} graphs")
@@ -677,6 +685,7 @@ def run_matching(
         )
         click.echo(f"  {graph.id}: {n_entities} entities, {n_statements} statements")
 
+    predicate_prior = make_predicate_prior(graphs, embedder=embedder)
     _confidence, groups, merged = match_graphs(
         graphs,
         predicate_prior=predicate_prior,
