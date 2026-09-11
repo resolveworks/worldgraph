@@ -18,7 +18,7 @@ def cli():
 )
 @click.option("-o", "--output-dir", required=True, type=click.Path(path_type=Path))
 def extract(articles: tuple[Path, ...], output_dir: Path):
-    """Stage 1: Extract entities and events from article text files (filename stem = article id)."""
+    """Stage 1: Extract term graphs from article text files (filename stem = article id)."""
     run_extraction(list(articles), output_dir)
 
 
