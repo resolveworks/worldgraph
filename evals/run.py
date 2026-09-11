@@ -1,11 +1,11 @@
 """Extraction eval harness over self-contained YAML cases.
 
 Each file under ``cases/`` contains an article and its expected term graph;
-the filename is the case name. Golden ids express term identity and shared
-references but are local to the golden: comparison finds the largest
-structurally consistent mapping to the extracted graph, so ids are never
-compared. The evaluator scores entity and statement precision/recall and
-prints misses and extras in both directions. The matcher is deterministic
+the filename is the case name. The golden is a ``Graph`` whose local ids
+express term identity and shared references only: comparison finds the
+largest structurally consistent mapping to the extracted graph, so ids are
+never compared. The evaluator scores entity and statement precision/recall
+and prints misses and extras in both directions. The matcher is deterministic
 and covered by unit tests — this suite judges only extraction.
 """
 
@@ -14,10 +14,9 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import cast
 
 import yaml
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel
 from pydantic_evals import Case, Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
@@ -46,45 +45,25 @@ class ExpectedStatement(BaseModel, extra="forbid"):
     object: str
 
 
-ExpectedTerm = ExpectedEntity | ExpectedStatement
-
-
 class ExpectedExtraction(BaseModel, extra="forbid"):
-    """A golden term graph whose ids define identity only within the case."""
+    """A golden term graph; ids are local to the case."""
 
     entities: list[ExpectedEntity]
     statements: list[ExpectedStatement]
 
-    @model_validator(mode="after")
-    def _validate_graph(self) -> ExpectedExtraction:
-        ids = [term.id for term in self.entities + self.statements]
-        duplicates = sorted({term_id for term_id in ids if ids.count(term_id) > 1})
-        if duplicates:
-            raise ValueError(f"duplicate golden term ids: {duplicates}")
-
-        known = set(ids)
-        unknown = sorted(
-            {
-                endpoint
-                for statement in self.statements
-                for endpoint in (statement.subject, statement.object)
-                if endpoint not in known
-            }
-        )
-        if unknown:
-            raise ValueError(f"golden statements reference unknown ids: {unknown}")
-
-        self_refs = sorted(
-            statement.id
-            for statement in self.statements
-            if statement.subject == statement.id or statement.object == statement.id
-        )
-        if self_refs:
-            raise ValueError(f"golden statements reference themselves: {self_refs}")
-        return self
-
-    def terms(self) -> dict[str, ExpectedTerm]:
-        return {term.id: term for term in self.entities + self.statements}
+    def to_graph(self) -> Graph:
+        graph = Graph(id="golden")
+        for entity in self.entities:
+            graph.add_entity(entity.name, id=entity.id)
+        for statement in self.statements:
+            graph.add_statement(
+                statement.subject,
+                statement.predicate,
+                statement.object,
+                id=statement.id,
+            )
+        graph.validate()
+        return graph
 
 
 class ExtractionCase(BaseModel, extra="forbid"):
@@ -124,33 +103,8 @@ def task(case: ExtractionCase) -> Graph:
 # ---------------------------------------------------------------------------
 
 
-def render_expected(
-    expected: ExpectedExtraction,
-    term_id: str,
-    stack: frozenset[str] = frozenset(),
-) -> str:
-    terms = expected.terms()
-    term = terms[term_id]
-    if isinstance(term, ExpectedEntity):
-        return term.name
-    if term.id in stack:
-        return "⟲"
-
-    inner = frozenset({*stack, term.id})
-
-    def endpoint(endpoint_id: str) -> str:
-        rendered = render_expected(expected, endpoint_id, inner)
-        return (
-            f"[{rendered}]"
-            if isinstance(terms[endpoint_id], ExpectedStatement)
-            else rendered
-        )
-
-    return f"{endpoint(term.subject)} —{term.predicate}→ {endpoint(term.object)}"
-
-
 def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -> str:
-    """Render an extracted term; ``stack`` breaks valid reference cycles."""
+    """Render a term; ``stack`` breaks reference cycles."""
     if isinstance(term, Entity):
         return " | ".join(term.names)
     if term.id in stack:
@@ -169,66 +123,59 @@ def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -
     return f"{endpoint(term.subject)} —{term.predicates[0]}→ {endpoint(term.object)}"
 
 
-def _compatible(expected: ExpectedTerm, extracted: Term) -> bool:
-    if isinstance(expected, ExpectedEntity):
-        return isinstance(extracted, Entity) and expected.name in extracted.names
-    return (
-        isinstance(extracted, Statement)
-        and expected.predicate in extracted.predicates
-    )
+def _compatible(golden: Term, extracted: Term) -> bool:
+    if isinstance(golden, Entity):
+        return isinstance(extracted, Entity) and golden.names[0] in extracted.names
+    return isinstance(extracted, Statement) and golden.predicates[0] in extracted.predicates
 
 
 def _extend_mapping(
-    expected_terms: dict[str, ExpectedTerm],
+    golden: Graph,
     graph: Graph,
     mapping: dict[str, str | None],
     reverse: dict[str, str],
-    expected_id: str,
+    golden_id: str,
     extracted_id: str,
 ) -> tuple[dict[str, str | None], dict[str, str]] | None:
-    """Map one term and force its endpoint mappings, preserving identity."""
+    """Map one golden term, forcing its endpoint mappings; None on conflict."""
     extended = mapping.copy()
     extended_reverse = reverse.copy()
-    pending = [(expected_id, extracted_id)]
+    pending = [(golden_id, extracted_id)]
 
     while pending:
-        golden_id, runtime_id = pending.pop()
-        if golden_id in extended:
-            if extended[golden_id] != runtime_id:
+        gid, rid = pending.pop()
+        if gid in extended:
+            if extended[gid] != rid:
                 return None
             continue
-        if runtime_id in extended_reverse:
+        if rid in extended_reverse:
             return None
 
-        golden = expected_terms[golden_id]
-        extracted = graph.terms[runtime_id]
-        if not _compatible(golden, extracted):
+        golden_term = golden.terms[gid]
+        extracted = graph.terms[rid]
+        if not _compatible(golden_term, extracted):
             return None
 
-        extended[golden_id] = runtime_id
-        extended_reverse[runtime_id] = golden_id
-        if isinstance(golden, ExpectedStatement):
-            extracted_statement = cast(Statement, extracted)
-            pending.extend(
-                [
-                    (golden.subject, extracted_statement.subject),
-                    (golden.object, extracted_statement.object),
-                ]
-            )
+        extended[gid] = rid
+        extended_reverse[rid] = gid
+        if isinstance(golden_term, Statement):
+            assert isinstance(extracted, Statement)
+            pending.append((golden_term.subject, extracted.subject))
+            pending.append((golden_term.object, extracted.object))
 
     return extended, extended_reverse
 
 
-def _best_mapping(graph: Graph, expected: ExpectedExtraction) -> dict[str, str]:
-    """Find a maximum structurally consistent injection into ``graph``."""
-    expected_terms = expected.terms()
+def _best_mapping(graph: Graph, golden: Graph) -> dict[str, str]:
+    """Find a maximum structurally consistent injection of ``golden`` into
+    ``graph``, preferring statement matches on ties."""
     candidates = {
         golden_id: [
             extracted_id
             for extracted_id, extracted in graph.terms.items()
-            if _compatible(golden, extracted)
+            if _compatible(golden_term, extracted)
         ]
-        for golden_id, golden in expected_terms.items()
+        for golden_id, golden_term in golden.terms.items()
     }
     best: dict[str, str] = {}
     best_score = (-1, -1)
@@ -240,13 +187,11 @@ def _best_mapping(graph: Graph, expected: ExpectedExtraction) -> dict[str, str]:
             for golden_id, runtime_id in mapping.items()
             if runtime_id is not None
         }
-        remaining = len(expected_terms) - len(mapping)
-        if len(mapped) + remaining < best_score[0]:
+        if len(mapped) + len(golden.terms) - len(mapping) < best_score[0]:
             return
-        if not remaining:
+        if len(mapping) == len(golden.terms):
             mapped_statements = sum(
-                isinstance(expected_terms[golden_id], ExpectedStatement)
-                for golden_id in mapped
+                isinstance(golden.terms[golden_id], Statement) for golden_id in mapped
             )
             score = (len(mapped), mapped_statements)
             if score > best_score:
@@ -254,24 +199,18 @@ def _best_mapping(graph: Graph, expected: ExpectedExtraction) -> dict[str, str]:
                 best_score = score
             return
 
-        unassigned = [golden_id for golden_id in expected_terms if golden_id not in mapping]
         golden_id = min(
-            unassigned,
-            key=lambda term_id: (
-                len([candidate for candidate in candidates[term_id] if candidate not in reverse]),
-                not isinstance(expected_terms[term_id], ExpectedStatement),
+            (gid for gid in golden.terms if gid not in mapping),
+            key=lambda gid: (
+                len([c for c in candidates[gid] if c not in reverse]),
+                not isinstance(golden.terms[gid], Statement),
             ),
         )
-        for runtime_id in candidates[golden_id]:
-            if runtime_id in reverse:
+        for extracted_id in candidates[golden_id]:
+            if extracted_id in reverse:
                 continue
             extended = _extend_mapping(
-                expected_terms,
-                graph,
-                mapping,
-                reverse,
-                golden_id,
-                runtime_id,
+                golden, graph, mapping, reverse, golden_id, extracted_id
             )
             if extended is not None:
                 search(*extended)
@@ -288,7 +227,7 @@ def _best_mapping(graph: Graph, expected: ExpectedExtraction) -> dict[str, str]:
 class Comparison:
     """Precision/recall and both diff directions for one graph mapping."""
 
-    matched_expected_ids: frozenset[str]
+    matched_golden_ids: frozenset[str]
     missed_entities: list[str]
     extra_entities: list[str]
     missed_facts: list[str]
@@ -307,12 +246,18 @@ class Comparison:
         )
 
 
-def compare(graph: Graph, expected: ExpectedExtraction) -> Comparison:
-    mapping = _best_mapping(graph, expected)
+def compare(graph: Graph, golden: Graph) -> Comparison:
+    mapping = _best_mapping(graph, golden)
     matched_runtime_ids = frozenset(mapping.values())
-    matched_expected_ids = frozenset(mapping)
+    matched_golden_ids = frozenset(mapping)
     entities = [term for term in graph.terms.values() if isinstance(term, Entity)]
     statements = [term for term in graph.terms.values() if isinstance(term, Statement)]
+    golden_entities = [
+        term for term in golden.terms.values() if isinstance(term, Entity)
+    ]
+    golden_statements = [
+        term for term in golden.terms.values() if isinstance(term, Statement)
+    ]
     matched_entities = sum(entity.id in matched_runtime_ids for entity in entities)
     matched_statements = sum(statement.id in matched_runtime_ids for statement in statements)
 
@@ -320,11 +265,11 @@ def compare(graph: Graph, expected: ExpectedExtraction) -> Comparison:
         return part / whole if whole else 1.0
 
     return Comparison(
-        matched_expected_ids=matched_expected_ids,
+        matched_golden_ids=matched_golden_ids,
         missed_entities=[
-            f"{entity.id}: {entity.name}"
-            for entity in expected.entities
-            if entity.id not in matched_expected_ids
+            f"{term.id}: {term.names[0]}"
+            for term in golden_entities
+            if term.id not in matched_golden_ids
         ],
         extra_entities=[
             render_term(graph, entity)
@@ -332,9 +277,9 @@ def compare(graph: Graph, expected: ExpectedExtraction) -> Comparison:
             if entity.id not in matched_runtime_ids
         ],
         missed_facts=[
-            f"{statement.id}: {render_expected(expected, statement.id)}"
-            for statement in expected.statements
-            if statement.id not in matched_expected_ids
+            f"{term.id}: {render_term(golden, term)}"
+            for term in golden_statements
+            if term.id not in matched_golden_ids
         ],
         extra_facts=[
             render_term(graph, statement)
@@ -342,9 +287,9 @@ def compare(graph: Graph, expected: ExpectedExtraction) -> Comparison:
             if statement.id not in matched_runtime_ids
         ],
         entity_precision=ratio(matched_entities, len(entities)),
-        entity_recall=ratio(matched_entities, len(expected.entities)),
+        entity_recall=ratio(matched_entities, len(golden_entities)),
         fact_precision=ratio(matched_statements, len(statements)),
-        fact_recall=ratio(matched_statements, len(expected.statements)),
+        fact_recall=ratio(matched_statements, len(golden_statements)),
     )
 
 
@@ -360,20 +305,20 @@ class ExtractionHit(Evaluator[ExtractionCase, Graph, object]):
     def evaluate(
         self, ctx: EvaluatorContext[ExtractionCase, Graph, object]
     ) -> dict[str, bool | float]:
-        expected = ctx.inputs.expected
-        result = compare(ctx.output, expected)
+        golden = ctx.inputs.expected.to_graph()
+        result = compare(ctx.output, golden)
         return {
             **{
-                f"entity {entity.id}: {entity.name}": (
-                    entity.id in result.matched_expected_ids
-                )
-                for entity in expected.entities
+                f"entity {term.id}: {term.names[0]}": term.id in result.matched_golden_ids
+                for term in golden.terms.values()
+                if isinstance(term, Entity)
             },
             **{
-                f"fact {statement.id}: {render_expected(expected, statement.id)}": (
-                    statement.id in result.matched_expected_ids
+                f"fact {term.id}: {render_term(golden, term)}": (
+                    term.id in result.matched_golden_ids
                 )
-                for statement in expected.statements
+                for term in golden.terms.values()
+                if isinstance(term, Statement)
             },
             "entity_precision": round(result.entity_precision, 3),
             "entity_recall": round(result.entity_recall, 3),
@@ -389,7 +334,8 @@ def main() -> None:
     report.print()
 
     for case in report.cases:
-        result = compare(case.output, case.inputs.expected)
+        golden = case.inputs.expected.to_graph()
+        result = compare(case.output, golden)
         if result.clean():
             continue
         print(f"\n{case.name}:")
