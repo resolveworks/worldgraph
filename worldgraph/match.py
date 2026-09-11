@@ -276,7 +276,7 @@ def _seed_confidence(
                 if not 0.0 <= seed <= 1.0:
                     raise ValueError(
                         "predicate prior out of [0, 1] for "
-                        f"({term_a.predicate!r}, {term_b.predicate!r}): {seed}"
+                        f"({term_a.predicates!r}, {term_b.predicates!r}): {seed}"
                     )
         else:
             assert isinstance(term_a, Entity) and isinstance(term_b, Entity)
@@ -570,8 +570,8 @@ def build_merged_graph(terms: dict[Qid, Term], members: dict[Qid, list[Qid]]) ->
 
     Merged entities carry the union of their members' names as aliases
     (the representative's names first, then members' aliases in sorted
-    member order); merged statements appear once, with the
-    representative's predicate and endpoints remapped to the canonical
+    member order); merged statements carry the union of their members'
+    predicates the same way, with endpoints remapped to the canonical
     ids of their participants' groups. Term ids are the qualified
     ``graph_id:term_id`` of the representative, and ``graph_id`` records
     the representative's origin graph.
@@ -594,11 +594,18 @@ def build_merged_graph(terms: dict[Qid, Term], members: dict[Qid, list[Qid]]) ->
                 id=qualified(canonical), graph_id=canonical[0], names=names
             )
         else:
+            predicates = list(rep.predicates)
+            for member in sorted(members[canonical]):
+                member_term = terms[member]
+                assert isinstance(member_term, Statement)
+                for predicate in member_term.predicates:
+                    if predicate not in predicates:
+                        predicates.append(predicate)
             term = Statement(
                 id=qualified(canonical),
                 graph_id=canonical[0],
                 subject=qualified(canonical_of[(canonical[0], rep.subject)]),
-                predicate=rep.predicate,
+                predicates=predicates,
                 object=qualified(canonical_of[(canonical[0], rep.object)]),
             )
         merged.terms[term.id] = term
@@ -654,9 +661,11 @@ def match_graphs(
 
 
 def _label(term: Term) -> str:
-    """Human label for group echo: primary name for entities, predicate
-    for statements."""
-    return term.names[0] if isinstance(term, Entity) else term.predicate
+    """Human label for group echo: primary name for entities, primary
+    predicate for statements."""
+    return (
+        term.names[0] if isinstance(term, Entity) else term.predicates[0]
+    )
 
 
 def run_matching(

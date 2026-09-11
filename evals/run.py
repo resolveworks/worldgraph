@@ -90,7 +90,7 @@ def _matches(graph: Graph, term: Term, ref: Ref) -> bool:
         return isinstance(term, Entity) and ref in term.names
     return (
         isinstance(term, Statement)
-        and term.predicate == ref.predicate
+        and ref.predicate in term.predicates
         and _matches(graph, graph.terms[term.subject], ref.subject)
         and _matches(graph, graph.terms[term.object], ref.object)
     )
@@ -126,7 +126,7 @@ def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -
             else rendered
         )
 
-    return f"{endpoint(term.subject)} —{term.predicate}→ {endpoint(term.object)}"
+    return f"{endpoint(term.subject)} —{term.predicates[0]}→ {endpoint(term.object)}"
 
 
 @dataclass

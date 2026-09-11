@@ -66,11 +66,11 @@ def test_roundtrip_nested_statements(tmp_path: Path):
     as_statement = next(
         t
         for t in loaded.terms.values()
-        if isinstance(t, Statement) and t.predicate == "as"
+        if isinstance(t, Statement) and t.predicates == ["as"]
     )
     work = loaded.resolve(as_statement.subject)
     assert isinstance(work, Statement)
-    assert work.predicate == "work at"
+    assert work.predicates == ["work at"]
     ceo = loaded.resolve(as_statement.object)
     assert isinstance(ceo, Entity)
     assert ceo.names == ["CEO"]
@@ -208,7 +208,7 @@ def test_load_unknown_reference_raises(tmp_path: Path):
                 "id": "s1",
                 "graph_id": "article-1",
                 "subject": "t999",
-                "predicate": "know",
+                "predicates": ["know"],
                 "object": "t998",
             },
         ],
@@ -265,7 +265,7 @@ def test_load_missing_field_raises(tmp_path: Path):
     data = {
         "id": "article-1",
         "terms": [
-            {"type": "statement", "id": "s1", "graph_id": "article-1", "predicate": "know"},
+            {"type": "statement", "id": "s1", "graph_id": "article-1", "predicates": ["know"]},
         ],
         "matches": [],
     }

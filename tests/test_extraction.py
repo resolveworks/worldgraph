@@ -129,10 +129,10 @@ def test_extraction_to_graph_structure():
     assert len(entity_terms) == 3
     assert len(statement_terms) == 2
 
-    as_statement = next(t for t in statement_terms if t.predicate == "as")
+    as_statement = next(t for t in statement_terms if t.predicates == ["as"])
     work = graph.resolve(as_statement.subject)
     assert isinstance(work, Statement)
-    assert work.predicate == "work at"
+    assert work.predicates == ["work at"]
     jane = graph.resolve(work.subject)
     supercorp = graph.resolve(work.object)
     ceo = graph.resolve(as_statement.object)
@@ -164,8 +164,8 @@ def test_extraction_to_graph_order_independent():
     )
     graph = extraction_to_graph("article-1", ext)
 
-    visit = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicate == "visit")
-    join = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicate == "join")
+    visit = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicates == ["visit"])
+    join = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicates == ["join"])
     assert join.subject == visit.id
 
 
