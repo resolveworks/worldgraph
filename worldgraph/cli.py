@@ -45,7 +45,7 @@ def match(
     max_iter: int,
     merge_threshold: float,
 ):
-    """Stage 2: Node alignment via similarity propagation — merge matched graphs."""
+    """Stage 2: Term alignment via similarity propagation — merge matched graphs."""
     run_matching(
         list(graphs),
         output,
