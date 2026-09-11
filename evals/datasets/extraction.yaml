@@ -1,572 +1,179 @@
+# Expected extractions, one case per fixture article, ordered as a
+# ladder: one sentence / one fact, then one construction each, then a
+# short multi-fact article, then a paraphrase pair (two independent
+# goldens). Entities are exact names (leading article stripped); facts
+# are recursive subject/predicate/object surface forms in the expected
+# convention: short active-voice base-form predicates, qualifiers as
+# statements about the statement they qualify, pronouns resolved.
+# Goldens encode the expected model, not current extractor output.
 name: extraction-fixtures
 cases:
-- name: object_entities
-  inputs: object_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Marisol Vaneck
-    - id: e2
-      name: ketamine
-    - id: e3
-      name: amphetamines
-    events:
-    - id: v1
-      label: use
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: use
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e3
-  evaluators: []
-- name: unnamed_parties
-  inputs: unnamed_parties
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Halvard Gallery
-    - id: e2
-      name: Vesterby
-    events:
-    - id: v1
-      label: be located in
-      participants:
-      - role: patient
-        ref: e1
-      - role: location
-        ref: e2
-  evaluators: []
-- name: media_meta_entities
-  inputs: media_meta_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Kestrel Bank
-    - id: e2
-      name: Ostmund
-    events:
-    - id: v1
-      label: close branches in
-      participants:
-      - role: agent
-        ref: e1
-      - role: location
-        ref: e2
-  evaluators: []
-- name: clause_entities
-  inputs: clause_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Kestrel Bank
-    - id: e2
-      name: Marta Reyes
-    events:
-    - id: v1
-      label: dismiss
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-  evaluators: []
-- name: repeated_entities
-  inputs: repeated_entities
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Halvard Gallery
-    - id: e2
-      name: Vesterby
-    - id: e3
-      name: Ostmund art fair
-    events:
-    - id: v1
-      label: be located in
-      participants:
-      - role: patient
-        ref: e1
-      - role: location
-        ref: e2
-    - id: v2
-      label: host
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e3
-  evaluators: []
-- name: coordinated_lists
-  inputs: coordinated_lists
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Meridian Rail
-    - id: e2
-      name: Vellmark
-    - id: e3
-      name: Vesterby
-    - id: e4
-      name: Torshavn
-    - id: e5
-      name: Kalden
-    - id: e6
-      name: Rysby
-    events:
-    - id: v1
-      label: close stations in
-      participants:
-      - role: agent
-        ref: e1
-      - role: location
-        ref: e2
-    - id: v2
-      label: close stations in
-      participants:
-      - role: agent
-        ref: e1
-      - role: location
-        ref: e3
-    - id: v3
-      label: close stations in
-      participants:
-      - role: agent
-        ref: e1
-      - role: location
-        ref: e4
-    - id: v4
-      label: review routes in
-      participants:
-      - role: agent
-        ref: e1
-      - role: location
-        ref: e5
-    - id: v5
-      label: review routes in
-      participants:
-      - role: agent
-        ref: e1
-      - role: location
-        ref: e6
-  evaluators: []
-- name: temporal_scope
-  inputs: temporal_scope
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Nordwind Shipping
-    - id: e2
-      name: Baltic Freight
-    - id: e3
-      name: Caspian Lines
-    - id: e4
-      name: Gdansk
-    events:
-    - id: v1
-      label: acquire
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: be headquartered in
-      participants:
-      - role: patient
-        ref: e1
-      - role: location
-        ref: e4
-    - id: v3
-      label: acquire
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e3
-  evaluators: []
-- name: historical_background
-  inputs: historical_background
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Nordwind Shipping
-    - id: e2
-      name: Vesterby tram network
-    - id: e3
-      name: Gdansk
-    - id: e4
-      name: Halden Engineering
-    - id: e5
-      name: Ostmund Lines
-    - id: e6
-      name: Meridian Rail
-    events:
-    - id: v1
-      label: modernise
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: move headquarters to
-      participants:
-      - role: agent
-        ref: e1
-      - role: destination
-        ref: e3
-    - id: v3
-      label: build
-      participants:
-      - role: agent
-        ref: e4
-      - role: patient
-        ref: e2
-    - id: v4
-      label: build
-      participants:
-      - role: agent
-        ref: e5
-      - role: patient
-        ref: e2
-    - id: v5
-      label: acquire
-      participants:
-      - role: agent
-        ref: e6
-      - role: patient
-        ref: e5
-  evaluators: []
-- name: denied_allegations
-  inputs: denied_allegations
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Ivo Brandt
-    - id: e2
-      name: Ostmund government
-    - id: e3
-      name: Voss Infrastructure
-    - id: e4
-      name: Ostmund rail link
-    - id: e5
-      name: transport minister
-    events:
-    - id: v1
-      label: serve in
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-      - role: capacity
-        ref: e5
-    - id: v2
-      label: build
-      participants:
-      - role: agent
-        ref: e3
-      - role: patient
-        ref: e4
-  evaluators: []
-- name: role_qualifiers
-  inputs: role_qualifiers
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Tessa Corin
-    - id: e2
-      name: Halden Freight
-    - id: e3
-      name: Vesterby
-    - id: e4
-      name: Meridian Rail
-    - id: e5
-      name: managing director
-    - id: e6
-      name: operations director
-    events:
-    - id: v1
-      label: manage
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-      - role: capacity
-        ref: e5
-      - role: beneficiary
-        ref: e3
-    - id: v2
-      label: manage
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e4
-      - role: capacity
-        ref: e6
-  evaluators: []
-- name: role_qualifiers_paraphrase
-  inputs: role_qualifiers_paraphrase
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Tessa Corin
-    - id: e2
-      name: Halden Freight
-    - id: e3
-      name: Vesterby
-    - id: e4
-      name: Meridian Rail
-    - id: e5
-      name: managing director
-    - id: e6
-      name: operations director
-    events:
-    - id: v1
-      label: oversee
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-      - role: capacity
-        ref: e5
-      - role: beneficiary
-        ref: e3
-    - id: v2
-      label: lead
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e4
-      - role: capacity
-        ref: e6
-  evaluators: []
+- name: dismiss
+  inputs:
+    article: dismiss
+    expected:
+      entities:
+      - Kestrel Bank
+      - Marta Reyes
+      facts:
+      - subject: Kestrel Bank
+        predicate: dismiss
+        object: Marta Reyes
+- name: passive
+  inputs:
+    article: passive
+    expected:
+      entities:
+      - Marta Reyes
+      - Kestrel Bank
+      facts:
+      - subject: Kestrel Bank
+        predicate: dismiss
+        object: Marta Reyes
+- name: qualifier
+  inputs:
+    article: qualifier
+    expected:
+      entities:
+      - Jane Okafor
+      - Supercorp
+      - chief reporter
+      facts:
+      - subject: Jane Okafor
+        predicate: work at
+        object: Supercorp
+      - subject:
+          subject: Jane Okafor
+          predicate: work at
+          object: Supercorp
+        predicate: as
+        object: chief reporter
+- name: denial
+  inputs:
+    article: denial
+    expected:
+      entities:
+      - minister
+      - Kestrel Bank
+      - losses
+      facts:
+      - subject: Kestrel Bank
+        predicate: hide
+        object: losses
+      - subject: minister
+        predicate: deny
+        object:
+          subject: Kestrel Bank
+          predicate: hide
+          object: losses
 - name: appositive_roles
-  inputs: appositive_roles
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Marisol Vaneck
-    - id: e2
-      name: Vesterby
-    - id: e3
-      name: Ardmore government
-    - id: e4
-      name: Ivo Brandt
-    - id: e5
-      name: foreign minister
-    - id: e6
-      name: deputy trade minister
-    events:
-    - id: v1
-      label: visit
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: serve in
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e3
-      - role: capacity
-        ref: e5
-    - id: v3
-      label: serve in
-      participants:
-      - role: agent
-        ref: e4
-      - role: patient
-        ref: e3
-      - role: capacity
-        ref: e6
-    - id: v4
-      label: join
-      participants:
-      - role: agent
-        ref: e4
-      - role: patient
-        ref: v1
-  evaluators: []
-- name: appositive_roles_paraphrase
-  inputs: appositive_roles_paraphrase
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Marisol Vaneck
-    - id: e2
-      name: Vesterby
-    - id: e3
-      name: Ardmore government
-    - id: e4
-      name: Ivo Brandt
-    - id: e5
-      name: foreign minister
-    - id: e6
-      name: deputy trade minister
-    events:
-    - id: v1
-      label: travel to
-      participants:
-      - role: agent
-        ref: e1
-      - role: destination
-        ref: e2
-    - id: v2
-      label: serve in
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e3
-      - role: capacity
-        ref: e5
-    - id: v3
-      label: serve in
-      participants:
-      - role: agent
-        ref: e4
-      - role: patient
-        ref: e3
-      - role: capacity
-        ref: e6
-    - id: v4
-      label: take part in
-      participants:
-      - role: agent
-        ref: e4
-      - role: patient
-        ref: v1
-  evaluators: []
-- name: specific_relation_reference
-  inputs: specific_relation_reference
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Marisol Vaneck
-    - id: e2
-      name: Vesterby
-    - id: e3
-      name: Kalden
-    - id: e4
-      name: Ivo Brandt
-    events:
-    - id: v1
-      label: visit
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: visit
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e3
-    - id: v3
-      label: join
-      participants:
-      - role: agent
-        ref: e4
-      - role: patient
-        ref: v2
-  evaluators: []
-- name: relation_to_relation
-  inputs: relation_to_relation
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Halden Energy
-    - id: e2
-      name: Vesterby Power Station
-    - id: e3
-      name: Meridian Rail
-    - id: e4
-      name: Kalden
-    events:
-    - id: v1
-      label: close
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: suspend services to
-      participants:
-      - role: agent
-        ref: e3
-      - role: destination
-        ref: e4
-    - id: v3
-      label: cause
-      participants:
-      - role: agent
-        ref: v1
-      - role: patient
-        ref: v2
-  evaluators: []
-- name: nested_relation_qualifiers
-  inputs: nested_relation_qualifiers
-  metadata: null
-  expected_output:
-    entities:
-    - id: e1
-      name: Lena Orvik
-    - id: e2
-      name: Torshavn
-    - id: e3
-      name: Pavel Rusk
-    - id: e4
-      name: Norvale Council
-    events:
-    - id: v1
-      label: visit
-      participants:
-      - role: agent
-        ref: e1
-      - role: patient
-        ref: e2
-    - id: v2
-      label: join
-      participants:
-      - role: agent
-        ref: e3
-      - role: patient
-        ref: v1
-      - role: beneficiary
-        ref: e4
-  evaluators: []
-evaluators: []
-report_evaluators: []
+  inputs:
+    article: appositive_roles
+    expected:
+      entities:
+      - Marisol Vaneck
+      - Ardmore government
+      - Vesterby
+      - foreign minister
+      - Ivo Brandt
+      - deputy trade minister
+      facts:
+      - subject: Marisol Vaneck
+        predicate: visit
+        object: Vesterby
+      - subject: Marisol Vaneck
+        predicate: serve in
+        object: Ardmore government
+      - subject:
+          subject: Marisol Vaneck
+          predicate: serve in
+          object: Ardmore government
+        predicate: as
+        object: foreign minister
+      - subject: Ivo Brandt
+        predicate: serve in
+        object: Ardmore government
+      - subject:
+          subject: Ivo Brandt
+          predicate: serve in
+          object: Ardmore government
+        predicate: as
+        object: deputy trade minister
+      - subject: Ivo Brandt
+        predicate: join
+        object:
+          subject: Marisol Vaneck
+          predicate: visit
+          object: Vesterby
+- name: role_qualifiers
+  inputs:
+    article: role_qualifiers
+    expected:
+      entities:
+      - Tessa Corin
+      - Halden Freight
+      - Vesterby
+      - Meridian Rail
+      - managing director
+      - operations director
+      facts:
+      - subject: Tessa Corin
+        predicate: manage
+        object: Halden Freight
+      - subject:
+          subject: Tessa Corin
+          predicate: manage
+          object: Halden Freight
+        predicate: as
+        object: managing director
+      - subject:
+          subject: Tessa Corin
+          predicate: manage
+          object: Halden Freight
+        predicate: for
+        object: Vesterby
+      - subject: Tessa Corin
+        predicate: manage
+        object: Meridian Rail
+      - subject:
+          subject: Tessa Corin
+          predicate: manage
+          object: Meridian Rail
+        predicate: as
+        object: operations director
+- name: role_qualifiers_paraphrase
+  inputs:
+    article: role_qualifiers_paraphrase
+    expected:
+      entities:
+      - Tessa Corin
+      - Halden Freight
+      - Vesterby
+      - Meridian Rail
+      - managing director
+      - operations director
+      facts:
+      - subject: Tessa Corin
+        predicate: oversee
+        object: Halden Freight
+      - subject:
+          subject: Tessa Corin
+          predicate: oversee
+          object: Halden Freight
+        predicate: as
+        object: managing director
+      - subject:
+          subject: Tessa Corin
+          predicate: oversee
+          object: Halden Freight
+        predicate: for
+        object: Vesterby
+      - subject: Tessa Corin
+        predicate: lead
+        object: Meridian Rail
+      - subject:
+          subject: Tessa Corin
+          predicate: lead
+          object: Meridian Rail
+        predicate: as
+        object: operations director

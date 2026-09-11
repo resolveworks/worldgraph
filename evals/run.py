@@ -1,19 +1,29 @@
 """Extraction eval harness: pydantic-evals dataset runner over article fixtures.
 
-Cases in ``datasets/extraction.yaml`` name fixture stems under ``fixtures/``.
-The task runs the production extraction path on each article; the evaluator
-asserts an exact hit on the hand-labeled golden extraction.
+Cases in ``datasets/extraction.yaml`` name fixture stems under ``fixtures/``
+with a hand-authored expected extraction: entities by name, facts as
+recursive triples — subject name or nested fact, predicate, object name or
+nested fact. The task runs the production extraction path; the evaluator
+scores entity and fact precision/recall against the golden (exact surface
+match; term ids are never compared) with one assertion per expected
+entity and fact, and the harness prints each case's misses (expected, not
+extracted) and extras (extracted, not expected). The matcher is
+deterministic and covered by unit tests — this suite judges only the
+extraction.
 """
 
+from __future__ import annotations
+
 import os
-from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
+from pydantic import BaseModel
 from pydantic_evals import Dataset
 from pydantic_evals.evaluators import Evaluator, EvaluatorContext
 
-from worldgraph.extract import Event, Extraction, build_agent, extract_article
+from worldgraph.extract import build_agent, extract_article, extraction_to_graph
+from worldgraph.graph import Entity, Graph, Statement, Term
 
 FIXTURES = Path(__file__).parent / "fixtures"
 DATASET_PATH = Path(__file__).parent / "datasets" / "extraction.yaml"
@@ -21,90 +31,218 @@ DATASET_PATH = Path(__file__).parent / "datasets" / "extraction.yaml"
 MODEL = os.environ["EXTRACTION_MODEL"]
 
 
-def task(stem: str) -> Extraction:
-    """Run the production extraction path on a fixture article."""
-    return extract_article(build_agent(MODEL), (FIXTURES / f"{stem}.md").read_text())
+# ---------------------------------------------------------------------------
+# Golden schema
+# ---------------------------------------------------------------------------
 
 
-def canonical(ext: Extraction) -> tuple[Counter[str], Counter[tuple]]:
-    """Order- and id-independent form: entity name counts and event form
-    counts. An event form is ``(label, ((role, term), ...))`` with
-    participants sorted; a term is an entity name or, where a participant
-    references an event, that event's own form — so a nested participation
-    is compared against the specific event it references, never its label
-    alone.
-    """
-    names = {entity.id: entity.name for entity in ext.entities}
-    events = {event.id: event for event in ext.events}
+class FactRef(BaseModel, extra="forbid"):
+    """A fact located by surface form: ``predicate`` plus each endpoint's
+    surface form — an entity name, or the referenced fact's own
+    ``FactRef`` when the endpoint nests."""
 
-    def term(ref: str, stack: tuple[str, ...]) -> str | tuple:
-        if ref in names:
-            return names[ref]
-        if ref in stack:
-            raise ValueError(f"cyclic event references: {ref!r} in {stack + (ref,)}")
-        return form(events[ref], stack + (ref,))
+    subject: str | FactRef
+    predicate: str
+    object: str | FactRef
 
-    def form(event: Event, stack: tuple[str, ...]) -> tuple:
-        participants = tuple(
-            sorted(
-                ((p.role, term(p.ref, stack)) for p in event.participants),
-                key=repr,
-            )
-        )
-        return (event.label, participants)
 
-    return (
-        Counter(names.values()),
-        Counter(form(event, ()) for event in ext.events),
+Ref = str | FactRef
+
+
+class ExpectedExtraction(BaseModel, extra="forbid"):
+    """The golden: every entity the article names and every fact it
+    asserts, in the expected extraction convention (short active-voice
+    base-form predicates; qualifiers as statements about the statement
+    they qualify)."""
+
+    entities: list[str]
+    facts: list[FactRef]
+
+
+class ExtractionCase(BaseModel, extra="forbid"):
+    """One article under test: the fixture stem and its golden."""
+
+    article: str
+    expected: ExpectedExtraction
+
+
+# ---------------------------------------------------------------------------
+# Task: the production extraction path on one article
+# ---------------------------------------------------------------------------
+
+
+def task(case: ExtractionCase) -> Graph:
+    return extraction_to_graph(
+        case.article,
+        extract_article(
+            build_agent(MODEL), (FIXTURES / f"{case.article}.md").read_text()
+        ),
     )
 
 
-def render(term: str | tuple) -> str:
-    """Human-readable term: an entity name plain, an event form as
-    ``label(role=term, ...)`` with nested forms bracketed."""
-    if isinstance(term, str):
-        return term
-    label, participants = term
+# ---------------------------------------------------------------------------
+# Surface-form comparison
+# ---------------------------------------------------------------------------
 
-    def show(t: str | tuple) -> str:
-        return t if isinstance(t, str) else f"[{render(t)}]"
 
-    inner = ", ".join(f"{role}={show(t)}" for role, t in participants)
-    return f"{label}({inner})"
+def _matches(graph: Graph, term: Term, ref: Ref) -> bool:
+    if isinstance(ref, str):
+        return isinstance(term, Entity) and ref in term.names
+    return (
+        isinstance(term, Statement)
+        and term.predicate == ref.predicate
+        and _matches(graph, graph.terms[term.subject], ref.subject)
+        and _matches(graph, graph.terms[term.object], ref.object)
+    )
+
+
+def render(ref: Ref) -> str:
+    """Compact surface form: names plain, facts as
+    ``subject —predicate→ object`` with nested facts bracketed."""
+    if isinstance(ref, str):
+        return ref
+
+    def endpoint(e: Ref) -> str:
+        return e if isinstance(e, str) else f"[{render(e)}]"
+
+    return f"{endpoint(ref.subject)} —{ref.predicate}→ {endpoint(ref.object)}"
+
+
+def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -> str:
+    """Render an extracted term the same way; ``stack`` breaks reference
+    cycles, which valid graphs may contain."""
+    if isinstance(term, Entity):
+        return " | ".join(term.names)
+    if term.id in stack:
+        return "⟲"
+
+    inner = frozenset({*stack, term.id})
+
+    def endpoint(term_id: str) -> str:
+        rendered = render_term(graph, graph.terms[term_id], inner)
+        return (
+            f"[{rendered}]"
+            if isinstance(graph.terms[term_id], Statement)
+            else rendered
+        )
+
+    return f"{endpoint(term.subject)} —{term.predicate}→ {endpoint(term.object)}"
 
 
 @dataclass
-class ExactHit(Evaluator[Extraction, Extraction, object]):
-    """Pass iff the extraction is an exact hit on the golden — same entities,
-    same events with their participant structure, no extras, no paraphrases."""
+class Comparison:
+    """Precision/recall over entities and facts, plus both diff
+    directions: misses (expected, not extracted) and extras (extracted,
+    not expected)."""
 
-    def evaluate(self, ctx: EvaluatorContext[Extraction, Extraction, object]) -> bool:
-        assert ctx.expected_output is not None
-        return canonical(ctx.output) == canonical(ctx.expected_output)
+    missed_entities: list[str]
+    extra_entities: list[str]
+    missed_facts: list[FactRef]
+    extra_facts: list[str]  # rendered surface forms
+    entity_precision: float
+    entity_recall: float
+    fact_precision: float
+    fact_recall: float
+
+    def clean(self) -> bool:
+        return not (
+            self.missed_entities
+            or self.extra_entities
+            or self.missed_facts
+            or self.extra_facts
+        )
+
+
+def compare(graph: Graph, expected: ExpectedExtraction) -> Comparison:
+    entities = [t for t in graph.terms.values() if isinstance(t, Entity)]
+    statements = [t for t in graph.terms.values() if isinstance(t, Statement)]
+
+    missed_entities = [
+        name
+        for name in expected.entities
+        if not any(name in entity.names for entity in entities)
+    ]
+    extra_entities = [
+        render_term(graph, entity)
+        for entity in entities
+        if not any(name in expected.entities for name in entity.names)
+    ]
+    missed_facts = [
+        fact
+        for fact in expected.facts
+        if not any(_matches(graph, statement, fact) for statement in statements)
+    ]
+    extra_facts = [
+        render_term(graph, statement)
+        for statement in statements
+        if not any(_matches(graph, statement, fact) for fact in expected.facts)
+    ]
+
+    def ratio(part: int, whole: int) -> float:
+        return part / whole if whole else 1.0
+
+    return Comparison(
+        missed_entities=missed_entities,
+        extra_entities=extra_entities,
+        missed_facts=missed_facts,
+        extra_facts=extra_facts,
+        entity_precision=ratio(len(entities) - len(extra_entities), len(entities)),
+        entity_recall=ratio(len(expected.entities) - len(missed_entities), len(expected.entities)),
+        fact_precision=ratio(len(statements) - len(extra_facts), len(statements)),
+        fact_recall=ratio(len(expected.facts) - len(missed_facts), len(expected.facts)),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Evaluator
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ExtractionHit(Evaluator[ExtractionCase, Graph, object]):
+    """One assertion per expected entity and fact (recall granularity),
+    plus entity and fact precision/recall as scores."""
+
+    def evaluate(
+        self, ctx: EvaluatorContext[ExtractionCase, Graph, object]
+    ) -> dict[str, bool | float]:
+        expected = ctx.inputs.expected
+        result = compare(ctx.output, expected)
+        return {
+            **{
+                f"entity: {name}": name not in result.missed_entities
+                for name in expected.entities
+            },
+            **{
+                f"fact: {render(fact)}": fact not in result.missed_facts
+                for fact in expected.facts
+            },
+            "entity_precision": round(result.entity_precision, 3),
+            "entity_recall": round(result.entity_recall, 3),
+            "fact_precision": round(result.fact_precision, 3),
+            "fact_recall": round(result.fact_recall, 3),
+        }
 
 
 def main() -> None:
-    dataset = Dataset[str, Extraction, object].from_file(DATASET_PATH)
-    dataset.evaluators.append(ExactHit())
+    dataset = Dataset[ExtractionCase, Graph, object].from_file(DATASET_PATH)
+    dataset.evaluators.append(ExtractionHit())
     report = dataset.evaluate_sync(task)
     report.print()
 
     for case in report.cases:
-        if case.assertions["ExactHit"].value:
+        result = compare(case.output, case.inputs.expected)
+        if result.clean():
             continue
-        gold_names, gold_forms = canonical(case.expected_output)
-        pred_names, pred_forms = canonical(case.output)
-        missing = sorted(render(f) for f in (gold_forms - pred_forms).elements())
-        extra = sorted(render(f) for f in (pred_forms - gold_forms).elements())
-        print(f"\n{case.name}: MISS")
+        print(f"\n{case.name}:")
+        print("  entities -:", *(result.missed_entities or ["·"]), sep="\n    ")
+        print("  entities +:", *(result.extra_entities or ["·"]), sep="\n    ")
         print(
-            "  entities  -:",
-            sorted((gold_names - pred_names).elements()) or "·",
-            "+:",
-            sorted((pred_names - gold_names).elements()) or "·",
+            "  facts    -:",
+            *([render(fact) for fact in result.missed_facts] or ["·"]),
+            sep="\n    ",
         )
-        print("  events    -:", *(missing or ["·"]), sep="\n    ")
-        print("  events    +:", *(extra or ["·"]), sep="\n    ")
+        print("  facts    +:", *(result.extra_facts or ["·"]), sep="\n    ")
 
 
 if __name__ == "__main__":
