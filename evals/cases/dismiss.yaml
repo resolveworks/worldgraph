@@ -1,0 +1,14 @@
+article: |-
+  Kestrel Bank has dismissed Marta Reyes.
+
+expected:
+  entities:
+  - id: kestrel_bank
+    name: Kestrel Bank
+  - id: marta_reyes
+    name: Marta Reyes
+  statements:
+  - id: dismissal
+    subject: kestrel_bank
+    predicate: dismiss
+    object: marta_reyes

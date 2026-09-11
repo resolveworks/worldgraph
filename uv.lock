@@ -1912,6 +1912,7 @@ dependencies = [
     { name = "numpy" },
     { name = "pydantic-ai-slim", extra = ["openai", "sentence-transformers"] },
     { name = "pydantic-evals" },
+    { name = "pyyaml" },
     { name = "rapidfuzz" },
 ]
 
@@ -1927,6 +1928,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.5.3" },
     { name = "pydantic-ai-slim", extras = ["openai", "sentence-transformers"], specifier = ">=2.42.0" },
     { name = "pydantic-evals", specifier = ">=2.42.0" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "rapidfuzz", specifier = ">=3.14.3" },
 ]
 

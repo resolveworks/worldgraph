@@ -1,0 +1,40 @@
+article: |-
+  # Tessa Corin manages Halden Freight
+
+  Tessa Corin manages Halden Freight as managing director for Vesterby. She previously managed Meridian Rail as operations director.
+
+expected:
+  entities:
+  - id: tessa_corin
+    name: Tessa Corin
+  - id: halden_freight
+    name: Halden Freight
+  - id: vesterby
+    name: Vesterby
+  - id: meridian_rail
+    name: Meridian Rail
+  - id: managing_director
+    name: managing director
+  - id: operations_director
+    name: operations director
+  statements:
+  - id: halden_management
+    subject: tessa_corin
+    predicate: manage
+    object: halden_freight
+  - id: halden_role
+    subject: halden_management
+    predicate: as
+    object: managing_director
+  - id: halden_scope
+    subject: halden_management
+    predicate: for
+    object: vesterby
+  - id: meridian_management
+    subject: tessa_corin
+    predicate: manage
+    object: meridian_rail
+  - id: meridian_role
+    subject: meridian_management
+    predicate: as
+    object: operations_director

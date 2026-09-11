@@ -1,0 +1,60 @@
+article: |-
+  # Ardmore foreign minister to visit Vesterby
+
+  Marisol Vaneck, the foreign minister in the Ardmore government, will visit Vesterby next month, the Ardmore government announced on Tuesday. Ivo Brandt, the deputy trade minister in the Ardmore government, will join the visit.
+
+expected:
+  entities:
+  - id: marisol_vaneck
+    name: Marisol Vaneck
+  - id: ardmore_government
+    name: Ardmore government
+  - id: vesterby
+    name: Vesterby
+  - id: next_month
+    name: next month
+  - id: foreign_minister
+    name: foreign minister
+  - id: ivo_brandt
+    name: Ivo Brandt
+  - id: deputy_trade_minister
+    name: deputy trade minister
+  - id: tuesday
+    name: Tuesday
+  statements:
+  - id: visit
+    subject: marisol_vaneck
+    predicate: visit
+    object: vesterby
+  - id: visit_time
+    subject: visit
+    predicate: in
+    object: next_month
+  - id: announcement
+    subject: ardmore_government
+    predicate: announce
+    object: visit
+  - id: announcement_time
+    subject: announcement
+    predicate: "on"
+    object: tuesday
+  - id: marisol_service
+    subject: marisol_vaneck
+    predicate: serve in
+    object: ardmore_government
+  - id: marisol_role
+    subject: marisol_service
+    predicate: as
+    object: foreign_minister
+  - id: ivo_service
+    subject: ivo_brandt
+    predicate: serve in
+    object: ardmore_government
+  - id: ivo_role
+    subject: ivo_service
+    predicate: as
+    object: deputy_trade_minister
+  - id: participation
+    subject: ivo_brandt
+    predicate: join
+    object: visit

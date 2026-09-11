@@ -9,6 +9,7 @@ dependencies = [
     "numpy>=2.5.3",
     "pydantic-ai-slim[openai,sentence-transformers]>=2.42.0",
     "pydantic-evals>=2.42.0",
+    "pyyaml>=6.0.3",
     "rapidfuzz>=3.14.3",
 ]
 

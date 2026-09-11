@@ -1,0 +1,20 @@
+article: |-
+  The minister denied that Kestrel Bank hid the losses.
+
+expected:
+  entities:
+  - id: minister
+    name: minister
+  - id: kestrel_bank
+    name: Kestrel Bank
+  - id: losses
+    name: losses
+  statements:
+  - id: concealment
+    subject: kestrel_bank
+    predicate: hide
+    object: losses
+  - id: denial
+    subject: minister
+    predicate: deny
+    object: concealment

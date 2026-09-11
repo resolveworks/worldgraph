@@ -1,0 +1,20 @@
+article: |-
+  Jane Okafor works at Supercorp as chief reporter.
+
+expected:
+  entities:
+  - id: jane_okafor
+    name: Jane Okafor
+  - id: supercorp
+    name: Supercorp
+  - id: chief_reporter
+    name: chief reporter
+  statements:
+  - id: employment
+    subject: jane_okafor
+    predicate: work at
+    object: supercorp
+  - id: role
+    subject: employment
+    predicate: as
+    object: chief_reporter
