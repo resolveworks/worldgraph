@@ -1,0 +1,18 @@
+article: |-
+  Kestrel Bank's dismissal of Marta Reyes took effect on Tuesday.
+
+expected:
+  entities:
+  - id: kestrel_bank
+    name: Kestrel Bank
+  - id: marta_reyes
+    name: Marta Reyes
+  - id: tuesday
+    name: Tuesday
+  statements:
+  - id: dismissal
+    subject: kestrel_bank
+    object: marta_reyes
+  - id: dismissal_effect
+    subject: dismissal
+    object: tuesday
