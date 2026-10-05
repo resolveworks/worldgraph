@@ -218,3 +218,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 papers
+
+# Matcher eval: generated parameter-sweep report (regenerate with
+# `uv run python -m evals.matcher.run`)
+evals/matcher/report.md
