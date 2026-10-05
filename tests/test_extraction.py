@@ -45,7 +45,9 @@ def test_entity_statement_id_collision_raises():
         Extraction(
             entities=entities("Alice"),
             statements=[
-                StatementModel(id="e1", subject="e1", predicate="resign from", object="e1"),
+                StatementModel(
+                    id="e1", subject="e1", predicate="resign from", object="e1"
+                ),
             ],
         )
 
@@ -164,8 +166,16 @@ def test_extraction_to_graph_order_independent():
     )
     graph = extraction_to_graph("article-1", ext)
 
-    visit = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicates == ["visit"])
-    join = next(t for t in graph.terms.values() if isinstance(t, Statement) and t.predicates == ["join"])
+    visit = next(
+        t
+        for t in graph.terms.values()
+        if isinstance(t, Statement) and t.predicates == ["visit"]
+    )
+    join = next(
+        t
+        for t in graph.terms.values()
+        if isinstance(t, Statement) and t.predicates == ["join"]
+    )
     assert join.subject == visit.id
 
 

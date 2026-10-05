@@ -117,9 +117,7 @@ class Graph:
                         f"statement {term.id!r} references unknown term id: {endpoint!r}"
                     )
                 if endpoint == term.id:
-                    raise ValueError(
-                        f"statement participates in itself: {term.id!r}"
-                    )
+                    raise ValueError(f"statement participates in itself: {term.id!r}")
 
 
 _ENTITY_FIELDS = frozenset({"type", "id", "graph_id", "names"})
@@ -131,9 +129,7 @@ _STATEMENT_FIELDS = frozenset(
 def _check_fields(term_data: dict, expected: frozenset[str]) -> None:
     unknown = sorted(set(term_data) - expected)
     if unknown:
-        raise ValueError(
-            f"unknown fields on {term_data.get('type')!r} term: {unknown}"
-        )
+        raise ValueError(f"unknown fields on {term_data.get('type')!r} term: {unknown}")
 
 
 def load_graph(path: Path) -> Graph:

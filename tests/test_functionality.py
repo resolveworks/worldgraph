@@ -67,12 +67,16 @@ def test_statement_participants_pool_by_occurrence():
     about two different statements never pool, while their identical-name
     title participant does."""
     g1 = Graph(id="g1")
-    s1 = g1.add_statement(g1.add_entity("Acme Corp"), "acquire", g1.add_entity("Beta Systems"))
+    s1 = g1.add_statement(
+        g1.add_entity("Acme Corp"), "acquire", g1.add_entity("Beta Systems")
+    )
     ceo1 = g1.add_entity("CEO")
     g1.add_statement(s1, "as", ceo1)
 
     g2 = Graph(id="g2")
-    s2 = g2.add_statement(g2.add_entity("Nordwind"), "acquire", g2.add_entity("Baltic Freight"))
+    s2 = g2.add_statement(
+        g2.add_entity("Nordwind"), "acquire", g2.add_entity("Baltic Freight")
+    )
     ceo2 = g2.add_entity("CEO")
     g2.add_statement(s2, "as", ceo2)
 

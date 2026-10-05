@@ -49,7 +49,9 @@ class Extraction(BaseModel):
         entity_ids = [entity.id for entity in self.entities]
         statement_ids = [statement.id for statement in self.statements]
         all_ids = entity_ids + statement_ids
-        duplicates = sorted({term_id for term_id in all_ids if all_ids.count(term_id) > 1})
+        duplicates = sorted(
+            {term_id for term_id in all_ids if all_ids.count(term_id) > 1}
+        )
         if duplicates:
             raise ValueError(f"duplicate term ids: {duplicates}")
         known = set(all_ids)

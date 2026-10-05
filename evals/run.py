@@ -120,9 +120,7 @@ def render_term(graph: Graph, term: Term, stack: frozenset[str] = frozenset()) -
     def endpoint(term_id: str) -> str:
         rendered = render_term(graph, graph.terms[term_id], inner)
         return (
-            f"[{rendered}]"
-            if isinstance(graph.terms[term_id], Statement)
-            else rendered
+            f"[{rendered}]" if isinstance(graph.terms[term_id], Statement) else rendered
         )
 
     return f"{endpoint(term.subject)} —{term.predicates[0]}→ {endpoint(term.object)}"
@@ -256,7 +254,9 @@ def compare(graph: Graph, golden: Graph) -> Comparison:
         term for term in golden.terms.values() if isinstance(term, Statement)
     ]
     matched_entities = sum(entity.id in matched_runtime_ids for entity in entities)
-    matched_statements = sum(statement.id in matched_runtime_ids for statement in statements)
+    matched_statements = sum(
+        statement.id in matched_runtime_ids for statement in statements
+    )
 
     def ratio(part: int, whole: int) -> float:
         return part / whole if whole else 1.0
@@ -306,7 +306,8 @@ class ExtractionHit(Evaluator[ExtractionCase, Graph, object]):
         result = compare(ctx.output, golden)
         return {
             **{
-                f"entity {term.id}: {term.names[0]}": term.id in result.matched_golden_ids
+                f"entity {term.id}: {term.names[0]}": term.id
+                in result.matched_golden_ids
                 for term in golden.terms.values()
                 if isinstance(term, Entity)
             },

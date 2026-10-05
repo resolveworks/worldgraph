@@ -707,9 +707,7 @@ def match_graphs(
 def _label(term: Term) -> str:
     """Human label for group echo: primary name for entities, primary
     predicate for statements."""
-    return (
-        term.names[0] if isinstance(term, Entity) else term.predicates[0]
-    )
+    return term.names[0] if isinstance(term, Entity) else term.predicates[0]
 
 
 def run_matching(
@@ -730,9 +728,7 @@ def run_matching(
     click.echo(f"Loaded {len(graphs)} graphs")
     for graph in graphs:
         n_entities = sum(1 for t in graph.terms.values() if isinstance(t, Entity))
-        n_statements = sum(
-            1 for t in graph.terms.values() if isinstance(t, Statement)
-        )
+        n_statements = sum(1 for t in graph.terms.values() if isinstance(t, Statement))
         click.echo(f"  {graph.id}: {n_entities} entities, {n_statements} statements")
 
     predicate_prior = make_predicate_prior(graphs, embedder=embedder)

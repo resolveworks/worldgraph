@@ -122,9 +122,7 @@ def test_add_statement_accepts_terms_and_ids():
 
 def test_resolve_returns_term_and_raises_on_unknown():
     g = jane_graph()
-    work = next(
-        t for t in g.terms.values() if isinstance(t, Statement)
-    )
+    work = next(t for t in g.terms.values() if isinstance(t, Statement))
     jane = g.resolve(work.subject)
     assert isinstance(jane, Entity)
     assert jane.names == ["Jane"]
@@ -250,7 +248,9 @@ def test_load_unknown_field_raises(tmp_path: Path):
 def test_load_unknown_term_type_raises(tmp_path: Path):
     data = {
         "id": "article-1",
-        "terms": [{"type": "event", "id": "t1", "graph_id": "article-1", "names": ["x"]}],
+        "terms": [
+            {"type": "event", "id": "t1", "graph_id": "article-1", "names": ["x"]}
+        ],
         "matches": [],
     }
     path = tmp_path / "g.json"
@@ -265,7 +265,12 @@ def test_load_missing_field_raises(tmp_path: Path):
     data = {
         "id": "article-1",
         "terms": [
-            {"type": "statement", "id": "s1", "graph_id": "article-1", "predicates": ["know"]},
+            {
+                "type": "statement",
+                "id": "s1",
+                "graph_id": "article-1",
+                "predicates": ["know"],
+            },
         ],
         "matches": [],
     }

@@ -67,7 +67,9 @@ def test_identical_predicates_short_circuit_to_one():
     assert len(embedder.calls) == calls_before
 
     def _unknown(id_: str) -> Statement:
-        return Statement(id=id_, graph_id="g", subject="s", predicates=["merged"], object="o")
+        return Statement(
+            id=id_, graph_id="g", subject="s", predicates=["merged"], object="o"
+        )
 
     assert prior(_unknown("u1"), _unknown("u2")) == 1.0
     assert len(embedder.calls) == calls_before
@@ -85,7 +87,10 @@ def test_monotone_above_baseline():
     )
     s = _statements(_graph("acquired", "bought out", "invested in", "partnered with"))
 
-    scores = [prior(s["acquired"], s[p]) for p in ("bought out", "invested in", "partnered with")]
+    scores = [
+        prior(s["acquired"], s[p])
+        for p in ("bought out", "invested in", "partnered with")
+    ]
     assert scores == sorted(scores)
     # Affine map from [0.65, 1.0] onto [0.5, 1.0]: cosine 0.72 -> 0.6, 0.86 -> 0.8, 0.93 -> 0.9.
     assert scores[0] == pytest.approx(0.6)
@@ -98,7 +103,9 @@ def test_at_or_below_baseline_is_neutral():
         {
             "acquired": np.array([1.0, 0.0]),
             "located in": np.array([0.0, 1.0]),  # orthogonal, cosine 0
-            "filed for": np.array([0.65, np.sqrt(1.0 - 0.65**2)]),  # cosine exactly at baseline
+            "filed for": np.array(
+                [0.65, np.sqrt(1.0 - 0.65**2)]
+            ),  # cosine exactly at baseline
         },
         [_graph("acquired", "located in", "filed for")],
     )
@@ -114,7 +121,9 @@ def test_unknown_predicate_at_call_time_is_neutral():
         [_graph("acquired", "purchased")],
     )
     s = _statements(_graph("acquired", "purchased"))
-    unknown = Statement(id="u", graph_id="g", subject="s", predicates=["rumored about"], object="o")
+    unknown = Statement(
+        id="u", graph_id="g", subject="s", predicates=["rumored about"], object="o"
+    )
 
     assert prior(unknown, s["acquired"]) == 0.5
     assert prior(s["purchased"], unknown) == 0.5

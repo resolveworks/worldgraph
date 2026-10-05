@@ -61,12 +61,8 @@ def same_group(groups: list[list[Qid]], *terms: Term) -> bool:
 # strongly-shrunk one.
 VARIANTS = [
     CALIBRATION,
-    CALIBRATION._replace(
-        prior_strength=0.25, exp_lambda=5.0, damping=0.3, max_iter=60
-    ),
-    CALIBRATION._replace(
-        prior_strength=4.0, exp_lambda=0.5, damping=0.8, max_iter=120
-    ),
+    CALIBRATION._replace(prior_strength=0.25, exp_lambda=5.0, damping=0.3, max_iter=60),
+    CALIBRATION._replace(prior_strength=4.0, exp_lambda=0.5, damping=0.8, max_iter=120),
 ]
 VARIANT_IDS = ["calibration", "fast-saturation", "slow-saturation"]
 
@@ -140,7 +136,9 @@ def _acquire_purchase_prior(a: Statement, b: Statement) -> float:
     return NEUTRAL_PRIOR
 
 
-def _direction_graphs() -> tuple[list[Graph], tuple[Term, Term, Term], tuple[Term, Term, Term]]:
+def _direction_graphs() -> tuple[
+    list[Graph], tuple[Term, Term, Term], tuple[Term, Term, Term]
+]:
     """(council, 'govern', district) vs the same fact reported
     backwards: identical names, identical predicate, opposite
     direction."""
@@ -376,7 +374,9 @@ def test_corroborating_path_raises_confidence(params):
     assert conf_with[pair] > conf_plain[key(plain.deals[0], plain.deals[1])]
 
 
-def _purchase_corpus(objects: list[str]) -> tuple[list[Graph], list[Entity], list[Statement]]:
+def _purchase_corpus(
+    objects: list[str],
+) -> tuple[list[Graph], list[Entity], list[Statement]]:
     """'John Mercer purchased <object>' reported in two graphs."""
     graphs, johns, purchases = [], [], []
     for i, object_ in enumerate(objects):

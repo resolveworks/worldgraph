@@ -83,7 +83,9 @@ def test_merged_statement_carries_all_member_predicates():
     wordings in sorted member order, deduplicated — mirroring merged
     entities' name aliases."""
     graphs = []
-    for i, predicates in enumerate([["acquire"], ["purchase"], ["purchase", "take over"]]):
+    for i, predicates in enumerate(
+        [["acquire"], ["purchase"], ["purchase", "take over"]]
+    ):
         g = Graph(id=f"g{i}")
         subject = g.add_entity("Acme Corp")
         object_ = g.add_entity("Beta Systems")

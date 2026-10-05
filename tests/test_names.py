@@ -142,7 +142,12 @@ def test_nfkd_normalization_matches_accented_forms():
 
 def test_soft_tfidf_is_symmetric():
     """soft_tfidf(a, b) should equal soft_tfidf(b, a)."""
-    labels = ["Meridian Technologies", "Meridian Tech", "DataVault Inc", "Elena Vasquez"]
+    labels = [
+        "Meridian Technologies",
+        "Meridian Tech",
+        "DataVault Inc",
+        "Elena Vasquez",
+    ]
     idf = build_idf(labels)
     for a, b in [
         ("Meridian Technologies", "Meridian Tech"),
