@@ -15,7 +15,7 @@ import pytest
 
 from worldgraph.constants import NEUTRAL_PRIOR
 from worldgraph.graph import Graph, Statement, Term
-from worldgraph.match import match_graphs
+from worldgraph.match import CALIBRATION, match_graphs
 
 Qid = tuple[str, str]
 
@@ -60,7 +60,9 @@ def test_prior_alone_never_merges():
     def hot_prior(a: Statement, b: Statement) -> float:
         return 0.95
 
-    _confidence, groups, _ = match_graphs([g1, g2], predicate_prior=hot_prior)
+    _confidence, groups, _ = match_graphs(
+        [g1, g2], params=CALIBRATION, predicate_prior=hot_prior
+    )
 
     assert groups == []
 
@@ -82,7 +84,7 @@ def test_direction_contradiction_never_merges():
     district2 = g2.add_entity("Harbor District")
     govern2 = g2.add_statement(district2, "govern", council2)
 
-    confidence, groups, _ = match_graphs([g1, g2])
+    confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert not same_group(groups, govern1, govern2)
     assert not same_group(groups, council1, council2)
@@ -104,7 +106,7 @@ def test_paraphrase_merges_under_neutral_prior():
     beta2 = g2.add_entity("Beta Systems")
     acquire2 = g2.add_statement(acme2, "purchase", beta2)
 
-    confidence, groups, _ = match_graphs([g1, g2])
+    confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert same_group(groups, acquire1, acquire2)
     assert same_group(groups, acme1, acme2)
@@ -131,7 +133,9 @@ def test_paraphrase_merges_with_high_prior():
             return 0.9
         return NEUTRAL_PRIOR
 
-    _confidence, groups, _ = match_graphs([g1, g2], predicate_prior=acquire_purchase_prior)
+    _confidence, groups, _ = match_graphs(
+        [g1, g2], params=CALIBRATION, predicate_prior=acquire_purchase_prior
+    )
 
     assert same_group(groups, acquire1, acquire2)
 
@@ -156,7 +160,7 @@ def test_qualifier_disagreement_keeps_facts_apart():
     munich2 = g2.add_entity("Munich")
     hq2 = g2.add_statement(acme2, "be headquartered in", munich2)
 
-    confidence, groups, _ = match_graphs([g1, g2])
+    confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert not same_group(groups, hq1, hq2)
     assert not same_group(groups, berlin1, munich2)
@@ -182,7 +186,7 @@ def test_shared_rare_participant_corroborates():
     price2 = g2.add_entity("$4.2 billion")
     price_stmt2 = g2.add_statement(deal2, "for", price2)
 
-    _confidence, groups, _ = match_graphs([g1, g2])
+    _confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert same_group(groups, deal1, deal2)
     assert same_group(groups, price_stmt1, price_stmt2)
@@ -204,7 +208,7 @@ def test_identical_names_alone_never_merge():
     g2 = Graph(id="g2")
     g2.add_entity("Acme Corp")
 
-    _confidence, groups, _ = match_graphs([g1, g2])
+    _confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert groups == []
 
@@ -227,7 +231,7 @@ def test_unrelated_graphs_do_not_match():
     japan2 = g2.add_entity("Japan")
     g2.add_statement(tokyo2, "be located in", japan2)
 
-    _confidence, groups, _ = match_graphs([g1, g2])
+    _confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert groups == []
 
@@ -248,11 +252,51 @@ def test_mismatched_participant_suppresses_statement_and_shared_name():
     truck2 = g2.add_entity("truck")
     purchase2 = g2.add_statement(john2, "purchase", truck2)
 
-    confidence, groups, _ = match_graphs([g1, g2])
+    confidence, groups, _ = match_graphs([g1, g2], params=CALIBRATION)
 
     assert confidence[key(purchase1, purchase2)] < NEUTRAL_PRIOR
     assert not same_group(groups, purchase1, purchase2)
     assert not same_group(groups, john1, john2)
+
+
+# ---------------------------------------------------------------------------
+# Pinned spec: progressive merging
+# ---------------------------------------------------------------------------
+
+
+def test_participant_merge_never_fabricates_negative_evidence():
+    """A mid-run merge of participants must not turn into decisive
+    negative evidence against a still-unmerged statement pair: adjacency
+    staleness after a merge is not evidence. Two reports of one deal,
+    with prior_strength high enough that the statement pair rests below
+    the merge bar (~0.69) while the name-identical entities merge
+    mid-run. The statement pair must keep its fixed point — after the
+    participant merge, both statements see the same canonical
+    participant, which if anything strengthens the pair."""
+    g1 = Graph(id="g1")
+    acme1 = g1.add_entity("Acme Corp")
+    beta1 = g1.add_entity("Beta Systems")
+    acquire1 = g1.add_statement(acme1, "acquire", beta1)
+
+    g2 = Graph(id="g2")
+    acme2 = g2.add_entity("Acme Corp")
+    beta2 = g2.add_entity("Beta Systems")
+    acquire2 = g2.add_statement(acme2, "purchase", beta2)
+
+    merging = CALIBRATION._replace(prior_strength=2.5)
+    frozen = merging._replace(merge_threshold=1.01)
+
+    conf_merging, groups_merging, _ = match_graphs([g1, g2], params=merging)
+    conf_frozen, groups_frozen, _ = match_graphs([g1, g2], params=frozen)
+
+    # The scenario holds: entities merge mid-run, statements never do,
+    # and with merging impossible nothing merges at all.
+    assert len(groups_merging) == 2
+    assert not same_group(groups_merging, acquire1, acquire2)
+    assert groups_frozen == []
+
+    assert conf_merging[key(acquire1, acquire2)] >= conf_frozen[key(acquire1, acquire2)]
+    assert conf_merging[key(acquire1, acquire2)] > NEUTRAL_PRIOR
 
 
 # ---------------------------------------------------------------------------
@@ -273,7 +317,7 @@ def test_three_sources_merge_transitively():
         statements.append(g.add_statement(acme, predicate, beta))
         graphs.append(g)
 
-    _confidence, groups, _ = match_graphs(graphs)
+    _confidence, groups, _ = match_graphs(graphs, params=CALIBRATION)
 
     assert same_group(groups, *statements)
 
@@ -295,7 +339,7 @@ def test_hub_participants_weaken_slot_evidence():
         return [g1, g2], acquire1, acquire2
 
     clean, acquire1, acquire2 = deal_graphs("clean")
-    conf_clean, groups_clean, _ = match_graphs(clean)
+    conf_clean, groups_clean, _ = match_graphs(clean, params=CALIBRATION)
     assert same_group(groups_clean, acquire1, acquire2)
 
     graphs, acquire3, acquire4 = deal_graphs("hub")
@@ -315,7 +359,7 @@ def test_hub_participants_weaken_slot_evidence():
         bg.add_statement(acme, predicate, gamma)
         graphs.append(bg)
 
-    conf_hub, groups_hub, _ = match_graphs(graphs)
+    conf_hub, groups_hub, _ = match_graphs(graphs, params=CALIBRATION)
 
     assert not same_group(groups_hub, acquire3, acquire4)
     assert conf_hub[key(acquire3, acquire4)] < conf_clean[key(acquire1, acquire2)]
@@ -348,7 +392,7 @@ def _scenario() -> list[Graph]:
 def test_confidence_is_symmetric():
     """For every pair key, the reversed key exists with the same score —
     consumers index confidence with arbitrary pair orderings."""
-    confidence, _, _ = match_graphs(_scenario())
+    confidence, _, _ = match_graphs(_scenario(), params=CALIBRATION)
 
     assert confidence
     for (a, b), score in confidence.items():
@@ -362,19 +406,19 @@ def test_graph_order_does_not_change_results():
     import itertools
 
     graphs = _scenario()
-    conf_ref, groups_ref, _ = match_graphs(graphs)
+    conf_ref, groups_ref, _ = match_graphs(graphs, params=CALIBRATION)
     ref = {frozenset(g) for g in groups_ref}
 
     for permutation in itertools.permutations(graphs):
-        conf, groups, _ = match_graphs(list(permutation))
+        conf, groups, _ = match_graphs(list(permutation), params=CALIBRATION)
         assert {frozenset(g) for g in groups} == ref
         assert conf == conf_ref
 
 
 def test_identical_runs_are_deterministic():
     graphs = _scenario()
-    conf_a, groups_a, merged_a = match_graphs(graphs)
-    conf_b, groups_b, merged_b = match_graphs(graphs)
+    conf_a, groups_a, merged_a = match_graphs(graphs, params=CALIBRATION)
+    conf_b, groups_b, merged_b = match_graphs(graphs, params=CALIBRATION)
 
     assert conf_a == conf_b
     assert groups_a == groups_b
@@ -387,7 +431,7 @@ def test_single_graph_matches_nothing():
     acme = g.add_entity("Acme Corp")
     g.add_statement(acme, "acquire", g.add_entity("Beta Systems"))
 
-    confidence, groups, merged = match_graphs([g])
+    confidence, groups, merged = match_graphs([g], params=CALIBRATION)
 
     assert confidence == {}
     assert groups == []
@@ -395,7 +439,7 @@ def test_single_graph_matches_nothing():
 
 
 def test_no_graphs_is_empty():
-    confidence, groups, merged = match_graphs([])
+    confidence, groups, merged = match_graphs([], params=CALIBRATION)
 
     assert confidence == {}
     assert groups == []
@@ -411,4 +455,4 @@ def test_duplicate_graph_ids_raise():
     g2.add_entity("Beta Systems")
 
     with pytest.raises(ValueError, match="duplicate graph id"):
-        match_graphs([g1, g2])
+        match_graphs([g1, g2], params=CALIBRATION)

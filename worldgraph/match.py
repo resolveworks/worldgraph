@@ -38,7 +38,7 @@ from typing import NamedTuple
 
 import click
 
-from worldgraph.constants import MERGE_THRESHOLD, NEUTRAL_PRIOR
+from worldgraph.constants import NEUTRAL_PRIOR
 from worldgraph.embed import Embedder
 from worldgraph.graph import (
     Entity,
@@ -62,6 +62,48 @@ SUBJECT = "subject"
 OBJECT = "object"
 
 PredicatePrior = Callable[[Statement, Statement], float]
+
+
+class MatcherParams(NamedTuple):
+    """Calibration of the propagation core.
+
+    These are data decisions, not mechanism: the values live in
+    ``CALIBRATION`` and are owned by the eval layer. Tests must not
+    assume them — they quantify over params or pass them explicitly.
+
+    merge_threshold: confidence, backed by tested neighbors, at which
+        propagation commits a merge.
+    prior_strength: Bayesian shrinkage κ — how many tested neighbors a
+        pair needs before its positive structural evidence counts at
+        full weight (n / (n + κ)).
+    exp_lambda: saturation rate of aggregated per-neighbor evidence
+        (1 - exp(-λ·strength)).
+    damping: blend weight of the freshly computed score against the
+        previous iteration's score.
+    max_iter: propagation iteration budget.
+    epsilon: per-pair score change below which an iteration counts as
+        converged.
+    """
+
+    merge_threshold: float
+    prior_strength: float
+    exp_lambda: float
+    damping: float
+    max_iter: int
+    epsilon: float
+
+
+# The canonical calibration — the values the eval layer currently
+# defends. Every caller (the CLI included) passes this instance rather
+# than carrying its own defaults.
+CALIBRATION = MatcherParams(
+    merge_threshold=0.7,
+    prior_strength=1.0,
+    exp_lambda=2.0,
+    damping=0.5,
+    max_iter=30,
+    epsilon=1e-4,
+)
 
 
 def qualified(qid: Qid) -> str:
@@ -313,13 +355,8 @@ def propagate_similarity(
     idf: dict[str, float],
     functionality: dict[str, Functionality],
     *,
+    params: MatcherParams,
     predicate_prior: PredicatePrior | None = None,
-    max_iter: int = 30,
-    epsilon: float = 1e-4,
-    exp_lambda: float = 2.0,
-    merge_threshold: float = MERGE_THRESHOLD,
-    damping: float = 0.5,
-    prior_strength: float = 1.0,
 ) -> tuple[Confidence, dict[Qid, list[Qid]]]:
     """Run damped similarity propagation with progressive merging.
 
@@ -354,9 +391,15 @@ def propagate_similarity(
     positive evidence can only spend the headroom above it; negative
     evidence pushes below it.
 
-    On merge, the canonical adjacency for the new representative is built
-    by combining and deduplicating the adjacency lists of the merged
-    terms — O(degree) per merge, not O(|statements|).
+    On merge, adjacency is rebuilt globally — O(total adjacency) per
+    merge batch — so that it stays consistent with the union-find:
+    every group's list is the deduplicated union of its members' with
+    neighbor references remapped to canonical ids. Consistency is what
+    keeps merges from fabricating evidence: a stale pre-merge id misses
+    its counterpart lookup, which the evidence rule reads as decisive
+    negative evidence. (A merged participant, by contrast, legitimately
+    strengthens statements over it: both statements then see the same
+    canonical node in the slot.)
 
     Returns (confidence, members). The union-find maintained during
     propagation is the **sole merge authority**: a pair merges iff it
@@ -433,7 +476,7 @@ def propagate_similarity(
 
     n_tested: dict[tuple[Qid, Qid], int] = {}
 
-    for _ in range(max_iter):
+    for _ in range(params.max_iter):
         prev = dict(conf)
         changed = False
 
@@ -453,19 +496,19 @@ def propagate_similarity(
                 (pos_fwd, neg_fwd, n_cp_fwd),
                 (pos_bwd, neg_bwd, n_cp_bwd),
             ):
-                w = n_cp / (n_cp + prior_strength) if n_cp > 0 else 0.0
-                pa = 1.0 - math.exp(-exp_lambda * pos_s) if pos_s > 0 else 0.0
-                na = 1.0 - math.exp(-exp_lambda * neg_s) if neg_s > 0 else 0.0
+                w = n_cp / (n_cp + params.prior_strength) if n_cp > 0 else 0.0
+                pa = 1.0 - math.exp(-params.exp_lambda * pos_s) if pos_s > 0 else 0.0
+                na = 1.0 - math.exp(-params.exp_lambda * neg_s) if neg_s > 0 else 0.0
                 evidence = pa * (1.0 - seed) * w - na * seed
                 dir_sum += max(0.0, min(1.0, seed + evidence))
             computed = dir_sum / 2
 
             old = prev[(ca, cb)]
-            new_val = (1.0 - damping) * old + damping * computed
+            new_val = (1.0 - params.damping) * old + params.damping * computed
             conf[(ca, cb)] = new_val
             conf[(cb, ca)] = new_val
 
-            if abs(new_val - old) > epsilon:
+            if abs(new_val - old) > params.epsilon:
                 changed = True
 
         if changed:
@@ -475,7 +518,7 @@ def propagate_similarity(
         new_merges = [
             (ca, cb)
             for ca, cb in pairs
-            if conf[(ca, cb)] >= merge_threshold
+            if conf[(ca, cb)] >= params.merge_threshold
             and uf.find(ca) != uf.find(cb)
             and n_tested.get((ca, cb), 0) > 0
         ]
@@ -484,25 +527,25 @@ def propagate_similarity(
             for ca, cb in new_merges:
                 uf.union(ca, cb)
 
-            # Update canonical_adj incrementally: combine + dedup.
-            merge_groups: dict[Qid, list[Qid]] = defaultdict(list)
-            for e in sorted({e for pair in new_merges for e in pair}):
-                merge_groups[uf.find(e)].append(e)
-            for new_canon, old_canons in merge_groups.items():
-                combined: list[Neighbor] = []
-                for oc in old_canons:
-                    combined.extend(canonical_adj.get(oc, []))
-                remapped = [
-                    Neighbor(
-                        uf.find(nbr.node),
-                        nbr.slot,
-                        nbr.pos_weight,
-                        nbr.neg_weight,
-                    )
-                    for nbr in combined
-                    if uf.find(nbr.node) != new_canon
-                ]
-                canonical_adj[new_canon] = _dedup_neighbors(remapped)
+            # Rebuild adjacency globally consistent with the union-find:
+            # each group's list is the deduplicated union of its members',
+            # with every neighbor reference remapped to its canonical id.
+            # Re-keying only the merged representatives would leave stale
+            # pre-merge ids in other terms' lists, and a stale id misses
+            # its counterpart lookup — decisive negative evidence
+            # fabricated from staleness, not structure.
+            pooled: dict[Qid, list[Neighbor]] = defaultdict(list)
+            for node, nbrs in canonical_adj.items():
+                root = uf.find(node)
+                for nbr in nbrs:
+                    nbr_root = uf.find(nbr.node)
+                    if nbr_root != root:
+                        pooled[root].append(
+                            Neighbor(nbr_root, nbr.slot, nbr.pos_weight, nbr.neg_weight)
+                        )
+            canonical_adj = {
+                node: _dedup_neighbors(nbrs) for node, nbrs in pooled.items()
+            }
 
             # Remap pairs and confidence dicts to canonical reps.
             pair_set: set[tuple[Qid, Qid]] = set()
@@ -621,16 +664,17 @@ def build_merged_graph(terms: dict[Qid, Term], members: dict[Qid, list[Qid]]) ->
 def match_graphs(
     graphs: list[Graph],
     *,
+    params: MatcherParams,
     predicate_prior: PredicatePrior | None = None,
-    **propagate_kwargs,
 ) -> tuple[Confidence, list[MatchGroup], Graph]:
     """Core matching pipeline: graphs → (confidence, match groups, merged graph).
 
     Computes name IDF and slot functionality, then runs similarity
-    propagation. ``predicate_prior`` seeds statement pairs with predicate
-    similarity (None means the constant neutral prior). Match groups come
-    straight from the union-find inside propagation — the sole merge
-    authority (one threshold, gated on structural evidence).
+    propagation under ``params``. ``predicate_prior`` seeds statement
+    pairs with predicate similarity (None means the constant neutral
+    prior). Match groups come straight from the union-find inside
+    propagation — the sole merge authority (one threshold, gated on
+    structural evidence).
     """
     terms = qualified_terms(graphs)
 
@@ -647,8 +691,8 @@ def match_graphs(
         terms,
         idf,
         functionality,
+        params=params,
         predicate_prior=predicate_prior,
-        **propagate_kwargs,
     )
     groups = sorted(sorted(ms) for ms in members.values() if len(ms) > 1)
     merged = build_merged_graph(terms, members)
@@ -671,9 +715,6 @@ def _label(term: Term) -> str:
 def run_matching(
     graph_files: list[Path],
     output_path: Path,
-    merge_threshold: float = MERGE_THRESHOLD,
-    max_iter: int = 30,
-    epsilon: float = 1e-4,
     embedder: Embedder | None = None,
 ) -> None:
     """Load graphs, run matching pipeline, save the merged graph with
@@ -682,7 +723,7 @@ def run_matching(
     Statement pairs seed from a predicate prior built from *embedder*;
     ``None`` builds the real one from ``EMBEDDING_MODEL`` (raises if
     unset). The seam for tests and experiments is an injected embedder —
-    the pipeline always runs with priors.
+    the pipeline always runs with priors, under CALIBRATION.
     """
     graphs = [load_graph(path) for path in graph_files]
     terms = qualified_terms(graphs)
@@ -697,10 +738,8 @@ def run_matching(
     predicate_prior = make_predicate_prior(graphs, embedder=embedder)
     _confidence, groups, merged = match_graphs(
         graphs,
+        params=CALIBRATION,
         predicate_prior=predicate_prior,
-        max_iter=max_iter,
-        epsilon=epsilon,
-        merge_threshold=merge_threshold,
     )
     matches = [[qualified(member) for member in group] for group in groups]
     save_graph(merged, output_path, matches)
